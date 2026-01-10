@@ -1,0 +1,12 @@
+[package]
+name = "aion-state"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+parking_lot = "0.12.5"
+tracing = "0.1.44"
+
+[dev-dependencies]
+lazy_static = "1.5.0"
+tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
