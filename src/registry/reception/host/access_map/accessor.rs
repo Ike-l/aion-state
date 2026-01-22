@@ -25,5 +25,5 @@ pub trait Accessor: Debug {
     fn remove<'a>(&self, resource: Self::StoredResource) -> Self::AccessResult<'a, Self::StoredResource>;
     
     /// Called when `resource` is being inserted
-    fn insert<'a>(&self, _resource: &'a Self::StoredResource) {}
+    fn insert<'a>(&self, resource: &'a Self::StoredResource);
 }

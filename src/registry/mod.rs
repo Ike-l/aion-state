@@ -27,7 +27,7 @@ impl<
     KeyId: Key,
     StoredResource,
 > Registry<ResourceId, ReserverId, Access, ResourceId, KeyId, Box<StoredResource>> {
-    fn permits_access(
+    pub fn inner_permits_access(
         &self,
         resource_id: &ResourceId,
         access: &Access,
@@ -45,6 +45,17 @@ impl<
             ReceptionAccessPermission::Host(HostAccessPermission::AccessMap(AccessPermission::UnknownAccessId)) => RegistryAccessPermission::Ok
         }
     }
+    
+    pub fn permits_access(
+        &self,
+        resource_id: &ResourceId,
+        access: &Access,
+        reserver_id: Option<&ReserverId>,
+        key: Option<&KeyId>,
+    ) -> RegistryAccessPermission {
+        let _sync = self.sync.lock();
+        self.inner_permits_access(resource_id, access, reserver_id, key)
+    }
 
     pub fn access(
         &self, 
@@ -57,7 +68,7 @@ impl<
         let _enter = span.enter();
 
         let _sync = self.sync.lock();
-        match self.permits_access(&resource_id, &access, reserver_id, key) {
+        match self.inner_permits_access(&resource_id, &access, reserver_id, key) {
             RegistryAccessPermission::NoEntry => RegistryAccessResult::NoEntry,
             RegistryAccessPermission::ReservationConflict => RegistryAccessResult::ReservationConflict,
             RegistryAccessPermission::AccessConflict => RegistryAccessResult::AccessConflict,
@@ -88,7 +99,7 @@ impl<
         let _enter = span.enter();
 
         let _sync = self.sync.lock();
-        match self.permits_access(&resource_id, &access, reserver_id, key) {
+        match self.inner_permits_access(&resource_id, &access, reserver_id, key) {
             RegistryAccessPermission::NoEntry => RegistryReplacementResult::NoEntry,
             RegistryAccessPermission::AccessConflict => RegistryReplacementResult::AccessConflict,
             RegistryAccessPermission::ReservationConflict => RegistryReplacementResult::ReservationConflict,
@@ -149,6 +160,13 @@ impl<
             ReceptionUnReserveResult::Host(HostUnReserveResult::ReservationMap(ReservationMapUnReserveResult::AccessMap(AccessRemovalResult::UnknownAccessId))) => RegistryUnReserveResult::UnknownResourceId,
             ReceptionUnReserveResult::Host(HostUnReserveResult::ReservationMap(ReservationMapUnReserveResult::AccessMap(AccessRemovalResult::Split))) => RegistryUnReserveResult::Ok,
         }
+    }
+
+    pub fn contains_resource(
+        &self,
+        resource_id: &ResourceId
+    ) -> bool {
+        self.registry.contains(resource_id)
     }
 
     /// Safety:
