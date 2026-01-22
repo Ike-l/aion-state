@@ -23,7 +23,7 @@ impl<
         &self, 
         resource_id: &ResourceId,
         access: &Access
-    ) -> OperatedRegistryAccessResult<Access::AccessResult<'_, Access::StoredResource>> {
+    ) -> OperatedRegistryAccessResult<Access::AccessResult<'_, Access::Resource>> {
         let span = span!(Level::DEBUG, "Operated Registry Access");
         let _enter = span.enter();
 

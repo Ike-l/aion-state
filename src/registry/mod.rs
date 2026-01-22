@@ -52,7 +52,7 @@ impl<
         access: Access,
         reserver_id: Option<&ReserverId>,
         key: Option<&KeyId>,
-    ) -> RegistryAccessResult<Access::AccessResult<'_, Access::StoredResource>> { 
+    ) -> RegistryAccessResult<Access::AccessResult<'_, Access::Resource>> { 
         let span = span!(Level::DEBUG, "Registry Access");
         let _enter = span.enter();
 

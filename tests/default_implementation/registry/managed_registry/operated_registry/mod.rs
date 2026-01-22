@@ -1,7 +1,7 @@
 use aion_state::prelude::{Accessor, OperatedRegistry, OperatedRegistryAccessResult, OperatedRegistryReplacementResult};
 use tracing::{Level, span};
 
-use crate::default_implementation::{init_tracing, prelude::{Access, AccessResult, ResourceId, StoredResource}};
+use crate::default_implementation::{init_tracing, prelude::{Access, AccessResult, Resource, ResourceId, StoredResource}};
 
 pub mod resource_key;
 
@@ -27,7 +27,7 @@ fn wrong_resource_id_access() {
 
     let in_resource_id = ResourceId::labelled("foo");
 
-    let stored_resource = StoredResource::new(1);
+    let stored_resource = StoredResource::new(Resource::new(1));
     let replacement_result = registry.accessed_replace(in_resource_id, &Access::Replace, Some(stored_resource));
     assert_eq!(replacement_result, OperatedRegistryReplacementResult::ResourceNotFound);
 
@@ -43,7 +43,7 @@ fn found_resource_access() {
     let mut registry = setup_operated_registry();
 
     let resource_id = ResourceId::labelled("foo");
-    let stored_resource = StoredResource::new(1);
+    let stored_resource = StoredResource::new(Resource::new(1));
     let replacement_result = registry.accessed_replace(resource_id.clone(), &Access::Replace, Some(stored_resource));
     assert_eq!(replacement_result, OperatedRegistryReplacementResult::ResourceNotFound);
 
@@ -64,7 +64,7 @@ fn found_resource_bad_access() {
     let mut registry = setup_operated_registry();
 
     let resource_id = ResourceId::labelled("foo");
-    let stored_resource = StoredResource::new(1);
+    let stored_resource = StoredResource::new(Resource::new(1));
     let replacement_result = registry.accessed_replace(resource_id.clone(), &Access::Replace, Some(stored_resource));
     assert_eq!(replacement_result, OperatedRegistryReplacementResult::ResourceNotFound);
 
@@ -91,7 +91,7 @@ fn noop_replace() {
 #[test]
 fn insert_something_replace() {
     let resource_id = ResourceId::labelled("foo");
-    let resource = StoredResource::new(1);
+    let resource = StoredResource::new(Resource::new(1));
 
     for access in Access::all() {
         let mut registry = setup_operated_registry();
@@ -111,7 +111,7 @@ fn insert_something_replace() {
 #[test]
 fn access_respected_replace() {
     let resource_id = ResourceId::labelled("foo");
-    let resource = StoredResource::new(1);
+    let resource = StoredResource::new(Resource::new(1));
 
     for access in Access::all() {
         let mut registry = setup_operated_registry();
@@ -163,8 +163,8 @@ fn insert_respects_id() {
     let resource_id = ResourceId::labelled("foo");
     let other_resource_id = ResourceId::labelled("bar");
 
-    let resource = StoredResource::new(1);
-    let other_resource = StoredResource::new(2);
+    let resource = StoredResource::new(Resource::new(1));
+    let other_resource = StoredResource::new(Resource::new(2));
 
     let mut registry = setup_operated_registry();
 

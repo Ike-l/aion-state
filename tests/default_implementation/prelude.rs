@@ -21,7 +21,7 @@ pub use crate::default_implementation::{
         }
     },
     resource::{
-        StoredResource
+        Resource, StoredResource
     },
     access_result::AccessResult
 };

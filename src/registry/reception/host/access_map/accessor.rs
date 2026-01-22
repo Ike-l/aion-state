@@ -2,6 +2,8 @@ use std::fmt::Debug;
 
 pub trait Accessor: Debug {
     type StoredResource;
+    type Resource;
+
     type AccessResult<'a, T> where T: 'a;
 
     fn can_access(&self, other: &Self) -> bool;
@@ -17,7 +19,7 @@ pub trait Accessor: Debug {
 
     /// Called when `resource` is being accessed with `self`
     // Option?
-    fn access<'a>(&self, resource: &'a Self::StoredResource) -> Self::AccessResult<'a, Self::StoredResource>;
+    fn access<'a>(&self, resource: &'a Self::StoredResource) -> Self::AccessResult<'a, Self::Resource>;
 
     /// Called when `resource` is being removed
     fn remove<'a>(&self, resource: Self::StoredResource) -> Self::AccessResult<'a, Self::StoredResource>;

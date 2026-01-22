@@ -31,7 +31,7 @@ impl<
         &self, 
         resource_id: &ResourceId,
         access: &Access,
-    ) -> ManagedRegistryAccessResult<Access::AccessResult<'_, Access::StoredResource>> {
+    ) -> ManagedRegistryAccessResult<Access::AccessResult<'_, Access::Resource>> {
         let span = span!(Level::DEBUG, "Managed Registry Access");
         let _enter = span.enter();
 

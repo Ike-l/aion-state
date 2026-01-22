@@ -1,7 +1,7 @@
 use aion_state::prelude::Accessor;
 use tracing::{Level, event};
 
-use crate::default_implementation::prelude::{AccessResult, StoredResource};
+use crate::default_implementation::{prelude::{AccessResult, StoredResource}, resource::Resource};
 
 #[derive(Debug, PartialEq)]
 pub enum BorrowType {
@@ -51,6 +51,7 @@ impl Access {
 
 impl Accessor for Access {
     type StoredResource = StoredResource;
+    type Resource = Resource;
 
     type AccessResult<'a, T> = AccessResult<'a, T> where T: 'a;
 
@@ -123,12 +124,12 @@ impl Accessor for Access {
         }
     }
 
-    fn access<'a>(&self, resource: &'a Self::StoredResource) -> Self::AccessResult<'a, Self::StoredResource> {
+    fn access<'a>(&self, resource: &'a Self::StoredResource) -> Self::AccessResult<'a, Self::Resource> {
         event!(Level::DEBUG, "Accessing Resource: {resource:?}");
         match self {
-            Access::Shared(_) => AccessResult::Shared(resource),
-            Access::Unique => AccessResult::Unique(resource),
-            Access::Owned => AccessResult::Owned(resource.clone()),
+            Access::Shared(_) => AccessResult::Shared(resource.get()),
+            Access::Unique => AccessResult::Unique(resource.get()),
+            Access::Owned => AccessResult::Owned(resource.get().clone()),
             Access::Replace => panic!("Tried Accessing with `Replace`"),
         }
     }
