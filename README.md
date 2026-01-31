@@ -16,3 +16,6 @@ AccessParameter {
             access 
         }: AccessParameter<'_, ResourceId, Access>
 */
+
+
+trying pattern where input has the logic?
