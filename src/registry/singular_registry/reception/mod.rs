@@ -1,4 +1,4 @@
-use crate::prelude::{Host, Owner, ReceptionAccessPermissionInput, ReceptionAccessPermission};
+use crate::prelude::{Host, Owner, ReceptionAccessPermission, ReceptionAccessPermissionInput, ReceptionRecordAccessInput};
 
 pub mod owner;
 pub mod host;
@@ -13,13 +13,14 @@ pub struct Reception<S, R> {
 impl<S, R> Reception<S, R> {
     pub fn permits_access(
         &self,
-        _input: ReceptionAccessPermissionInput
+        _input: &ReceptionAccessPermissionInput
     ) -> ReceptionAccessPermission {
         todo!()
     }
 
     pub fn record_access(
-        &self
+        &self,
+        _input: ReceptionRecordAccessInput
     ) {
         todo!()
     }

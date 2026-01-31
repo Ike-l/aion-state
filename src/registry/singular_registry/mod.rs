@@ -19,7 +19,7 @@ impl<
 > SingularRegistry<S, T, R> {
     pub fn permits_access(
         &self,
-        input: ReceptionAccessPermissionInput
+        input: &ReceptionAccessPermissionInput
     ) -> ReceptionAccessPermission {
         self.reception.permits_access(input)
     }
@@ -41,11 +41,11 @@ impl<
             permission_input
         ) = input.split();
 
-        let permission = self.permits_access(permission_input);
+        let permission = self.permits_access(&permission_input);
         if permission.ok() {
-            let access = unsafe { self.automated_registry.access(access_input) };
+            let access = unsafe { self.automated_registry.access(&access_input) };
             if matches!(access, ManualRegistryAccessResult::Found(_)) {
-                self.reception.record_access();
+                self.reception.record_access(permission_input.as_record_access_input());
             }
 
             return SingularRegistryAccessResult::OkAccess(access);

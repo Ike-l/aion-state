@@ -18,7 +18,8 @@ pub mod prelude {
                 reception::{
                     Reception,
                     reception_input::{
-                        ReceptionAccessPermissionInput
+                        ReceptionAccessPermissionInput,
+                        ReceptionRecordAccessInput
                     },
                     reception_result::{
                         ReceptionAccessPermission,
@@ -30,9 +31,9 @@ pub mod prelude {
                             reservations_input::{
                                 ReservationMapAccessPermissionInput
                             },
-                            // reservations_result::{
-
-                            // },
+                            reservations_result::{
+                                ReservationMapAccessPermissionResult
+                            },
                             reservation_map::{
                                 ReservationMap
                             }

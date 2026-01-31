@@ -13,35 +13,29 @@ pub struct ManualRegistry<S> {
 impl<
     S: Storage,
 > ManualRegistry<S> {
-    pub fn access<
-        Access: Accessor<StoredValue = S::Value>
-    >(
+    pub fn access<Access: Accessor<StoredValue = S::Value>>(
         &self, 
-        input: ManualRegistryAccessInput<'_, Access, S::Key>
+        ManualRegistryAccessInput {
+            key, access
+        }: &ManualRegistryAccessInput<'_, Access, S::Key>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_, Access::Value>> {
         let span = span!(FUNCTION_LEVEL, "Manual Access");
         let _enter = span.enter();
 
-        match self.storage.get(input.key) {
-            Some(value) => ManualRegistryAccessResult::Found(input.access.access(value)),
+        match self.storage.get(key) {
+            Some(value) => ManualRegistryAccessResult::Found(access.access(value)),
             None => ManualRegistryAccessResult::NotFound,
         }
     }
 
-    pub fn replace<
-        Access: Accessor<StoredValue = S::Value>
-    >(
+    pub fn replace<Access: Accessor<StoredValue = S::Value>>(
         &mut self,
-        input: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
+        ManualRegistryReplacementInput {
+            access, key, value
+        }: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
     ) -> ManualRegistryReplacementResult<Access::AccessResult<'_, Access::StoredValue>> {
         let span = span!(FUNCTION_LEVEL, "Manual Replacement");
         let _enter = span.enter();
-
-        let ManualRegistryReplacementInput {
-            access,
-            key,
-            value
-        } = input;
 
         let old_resource = match (
             value,

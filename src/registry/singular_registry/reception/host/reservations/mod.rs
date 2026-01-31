@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use tracing::{Level, event, span};
 
-use crate::prelude::{FUNCTION_LEVEL, ReservationMap, ReservationMapAccessPermissionInput, Storage};
+use crate::prelude::{FUNCTION_LEVEL, ReservationMap, ReservationMapAccessPermissionInput, ReservationMapAccessPermissionResult, Storage};
 
 pub mod reservation_map;
 pub mod reservations_input;
@@ -16,22 +16,12 @@ pub struct Reservations<S, R> {
 impl<S: Storage, R: ReservationMap<S>> Reservations<S, R> {
     pub fn permits_access(
         &self,
-        input: ReservationMapAccessPermissionInput<
-            '_, 
-            R::Reserver, 
-            S::Key, 
-            S::Value,
-        >
-    ) {
+        ReservationMapAccessPermissionInput {
+            reserver, access_key, access,
+        }: ReservationMapAccessPermissionInput<'_, R::Reserver, S::Key, S::Value>
+    ) -> ReservationMapAccessPermissionResult {
         let span = span!(FUNCTION_LEVEL, "Reservations Permits Access");
         let _enter = span.enter();
-
-        let ReservationMapAccessPermissionInput {
-            reserver,
-            access_key,
-            access,
-        } = input;
-
 
         let conflicts = self.reservation_map
             .read()
@@ -54,5 +44,7 @@ impl<S: Storage, R: ReservationMap<S>> Reservations<S, R> {
                     false
                 }
             });
+
+        ReservationMapAccessPermissionResult::Ok(!conflicts)
     }
 }

@@ -19,11 +19,9 @@ impl<S: Storage> AutomatedRegistry<S> {
         unsafe { &mut *self.manual_registry.get() }
     }
 
-    pub unsafe fn access<
-        Access: Accessor<StoredValue = S::Value>
-    >(
+    pub unsafe fn access<Access: Accessor<StoredValue = S::Value>>(
         &self,
-        input: ManualRegistryAccessInput<'_, Access, S::Key>
+        input: &ManualRegistryAccessInput<'_, Access, S::Key>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_, Access::Value>> {
         let span = span!(FUNCTION_LEVEL, "Automated Access");
         let _enter = span.enter();
@@ -31,9 +29,7 @@ impl<S: Storage> AutomatedRegistry<S> {
         unsafe { self.get_inner() }.access(input)
     }
 
-    pub unsafe fn replace<
-        Access: Accessor<StoredValue = S::Value>
-    >(
+    pub unsafe fn replace<Access: Accessor<StoredValue = S::Value>>(
         &self,
         input: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
     ) -> ManualRegistryReplacementResult<Access::AccessResult<'_, Access::StoredValue>> {
