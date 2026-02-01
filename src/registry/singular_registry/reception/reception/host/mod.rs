@@ -64,6 +64,9 @@ impl<
         &mut self,
         remove_access_input: RemoveAccessInput<'_, AS::Key, AS::Value>
     ) -> RemoveAccessResult {
+        let span = span!(FUNCTION_LEVEL, "Host Remove Access");
+        let _enter = span.enter();
+
         self.accesses.remove_access(remove_access_input)
     }
 
@@ -71,6 +74,9 @@ impl<
         &mut self,
         unreserve_input: UnreserveInput<'_, RS::Key, AS::Key, AS::Value>
     ) -> ReservationsUnreserveResult {
+        let span = span!(FUNCTION_LEVEL, "Host Unreserve");
+        let _enter = span.enter();
+
         self.reservations.unreserve(unreserve_input)
     }
 
@@ -78,6 +84,9 @@ impl<
         &mut self,
         reserve_input: ReserveInput<RS::Key, AS::Key, AS::Value>
     ) -> ReservationsReserveResult {
+        let span = span!(FUNCTION_LEVEL, "Host Reserve");
+        let _enter = span.enter();
+
         self.reservations.reserve(reserve_input)
     }
 }

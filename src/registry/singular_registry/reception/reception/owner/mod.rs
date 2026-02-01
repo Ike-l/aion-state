@@ -1,4 +1,6 @@
-use crate::prelude::{AuthenticateInput, Authenticator, OwnerAccessPermissionInput, OwnerAccessPermissionResult, OwnerStorage, PasswordManager, PasswordManagerAccessPermissionInput, PasswordStorage};
+use tracing::span;
+
+use crate::prelude::{AuthenticateInput, Authenticator, FUNCTION_LEVEL, OwnerAccessPermissionInput, OwnerAccessPermissionResult, OwnerStorage, PasswordManager, PasswordManagerAccessPermissionInput, PasswordStorage};
 
 pub mod authenticator;
 pub mod password_manager;
@@ -21,6 +23,9 @@ impl<
             owner_credentials, password, access
         }: OwnerAccessPermissionInput<'_, OS::Key, OS::Value, PS::Password, PS::Access>
     ) -> OwnerAccessPermissionResult {
+        let span = span!(FUNCTION_LEVEL, "Owner Permits Access");
+        let _enter = span.enter();
+
         if let Some((owner_id, owner_key)) = owner_credentials {
             if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_key }) {
                 return OwnerAccessPermissionResult::OwnerVerified;
@@ -28,7 +33,7 @@ impl<
         }
 
         if let Some(password) = password {
-            OwnerAccessPermissionResult::PasswordResult(self.password_manager.permits_access(PasswordManagerAccessPermissionInput { password, access }))
+            OwnerAccessPermissionResult::PasswordResult(self.password_manager.check_password(PasswordManagerAccessPermissionInput { password, access }))
         } else {
             OwnerAccessPermissionResult::NoCredentials
         }

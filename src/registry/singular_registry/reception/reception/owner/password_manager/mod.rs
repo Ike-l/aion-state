@@ -1,4 +1,6 @@
-use crate::prelude::{PasswordManagerAccessPermissionInput, PasswordManagerAccessPermissionResult, PasswordStorage};
+use tracing::span;
+
+use crate::prelude::{FUNCTION_LEVEL, PasswordManagerAccessPermissionInput, PasswordManagerAccessPermissionResult, PasswordStorage};
 
 pub mod password_storage;
 
@@ -10,12 +12,15 @@ pub struct PasswordManager<PS> {
 }
 
 impl<PS: PasswordStorage> PasswordManager<PS> {
-    pub fn permits_access(
+    pub fn check_password(
         &self,
         PasswordManagerAccessPermissionInput {
             password, access
         }: PasswordManagerAccessPermissionInput<PS::Password, PS::Access>
     ) -> PasswordManagerAccessPermissionResult {
+        let span = span!(FUNCTION_LEVEL, "Password Manager Checking Password");
+        let _enter = span.enter();
+        
         PasswordManagerAccessPermissionResult::Checked(self.password_storage.check(password, access))
     }
 
