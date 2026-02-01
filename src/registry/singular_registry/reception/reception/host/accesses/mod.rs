@@ -1,6 +1,8 @@
+use std::fmt::Debug;
+
 use tracing::{field, span};
 
-use crate::prelude::{AccessPermission, AccessStorage, FUNCTION_LEVEL, PermitsAccessInput, RecordAccessInput};
+use crate::prelude::{AccessPermission, AccessStorage, Accessor, FUNCTION_LEVEL, PermitsAccessInput, RecordAccessInput, RecordAccessResult, RemoveAccessResult};
 
 pub mod accesses_input;
 pub mod accesses_result;
@@ -8,10 +10,12 @@ pub mod access_storage;
 
 #[derive(Default)]
 pub struct Accesses<AS> {
-    access_map: AS
+    access_storage: AS
 }
 
-impl<AS: AccessStorage> Accesses<AS> {
+impl<AS: AccessStorage> Accesses<AS> 
+    where AS::Value: Accessor + Debug
+{
     pub fn permits_access(
         &self,
         PermitsAccessInput {
@@ -29,10 +33,23 @@ impl<AS: AccessStorage> Accesses<AS> {
         RecordAccessInput {
             access_key, access
         }: RecordAccessInput<AS::Key, AS::Value>
-    ) {
-        let span = span!(FUNCTION_LEVEL, "Accesses Record Access");
+    ) -> RecordAccessResult {
+        let span = span!(FUNCTION_LEVEL, "Accesses Record Access", current_access = field::Empty);
         let _enter = span.enter();
 
+        if let Some(current_access) = self.access_storage.get_mut(&access_key) {
+            span.record("current_access", format!("{current_access:?}"));
+            current_access.merge(access);
+            RecordAccessResult::Merged
+        } else {
+            self.access_storage.insert(access_key, access);
+            RecordAccessResult::Inserted
+        }
+    }
+
+    pub fn remove_access(
+        &mut self
+    ) -> RemoveAccessResult {
         todo!()
     }
 }

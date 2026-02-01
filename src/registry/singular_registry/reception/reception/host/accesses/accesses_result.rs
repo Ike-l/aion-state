@@ -7,3 +7,12 @@ impl AccessPermission {
         todo!()
     }
 }
+
+pub enum RecordAccessResult {
+    Merged,
+    Inserted
+}
+
+pub enum RemoveAccessResult {
+    
+}

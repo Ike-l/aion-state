@@ -22,6 +22,11 @@ pub trait Accessor {
         value: Self::Value
     ) -> Self::StoredValue;
 
+    fn merge(
+        &mut self,
+        other: Self
+    );
+
     fn can_insert(&self) -> bool;
     fn can_remove(&self) -> bool;
 }

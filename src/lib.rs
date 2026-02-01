@@ -34,10 +34,14 @@ pub mod prelude {
                                     ReservationStorage
                                 },
                                 reservations_input::{
-                                    ReservationsAccessPermissionInput, ReserveInput
+                                    ReservationsAccessPermissionInput, 
+                                    ReserveInput,
+                                    UnreserveInput
                                 },
                                 reservations_result::{
-                                    ReservationMapAccessPermissionResult
+                                    ReservationsAccessPermissionResult,
+                                    ReservationsReserveResult,
+                                    ReservationsUnreserveResult
                                 },
                             },
                             accesses::{
@@ -46,10 +50,13 @@ pub mod prelude {
                                     AccessStorage
                                 },
                                 accesses_result::{
-                                    AccessPermission
+                                    AccessPermission,
+                                    RecordAccessResult,
+                                    RemoveAccessResult
                                 },
                                 accesses_input::{
-                                    PermitsAccessInput, RecordAccessInput
+                                    PermitsAccessInput, 
+                                    RecordAccessInput
                                 }
                             }
                         },
