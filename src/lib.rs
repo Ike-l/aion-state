@@ -29,10 +29,12 @@ pub mod prelude {
                         host::{
                             Host,
                             host_input::{
-                                HostAccessPermissionInput
+                                HostAccessPermissionInput,
+                                HostRecordAccessInput
                             },
                             host_result::{
-                                HostAccessPermissionResult
+                                HostAccessPermissionResult,
+                                HostRecordAccessResult
                             },
                             reservations::{
                                 Reservations,

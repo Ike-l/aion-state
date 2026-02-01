@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use tracing::span;
 
-use crate::prelude::{AccessStorage, Accesses, Accessor, FUNCTION_LEVEL, HostAccessPermissionInput, HostAccessPermissionResult, PermitsAccessInput, ReservationStorage, Reservations, ReservationsAccessPermissionInput};
+use crate::prelude::{AccessStorage, Accesses, Accessor, FUNCTION_LEVEL, HostAccessPermissionInput, HostAccessPermissionResult, HostRecordAccessInput, HostRecordAccessResult, PermitsAccessInput, RecordAccessInput, ReservationStorage, Reservations, ReservationsAccessPermissionInput, UnreserveInput};
 
 pub mod reservations;
 pub mod accesses;
@@ -37,6 +37,26 @@ impl<
             HostAccessPermissionResult::Accesses(self.accesses.permits_access(PermitsAccessInput { access_key, access }))
         } else {
             HostAccessPermissionResult::ReservationConflict
+        }
+    }
+
+    pub fn record_access(
+        &mut self,
+        HostRecordAccessInput {
+            reserver, access_key, access
+        }: HostRecordAccessInput<RS::Key, AS::Key, AS::Value>
+    ) -> HostRecordAccessResult {
+        let span = span!(FUNCTION_LEVEL, "Host Record Access");
+        let _enter = span.enter();
+
+        let unreserve_result = if let Some(reserver) = reserver {
+            Some(self.reservations.unreserve(UnreserveInput { reserver, access_key: &access_key, access: &access }))
+        } else { None };
+
+        let record_access_result = self.accesses.record_access(RecordAccessInput { access_key, access });
+
+        HostRecordAccessResult {
+            unreserve_result, record_access_result
         }
     }
 }
