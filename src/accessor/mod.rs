@@ -21,6 +21,11 @@ pub trait Accessor {
         other: Self
     );
 
+    fn split(
+        &mut self,
+        other: &Self
+    );
+
     fn insert<'a>(
         &self,
         value: Self::Value

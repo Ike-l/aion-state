@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use tracing::{Level, event, span};
 
-use crate::prelude::{AccessStorage, Accesses, Accessor, FUNCTION_LEVEL, PermitsAccessInput, RecordAccessInput, ReservationStorage, ReservationsAccessPermissionInput, ReservationsAccessPermissionResult, ReservationsReserveResult, ReservationsUnreserveResult, ReserveInput, UnreserveInput};
+use crate::prelude::{AccessStorage, Accesses, Accessor, FUNCTION_LEVEL, PermitsAccessInput, RecordAccessInput, RemoveAccessInput, ReservationStorage, ReservationsAccessPermissionInput, ReservationsAccessPermissionResult, ReservationsReserveResult, ReservationsUnreserveResult, ReserveInput, UnreserveInput};
 
 pub mod reservations_input;
 pub mod reservations_result;
@@ -77,14 +77,14 @@ impl<
     pub fn unreserve(
         &mut self,
         UnreserveInput {
-            reserver
-        }: UnreserveInput<'_, RS::Key>
+            reserver, access_key, access
+        }: UnreserveInput<'_, RS::Key, AS::Key, AS::Value>
     ) -> ReservationsUnreserveResult {
         let span = span!(FUNCTION_LEVEL, "Reservations Unreserve");
         let _enter = span.enter();
 
         if let Some(access_map) = self.reservation_storage.get_mut(reserver) {
-            ReservationsUnreserveResult::Accesses(access_map.remove_access())
+            ReservationsUnreserveResult::Accesses(access_map.remove_access(RemoveAccessInput { access, access_key }))
         } else {
             ReservationsUnreserveResult::NoReserver
         }

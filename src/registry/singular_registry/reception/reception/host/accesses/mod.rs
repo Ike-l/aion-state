@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use tracing::{field, span};
 
-use crate::prelude::{AccessPermission, AccessStorage, Accessor, FUNCTION_LEVEL, PermitsAccessInput, RecordAccessInput, RecordAccessResult, RemoveAccessResult};
+use crate::prelude::{AccessPermission, AccessStorage, Accessor, FUNCTION_LEVEL, PermitsAccessInput, RecordAccessInput, RecordAccessResult, RemoveAccessInput, RemoveAccessResult};
 
 pub mod accesses_input;
 pub mod accesses_result;
@@ -53,8 +53,21 @@ impl<AS: AccessStorage> Accesses<AS>
     }
 
     pub fn remove_access(
-        &mut self
+        &mut self,
+        RemoveAccessInput {
+            access_key, access
+        }: RemoveAccessInput<AS::Key, AS::Value>
     ) -> RemoveAccessResult {
-        todo!()
+        let span = span!(FUNCTION_LEVEL, "Accesses Remove Access", current_access = field::Empty);
+        let _enter = span.enter();
+
+        if let Some(current_access) = self.access_storage.get_mut(access_key) {
+            span.record("current_access", format!("{current_access:?}"));
+
+            current_access.split(access);
+            RemoveAccessResult::Split
+        } else {
+            RemoveAccessResult::NoCurrentAccess
+        }
     }
 }

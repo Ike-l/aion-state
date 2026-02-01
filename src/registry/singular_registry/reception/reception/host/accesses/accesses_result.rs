@@ -15,5 +15,6 @@ pub enum RecordAccessResult {
 }
 
 pub enum RemoveAccessResult {
-    
+    Split,
+    NoCurrentAccess
 }

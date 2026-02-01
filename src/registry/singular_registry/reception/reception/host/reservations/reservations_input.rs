@@ -10,6 +10,8 @@ pub struct ReserveInput<Reserver, AccessKey, Access> {
     pub access: Access,
 }
 
-pub struct UnreserveInput<'a, Reserver> {
-    pub reserver: &'a Reserver
+pub struct UnreserveInput<'a, Reserver, AccessKey, Access> {
+    pub reserver: &'a Reserver,
+    pub access_key: &'a AccessKey,
+    pub access: &'a Access
 }

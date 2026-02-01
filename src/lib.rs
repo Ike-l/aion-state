@@ -56,7 +56,8 @@ pub mod prelude {
                                 },
                                 accesses_input::{
                                     PermitsAccessInput, 
-                                    RecordAccessInput
+                                    RecordAccessInput,
+                                    RemoveAccessInput
                                 }
                             }
                         },
