@@ -1,8 +1,9 @@
 use crate::prelude::PasswordManagerAccessPermissionResult;
 
 pub enum OwnerAccessPermissionResult {
+    PasswordResult(PasswordManagerAccessPermissionResult),
     OwnerVerified,
-    PasswordResult(PasswordManagerAccessPermissionResult)
+    NoCredentials,
 }
 
 impl OwnerAccessPermissionResult {
@@ -10,6 +11,7 @@ impl OwnerAccessPermissionResult {
         match self {
             Self::OwnerVerified => true,
             Self::PasswordResult(password_result) => password_result.ok(),
+            Self::NoCredentials => false,
         }
     }
 }

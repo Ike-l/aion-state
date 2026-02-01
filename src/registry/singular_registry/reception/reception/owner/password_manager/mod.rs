@@ -1,16 +1,23 @@
-use crate::prelude::PasswordManagerAccessPermissionResult;
+use crate::prelude::{PasswordManagerAccessPermissionInput, PasswordManagerAccessPermissionResult, PasswordStorage};
+
+pub mod password_storage;
 
 pub mod password_manager_result;
+pub mod password_manager_input;
 
-pub struct PasswordManager {
-    // checks passwords
-    // generates passwords
+pub struct PasswordManager<PS> {
+    password_storage: PS
 }
 
-impl PasswordManager {
+impl<PS: PasswordStorage> PasswordManager<PS> {
     pub fn permits_access(
-        &self
+        &self,
+        PasswordManagerAccessPermissionInput {
+            password, access
+        }: PasswordManagerAccessPermissionInput<PS::Password, PS::Access>
     ) -> PasswordManagerAccessPermissionResult {
-        todo!()
+        PasswordManagerAccessPermissionResult::Checked(self.password_storage.check(password, access))
     }
+
+    // generate password
 }

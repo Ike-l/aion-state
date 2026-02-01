@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateInput, Authenticator, OwnerAccessPermissionInput, OwnerAccessPermissionResult, OwnerStorage, PasswordManager};
+use crate::prelude::{AuthenticateInput, Authenticator, OwnerAccessPermissionInput, OwnerAccessPermissionResult, OwnerStorage, PasswordManager, PasswordManagerAccessPermissionInput, PasswordStorage};
 
 pub mod authenticator;
 pub mod password_manager;
@@ -6,17 +6,20 @@ pub mod password_manager;
 pub mod owner_result;
 pub mod owner_input;
 
-pub struct Owner<OS> {
+pub struct Owner<OS, PS> {
     authenticator: Authenticator<OS>,
-    password_manager: PasswordManager
+    password_manager: PasswordManager<PS>
 }
 
-impl<OS: OwnerStorage> Owner<OS> {
+impl<
+    OS: OwnerStorage,
+    PS: PasswordStorage
+> Owner<OS, PS> {
     pub fn permits_access(
         &self,
         OwnerAccessPermissionInput {
-            owner_credentials
-        }: OwnerAccessPermissionInput<'_, OS::Key, OS::Value>
+            owner_credentials, password, access
+        }: OwnerAccessPermissionInput<'_, OS::Key, OS::Value, PS::Password, PS::Access>
     ) -> OwnerAccessPermissionResult {
         if let Some((owner_id, owner_key)) = owner_credentials {
             if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_key }) {
@@ -24,6 +27,14 @@ impl<OS: OwnerStorage> Owner<OS> {
             }
         }
 
-        OwnerAccessPermissionResult::PasswordResult(self.password_manager.permits_access())
+        if let Some(password) = password {
+            OwnerAccessPermissionResult::PasswordResult(self.password_manager.permits_access(PasswordManagerAccessPermissionInput { password, access }))
+        } else {
+            OwnerAccessPermissionResult::NoCredentials
+        }
     }
+
+    // generate password
+    // check if owner authenticate
+    // then password_manager.generate
 }

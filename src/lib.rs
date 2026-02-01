@@ -87,6 +87,12 @@ pub mod prelude {
                             },
                             password_manager::{
                                 PasswordManager,
+                                password_storage::{
+                                    PasswordStorage
+                                },
+                                password_manager_input::{
+                                    PasswordManagerAccessPermissionInput
+                                },
                                 password_manager_result::{
                                     PasswordManagerAccessPermissionResult
                                 }

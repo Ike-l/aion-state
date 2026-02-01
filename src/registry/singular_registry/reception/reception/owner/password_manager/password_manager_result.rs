@@ -1,9 +1,9 @@
 pub enum PasswordManagerAccessPermissionResult {
-    
+    Checked(bool)
 }
 
 impl PasswordManagerAccessPermissionResult {
     pub fn ok(&self) -> bool {
-        todo!()
+        matches!(self, Self::Checked(true))
     }
 }
