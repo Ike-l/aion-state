@@ -7,4 +7,9 @@ pub trait PasswordStorage {
         password: &Self::Password,
         access: &Self::Access
     ) -> bool;
+
+    fn generate_password(
+        &mut self,
+        access: &Self::Access
+    ) -> Self::Password;
 }

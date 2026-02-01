@@ -1,6 +1,6 @@
 use tracing::span;
 
-use crate::prelude::{FUNCTION_LEVEL, PasswordManagerAccessPermissionInput, PasswordManagerAccessPermissionResult, PasswordStorage};
+use crate::prelude::{FUNCTION_LEVEL, PasswordGeneratorInput, PasswordGeneratorResult, PasswordManagerAccessPermissionInput, PasswordManagerAccessPermissionResult, PasswordStorage};
 
 pub mod password_storage;
 
@@ -24,5 +24,16 @@ impl<PS: PasswordStorage> PasswordManager<PS> {
         PasswordManagerAccessPermissionResult::Checked(self.password_storage.check(password, access))
     }
 
+    pub fn generate_password(
+        &mut self,
+        PasswordGeneratorInput {
+            access
+        }: PasswordGeneratorInput<'_, PS::Access>
+    ) -> PasswordGeneratorResult<PS::Password> {
+        let span = span!(FUNCTION_LEVEL, "Password Manager Generating Password");
+        let _enter = span.enter();
+
+        PasswordGeneratorResult::Generated(self.password_storage.generate_password(access))
+    }
     // generate password
 }

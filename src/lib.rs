@@ -91,10 +91,12 @@ pub mod prelude {
                                     PasswordStorage
                                 },
                                 password_manager_input::{
-                                    PasswordManagerAccessPermissionInput
+                                    PasswordManagerAccessPermissionInput,
+                                    PasswordGeneratorInput
                                 },
                                 password_manager_result::{
-                                    PasswordManagerAccessPermissionResult
+                                    PasswordManagerAccessPermissionResult,
+                                    PasswordGeneratorResult
                                 }
                             }
                         }

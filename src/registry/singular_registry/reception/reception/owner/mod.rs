@@ -39,6 +39,18 @@ impl<
         }
     }
 
+    pub fn generate_password(
+        &mut self
+    ) {
+        let span = span!(FUNCTION_LEVEL, "Owner Generating Password");
+        let _enter = span.enter();
+
+        if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_key }) {
+            return self.password_manager.generate_password(access)
+        } else {
+
+        }
+    }
     // generate password
     // check if owner authenticate
     // then password_manager.generate

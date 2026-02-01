@@ -7,3 +7,7 @@ impl PasswordManagerAccessPermissionResult {
         matches!(self, Self::Checked(true))
     }
 }
+
+pub enum PasswordGeneratorResult<Password> {
+    Generated(Password)
+}
