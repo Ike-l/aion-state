@@ -4,6 +4,16 @@ pub mod accessor;
 
 pub mod prelude {
     pub const FUNCTION_LEVEL: tracing::Level = tracing::Level::DEBUG;
+
+    #[cfg(not(all(test, feature = "loom")))]
+    pub(crate) use std::sync;
+
+    #[cfg(all(test, feature = "loom"))]
+    pub(crate) use loom::sync;
+
+    // #[cfg(feature = "tokio")]
+    // pub(crate) use tokio::sync;
+
     pub use super::{
         registry::{
             Registry,

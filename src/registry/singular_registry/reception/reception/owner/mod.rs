@@ -54,7 +54,4 @@ impl<
             OwnerPasswordGeneratorResult::Denied
         }
     }
-    // generate password
-    // check if owner authenticate
-    // then password_manager.generate
 }
