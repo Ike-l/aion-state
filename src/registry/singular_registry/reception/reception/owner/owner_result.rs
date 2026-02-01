@@ -1,4 +1,4 @@
-use crate::prelude::PasswordManagerAccessPermissionResult;
+use crate::prelude::{PasswordGeneratorResult, PasswordManagerAccessPermissionResult};
 
 pub enum OwnerAccessPermissionResult {
     PasswordResult(PasswordManagerAccessPermissionResult),
@@ -14,4 +14,9 @@ impl OwnerAccessPermissionResult {
             Self::NoCredentials => false,
         }
     }
+}
+
+pub enum OwnerPasswordGeneratorResult<Password> {
+    Generated(PasswordGeneratorResult<Password>),
+    Denied,
 }

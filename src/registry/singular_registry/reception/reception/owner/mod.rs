@@ -1,6 +1,6 @@
 use tracing::span;
 
-use crate::prelude::{AuthenticateInput, Authenticator, FUNCTION_LEVEL, OwnerAccessPermissionInput, OwnerAccessPermissionResult, OwnerStorage, PasswordManager, PasswordManagerAccessPermissionInput, PasswordStorage};
+use crate::prelude::{AuthenticateInput, Authenticator, FUNCTION_LEVEL, OwnerAccessPermissionInput, OwnerAccessPermissionResult, OwnerPasswordGeneratorInput, OwnerPasswordGeneratorResult, OwnerStorage, PasswordGeneratorInput, PasswordManager, PasswordManagerAccessPermissionInput, PasswordStorage};
 
 pub mod authenticator;
 pub mod password_manager;
@@ -40,15 +40,18 @@ impl<
     }
 
     pub fn generate_password(
-        &mut self
-    ) {
+        &mut self,
+        OwnerPasswordGeneratorInput {
+            owner_id, owner_key, access
+        }: OwnerPasswordGeneratorInput<'_, OS::Key, OS::Value, PS::Access>
+    ) -> OwnerPasswordGeneratorResult<PS::Password> {
         let span = span!(FUNCTION_LEVEL, "Owner Generating Password");
         let _enter = span.enter();
 
         if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_key }) {
-            return self.password_manager.generate_password(access)
+            OwnerPasswordGeneratorResult::Generated(self.password_manager.generate_password(PasswordGeneratorInput { access }))
         } else {
-
+            OwnerPasswordGeneratorResult::Denied
         }
     }
     // generate password

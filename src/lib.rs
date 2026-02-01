@@ -71,10 +71,12 @@ pub mod prelude {
                         owner::{
                             Owner,
                             owner_input::{
-                                OwnerAccessPermissionInput
+                                OwnerAccessPermissionInput,
+                                OwnerPasswordGeneratorInput
                             },
                             owner_result::{
-                                OwnerAccessPermissionResult
+                                OwnerAccessPermissionResult,
+                                OwnerPasswordGeneratorResult
                             },
                             authenticator::{
                                 Authenticator,

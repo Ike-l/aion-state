@@ -3,3 +3,9 @@ pub struct OwnerAccessPermissionInput<'a, OwnerId, OwnerKey, Password, Access> {
     pub password: Option<&'a Password>,
     pub access: &'a Access
 }
+
+pub struct OwnerPasswordGeneratorInput<'a, OwnerId, OwnerKey, Access> {
+    pub owner_id: &'a OwnerId,
+    pub owner_key: &'a OwnerKey,
+    pub access: &'a Access
+}

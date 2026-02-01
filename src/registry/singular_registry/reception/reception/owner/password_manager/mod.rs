@@ -35,5 +35,4 @@ impl<PS: PasswordStorage> PasswordManager<PS> {
 
         PasswordGeneratorResult::Generated(self.password_storage.generate_password(access))
     }
-    // generate password
 }
