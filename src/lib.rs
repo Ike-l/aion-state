@@ -70,9 +70,9 @@ pub mod prelude {
                         },
                         owner::{
                             Owner,
-                            // owner_input::{
-
-                            // },
+                            owner_input::{
+                                OwnerAccessPermissionInput
+                            },
                             owner_result::{
                                 OwnerAccessPermissionResult
                             },
@@ -86,7 +86,10 @@ pub mod prelude {
                                 }
                             },
                             password_manager::{
-                                PasswordManager
+                                PasswordManager,
+                                password_manager_result::{
+                                    PasswordManagerAccessPermissionResult
+                                }
                             }
                         }
                     }

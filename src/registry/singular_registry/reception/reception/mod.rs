@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use tracing::span;
 
-use crate::prelude::{AccessStorage, Accessor, FUNCTION_LEVEL, Host, HostAccessPermissionInput, Owner, OwnerStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReservationStorage};
+use crate::prelude::{AccessStorage, Accessor, FUNCTION_LEVEL, Host, HostAccessPermissionInput, Owner, OwnerAccessPermissionInput, OwnerStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReservationStorage};
 
 pub mod host;
 pub mod owner;
@@ -27,13 +27,13 @@ impl<
     pub fn permits_access(
         &self,
         ReceptionAccessPermissionInput {
-            reserver, access_key, access
-        }: ReceptionAccessPermissionInput<'_, RS::Key, AS::Key, AS::Value>
+            reserver, access_key, access, owner_credentials
+        }: ReceptionAccessPermissionInput<'_, RS::Key, AS::Key, AS::Value, OS::Key, OS::Value>
     ) -> ReceptionAccessPermissionResult {
         let span = span!(FUNCTION_LEVEL, "Reception Permits Access");
         let _enter = span.enter();
 
-        let owner_access_permission = self.owner.permits_access();
+        let owner_access_permission = self.owner.permits_access(OwnerAccessPermissionInput { owner_credentials });
         if owner_access_permission.ok() {
             ReceptionAccessPermissionResult::Host(self.host.permits_access(HostAccessPermissionInput { reserver, access_key, access }))
         } else {

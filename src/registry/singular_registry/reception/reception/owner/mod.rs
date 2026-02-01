@@ -1,4 +1,4 @@
-use crate::prelude::{Authenticator, OwnerAccessPermissionResult, OwnerStorage, PasswordManager};
+use crate::prelude::{AuthenticateInput, Authenticator, OwnerAccessPermissionInput, OwnerAccessPermissionResult, OwnerStorage, PasswordManager};
 
 pub mod authenticator;
 pub mod password_manager;
@@ -13,18 +13,17 @@ pub struct Owner<OS> {
 
 impl<OS: OwnerStorage> Owner<OS> {
     pub fn permits_access(
-        &self
+        &self,
+        OwnerAccessPermissionInput {
+            owner_credentials
+        }: OwnerAccessPermissionInput<'_, OS::Key, OS::Value>
     ) -> OwnerAccessPermissionResult {
-        if self.authenticator.authenticate(authenticate_input) {
-
-        } else {
-            if self.password_manager.permits_access() {
-
-            } else {
-                OwnerAccessPermissionResult::Denied
+        if let Some((owner_id, owner_key)) = owner_credentials {
+            if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_key }) {
+                return OwnerAccessPermissionResult::OwnerVerified;
             }
         }
-        // if owner
-        // or if password is allowed
+
+        OwnerAccessPermissionResult::PasswordResult(self.password_manager.permits_access())
     }
 }
