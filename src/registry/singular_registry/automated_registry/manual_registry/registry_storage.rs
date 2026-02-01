@@ -1,4 +1,4 @@
-pub trait Storage {
+pub trait RegistryStorage {
     type Key;
     type Value;
 
@@ -23,3 +23,4 @@ pub trait Storage {
         key: &Self::Key
     ) -> bool;
 }
+

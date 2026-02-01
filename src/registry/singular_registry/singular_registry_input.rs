@@ -1,8 +1,8 @@
 use crate::prelude::{ManualRegistryAccessInput, ReceptionAccessPermissionInput};
 
 pub struct SingularRegistryAccessInput<'a, Access, Key> {
-    _a: &'a Access,
-    _b: &'a Key
+    pub access: &'a Access,
+    pub key: &'a Key,
 }
 
 impl<'a, Access, Key> SingularRegistryAccessInput<'a, Access, Key> {
@@ -10,6 +10,14 @@ impl<'a, Access, Key> SingularRegistryAccessInput<'a, Access, Key> {
         ManualRegistryAccessInput<'a, Access, Key>,
         ReceptionAccessPermissionInput,
     ) {
-        todo!()
+        (
+            ManualRegistryAccessInput {
+                access: self.access,
+                key: self.key
+            },
+            ReceptionAccessPermissionInput {
+                
+            }
+        )
     }
 }

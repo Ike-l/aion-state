@@ -1,16 +1,15 @@
-use crate::prelude::{Host, Owner, ReceptionAccessPermission, ReceptionAccessPermissionInput, ReceptionRecordAccessInput};
+use crate::prelude::{Reception, ReceptionAccessPermission, ReceptionAccessPermissionInput, ReceptionRecordAccessInput};
 
-pub mod owner;
-pub mod host;
-pub mod reception_result;
-pub mod reception_input;
+pub mod coordinated_reception_result;
+pub mod coordinated_reception_input;
 
-pub struct Reception<S, R> {
-    owner: Owner,
-    host: Host<S, R>,
+pub mod reception;
+
+pub struct CoordinatedReception<RS, AS> {
+    reception: parking_lot::RwLock<Reception<RS, AS>>
 }
 
-impl<S, R> Reception<S, R> {
+impl<S, R> CoordinatedReception<S, R> {
     pub fn permits_access(
         &self,
         _input: &ReceptionAccessPermissionInput

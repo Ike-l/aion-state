@@ -2,7 +2,7 @@ use std::cell::UnsafeCell;
 
 use tracing::span;
 
-use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, Storage};
+use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage};
 
 pub mod manual_registry;
 
@@ -10,7 +10,7 @@ pub struct AutomatedRegistry<S> {
     manual_registry: UnsafeCell<ManualRegistry<S>>
 }
 
-impl<S: Storage> AutomatedRegistry<S> {
+impl<S: RegistryStorage> AutomatedRegistry<S> {
     unsafe fn get_inner(&self) -> &ManualRegistry<S> {
         unsafe { & *self.manual_registry.get() }
     }
@@ -21,7 +21,7 @@ impl<S: Storage> AutomatedRegistry<S> {
 
     pub unsafe fn access<Access: Accessor<StoredValue = S::Value>>(
         &self,
-        input: &ManualRegistryAccessInput<'_, Access, S::Key>
+        input: ManualRegistryAccessInput<'_, Access, S::Key>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_, Access::Value>> {
         let span = span!(FUNCTION_LEVEL, "Automated Access");
         let _enter = span.enter();

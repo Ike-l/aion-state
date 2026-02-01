@@ -1,5 +1,4 @@
 pub struct ReceptionAccessPermissionInput {
-
 }
 
 impl ReceptionAccessPermissionInput {
@@ -9,5 +8,5 @@ impl ReceptionAccessPermissionInput {
 }
 
 pub struct ReceptionRecordAccessInput {
-    
+
 }

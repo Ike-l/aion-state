@@ -1,22 +1,22 @@
 use tracing::span;
 
-use crate::prelude::{Accessor, AutomatedRegistry, FUNCTION_LEVEL, ManualRegistryAccessResult, Reception, ReceptionAccessPermission, ReceptionAccessPermissionInput, ReservationMap, SingularRegistryAccessInput, SingularRegistryAccessResult, Storage};
+use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, FUNCTION_LEVEL, ManualRegistryAccessResult, CoordinatedReception, ReceptionAccessPermission, ReceptionAccessPermissionInput, RegistryStorage, SingularRegistryAccessInput, SingularRegistryAccessResult, ReservationStorage};
 
 pub mod automated_registry;
 pub mod reception;
 pub mod singular_registry_result;
 pub mod singular_registry_input;
 
-pub struct SingularRegistry<S, T, R> {
+pub struct SingularRegistry<S, RS, AS> {
     automated_registry: AutomatedRegistry<S>,
-    reception: Reception<T, R>,
+    reception: CoordinatedReception<RS, AS>,
 }
 
 impl<
-    S: Storage,
-    T: Storage,
-    R: ReservationMap<T>
-> SingularRegistry<S, T, R> {
+    S: RegistryStorage,
+    RS: ReservationStorage<AccessStorage = AS>,
+    AS: AccessStorage
+> SingularRegistry<S, RS, AS> {
     pub fn permits_access(
         &self,
         input: &ReceptionAccessPermissionInput
@@ -43,7 +43,7 @@ impl<
 
         let permission = self.permits_access(&permission_input);
         if permission.ok() {
-            let access = unsafe { self.automated_registry.access(&access_input) };
+            let access = unsafe { self.automated_registry.access(access_input) };
             if matches!(access, ManualRegistryAccessResult::Found(_)) {
                 self.reception.record_access(permission_input.as_record_access_input());
             }

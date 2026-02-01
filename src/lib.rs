@@ -16,48 +16,51 @@ pub mod prelude {
                     SingularRegistryAccessResult
                 },
                 reception::{
-                    Reception,
-                    reception_input::{
+                    CoordinatedReception,
+                    coordinated_reception_input::{
                         ReceptionAccessPermissionInput,
                         ReceptionRecordAccessInput
                     },
-                    reception_result::{
+                    coordinated_reception_result::{
                         ReceptionAccessPermission,
                     },
-                    host::{
-                        Host,
-                        reservations::{
-                            Reservations,
-                            reservations_input::{
-                                ReservationMapAccessPermissionInput
+                    reception::{
+                        Reception,
+                        host::{
+                            Host,
+                            reservations::{
+                                Reservations,
+                                reservation_storage::{
+                                    ReservationStorage
+                                },
+                                reservations_input::{
+                                    ReservationsAccessPermissionInput, ReserveInput
+                                },
+                                reservations_result::{
+                                    ReservationMapAccessPermissionResult
+                                },
                             },
-                            reservations_result::{
-                                ReservationMapAccessPermissionResult
-                            },
-                            reservation_map::{
-                                ReservationMap
-                            }
-                        },
-                        stored_accesses::{
-                            StoredAccesses,
-                            access_map::{
-                                AccessMap,
-                                // access_map_input::{
-
-                                // },
-                                access_map_result::{
+                            accesses::{
+                                Accesses,
+                                access_storage::{
+                                    AccessStorage
+                                },
+                                accesses_result::{
                                     AccessPermission
+                                },
+                                accesses_input::{
+                                    PermitsAccessInput, RecordAccessInput
                                 }
                             }
-                        }
-                    },
-                    owner::{
-                        Owner,
-                        authenticator::{
-                            Authenticator
                         },
-                        password_manager::{
-                            PasswordManager
+                        owner::{
+                            Owner,
+                            authenticator::{
+                                Authenticator
+                            },
+                            password_manager::{
+                                PasswordManager
+                            }
                         }
                     }
                 },
@@ -73,8 +76,8 @@ pub mod prelude {
                             ManualRegistryAccessResult, 
                             ManualRegistryReplacementResult
                         },
-                        storage::{
-                            Storage
+                        registry_storage::{
+                            RegistryStorage
                         }
                     }
                 }

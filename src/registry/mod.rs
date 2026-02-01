@@ -8,5 +8,5 @@ pub struct Registry<S, T, R> {
 }
 
 impl<S, T, R> Registry<S, T, R> {
-
+    
 }

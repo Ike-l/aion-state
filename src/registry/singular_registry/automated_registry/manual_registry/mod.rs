@@ -1,8 +1,8 @@
 use tracing::span;
 
-use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, Storage};
+use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage};
 
-pub mod storage;
+pub mod registry_storage;
 pub mod manual_registry_input;
 pub mod manual_registry_result;
 
@@ -11,13 +11,13 @@ pub struct ManualRegistry<S> {
 }
 
 impl<
-    S: Storage,
+    S: RegistryStorage,
 > ManualRegistry<S> {
     pub fn access<Access: Accessor<StoredValue = S::Value>>(
         &self, 
         ManualRegistryAccessInput {
             key, access
-        }: &ManualRegistryAccessInput<'_, Access, S::Key>
+        }: ManualRegistryAccessInput<'_, Access, S::Key>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_, Access::Value>> {
         let span = span!(FUNCTION_LEVEL, "Manual Access");
         let _enter = span.enter();
