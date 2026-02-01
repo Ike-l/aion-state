@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use tracing::span;
 
-use crate::prelude::{AccessStorage, Accesses, Accessor, FUNCTION_LEVEL, HostAccessPermissionInput, HostAccessPermissionResult, HostRecordAccessInput, HostRecordAccessResult, PermitsAccessInput, RecordAccessInput, RemoveAccessInput, RemoveAccessResult, ReservationStorage, Reservations, ReservationsAccessPermissionInput, UnreserveInput};
+use crate::prelude::{AccessStorage, Accesses, Accessor, FUNCTION_LEVEL, HostAccessPermissionInput, HostAccessPermissionResult, HostRecordAccessInput, HostRecordAccessResult, PermitsAccessInput, RecordAccessInput, RemoveAccessInput, RemoveAccessResult, ReservationStorage, Reservations, ReservationsAccessPermissionInput, ReservationsUnreserveResult, UnreserveInput};
 
 pub mod reservations;
 pub mod accesses;
@@ -65,5 +65,12 @@ impl<
         remove_access_input: RemoveAccessInput<'_, AS::Key, AS::Value>
     ) -> RemoveAccessResult {
         self.accesses.remove_access(remove_access_input)
-     }
+    }
+
+    pub fn unreserve(
+        &mut self,
+        unreserve_input: UnreserveInput<'_, RS::Key, AS::Key, AS::Value>
+    ) -> ReservationsUnreserveResult {
+        self.reservations.unreserve(unreserve_input)
+    }
 }
