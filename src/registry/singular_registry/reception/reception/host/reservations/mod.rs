@@ -42,6 +42,9 @@ impl<
                     if permission.ok() {
                         false
                     } else {
+                        // warn here because 
+                        // 1. It early returns- could be more unknown conflicts
+                        // 2. Because of 1. the return doesn't include the conflict info so can put it here
                         event!(Level::WARN, conflicting_reserver =? reserver, "Reservation Conflict");
                         true
                     }

@@ -28,6 +28,12 @@ pub mod prelude {
                         Reception,
                         host::{
                             Host,
+                            host_input::{
+                                HostAccessPermissionInput
+                            },
+                            host_result::{
+                                HostAccessPermissionResult
+                            },
                             reservations::{
                                 Reservations,
                                 reservation_storage::{
