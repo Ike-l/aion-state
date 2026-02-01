@@ -7,26 +7,27 @@ pub trait Accessor {
 
     type AccessResult<'a, T> where T: 'a;
 
+    fn can_access(&self, other: &Self) -> bool;
+    fn can_insert(&self) -> bool;
+    fn can_remove(&self) -> bool;
+
     fn access<'a>(
         &self, 
         stored_value: &'a Self::StoredValue
     ) -> Self::AccessResult<'a, Self::Value>;
-
-    fn remove<'a>(
-        &self,
-        stored_value: Self::StoredValue
-    ) -> Self::AccessResult<'a, Self::StoredValue>;
-
-    fn insert<'a>(
-        &self,
-        value: Self::Value
-    ) -> Self::StoredValue;
 
     fn merge(
         &mut self,
         other: Self
     );
 
-    fn can_insert(&self) -> bool;
-    fn can_remove(&self) -> bool;
+    fn insert<'a>(
+        &self,
+        value: Self::Value
+    ) -> Self::StoredValue;
+
+    fn remove<'a>(
+        &self,
+        stored_value: Self::StoredValue
+    ) -> Self::AccessResult<'a, Self::StoredValue>;    
 }

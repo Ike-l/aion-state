@@ -7,6 +7,11 @@ pub trait AccessStorage {
         key: &Self::Key
     ) -> Option<&mut Self::Value>;
 
+    fn get(
+        &self, 
+        key: &Self::Key
+    ) -> Option<&Self::Value>;
+
     fn insert(
         &mut self,
         key: Self::Key,

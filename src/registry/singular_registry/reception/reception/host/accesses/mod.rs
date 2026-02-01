@@ -25,7 +25,12 @@ impl<AS: AccessStorage> Accesses<AS>
         let span = span!(FUNCTION_LEVEL, "Accesses Permits Access", current_access = field::Empty);
         let _enter = span.enter();
 
-        todo!()
+        if let Some(current_access) = self.access_storage.get(access_key) {
+            span.record("current_access", format!("{current_access:?}"));
+            AccessPermission::Ok(current_access.can_access(access))
+        } else {
+            AccessPermission::NoCurrentAccess
+        }
     }
 
     pub fn record_access(

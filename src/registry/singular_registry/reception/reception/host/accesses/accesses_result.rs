@@ -1,10 +1,11 @@
 pub enum AccessPermission {
-    UnknownAccessKey
+    Ok(bool),
+    NoCurrentAccess
 }
 
 impl AccessPermission {
     pub fn ok(&self) -> bool {
-        todo!()
+        matches!(self, Self::Ok(true))
     }
 }
 
