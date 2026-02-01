@@ -50,7 +50,7 @@ impl<
         let _enter = span.enter();
 
         let unreserve_result = if let Some(reserver) = reserver {
-            Some(self.reservations.unreserve(UnreserveInput { reserver, access_key: &access_key, access: &access }))
+            Some(self.unreserve(UnreserveInput { reserver, access_key: &access_key, access: &access }))
         } else { None };
 
         let record_access_result = self.accesses.record_access(RecordAccessInput { access_key, access });

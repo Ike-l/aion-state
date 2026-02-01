@@ -17,15 +17,14 @@ pub mod prelude {
                 },
                 reception::{
                     CoordinatedReception,
-                    coordinated_reception_input::{
-                        ReceptionAccessPermissionInput,
-                        ReceptionRecordAccessInput
-                    },
-                    coordinated_reception_result::{
-                        ReceptionAccessPermission,
-                    },
                     reception::{
                         Reception,
+                        reception_input::{
+                            ReceptionAccessPermissionInput
+                        },
+                        reception_result::{
+                            ReceptionAccessPermissionResult
+                        },
                         host::{
                             Host,
                             host_input::{
@@ -71,8 +70,20 @@ pub mod prelude {
                         },
                         owner::{
                             Owner,
+                            // owner_input::{
+
+                            // },
+                            owner_result::{
+                                OwnerAccessPermissionResult
+                            },
                             authenticator::{
-                                Authenticator
+                                Authenticator,
+                                authenticator_input::{
+                                    AuthenticateInput
+                                },
+                                owner_storage::{
+                                    OwnerStorage
+                                }
                             },
                             password_manager::{
                                 PasswordManager
