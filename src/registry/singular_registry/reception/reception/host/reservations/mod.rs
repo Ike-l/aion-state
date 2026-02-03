@@ -87,7 +87,7 @@ impl<
         let _enter = span.enter();
 
         if let Some(access_map) = self.reservation_storage.get_mut(reserver) {
-            ReservationsUnreserveResult::Accesses(access_map.remove_access(RemoveAccessInput { access, access_key }))
+            ReservationsUnreserveResult::Accesses(access_map.release_access(RemoveAccessInput { access, access_key }))
         } else {
             ReservationsUnreserveResult::NoReserver
         }

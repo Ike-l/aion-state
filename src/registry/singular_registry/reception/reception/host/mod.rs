@@ -60,14 +60,14 @@ impl<
         }
     }
 
-    pub fn remove_access(
+    pub fn release_access(
         &mut self,
         remove_access_input: RemoveAccessInput<'_, AS::Key, AS::Value>
     ) -> RemoveAccessResult {
         let span = span!(FUNCTION_LEVEL, "Host Remove Access");
         let _enter = span.enter();
 
-        self.accesses.remove_access(remove_access_input)
+        self.accesses.release_access(remove_access_input)
     }
 
     pub fn unreserve(

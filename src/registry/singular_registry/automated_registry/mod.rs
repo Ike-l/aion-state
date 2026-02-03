@@ -19,14 +19,14 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
         unsafe { &mut *self.manual_registry.get() }
     }
 
-    pub unsafe fn access<Access: Accessor<StoredValue = S::Value>>(
+    pub unsafe fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
         &self,
         input: ManualRegistryAccessInput<'_, Access, S::Key>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_, Access::Value>> {
-        let span = span!(FUNCTION_LEVEL, "Automated Access");
+        let span = span!(FUNCTION_LEVEL, "Automated Acquire Access");
         let _enter = span.enter();
 
-        unsafe { self.get_inner() }.access(input)
+        unsafe { self.get_inner() }.acquire_access(input)
     }
 
     pub unsafe fn replace<Access: Accessor<StoredValue = S::Value>>(

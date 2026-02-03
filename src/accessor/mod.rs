@@ -11,7 +11,7 @@ pub trait Accessor {
     fn can_insert(&self) -> bool;
     fn can_remove(&self) -> bool;
 
-    fn access<'a>(
+    fn acquire<'a>(
         &self, 
         stored_value: &'a Self::StoredValue
     ) -> Self::AccessResult<'a, Self::Value>;
@@ -21,7 +21,7 @@ pub trait Accessor {
         other: Self
     );
 
-    fn split(
+    fn release(
         &mut self,
         other: &Self
     );

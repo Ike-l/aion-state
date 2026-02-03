@@ -13,17 +13,17 @@ pub struct ManualRegistry<S> {
 impl<
     S: RegistryStorage,
 > ManualRegistry<S> {
-    pub fn access<Access: Accessor<StoredValue = S::Value>>(
+    pub fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
         &self, 
         ManualRegistryAccessInput {
             key, access
         }: ManualRegistryAccessInput<'_, Access, S::Key>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_, Access::Value>> {
-        let span = span!(FUNCTION_LEVEL, "Manual Access");
+        let span = span!(FUNCTION_LEVEL, "Manual Acquire Access");
         let _enter = span.enter();
 
         match self.storage.get(key) {
-            Some(value) => ManualRegistryAccessResult::Found(access.access(value)),
+            Some(value) => ManualRegistryAccessResult::Found(access.acquire(value)),
             None => ManualRegistryAccessResult::NotFound,
         }
     }

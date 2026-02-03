@@ -52,19 +52,19 @@ impl<AS: AccessStorage> Accesses<AS>
         }
     }
 
-    pub fn remove_access(
+    pub fn release_access(
         &mut self,
         RemoveAccessInput {
             access_key, access
         }: RemoveAccessInput<AS::Key, AS::Value>
     ) -> RemoveAccessResult {
-        let span = span!(FUNCTION_LEVEL, "Accesses Remove Access", current_access = field::Empty);
+        let span = span!(FUNCTION_LEVEL, "Accesses Release Access", current_access = field::Empty);
         let _enter = span.enter();
 
         if let Some(current_access) = self.access_storage.get_mut(access_key) {
             span.record("current_access", format!("{current_access:?}"));
 
-            current_access.split(access);
+            current_access.release(access);
             RemoveAccessResult::Split
         } else {
             RemoveAccessResult::NoCurrentAccess
