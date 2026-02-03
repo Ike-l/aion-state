@@ -1,10 +1,11 @@
 use tracing::span;
 
-use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage};
+use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
 pub mod manual_registry_result;
+pub mod stable_address;
 
 pub struct ManualRegistry<S> {
     storage: S,
@@ -78,26 +79,13 @@ impl<
         }
     }
 
-    pub fn contains_key(
-        &self,
-        key: &S::Key
-    ) -> bool {
-        self.storage.contains_key(key)
-    }
-}
-
-impl<
-    T,
-    S: RegistryStorage<Value = Box<T>>
-> ManualRegistry<S> 
-{
-
     /// Safety:
     /// Access cannot be used to 'acquire' a reference to Box<T>
-    pub unsafe fn safer_replace<W, Access: Accessor<StoredValue = S::Value, Value = W>>(
+    pub unsafe fn safer_replace<W, Access: Accessor<StoredValue = S::Value>>(
         &mut self,
         manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
     ) -> ManualRegistryReplacementResult<Access::StoredValue> 
+        where Access::StoredValue: StableAddress
     {
         let span = span!(FUNCTION_LEVEL, "Manual Safe Replacement");
         let _enter = span.enter();
@@ -106,5 +94,12 @@ impl<
         // if a container of Box reallocates, pointers to the Box are still valid
         // note: references to the box itself can still be made invalid
         unsafe { self.replace(manual_registry_replacement_input) }
+    }
+
+    pub fn contains_key(
+        &self,
+        key: &S::Key
+    ) -> bool {
+        self.storage.contains_key(key)
     }
 }

@@ -32,7 +32,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     pub unsafe fn replace<Access: Accessor<StoredValue = S::Value>>(
         &self,
         input: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
-    ) -> ManualRegistryReplacementResult<Access::AccessResult<'_, Access::StoredValue>> {
+    ) -> ManualRegistryReplacementResult<Access::StoredValue> {
         let span = span!(FUNCTION_LEVEL, "Automated Replacement");
         let _enter = span.enter();
 
