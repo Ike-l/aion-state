@@ -29,15 +29,12 @@ impl<
         }
     }
 
-    pub fn reallocates_on_next_new_insert(&self) -> bool {
-        self.storage.reallocates_on_next_new_insert()
-    }
-
+    // private until i can figure out a way to detect reallocations before they happen
     /// Safety:
     /// Insert won't invalidate concurrent access
     /// ^ i.e do not "replace" a borrowed item
     /// ^ i.e do not insert if it could reallocate container and invalidate concurrent accesses
-    pub unsafe fn replace<Access: Accessor<StoredValue = S::Value>>(
+    unsafe fn replace<Access: Accessor<StoredValue = S::Value>>(
         &mut self,
         ManualRegistryReplacementInput {
             access, key, value

@@ -1,6 +1,8 @@
 pub mod registry;
 pub mod accessor;
 
+#[cfg(feature = "default-implementation")]
+pub mod default;
 
 pub mod prelude {
     pub const FUNCTION_LEVEL: tracing::Level = tracing::Level::DEBUG;
