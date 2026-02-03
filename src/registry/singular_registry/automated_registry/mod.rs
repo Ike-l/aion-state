@@ -1,6 +1,6 @@
 use std::cell::UnsafeCell;
 
-use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
+use crate::prelude::{Accessor, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
 
 pub mod manual_registry;
 

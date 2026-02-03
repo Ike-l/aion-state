@@ -18,7 +18,7 @@ pub mod prelude {
 
     macro_rules! trace_function {
         ($log:literal) => {
-            let span = tracing::span!(FUNCTION_LEVEL, $log);
+            let span = tracing::span!(crate::prelude::FUNCTION_LEVEL, $log);
             let _enter = span.enter();
         };
     }
@@ -108,20 +108,41 @@ pub mod prelude {
                                     OwnerStorage
                                 }
                             },
-                            password_manager::{
-                                PasswordManager,
-                                password_storage::{
-                                    PasswordStorage
+                            door::{
+                                Door,
+                                door_input::{
+                                    DoorPermitsAccessInput
                                 },
-                                password_manager_input::{
-                                    PasswordManagerAccessPermissionInput,
-                                    PasswordGeneratorInput
+                                door_result::{
+                                    DoorAccessPermissionResult
                                 },
-                                password_manager_result::{
-                                    PasswordManagerAccessPermissionResult,
-                                    PasswordGeneratorResult
-                                }
-                            }
+                                password_manager::{
+                                    PasswordManager,
+                                    password_storage::{
+                                        PasswordStorage
+                                    },
+                                    password_manager_input::{
+                                        PasswordManagerAccessPermissionInput,
+                                        PasswordGeneratorInput
+                                    },
+                                    password_manager_result::{
+                                        PasswordManagerAccessPermissionResult,
+                                        PasswordGeneratorResult
+                                    }
+                                },
+                                locker::{
+                                    Locker,
+                                    lock_storage::{
+                                        LockStorage
+                                    },
+                                    locker_input::{
+                                        LockerPermitsAccessInput
+                                    },
+                                    locker_result::{
+                                        LockerAccessPermissionResult
+                                    }
+                                },
+                            },
                         }
                     }
                 },

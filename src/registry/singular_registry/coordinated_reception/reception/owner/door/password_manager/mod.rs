@@ -1,4 +1,4 @@
-use crate::prelude::{FUNCTION_LEVEL, PasswordGeneratorInput, PasswordGeneratorResult, PasswordManagerAccessPermissionInput, PasswordManagerAccessPermissionResult, PasswordStorage, trace_function};
+use crate::prelude::{PasswordGeneratorInput, PasswordGeneratorResult, PasswordManagerAccessPermissionInput, PasswordManagerAccessPermissionResult, PasswordStorage, trace_function};
 
 pub mod password_storage;
 

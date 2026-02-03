@@ -1,5 +1,6 @@
-pub struct OwnerAccessPermissionInput<'a, OwnerId, OwnerKey, Password, Access> {
+pub struct OwnerAccessPermissionInput<'a, OwnerId, OwnerKey, Item, Password, Access> {
     pub owner_credentials: Option<(&'a OwnerId, &'a OwnerKey)>,
+    pub item: &'a Item,
     pub password: Option<&'a Password>,
     pub access: &'a Access
 }

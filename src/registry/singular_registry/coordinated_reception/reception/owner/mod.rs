@@ -1,27 +1,26 @@
-use crate::prelude::{AuthenticateInput, Authenticator, FUNCTION_LEVEL, OwnerAccessPermissionInput, OwnerAccessPermissionResult, OwnerPasswordGeneratorInput, OwnerPasswordGeneratorResult, OwnerStorage, PasswordGeneratorInput, PasswordManager, PasswordManagerAccessPermissionInput, PasswordStorage, trace_function};
+use crate::prelude::{AuthenticateInput, Authenticator, Door, DoorPermitsAccessInput, LockStorage, OwnerAccessPermissionInput, OwnerAccessPermissionResult, OwnerPasswordGeneratorInput, OwnerPasswordGeneratorResult, OwnerStorage, PasswordStorage, trace_function};
 
 pub mod authenticator;
-pub mod password_manager;
+pub mod door;
 
 pub mod owner_result;
 pub mod owner_input;
 
-pub struct Owner<OS, PS> {
+pub struct Owner<OS, PS, LS> {
     authenticator: Authenticator<OS>,
-    password_manager: PasswordManager<PS>
-    // door: Door<PS, LS(LockStorage)>
-    // door has locks: "Storage"<ResourceId, bool>
+    door: Door<PS, LS>
 }
 
 impl<
     OS: OwnerStorage,
-    PS: PasswordStorage
-> Owner<OS, PS> {
+    PS: PasswordStorage,
+    LS: LockStorage
+> Owner<OS, PS, LS> {
     pub fn permits_access(
         &self,
         OwnerAccessPermissionInput {
-            owner_credentials, password, access
-        }: OwnerAccessPermissionInput<'_, OS::Key, OS::Value, PS::Password, PS::Access>
+            owner_credentials, item, password, access
+        }: OwnerAccessPermissionInput<'_, OS::Key, OS::Value, LS::Item, PS::Password, PS::Access>
     ) -> OwnerAccessPermissionResult {
         trace_function!("Owner Permits Access");
 
@@ -31,7 +30,8 @@ impl<
             }
         }
 
-        OwnerAccessPermissionResult::PasswordResult(self.password_manager.check_password(PasswordManagerAccessPermissionInput { password, access }))
+        OwnerAccessPermissionResult::Door(self.door.permits_access(DoorPermitsAccessInput { item, password, access }))
+
     }
 
     pub fn generate_password(
@@ -42,10 +42,11 @@ impl<
     ) -> OwnerPasswordGeneratorResult<PS::Password> {
         trace_function!("Owner Generates Password");
 
-        if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_key }) {
-            OwnerPasswordGeneratorResult::Generated(self.password_manager.generate_password(PasswordGeneratorInput { access, policy }))
-        } else {
-            OwnerPasswordGeneratorResult::Denied
-        }
+        todo!()
+        // if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_key }) {
+        //     OwnerPasswordGeneratorResult::Generated(self.password_manager.generate_password(PasswordGeneratorInput { access, policy }))
+        // } else {
+        //     OwnerPasswordGeneratorResult::Denied
+        // }
     }
 }

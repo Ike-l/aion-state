@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateInput, FUNCTION_LEVEL, OwnerStorage, trace_function};
+use crate::prelude::{AuthenticateInput, OwnerStorage, trace_function};
 
 pub mod owner_storage;
 

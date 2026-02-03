@@ -1,0 +1,9 @@
+pub enum LockerAccessPermissionResult {
+    LockedResult(bool)
+}
+
+impl LockerAccessPermissionResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::LockedResult(true))
+    }
+}

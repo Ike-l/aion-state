@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, FUNCTION_LEVEL, Host, HostAccessPermissionInput, Owner, OwnerAccessPermissionInput, OwnerStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReservationStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, Host, HostAccessPermissionInput, LockStorage, Owner, OwnerAccessPermissionInput, OwnerStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReservationStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -8,8 +8,8 @@ pub mod owner;
 pub mod reception_input;
 pub mod reception_result;
 
-pub struct Reception<RS, AS, OS, PS> {
-    owner: Owner<OS, PS>,
+pub struct Reception<RS, AS, OS, PS, LS> {
+    owner: Owner<OS, PS, LS>,
     host: Host<RS, AS>
 }
 
@@ -17,8 +17,9 @@ impl<
     RS: ReservationStorage<AccessStorage = AS>, 
     AS: AccessStorage + Default,
     OS: OwnerStorage,
-    PS: PasswordStorage<Access = AS::Value>
-> Reception<RS, AS, OS, PS> 
+    PS: PasswordStorage<Access = AS::Value>,
+    LS: LockStorage<Item = AS::Key>,
+> Reception<RS, AS, OS, PS, LS> 
     where 
         RS::Key: Debug + PartialEq,
         AS::Value: Debug + Accessor,
@@ -31,7 +32,7 @@ impl<
     ) -> ReceptionAccessPermissionResult {
         trace_function!("Reception Permits Access");
 
-        let owner_access_permission = self.owner.permits_access(OwnerAccessPermissionInput { owner_credentials, password, access });
+        let owner_access_permission = self.owner.permits_access(OwnerAccessPermissionInput { owner_credentials, item: access_key, password, access });
         if owner_access_permission.ok() {
             ReceptionAccessPermissionResult::Host(self.host.permits_access(HostAccessPermissionInput { reserver, access_key, access }))
         } else {
@@ -39,9 +40,18 @@ impl<
         }
     }
 
+    // pub fn locks
+    // checks for any reservation or accesses 
+    // if !self.host.has_stakeholder {
+    //  self.owner.lock()
+    // }
+
     pub fn generate_password(
         &mut self
     ) {
         trace_function!("Reception Generate Password");
+
+        // this will check if its locked :)
+        // self.owner.generate_password(owner_password_generator_input)
     }
 }
