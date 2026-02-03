@@ -37,5 +37,5 @@ pub trait Accessor {
     fn remove<'a>(
         &self,
         stored_value: Self::StoredValue
-    ) -> Self::AccessResult<'a, Self::StoredValue>;    
+    ) -> Self::StoredValue;    
 }

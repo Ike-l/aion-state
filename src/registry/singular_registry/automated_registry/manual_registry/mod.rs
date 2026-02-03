@@ -41,7 +41,7 @@ impl<
         ManualRegistryReplacementInput {
             access, key, value
         }: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
-    ) -> ManualRegistryReplacementResult<Access::AccessResult<'_, Access::StoredValue>> {
+    ) -> ManualRegistryReplacementResult<Access::StoredValue> {
         let span = span!(FUNCTION_LEVEL, "Manual Unsafe Replacement");
         let _enter = span.enter();
 
@@ -94,10 +94,11 @@ impl<
 
     /// Safety:
     /// Access cannot be used to 'acquire' a reference to Box<T>
-    pub unsafe fn safer_replace<Access: Accessor<StoredValue = S::Value>>(
+    pub unsafe fn safer_replace<W, Access: Accessor<StoredValue = S::Value, Value = W>>(
         &mut self,
         manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
-    ) -> ManualRegistryReplacementResult<Access::AccessResult<'_, Access::StoredValue>> {
+    ) -> ManualRegistryReplacementResult<Access::StoredValue> 
+    {
         let span = span!(FUNCTION_LEVEL, "Manual Safe Replacement");
         let _enter = span.enter();
 
