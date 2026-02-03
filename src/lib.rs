@@ -137,11 +137,13 @@ pub mod prelude {
                                     },
                                     locker_input::{
                                         LockerPermitsAccessInput,
-                                        LockInput
+                                        LockInput,
+                                        UnlockInput
                                     },
                                     locker_result::{
                                         LockerAccessPermissionResult,
-                                        LockResult
+                                        LockResult,
+                                        UnlockResult
                                     }
                                 },
                             },

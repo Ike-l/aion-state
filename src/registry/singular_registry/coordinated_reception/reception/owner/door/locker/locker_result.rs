@@ -11,3 +11,7 @@ impl LockerAccessPermissionResult {
 pub enum LockResult {
     LockResult(bool)
 }
+
+pub enum UnlockResult {
+    UnlockResult(bool)
+}
