@@ -28,13 +28,21 @@ impl<
         }
     }
 
-    pub fn replace<Access: Accessor<StoredValue = S::Value>>(
+    pub fn reallocates_on_next_new_insert(&self) -> bool {
+        self.storage.reallocates_on_next_new_insert()
+    }
+
+    /// Safety:
+    /// Ensure the insert will not invalidate any concurrent accesses.
+    /// i.e If an access exists, do not reallocate the accessed memory
+    /// can use `reallocates_on_next_new_insert` & tracked accesses
+    pub unsafe fn replace<Access: Accessor<StoredValue = S::Value>>(
         &mut self,
         ManualRegistryReplacementInput {
             access, key, value
         }: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
     ) -> ManualRegistryReplacementResult<Access::AccessResult<'_, Access::StoredValue>> {
-        let span = span!(FUNCTION_LEVEL, "Manual Replacement");
+        let span = span!(FUNCTION_LEVEL, "Manual Unsafe Replacement");
         let _enter = span.enter();
 
         let old_resource = match (
@@ -75,5 +83,27 @@ impl<
         key: &S::Key
     ) -> bool {
         self.storage.contains_key(key)
+    }
+}
+
+impl<
+    T,
+    S: RegistryStorage<Value = Box<T>>
+> ManualRegistry<S> 
+{
+
+    /// Safety:
+    /// Access cannot be used to 'acquire' a reference to Box<T>
+    pub unsafe fn safer_replace<Access: Accessor<StoredValue = S::Value>>(
+        &mut self,
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
+    ) -> ManualRegistryReplacementResult<Access::AccessResult<'_, Access::StoredValue>> {
+        let span = span!(FUNCTION_LEVEL, "Manual Safe Replacement");
+        let _enter = span.enter();
+
+        // Safety:
+        // if a container of Box reallocates, pointers to the Box are still valid
+        // note: references to the box itself can still be made invalid
+        unsafe { self.replace(manual_registry_replacement_input) }
     }
 }

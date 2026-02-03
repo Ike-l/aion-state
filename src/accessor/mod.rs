@@ -11,6 +11,9 @@ pub trait Accessor {
     fn can_insert(&self) -> bool;
     fn can_remove(&self) -> bool;
 
+    // if the container containing self can be reallocated
+    fn can_reallocate(&self) -> bool;
+
     fn acquire<'a>(
         &self, 
         stored_value: &'a Self::StoredValue

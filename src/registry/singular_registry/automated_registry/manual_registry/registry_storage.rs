@@ -22,5 +22,8 @@ pub trait RegistryStorage {
         &self, 
         key: &Self::Key
     ) -> bool;
+
+
+    fn reallocates_on_next_new_insert(&self) -> bool;
 }
 
