@@ -25,7 +25,7 @@ pub mod prelude {
                 singular_registry_result::{
                     SingularRegistryAccessResult
                 },
-                reception::{
+                coordinated_reception::{
                     CoordinatedReception,
                     reception::{
                         Reception,
@@ -118,6 +118,9 @@ pub mod prelude {
                     AutomatedRegistry,
                     manual_registry::{
                         ManualRegistry,
+                        stable_address::{
+                            StableAddress
+                        },
                         manual_registry_input::{
                             ManualRegistryAccessInput, 
                             ManualRegistryReplacementInput
@@ -128,7 +131,7 @@ pub mod prelude {
                         },
                         registry_storage::{
                             RegistryStorage
-                        }
+                        },
                     }
                 }
             }

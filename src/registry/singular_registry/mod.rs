@@ -1,7 +1,7 @@
 use crate::prelude::{AutomatedRegistry, CoordinatedReception};
 
 pub mod automated_registry;
-pub mod reception;
+pub mod coordinated_reception;
 pub mod singular_registry_result;
 pub mod singular_registry_input;
 
