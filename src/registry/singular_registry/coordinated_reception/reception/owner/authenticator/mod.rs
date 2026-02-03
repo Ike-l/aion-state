@@ -1,6 +1,4 @@
-use tracing::span;
-
-use crate::prelude::{AuthenticateInput, FUNCTION_LEVEL, OwnerStorage};
+use crate::prelude::{AuthenticateInput, FUNCTION_LEVEL, OwnerStorage, trace_function};
 
 pub mod owner_storage;
 
@@ -17,8 +15,7 @@ impl<OS: OwnerStorage> Authenticator<OS> {
             owner_id, owner_key
         }: AuthenticateInput<'_, OS::Key, OS::Value>
     ) -> bool {
-        let span = span!(FUNCTION_LEVEL, "Authenticating Owner");
-        let _enter = span.enter();
+        trace_function!("Authenticating Owner");
         
         self.owner_storage.verify(owner_id, owner_key)
     }

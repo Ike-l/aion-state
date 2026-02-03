@@ -1,8 +1,6 @@
 use std::fmt::Debug;
 
-use tracing::span;
-
-use crate::prelude::{AccessStorage, Accesses, Accessor, FUNCTION_LEVEL, HostAccessPermissionInput, HostAccessPermissionResult, HostRecordAccessInput, HostRecordAccessResult, PermitsAccessInput, RecordAccessInput, RemoveAccessInput, RemoveAccessResult, ReservationStorage, Reservations, ReservationsAccessPermissionInput, ReservationsReserveResult, ReservationsUnreserveResult, ReserveInput, UnreserveInput};
+use crate::prelude::{AccessStorage, Accesses, Accessor, FUNCTION_LEVEL, HostAccessPermissionInput, HostAccessPermissionResult, HostRecordAccessInput, HostRecordAccessResult, PermitsAccessInput, RecordAccessInput, RemoveAccessInput, RemoveAccessResult, ReservationStorage, Reservations, ReservationsAccessPermissionInput, ReservationsReserveResult, ReservationsUnreserveResult, ReserveInput, UnreserveInput, trace_function};
 
 pub mod reservations;
 pub mod accesses;
@@ -29,8 +27,7 @@ impl<
             reserver, access_key, access
         }: HostAccessPermissionInput<'_, RS::Key, AS::Key, AS::Value>
     ) -> HostAccessPermissionResult {
-        let span = span!(FUNCTION_LEVEL, "Host Permits Access");
-        let _enter = span.enter();
+        trace_function!("Host Permits Access");
 
         let reservations_permission = self.reservations.permits_access(ReservationsAccessPermissionInput { reserver, access_key, access });
         if reservations_permission.ok() {
@@ -46,8 +43,7 @@ impl<
             reserver, access_key, access
         }: HostRecordAccessInput<RS::Key, AS::Key, AS::Value>
     ) -> HostRecordAccessResult {
-        let span = span!(FUNCTION_LEVEL, "Host Record Access");
-        let _enter = span.enter();
+        trace_function!("Host Record Access");
 
         let unreserve_result = if let Some(reserver) = reserver {
             Some(self.unreserve(UnreserveInput { reserver, access_key: &access_key, access: &access }))
@@ -64,8 +60,7 @@ impl<
         &mut self,
         remove_access_input: RemoveAccessInput<'_, AS::Key, AS::Value>
     ) -> RemoveAccessResult {
-        let span = span!(FUNCTION_LEVEL, "Host Remove Access");
-        let _enter = span.enter();
+        trace_function!("Host Remove Access");
 
         self.accesses.release_access(remove_access_input)
     }
@@ -74,8 +69,7 @@ impl<
         &mut self,
         unreserve_input: UnreserveInput<'_, RS::Key, AS::Key, AS::Value>
     ) -> ReservationsUnreserveResult {
-        let span = span!(FUNCTION_LEVEL, "Host Unreserve");
-        let _enter = span.enter();
+        trace_function!("Host Unreserve");
 
         self.reservations.unreserve(unreserve_input)
     }
@@ -84,8 +78,7 @@ impl<
         &mut self,
         reserve_input: ReserveInput<RS::Key, AS::Key, AS::Value>
     ) -> ReservationsReserveResult {
-        let span = span!(FUNCTION_LEVEL, "Host Reserve");
-        let _enter = span.enter();
+        trace_function!("Host Reserve");
 
         self.reservations.reserve(reserve_input)
     }

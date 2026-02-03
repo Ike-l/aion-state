@@ -16,6 +16,15 @@ pub mod prelude {
     // #[cfg(feature = "tokio")]
     // pub(crate) use tokio::sync;
 
+    macro_rules! trace_function {
+        ($log:literal) => {
+            let span = tracing::span!(FUNCTION_LEVEL, $log);
+            let _enter = span.enter();
+        };
+    }
+
+    pub(crate) use trace_function;
+
     pub use super::{
         registry::{
             Registry,

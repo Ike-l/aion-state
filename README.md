@@ -19,3 +19,16 @@ AccessParameter {
 
 
 trying pattern where input has the logic?
+
+owner:
+- authenticator
+- door
+
+door:
+- passwords
+- locks
+
+generate_password <- access, policy, +ResourceId
+
+door sees if ResourceId is/isn't locked
+if not locked then refuses to generate a password for it

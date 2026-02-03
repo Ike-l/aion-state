@@ -9,5 +9,5 @@ impl PasswordManagerAccessPermissionResult {
 }
 
 pub enum PasswordGeneratorResult<Password> {
-    Generated(Password)
+    Generated(Option<Password>),
 }

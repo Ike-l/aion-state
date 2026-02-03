@@ -1,8 +1,6 @@
 use std::fmt::Debug;
 
-use tracing::span;
-
-use crate::prelude::{AccessStorage, Accessor, FUNCTION_LEVEL, Host, HostAccessPermissionInput, Owner, OwnerAccessPermissionInput, OwnerStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReservationStorage};
+use crate::prelude::{AccessStorage, Accessor, FUNCTION_LEVEL, Host, HostAccessPermissionInput, Owner, OwnerAccessPermissionInput, OwnerStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReservationStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -31,8 +29,7 @@ impl<
             reserver, access_key, access, owner_credentials, password
         }: ReceptionAccessPermissionInput<'_, RS::Key, AS::Key, AS::Value, OS::Key, OS::Value, PS::Password>
     ) -> ReceptionAccessPermissionResult {
-        let span = span!(FUNCTION_LEVEL, "Reception Permits Access");
-        let _enter = span.enter();
+        trace_function!("Reception Permits Access");
 
         let owner_access_permission = self.owner.permits_access(OwnerAccessPermissionInput { owner_credentials, password, access });
         if owner_access_permission.ok() {
@@ -40,5 +37,11 @@ impl<
         } else {
             ReceptionAccessPermissionResult::Denied
         }
+    }
+
+    pub fn generate_password(
+        &mut self
+    ) {
+        trace_function!("Reception Generate Password");
     }
 }

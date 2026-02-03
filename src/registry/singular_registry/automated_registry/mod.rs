@@ -1,8 +1,6 @@
 use std::cell::UnsafeCell;
 
-use tracing::span;
-
-use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress};
+use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
 
 pub mod manual_registry;
 
@@ -26,8 +24,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
         &self,
         input: ManualRegistryAccessInput<'_, Access, S::Key>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_>> {
-        let span = span!(FUNCTION_LEVEL, "Automated Acquire Access");
-        let _enter = span.enter();
+        trace_function!("Automated Acquire Access");
 
         unsafe { self.get_inner() }.acquire_access(input)
     }
@@ -43,8 +40,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     ) -> ManualRegistryReplacementResult<Access::StoredValue> 
         where Access::StoredValue: StableAddress
     {
-        let span = span!(FUNCTION_LEVEL, "Automated Safer Replacement");
-        let _enter = span.enter();
+        trace_function!("Automated Safer Replacement");
 
         unsafe { self.get_inner_mut().safer_replace(manual_registry_replacement_input) }
     }

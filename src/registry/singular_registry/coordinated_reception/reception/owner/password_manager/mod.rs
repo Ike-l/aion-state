@@ -1,6 +1,4 @@
-use tracing::span;
-
-use crate::prelude::{FUNCTION_LEVEL, PasswordGeneratorInput, PasswordGeneratorResult, PasswordManagerAccessPermissionInput, PasswordManagerAccessPermissionResult, PasswordStorage};
+use crate::prelude::{FUNCTION_LEVEL, PasswordGeneratorInput, PasswordGeneratorResult, PasswordManagerAccessPermissionInput, PasswordManagerAccessPermissionResult, PasswordStorage, trace_function};
 
 pub mod password_storage;
 
@@ -18,8 +16,7 @@ impl<PS: PasswordStorage> PasswordManager<PS> {
             password, access
         }: PasswordManagerAccessPermissionInput<PS::Password, PS::Access>
     ) -> PasswordManagerAccessPermissionResult {
-        let span = span!(FUNCTION_LEVEL, "Password Manager Checking Password");
-        let _enter = span.enter();
+        trace_function!("Checking Password");
         
         PasswordManagerAccessPermissionResult::Checked(self.password_storage.check(password, access))
     }
@@ -27,12 +24,11 @@ impl<PS: PasswordStorage> PasswordManager<PS> {
     pub fn generate_password(
         &mut self,
         PasswordGeneratorInput {
-            access
-        }: PasswordGeneratorInput<'_, PS::Access>
+            access, policy
+        }: PasswordGeneratorInput<'_, PS::Access, PS::GenerationPolicy>
     ) -> PasswordGeneratorResult<PS::Password> {
-        let span = span!(FUNCTION_LEVEL, "Password Manager Generating Password");
-        let _enter = span.enter();
+        trace_function!("Generating Password");
 
-        PasswordGeneratorResult::Generated(self.password_storage.generate_password(access))
+        PasswordGeneratorResult::Generated(self.password_storage.generate_password(access, policy))
     }
 }

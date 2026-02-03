@@ -1,8 +1,8 @@
 use std::fmt::Debug;
 
-use tracing::{Level, event, span};
+use tracing::{Level, event};
 
-use crate::prelude::{AccessStorage, Accesses, Accessor, FUNCTION_LEVEL, PermitsAccessInput, RecordAccessInput, RemoveAccessInput, ReservationStorage, ReservationsAccessPermissionInput, ReservationsAccessPermissionResult, ReservationsReserveResult, ReservationsUnreserveResult, ReserveInput, UnreserveInput};
+use crate::prelude::{AccessStorage, Accesses, Accessor, FUNCTION_LEVEL, PermitsAccessInput, RecordAccessInput, RemoveAccessInput, ReservationStorage, ReservationsAccessPermissionInput, ReservationsAccessPermissionResult, ReservationsReserveResult, ReservationsUnreserveResult, ReserveInput, UnreserveInput, trace_function};
 
 pub mod reservations_input;
 pub mod reservations_result;
@@ -26,8 +26,7 @@ impl<
             reserver, access_key, access,
         }: ReservationsAccessPermissionInput<'_, RS::Key, AS::Key, AS::Value>
     ) -> ReservationsAccessPermissionResult {
-        let span = span!(FUNCTION_LEVEL, "Reservations Permits Access");
-        let _enter = span.enter();
+        trace_function!("Reservations Permits Access");
 
         let conflicts = self.reservation_storage
             .iter()
@@ -62,8 +61,7 @@ impl<
             reserver, access_key, access
         }: ReserveInput<RS::Key, AS::Key, AS::Value>
     ) -> ReservationsReserveResult {
-        let span = span!(FUNCTION_LEVEL, "Reservations Reserve");
-        let _enter = span.enter();
+        trace_function!("Reservations Reserve");
 
         let input = RecordAccessInput { access, access_key };
         if let Some(access_map) = self.reservation_storage.get_mut(&reserver) {
@@ -83,8 +81,7 @@ impl<
             reserver, access_key, access
         }: UnreserveInput<'_, RS::Key, AS::Key, AS::Value>
     ) -> ReservationsUnreserveResult {
-        let span = span!(FUNCTION_LEVEL, "Reservations Unreserve");
-        let _enter = span.enter();
+        trace_function!("Reservations Unreserve");
 
         if let Some(access_map) = self.reservation_storage.get_mut(reserver) {
             ReservationsUnreserveResult::Accesses(access_map.release_access(RemoveAccessInput { access, access_key }))
