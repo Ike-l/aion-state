@@ -7,3 +7,7 @@ impl LockerAccessPermissionResult {
         matches!(self, Self::LockedResult(true))
     }
 }
+
+pub enum LockResult {
+    LockResult(bool)
+}

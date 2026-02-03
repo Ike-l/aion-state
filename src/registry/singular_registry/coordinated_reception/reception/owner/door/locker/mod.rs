@@ -1,4 +1,4 @@
-use crate::prelude::{LockStorage, LockerAccessPermissionResult, LockerPermitsAccessInput, trace_function};
+use crate::prelude::{LockInput, LockResult, LockStorage, LockerAccessPermissionResult, LockerPermitsAccessInput, trace_function};
 
 pub mod lock_storage;
 
@@ -23,9 +23,16 @@ impl<
         LockerAccessPermissionResult::LockedResult(self.lock_storage.check(item))
     }
 
-    // pub fn lock(
-    //     &self
-    // )
+    pub fn lock(
+        &self,
+        LockInput {
+            item
+        }: LockInput<LS::Item>
+    ) -> LockResult{
+        trace_function!("Locker Lock");
+
+        LockResult::LockResult(self.lock_storage.lock(item))
+    }
 
     // pub fn unlock(
     //     &self

@@ -136,10 +136,12 @@ pub mod prelude {
                                         LockStorage
                                     },
                                     locker_input::{
-                                        LockerPermitsAccessInput
+                                        LockerPermitsAccessInput,
+                                        LockInput
                                     },
                                     locker_result::{
-                                        LockerAccessPermissionResult
+                                        LockerAccessPermissionResult,
+                                        LockResult
                                     }
                                 },
                             },
