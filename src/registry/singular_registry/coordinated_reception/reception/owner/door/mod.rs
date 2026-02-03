@@ -1,4 +1,4 @@
-use crate::prelude::{DoorAccessPermissionResult, DoorPermitsAccessInput, LockStorage, Locker, LockerPermitsAccessInput, PasswordManager, PasswordManagerAccessPermissionInput, PasswordStorage, trace_function};
+use crate::prelude::{DoorAccessPermissionResult, DoorGeneratePasswordInput, DoorGeneratePasswordResult, DoorPermitsAccessInput, LockStorage, Locker, LockerPermitsAccessInput, PasswordGeneratorInput, PasswordManager, PasswordManagerAccessPermissionInput, PasswordStorage, trace_function};
 
 pub mod password_manager;
 pub mod locker;
@@ -27,6 +27,19 @@ impl<
             DoorAccessPermissionResult::Locked(self.password_manager.check_password(PasswordManagerAccessPermissionInput { password, access }))
         } else {
             DoorAccessPermissionResult::Unlocked   
+        }
+    }
+
+    pub fn generate_password(
+        &mut self,
+        DoorGeneratePasswordInput {
+            item, access, policy
+        }: DoorGeneratePasswordInput<LS::Item, PS::Access, PS::GenerationPolicy>
+    ) -> DoorGeneratePasswordResult<PS::Password> {
+        if self.locker.check_locked(LockerPermitsAccessInput { item }).ok() {
+            DoorGeneratePasswordResult::PasswordManagerResult(self.password_manager.generate_password(PasswordGeneratorInput { access, policy }))
+        } else {
+            DoorGeneratePasswordResult::Unlocked
         }
     }
 }

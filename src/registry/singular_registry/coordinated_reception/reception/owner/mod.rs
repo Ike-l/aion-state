@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateInput, Authenticator, Door, DoorPermitsAccessInput, LockStorage, OwnerAccessPermissionInput, OwnerAccessPermissionResult, OwnerPasswordGeneratorInput, OwnerPasswordGeneratorResult, OwnerStorage, PasswordStorage, trace_function};
+use crate::prelude::{AuthenticateInput, Authenticator, Door, DoorGeneratePasswordInput, DoorPermitsAccessInput, LockStorage, OwnerAccessPermissionInput, OwnerAccessPermissionResult, OwnerPasswordGeneratorInput, OwnerPasswordGeneratorResult, OwnerStorage, PasswordStorage, trace_function};
 
 pub mod authenticator;
 pub mod door;
@@ -37,16 +37,15 @@ impl<
     pub fn generate_password(
         &mut self,
         OwnerPasswordGeneratorInput {
-            owner_id, owner_key, access, policy
-        }: OwnerPasswordGeneratorInput<'_, OS::Key, OS::Value, PS::Access, PS::GenerationPolicy>
+            owner_id, owner_key, item, access, policy
+        }: OwnerPasswordGeneratorInput<'_, OS::Key, OS::Value, LS::Item, PS::Access, PS::GenerationPolicy>
     ) -> OwnerPasswordGeneratorResult<PS::Password> {
         trace_function!("Owner Generates Password");
 
-        todo!()
-        // if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_key }) {
-        //     OwnerPasswordGeneratorResult::Generated(self.password_manager.generate_password(PasswordGeneratorInput { access, policy }))
-        // } else {
-        //     OwnerPasswordGeneratorResult::Denied
-        // }
+        if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_key }) {
+            OwnerPasswordGeneratorResult::Door(self.door.generate_password(DoorGeneratePasswordInput { item, access, policy }))
+        } else {
+            OwnerPasswordGeneratorResult::Denied
+        }
     }
 }

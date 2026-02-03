@@ -1,4 +1,4 @@
-use crate::prelude::{PasswordGeneratorResult, DoorAccessPermissionResult};
+use crate::prelude::{DoorAccessPermissionResult, DoorGeneratePasswordResult};
 
 pub enum OwnerAccessPermissionResult {
     Door(DoorAccessPermissionResult),
@@ -17,6 +17,6 @@ impl OwnerAccessPermissionResult {
 }
 
 pub enum OwnerPasswordGeneratorResult<Password> {
-    Generated(PasswordGeneratorResult<Password>),
+    Door(DoorGeneratePasswordResult<Password>),
     Denied,
 }

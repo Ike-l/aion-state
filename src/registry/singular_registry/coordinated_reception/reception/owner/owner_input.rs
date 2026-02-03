@@ -5,9 +5,10 @@ pub struct OwnerAccessPermissionInput<'a, OwnerId, OwnerKey, Item, Password, Acc
     pub access: &'a Access
 }
 
-pub struct OwnerPasswordGeneratorInput<'a, OwnerId, OwnerKey, Access, Policy> {
+pub struct OwnerPasswordGeneratorInput<'a, OwnerId, OwnerKey, Item, Access, Policy> {
     pub owner_id: &'a OwnerId,
     pub owner_key: &'a OwnerKey,
+    pub item: &'a Item,
     pub access: &'a Access,
     pub policy: &'a Policy
 }

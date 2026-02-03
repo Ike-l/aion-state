@@ -111,10 +111,12 @@ pub mod prelude {
                             door::{
                                 Door,
                                 door_input::{
-                                    DoorPermitsAccessInput
+                                    DoorPermitsAccessInput,
+                                    DoorGeneratePasswordInput
                                 },
                                 door_result::{
-                                    DoorAccessPermissionResult
+                                    DoorAccessPermissionResult,
+                                    DoorGeneratePasswordResult
                                 },
                                 password_manager::{
                                     PasswordManager,
@@ -126,7 +128,7 @@ pub mod prelude {
                                         PasswordGeneratorInput
                                     },
                                     password_manager_result::{
-                                        PasswordManagerAccessPermissionResult,
+                                        PasswordCheckResult,
                                         PasswordGeneratorResult
                                     }
                                 },

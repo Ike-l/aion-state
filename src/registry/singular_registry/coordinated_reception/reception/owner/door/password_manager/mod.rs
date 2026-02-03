@@ -1,4 +1,4 @@
-use crate::prelude::{PasswordGeneratorInput, PasswordGeneratorResult, PasswordManagerAccessPermissionInput, PasswordManagerAccessPermissionResult, PasswordStorage, trace_function};
+use crate::prelude::{PasswordGeneratorInput, PasswordGeneratorResult, PasswordManagerAccessPermissionInput, PasswordCheckResult, PasswordStorage, trace_function};
 
 pub mod password_storage;
 
@@ -15,10 +15,10 @@ impl<PS: PasswordStorage> PasswordManager<PS> {
         PasswordManagerAccessPermissionInput {
             password, access
         }: PasswordManagerAccessPermissionInput<PS::Password, PS::Access>
-    ) -> PasswordManagerAccessPermissionResult {
+    ) -> PasswordCheckResult {
         trace_function!("Checking Password");
         
-        PasswordManagerAccessPermissionResult::Checked(self.password_storage.check(password, access))
+        PasswordCheckResult::Checked(self.password_storage.check(password, access))
     }
 
     pub fn generate_password(
