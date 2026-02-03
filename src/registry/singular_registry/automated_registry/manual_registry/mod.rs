@@ -19,7 +19,7 @@ impl<
         ManualRegistryAccessInput {
             key, access
         }: ManualRegistryAccessInput<'_, Access, S::Key>
-    ) -> ManualRegistryAccessResult<Access::AccessResult<'_, Access::Value>> {
+    ) -> ManualRegistryAccessResult<Access::AccessResult<'_>> {
         let span = span!(FUNCTION_LEVEL, "Manual Acquire Access");
         let _enter = span.enter();
 
@@ -34,9 +34,9 @@ impl<
     }
 
     /// Safety:
-    /// Ensure the insert will not invalidate any concurrent accesses.
-    /// i.e If an access exists, do not reallocate the accessed memory
-    /// can use `reallocates_on_next_new_insert` & tracked accesses
+    /// Insert won't invalidate concurrent access
+    /// ^ i.e do not "replace" a borrowed item
+    /// ^ i.e do not insert if it could reallocate container and invalidate concurrent accesses
     pub unsafe fn replace<Access: Accessor<StoredValue = S::Value>>(
         &mut self,
         ManualRegistryReplacementInput {
@@ -79,9 +79,12 @@ impl<
         }
     }
 
+    // safer bc trade reallocation requirement for the don't reference the stable address stored vaslue itself
     /// Safety:
-    /// Access cannot be used to 'acquire' a reference to Box<T>
-    pub unsafe fn safer_replace<W, Access: Accessor<StoredValue = S::Value>>(
+    /// Access cannot be used to 'acquire' a reference to StableAddress itself
+    /// Insert won't invalidate concurrent access
+    /// ^ i.e do not replace a borrowed item
+    pub unsafe fn safer_replace<Access: Accessor<StoredValue = S::Value>>(
         &mut self,
         manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
     ) -> ManualRegistryReplacementResult<Access::StoredValue> 
@@ -91,8 +94,7 @@ impl<
         let _enter = span.enter();
 
         // Safety:
-        // if a container of Box reallocates, pointers to the Box are still valid
-        // note: references to the box itself can still be made invalid
+        // if a container of StableAddress reallocates, pointers are still valid
         unsafe { self.replace(manual_registry_replacement_input) }
     }
 

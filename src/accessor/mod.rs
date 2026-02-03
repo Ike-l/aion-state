@@ -2,10 +2,12 @@
 // if do raw ptr stuff will need StoredValue to be boxed or something
 // because otherwise an insert could reallocate and create danling ptrs
 pub trait Accessor {
+    // input -> stored -> output
+    // Value -> StoredValue -> AccessResult
     type StoredValue;
     type Value;
 
-    type AccessResult<'a, T> where T: 'a;
+    type AccessResult<'a>;
 
     fn can_access(&self, other: &Self) -> bool;
     fn can_insert(&self) -> bool;
@@ -17,7 +19,7 @@ pub trait Accessor {
     fn acquire<'a>(
         &self, 
         stored_value: &'a Self::StoredValue
-    ) -> Self::AccessResult<'a, Self::Value>;
+    ) -> Self::AccessResult<'a>;
 
     fn merge(
         &mut self,
