@@ -1,20 +1,15 @@
 
-// if do raw ptr stuff will need StoredValue to be boxed or something
-// because otherwise an insert could reallocate and create danling ptrs
 pub trait Accessor {
     // input -> stored -> output
     // Value -> StoredValue -> AccessResult
+
     type StoredValue;
     type Value;
-
     type AccessResult<'a>;
 
     fn can_access(&self, other: &Self) -> bool;
     fn can_insert(&self) -> bool;
     fn can_remove(&self) -> bool;
-
-    // if the container containing self can be reallocated
-    fn can_reallocate(&self) -> bool;
 
     fn acquire<'a>(
         &self, 

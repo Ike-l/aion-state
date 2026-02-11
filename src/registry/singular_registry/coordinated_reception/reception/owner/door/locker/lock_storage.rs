@@ -1,4 +1,5 @@
 pub trait LockStorage {
+    // ResourceId
     type Item;
 
     fn check(&self, item: &Self::Item) -> bool;

@@ -1,5 +1,8 @@
 pub trait AccessStorage {
+    // ResourceId
     type Key;
+
+    // Value: Accessor
     type Value;
 
     fn get_mut(

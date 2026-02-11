@@ -1,5 +1,8 @@
 pub trait RegistryStorage {
+    // ResourceId
     type Key;
+
+    // Accessor::StoredResource
     type Value;
 
     fn get(

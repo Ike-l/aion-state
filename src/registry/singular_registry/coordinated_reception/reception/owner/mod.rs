@@ -12,6 +12,7 @@ pub struct Owner<OS, PS, LS> {
 }
 
 impl<
+    // OSS<Item = LS::Item, Id: OS::Key>
     OS: OwnerStorage,
     PS: PasswordStorage,
     LS: LockStorage

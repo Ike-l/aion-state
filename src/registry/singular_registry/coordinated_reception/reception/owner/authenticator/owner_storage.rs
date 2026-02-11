@@ -1,5 +1,8 @@
 pub trait OwnerStorage {
+    // OwnerId
     type Key;
+
+    // Password
     type Value;
 
     // is on storage because value might want to be hashed etc.

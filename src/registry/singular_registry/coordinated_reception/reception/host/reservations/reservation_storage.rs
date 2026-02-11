@@ -1,8 +1,11 @@
-use crate::prelude::{AccessStorage, Accesses};
+use crate::prelude::Accesses;
 
 pub trait ReservationStorage {
+    // ReserverId
     type Key;
-    type AccessStorage: AccessStorage;
+
+    // AccessStorage: AccessStorage
+    type AccessStorage;
 
     fn get_mut(
         &mut self, 

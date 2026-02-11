@@ -17,6 +17,7 @@ impl<
     RS: ReservationStorage<AccessStorage = AS>, 
     AS: AccessStorage + Default,
     OS: OwnerStorage,
+    // OSS<Item = LS::Item, Id: OS::Key>
     PS: PasswordStorage<Access = AS::Value>,
     LS: LockStorage<Item = AS::Key>,
 > Reception<RS, AS, OS, PS, LS> 
@@ -45,6 +46,8 @@ impl<
     // if !self.host.has_stakeholder {
     //  self.owner.lock()
     // }
+    // if self.host.allows_ownership
+    // if !(self.host.has_reservations or self.host.has_access)
 
     pub fn generate_password(
         &mut self
