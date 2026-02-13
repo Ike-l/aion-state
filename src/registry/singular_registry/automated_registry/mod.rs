@@ -22,7 +22,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// Safety: No Concurrent Unique References
     pub unsafe fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
         &self,
-        input: ManualRegistryAccessInput<'_, Access, S::Key>
+        input: ManualRegistryAccessInput<'_, Access, S::ValueId>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_>> {
         trace_function!("Automated Acquire Access");
 
@@ -36,7 +36,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn safer_replace<Access: Accessor<StoredValue = S::Value>>(
         &mut self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, Access::Value>
     ) -> ManualRegistryReplacementResult<Access::StoredValue> 
         where Access::StoredValue: StableAddress
     {
@@ -47,7 +47,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
 
     pub fn contains_key(
         &self,
-        key: &S::Key
+        key: &S::ValueId
     ) -> bool {
         unsafe { self.get_inner() }.contains_key(key)
     }

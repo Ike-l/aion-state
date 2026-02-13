@@ -1,5 +1,5 @@
 pub trait PasswordStorage {
-    type Password;
+    type ValuePassword;
     type Access;
 
     // i.e If want "Global" semantics for an access, but still want it to be locked
@@ -8,7 +8,7 @@ pub trait PasswordStorage {
 
     fn check(
         &self,
-        password: Option<&Self::Password>,
+        password: Option<&Self::ValuePassword>,
         access: &Self::Access
     ) -> bool;
 
@@ -16,5 +16,5 @@ pub trait PasswordStorage {
         &mut self,
         access: &Self::Access,
         policy: &Self::GenerationPolicy
-    ) -> Option<Self::Password>;
+    ) -> Option<Self::ValuePassword>;
 }

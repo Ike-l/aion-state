@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, Host, HostAccessPermissionInput, LockStorage, Owner, OwnerAccessPermissionInput, OwnerStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReservationStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, Host, HostAccessPermissionInput, LockStorage, Owner, OwnerAccessPermissionInput, OwnerStorage, OwnershipStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReservationStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -8,8 +8,8 @@ pub mod owner;
 pub mod reception_input;
 pub mod reception_result;
 
-pub struct Reception<RS, AS, OS, PS, LS> {
-    owner: Owner<OS, PS, LS>,
+pub struct Reception<RS, AS, OS, PS, LS, OSS> {
+    owner: Owner<OS, PS, LS, OSS>,
     host: Host<RS, AS>
 }
 
@@ -17,19 +17,19 @@ impl<
     RS: ReservationStorage<AccessStorage = AS>, 
     AS: AccessStorage + Default,
     OS: OwnerStorage,
-    // OSS<Item = LS::Item, Id: OS::Key>
-    PS: PasswordStorage<Access = AS::Value>,
-    LS: LockStorage<Item = AS::Key>,
-> Reception<RS, AS, OS, PS, LS> 
+    OSS: OwnershipStorage<ValueId = LS::ValueId, OwnerId = OS::OwnerId>,
+    PS: PasswordStorage<Access = AS::Access>,
+    LS: LockStorage<ValueId = AS::AccessId>,
+> Reception<RS, AS, OS, PS, LS, OSS> 
     where 
-        RS::Key: Debug + PartialEq,
-        AS::Value: Debug + Accessor,
+        RS::ReserverId: Debug + PartialEq,
+        AS::Access: Debug + Accessor,
 {
     pub fn permits_access(
         &self,
         ReceptionAccessPermissionInput {
             reserver, access_key, access, owner_credentials, password
-        }: ReceptionAccessPermissionInput<'_, RS::Key, AS::Key, AS::Value, OS::Key, OS::Value, PS::Password>
+        }: ReceptionAccessPermissionInput<'_, RS::ReserverId, AS::AccessId, AS::Access, OS::OwnerId, OS::OwnerPassword, PS::ValuePassword>
     ) -> ReceptionAccessPermissionResult {
         trace_function!("Reception Permits Access");
 

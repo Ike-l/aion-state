@@ -17,14 +17,14 @@ impl<
     AS: AccessStorage + Default
 > Reservations<RS> 
     where 
-        RS::Key: Debug + PartialEq,
-        AS::Value: Debug + Accessor
+        RS::ReserverId: Debug + PartialEq,
+        AS::Access: Debug + Accessor
 {
     pub fn permits_access(
         &self,
         ReservationsAccessPermissionInput {
             reserver, access_key, access,
-        }: ReservationsAccessPermissionInput<'_, RS::Key, AS::Key, AS::Value>
+        }: ReservationsAccessPermissionInput<'_, RS::ReserverId, AS::AccessId, AS::Access>
     ) -> ReservationsAccessPermissionResult {
         trace_function!("Reservations Permits Access");
 
@@ -59,7 +59,7 @@ impl<
         &mut self,
         ReserveInput {
             reserver, access_key, access
-        }: ReserveInput<RS::Key, AS::Key, AS::Value>
+        }: ReserveInput<RS::ReserverId, AS::AccessId, AS::Access>
     ) -> ReservationsReserveResult {
         trace_function!("Reservations Reserve");
 
@@ -79,7 +79,7 @@ impl<
         &mut self,
         UnreserveInput {
             reserver, access_key, access
-        }: UnreserveInput<'_, RS::Key, AS::Key, AS::Value>
+        }: UnreserveInput<'_, RS::ReserverId, AS::AccessId, AS::Access>
     ) -> ReservationsUnreserveResult {
         trace_function!("Reservations Unreserve");
 

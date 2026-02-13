@@ -14,7 +14,7 @@ impl<PS: PasswordStorage> PasswordManager<PS> {
         &self,
         PasswordManagerAccessPermissionInput {
             password, access
-        }: PasswordManagerAccessPermissionInput<PS::Password, PS::Access>
+        }: PasswordManagerAccessPermissionInput<PS::ValuePassword, PS::Access>
     ) -> PasswordCheckResult {
         trace_function!("Checking Password");
         
@@ -26,7 +26,7 @@ impl<PS: PasswordStorage> PasswordManager<PS> {
         PasswordGeneratorInput {
             access, policy
         }: PasswordGeneratorInput<'_, PS::Access, PS::GenerationPolicy>
-    ) -> PasswordGeneratorResult<PS::Password> {
+    ) -> PasswordGeneratorResult<PS::ValuePassword> {
         trace_function!("Generating Password");
 
         PasswordGeneratorResult::Generated(self.password_storage.generate_password(access, policy))

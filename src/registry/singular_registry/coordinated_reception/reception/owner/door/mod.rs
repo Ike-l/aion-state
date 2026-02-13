@@ -19,7 +19,7 @@ impl<
         &self,
         DoorPermitsAccessInput {
             item, password, access
-        }: DoorPermitsAccessInput<LS::Item, PS::Password, PS::Access>
+        }: DoorPermitsAccessInput<LS::ValueId, PS::ValuePassword, PS::Access>
     ) -> DoorAccessPermissionResult {
         trace_function!("Door Permits Access");
 
@@ -34,8 +34,8 @@ impl<
         &mut self,
         DoorGeneratePasswordInput {
             item, access, policy
-        }: DoorGeneratePasswordInput<LS::Item, PS::Access, PS::GenerationPolicy>
-    ) -> DoorGeneratePasswordResult<PS::Password> {
+        }: DoorGeneratePasswordInput<LS::ValueId, PS::Access, PS::GenerationPolicy>
+    ) -> DoorGeneratePasswordResult<PS::ValuePassword> {
         if self.locker.check_locked(LockerPermitsAccessInput { item }).ok() {
             DoorGeneratePasswordResult::PasswordManagerResult(self.password_manager.generate_password(PasswordGeneratorInput { access, policy }))
         } else {

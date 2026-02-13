@@ -16,7 +16,7 @@ impl<
         &self,
         LockerPermitsAccessInput {
             item
-        }: LockerPermitsAccessInput<'_, LS::Item>
+        }: LockerPermitsAccessInput<'_, LS::ValueId>
     ) -> LockerAccessPermissionResult {
         trace_function!("Locker Check Locked");
 
@@ -27,7 +27,7 @@ impl<
         &self,
         LockInput {
             item
-        }: LockInput<LS::Item>
+        }: LockInput<LS::ValueId>
     ) -> LockResult{
         trace_function!("Locker Lock");
 
@@ -38,7 +38,7 @@ impl<
         &self,
         UnlockInput {
             item
-        }: UnlockInput<LS::Item>
+        }: UnlockInput<LS::ValueId>
     ) -> UnlockResult{
         trace_function!("Locker Unlock");
 

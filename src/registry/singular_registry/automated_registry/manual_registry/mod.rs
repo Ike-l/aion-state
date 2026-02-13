@@ -18,7 +18,7 @@ impl<
         &self, 
         ManualRegistryAccessInput {
             key, access
-        }: ManualRegistryAccessInput<'_, Access, S::Key>
+        }: ManualRegistryAccessInput<'_, Access, S::ValueId>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_>> {
         let span = span!(FUNCTION_LEVEL, "Manual Acquire Access");
         let _enter = span.enter();
@@ -38,7 +38,7 @@ impl<
         &mut self,
         ManualRegistryReplacementInput {
             access, key, value
-        }: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
+        }: ManualRegistryReplacementInput<'_, Access, S::ValueId, Access::Value>
     ) -> ManualRegistryReplacementResult<Access::StoredValue> {
         let span = span!(FUNCTION_LEVEL, "Manual Unsafe Replacement");
         let _enter = span.enter();
@@ -83,7 +83,7 @@ impl<
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn safer_replace<Access: Accessor<StoredValue = S::Value>>(
         &mut self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::Key, Access::Value>
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, Access::Value>
     ) -> ManualRegistryReplacementResult<Access::StoredValue> 
         where Access::StoredValue: StableAddress
     {
@@ -97,7 +97,7 @@ impl<
 
     pub fn contains_key(
         &self,
-        key: &S::Key
+        key: &S::ValueId
     ) -> bool {
         self.storage.contains_key(key)
     }

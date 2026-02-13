@@ -14,13 +14,13 @@ pub struct Accesses<AS> {
 }
 
 impl<AS: AccessStorage> Accesses<AS> 
-    where AS::Value: Accessor + Debug
+    where AS::Access: Accessor + Debug
 {
     pub fn permits_access(
         &self,
         PermitsAccessInput {
             access_key, access
-        }: PermitsAccessInput<'_, AS::Key, AS::Value>
+        }: PermitsAccessInput<'_, AS::AccessId, AS::Access>
     ) -> AccessPermission {
         let span = span!(FUNCTION_LEVEL, "Accesses Permits Access", current_access = field::Empty);
         let _enter = span.enter();
@@ -37,7 +37,7 @@ impl<AS: AccessStorage> Accesses<AS>
         &mut self,
         RecordAccessInput {
             access_key, access
-        }: RecordAccessInput<AS::Key, AS::Value>
+        }: RecordAccessInput<AS::AccessId, AS::Access>
     ) -> RecordAccessResult {
         let span = span!(FUNCTION_LEVEL, "Accesses Record Access", current_access = field::Empty);
         let _enter = span.enter();
@@ -56,7 +56,7 @@ impl<AS: AccessStorage> Accesses<AS>
         &mut self,
         RemoveAccessInput {
             access_key, access
-        }: RemoveAccessInput<AS::Key, AS::Value>
+        }: RemoveAccessInput<AS::AccessId, AS::Access>
     ) -> RemoveAccessResult {
         let span = span!(FUNCTION_LEVEL, "Accesses Release Access", current_access = field::Empty);
         let _enter = span.enter();

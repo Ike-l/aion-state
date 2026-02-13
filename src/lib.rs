@@ -106,7 +106,10 @@ pub mod prelude {
                                 },
                                 owner_storage::{
                                     OwnerStorage
-                                }
+                                },
+                                ownership_storage::{
+                                    OwnershipStorage
+                                },
                             },
                             door::{
                                 Door,

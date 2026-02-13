@@ -1,23 +1,23 @@
 pub trait AccessStorage {
     // ResourceId
-    type Key;
+    type AccessId;
 
     // Value: Accessor
-    type Value;
+    type Access;
 
     fn get_mut(
         &mut self, 
-        key: &Self::Key
-    ) -> Option<&mut Self::Value>;
+        key: &Self::AccessId
+    ) -> Option<&mut Self::Access>;
 
     fn get(
         &self, 
-        key: &Self::Key
-    ) -> Option<&Self::Value>;
+        key: &Self::AccessId
+    ) -> Option<&Self::Access>;
 
     fn insert(
         &mut self,
-        key: Self::Key,
-        value: Self::Value
-    ) -> Option<Self::Value>;
+        key: Self::AccessId,
+        value: Self::Access
+    ) -> Option<Self::Access>;
 }

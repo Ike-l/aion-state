@@ -1,14 +1,11 @@
 pub trait OwnerStorage {
-    // OwnerId
-    type Key;
-
-    // Password
-    type Value;
+    type OwnerId;
+    type OwnerPassword;
 
     // is on storage because value might want to be hashed etc.
     fn verify(
         &self,
-        key: &Self::Key, 
-        value: &Self::Value
+        key: &Self::OwnerId, 
+        value: &Self::OwnerPassword
     ) -> bool;
 }

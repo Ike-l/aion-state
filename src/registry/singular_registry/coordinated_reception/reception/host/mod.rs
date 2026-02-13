@@ -18,14 +18,14 @@ impl<
     AS: AccessStorage + Default
 > Host<RS, AS> 
     where 
-        RS::Key: Debug + PartialEq,
-        AS::Value: Debug + Accessor
+        RS::ReserverId: Debug + PartialEq,
+        AS::Access: Debug + Accessor
 {
     pub fn permits_access(
         &self,
         HostAccessPermissionInput {
             reserver, access_key, access
-        }: HostAccessPermissionInput<'_, RS::Key, AS::Key, AS::Value>
+        }: HostAccessPermissionInput<'_, RS::ReserverId, AS::AccessId, AS::Access>
     ) -> HostAccessPermissionResult {
         trace_function!("Host Permits Access");
 
@@ -41,7 +41,7 @@ impl<
         &mut self,
         HostRecordAccessInput {
             reserver, access_key, access
-        }: HostRecordAccessInput<RS::Key, AS::Key, AS::Value>
+        }: HostRecordAccessInput<RS::ReserverId, AS::AccessId, AS::Access>
     ) -> HostRecordAccessResult {
         trace_function!("Host Record Access");
 
@@ -58,7 +58,7 @@ impl<
 
     pub fn release_access(
         &mut self,
-        remove_access_input: RemoveAccessInput<'_, AS::Key, AS::Value>
+        remove_access_input: RemoveAccessInput<'_, AS::AccessId, AS::Access>
     ) -> RemoveAccessResult {
         trace_function!("Host Remove Access");
 
@@ -67,7 +67,7 @@ impl<
 
     pub fn unreserve(
         &mut self,
-        unreserve_input: UnreserveInput<'_, RS::Key, AS::Key, AS::Value>
+        unreserve_input: UnreserveInput<'_, RS::ReserverId, AS::AccessId, AS::Access>
     ) -> ReservationsUnreserveResult {
         trace_function!("Host Unreserve");
 
@@ -76,7 +76,7 @@ impl<
 
     pub fn reserve(
         &mut self,
-        reserve_input: ReserveInput<RS::Key, AS::Key, AS::Value>
+        reserve_input: ReserveInput<RS::ReserverId, AS::AccessId, AS::Access>
     ) -> ReservationsReserveResult {
         trace_function!("Host Reserve");
 

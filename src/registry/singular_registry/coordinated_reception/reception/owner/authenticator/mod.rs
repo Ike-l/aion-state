@@ -1,10 +1,11 @@
-use crate::prelude::{AuthenticateInput, OwnerStorage, trace_function};
+use crate::prelude::{AuthenticateInput, OwnerStorage, OwnershipStorage, trace_function};
 
 pub mod owner_storage;
 
 pub mod authenticator_input;
+pub mod ownership_storage;
 
-pub struct Authenticator<OS> {
+pub struct Authenticator<OS, OSS> {
     // if owner_storage stores owner id: password then
     owner_storage: OS,
     ownership_storage: OSS,
@@ -13,14 +14,14 @@ pub struct Authenticator<OS> {
 }
 
 impl<
-    OS: OwnerStorage
-    // OSS<Id: OS::Key>
-> Authenticator<OS> {
+    OS: OwnerStorage,
+    OSS: OwnershipStorage<OwnerId = OS::OwnerId>
+> Authenticator<OS, OSS> {
     pub fn authenticate(
         &self,
         AuthenticateInput {
             owner_id, owner_key // item
-        }: AuthenticateInput<'_, OS::Key, OS::Value> // OS::Item
+        }: AuthenticateInput<'_, OS::OwnerId, OS::OwnerPassword> // OS::Item
     ) -> bool {
         trace_function!("Authenticating Owner");
         
