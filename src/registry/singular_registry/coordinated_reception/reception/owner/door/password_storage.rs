@@ -7,6 +7,7 @@ pub trait PasswordStorage {
     // rename to GenerationConfig?
     type GenerationPolicy;
 
+    /// If the password is compatible with the access
     fn check(
         &self,
         value_password: Option<&Self::ValuePassword>,
