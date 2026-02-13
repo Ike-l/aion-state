@@ -6,6 +6,7 @@ pub mod door;
 pub mod owner_result;
 pub mod owner_input;
 
+/// Applies `Authentication` semantics when ownership of the door is required, then `Door` semantics 
 pub struct Owner<OS, PS, LS, OSS> {
     authenticator: Authenticator<OS, OSS>,
     door: Door<PS, LS>
@@ -17,6 +18,7 @@ impl<
     LS: LockStorage,
     OSS: OwnershipStorage<OwnerId = OS::OwnerId, ValueId = LS::ValueId>,
 > Owner<OS, PS, LS, OSS> {
+    /// No owner semantics are need so is a `pass through` function to `Door`
     pub fn permits_access(
         &self,
         OwnerAccessPermissionInput {
@@ -29,6 +31,7 @@ impl<
 
     }
 
+    /// If the caller is authenticated then generate the password
     pub fn generate_password(
         &mut self,
         OwnerPasswordGeneratorInput {
