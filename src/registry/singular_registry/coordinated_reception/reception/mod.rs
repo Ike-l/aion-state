@@ -28,14 +28,14 @@ impl<
     pub fn permits_access(
         &self,
         ReceptionAccessPermissionInput {
-            reserver, access_key, access, owner_credentials, password
+            reserver_id, access_id, access, owner_credentials, value_password
         }: ReceptionAccessPermissionInput<'_, RS::ReserverId, AS::AccessId, AS::Access, OS::OwnerId, OS::OwnerPassword, PS::ValuePassword>
     ) -> ReceptionAccessPermissionResult {
         trace_function!("Reception Permits Access");
 
-        let owner_access_permission = self.owner.permits_access(OwnerAccessPermissionInput { owner_credentials, item: access_key, password, access });
+        let owner_access_permission = self.owner.permits_access(OwnerAccessPermissionInput { owner_credentials, value_id: access_id, value_password, access });
         if owner_access_permission.ok() {
-            ReceptionAccessPermissionResult::Host(self.host.permits_access(HostAccessPermissionInput { reserver, access_key, access }))
+            ReceptionAccessPermissionResult::Host(self.host.permits_access(HostAccessPermissionInput { reserver_id, access_id, access }))
         } else {
             ReceptionAccessPermissionResult::Denied
         }

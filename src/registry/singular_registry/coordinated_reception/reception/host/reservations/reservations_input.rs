@@ -1,17 +1,17 @@
-pub struct ReservationsAccessPermissionInput<'a, Reserver, AccessKey, Access> {
-    pub reserver: Option<&'a Reserver>,
-    pub access_key: &'a AccessKey,
+pub struct ReservationsAccessPermissionInput<'a, ReserverId, AccessId, Access> {
+    pub reserver_id: Option<&'a ReserverId>,
+    pub access_id: &'a AccessId,
     pub access: &'a Access
 }
 
-pub struct ReserveInput<Reserver, AccessKey, Access> {
-    pub reserver: Reserver,
-    pub access_key: AccessKey,
+pub struct ReserveInput<ReserverId, AccessId, Access> {
+    pub reserver_id: ReserverId,
+    pub access_id: AccessId,
     pub access: Access,
 }
 
-pub struct UnreserveInput<'a, Reserver, AccessKey, Access> {
-    pub reserver: &'a Reserver,
-    pub access_key: &'a AccessKey,
+pub struct UnreserveInput<'a, ReserverId, AccessId, Access> {
+    pub reserver_id: &'a ReserverId,
+    pub access_id: &'a AccessId,
     pub access: &'a Access
 }

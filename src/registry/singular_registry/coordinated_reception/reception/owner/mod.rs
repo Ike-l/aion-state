@@ -20,31 +20,32 @@ impl<
     pub fn permits_access(
         &self,
         OwnerAccessPermissionInput {
-            owner_credentials, item, password, access
+            owner_credentials, value_id, value_password, access
         }: OwnerAccessPermissionInput<'_, OS::OwnerId, OS::OwnerPassword, LS::ValueId, PS::ValuePassword, PS::Access>
     ) -> OwnerAccessPermissionResult {
         trace_function!("Owner Permits Access");
 
-        if let Some((owner_id, owner_key)) = owner_credentials {
-            if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_key }) {
-                return OwnerAccessPermissionResult::OwnerVerified;
+        if let Some((owner_id, owner_password)) = owner_credentials {
+            let authentication_result = self.authenticator.authenticate(AuthenticateInput { owner_id, owner_password, value_id });
+            if !authentication_result.ok() {
+                return OwnerAccessPermissionResult::AuthenticationError(authentication_result)
             }
         }
 
-        OwnerAccessPermissionResult::Door(self.door.permits_access(DoorPermitsAccessInput { item, password, access }))
+        OwnerAccessPermissionResult::Door(self.door.permits_access(DoorPermitsAccessInput { value_id, value_password, access }))
 
     }
 
     pub fn generate_password(
         &mut self,
         OwnerPasswordGeneratorInput {
-            owner_id, owner_key, item, access, policy
+            owner_id, owner_password, value_id, access, policy
         }: OwnerPasswordGeneratorInput<'_, OS::OwnerId, OS::OwnerPassword, LS::ValueId, PS::Access, PS::GenerationPolicy>
     ) -> OwnerPasswordGeneratorResult<PS::ValuePassword> {
         trace_function!("Owner Generates Password");
 
-        if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_key }) {
-            OwnerPasswordGeneratorResult::Door(self.door.generate_password(DoorGeneratePasswordInput { item, access, policy }))
+        if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_password, value_id }).ok() {
+            OwnerPasswordGeneratorResult::Door(self.door.generate_password(DoorGeneratePasswordInput { value_id, access, policy }))
         } else {
             OwnerPasswordGeneratorResult::Denied
         }

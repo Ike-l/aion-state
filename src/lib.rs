@@ -104,6 +104,9 @@ pub mod prelude {
                                 authenticator_input::{
                                     AuthenticateInput
                                 },
+                                authenticator_result::{
+                                    AuthenticationResult
+                                },
                                 owner_storage::{
                                     OwnerStorage
                                 },

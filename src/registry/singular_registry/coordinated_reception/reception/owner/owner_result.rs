@@ -1,16 +1,16 @@
-use crate::prelude::{DoorAccessPermissionResult, DoorGeneratePasswordResult};
+use crate::prelude::{AuthenticationResult, DoorAccessPermissionResult, DoorGeneratePasswordResult};
 
 pub enum OwnerAccessPermissionResult {
     Door(DoorAccessPermissionResult),
-    OwnerVerified,
+    AuthenticationError(AuthenticationResult),
     NoCredentials,
 }
 
 impl OwnerAccessPermissionResult {
     pub fn ok(&self) -> bool {
         match self {
-            Self::OwnerVerified => true,
             Self::Door(password_result) => password_result.ok(),
+            Self::AuthenticationError(result) => result.ok(),
             Self::NoCredentials => false,
         }
     }

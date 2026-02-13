@@ -1,10 +1,10 @@
-pub struct ManualRegistryAccessInput<'a, Access, Key> {
+pub struct ManualRegistryAccessInput<'a, Access, ValueId> {
     pub access: &'a Access,
-    pub key: &'a Key,
+    pub value_id: &'a ValueId,
 }
 
-pub struct ManualRegistryReplacementInput<'a, Access, Key, Value> {
+pub struct ManualRegistryReplacementInput<'a, Access, ValueId, Value> {
     pub access: &'a Access,
-    pub key: Key,
+    pub value_id: ValueId,
     pub value: Option<Value>
 }

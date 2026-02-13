@@ -5,7 +5,7 @@ pub trait OwnerStorage {
     // is on storage because value might want to be hashed etc.
     fn verify(
         &self,
-        key: &Self::OwnerId, 
-        value: &Self::OwnerPassword
+        owner_id: &Self::OwnerId, 
+        owner_password: &Self::OwnerPassword
     ) -> bool;
 }

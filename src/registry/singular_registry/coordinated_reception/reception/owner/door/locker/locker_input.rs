@@ -1,11 +1,11 @@
-pub struct LockerPermitsAccessInput<'a, Item> {
-    pub item: &'a Item
+pub struct LockerPermitsAccessInput<'a, ValueId> {
+    pub value_id: &'a ValueId
 }
 
-pub struct LockInput<'a, Item> {
-    pub item: &'a Item
+pub struct LockInput<'a, ValueId> {
+    pub value_id: &'a ValueId
 }
 
-pub struct UnlockInput<'a, Item> {
-    pub item: &'a Item
+pub struct UnlockInput<'a, ValueId> {
+    pub value_id: &'a ValueId
 }

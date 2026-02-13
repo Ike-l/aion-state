@@ -1,5 +1,5 @@
-pub struct PasswordManagerAccessPermissionInput<'a, Password, Access> {
-    pub password: Option<&'a Password>,
+pub struct PasswordManagerAccessPermissionInput<'a, ValuePassword, Access> {
+    pub value_password: Option<&'a ValuePassword>,
     pub access: &'a Access
 }
 

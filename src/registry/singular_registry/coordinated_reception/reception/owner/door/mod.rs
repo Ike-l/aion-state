@@ -18,13 +18,13 @@ impl<
     pub fn permits_access(
         &self,
         DoorPermitsAccessInput {
-            item, password, access
+            value_id, value_password, access
         }: DoorPermitsAccessInput<LS::ValueId, PS::ValuePassword, PS::Access>
     ) -> DoorAccessPermissionResult {
         trace_function!("Door Permits Access");
 
-        if self.locker.check_locked(LockerPermitsAccessInput { item }).ok() {
-            DoorAccessPermissionResult::Locked(self.password_manager.check_password(PasswordManagerAccessPermissionInput { password, access }))
+        if self.locker.check_locked(LockerPermitsAccessInput { value_id }).ok() {
+            DoorAccessPermissionResult::Locked(self.password_manager.check_password(PasswordManagerAccessPermissionInput { value_password, access }))
         } else {
             DoorAccessPermissionResult::Unlocked   
         }
@@ -33,10 +33,10 @@ impl<
     pub fn generate_password(
         &mut self,
         DoorGeneratePasswordInput {
-            item, access, policy
+            value_id, access, policy
         }: DoorGeneratePasswordInput<LS::ValueId, PS::Access, PS::GenerationPolicy>
     ) -> DoorGeneratePasswordResult<PS::ValuePassword> {
-        if self.locker.check_locked(LockerPermitsAccessInput { item }).ok() {
+        if self.locker.check_locked(LockerPermitsAccessInput { value_id }).ok() {
             DoorGeneratePasswordResult::PasswordManagerResult(self.password_manager.generate_password(PasswordGeneratorInput { access, policy }))
         } else {
             DoorGeneratePasswordResult::Unlocked

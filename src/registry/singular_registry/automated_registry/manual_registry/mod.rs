@@ -17,14 +17,14 @@ impl<
     pub fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
         &self, 
         ManualRegistryAccessInput {
-            key, access
+            value_id, access
         }: ManualRegistryAccessInput<'_, Access, S::ValueId>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_>> {
         let span = span!(FUNCTION_LEVEL, "Manual Acquire Access");
         let _enter = span.enter();
 
-        match self.storage.get(key) {
-            Some(value) => ManualRegistryAccessResult::Found(access.acquire(value)),
+        match self.storage.get(value_id) {
+            Some(stored_value) => ManualRegistryAccessResult::Found(access.acquire(stored_value)),
             None => ManualRegistryAccessResult::NotFound,
         }
     }
@@ -37,7 +37,7 @@ impl<
     unsafe fn replace<Access: Accessor<StoredValue = S::Value>>(
         &mut self,
         ManualRegistryReplacementInput {
-            access, key, value
+            access, value_id, value
         }: ManualRegistryReplacementInput<'_, Access, S::ValueId, Access::Value>
     ) -> ManualRegistryReplacementResult<Access::StoredValue> {
         let span = span!(FUNCTION_LEVEL, "Manual Unsafe Replacement");
@@ -45,7 +45,7 @@ impl<
 
         let old_resource = match (
             value,
-            self.storage.contains_key(&key),
+            self.storage.contains_key(&value_id),
             access.can_insert(),
             access.can_remove(),
         ) {
@@ -58,7 +58,7 @@ impl<
             (None, false, _, _) => return ManualRegistryReplacementResult::NoOp,
 
             // removal and allowed remove
-            (None, true, _, true) => self.storage.remove(&key),
+            (None, true, _, true) => self.storage.remove(&value_id),
             
             // replacement and allowed insert & remove
             (Some(new_value), true, true, true) |
@@ -66,7 +66,7 @@ impl<
             // insert without replacement and allowed insert
             (Some(new_value), false, true, _) => {
                 let new_stored_value = access.insert(new_value);
-                self.storage.insert(key, new_stored_value)
+                self.storage.insert(value_id, new_stored_value)
             },            
         };
 

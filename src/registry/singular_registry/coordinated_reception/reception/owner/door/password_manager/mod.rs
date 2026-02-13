@@ -13,12 +13,12 @@ impl<PS: PasswordStorage> PasswordManager<PS> {
     pub fn check_password(
         &self,
         PasswordManagerAccessPermissionInput {
-            password, access
+            value_password, access
         }: PasswordManagerAccessPermissionInput<PS::ValuePassword, PS::Access>
     ) -> PasswordCheckResult {
         trace_function!("Checking Password");
         
-        PasswordCheckResult::Checked(self.password_storage.check(password, access))
+        PasswordCheckResult::Checked(self.password_storage.check(value_password, access))
     }
 
     pub fn generate_password(
