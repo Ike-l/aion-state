@@ -43,6 +43,9 @@ try pattern where input has the logic?
 * Already have loom integration using feature flag but no tests 
 * Want Miri testing 
 
+### Future Considerations
+* Passing a "config" associated type- like in `PasswordStorage`
+
 ## Motivation
 This is a helper crate for my big project `Aion`. 
 This will feed directly to `Aion-Program`

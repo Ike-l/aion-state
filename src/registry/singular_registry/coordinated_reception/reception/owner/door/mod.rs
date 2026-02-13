@@ -9,6 +9,10 @@ pub mod door_result;
 /// Wraps `locker storage` 
 /// 
 /// Applies `locker` semantics and then `password storage` semantics
+/// 
+/// If locker semantics are a boolean truth about whether a value can be accessed
+/// 
+/// Then password semantics allow a spectrum of permissions over a locked value 
 pub struct Door<PS, LS> {
     locker: LS,
     password_storage: PS,
@@ -36,6 +40,9 @@ impl<
         }
     }
 
+    /// If the value is locked then generate a password for the access & policy
+    /// 
+    /// Otherwise do nothing: Only locked values can be given a password
     pub fn generate_password(
         &mut self,
         DoorGeneratePasswordInput {

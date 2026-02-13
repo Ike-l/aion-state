@@ -4,6 +4,7 @@ pub trait PasswordStorage {
 
     // i.e If want "Global" semantics for an access, but still want it to be locked
     // ^i.e if Owner wants to restrict access so noone can get a "Unique" access can make the "Shared" access password `None`
+    // rename to GenerationConfig?
     type GenerationPolicy;
 
     fn check(
