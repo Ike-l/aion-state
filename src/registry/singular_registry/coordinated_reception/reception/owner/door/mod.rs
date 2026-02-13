@@ -15,6 +15,9 @@ impl<
     PS: PasswordStorage, 
     LS: LockStorage
 > Door<PS, LS> {
+    /// Is the value currently locked;
+    /// 
+    /// If so: Is the password correct
     pub fn permits_access(
         &self,
         DoorPermitsAccessInput {

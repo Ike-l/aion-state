@@ -7,22 +7,22 @@ pub mod authenticator_result;
 pub mod ownership_storage;
 
 pub struct Authenticator<OS, OSS> {
-    // if owner_storage stores owner id: password then
     owner_storage: OS,
     ownership_storage: OSS,
-    // x stores owner id: resource id
-    // Item, Id
 }
 
 impl<
     OS: OwnerStorage,
     OSS: OwnershipStorage<OwnerId = OS::OwnerId>
 > Authenticator<OS, OSS> {
+    /// Are you the owner; 
+    /// 
+    /// Do you own the resource;
     pub fn authenticate(
         &self,
         AuthenticateInput {
             owner_id, owner_password, value_id
-        }: AuthenticateInput<'_, OS::OwnerId, OS::OwnerPassword, OSS::ValueId> // OS::Item
+        }: AuthenticateInput<'_, OS::OwnerId, OS::OwnerPassword, OSS::ValueId> 
     ) -> AuthenticationResult {
         trace_function!("Authenticating Owner");
 

@@ -1,5 +1,4 @@
-pub struct OwnerAccessPermissionInput<'a, OwnerId, OwnerPassword, ValueId, ValuePassword, Access> {
-    pub owner_credentials: Option<(&'a OwnerId, &'a OwnerPassword)>,
+pub struct OwnerAccessPermissionInput<'a, ValueId, ValuePassword, Access> {
     pub value_id: &'a ValueId,
     pub value_password: Option<&'a ValuePassword>,
     pub access: &'a Access
