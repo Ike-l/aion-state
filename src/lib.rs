@@ -124,19 +124,8 @@ pub mod prelude {
                                     DoorAccessPermissionResult,
                                     DoorGeneratePasswordResult
                                 },
-                                password_manager::{
-                                    PasswordManager,
-                                    password_storage::{
-                                        PasswordStorage
-                                    },
-                                    password_manager_input::{
-                                        PasswordManagerAccessPermissionInput,
-                                        PasswordGeneratorInput
-                                    },
-                                    password_manager_result::{
-                                        PasswordCheckResult,
-                                        PasswordGeneratorResult
-                                    }
+                                password_storage::{
+                                    PasswordStorage
                                 },
                                 lock_storage::{
                                     LockStorage

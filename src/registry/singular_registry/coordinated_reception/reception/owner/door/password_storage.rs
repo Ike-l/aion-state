@@ -8,7 +8,7 @@ pub trait PasswordStorage {
 
     fn check(
         &self,
-        password: Option<&Self::ValuePassword>,
+        value_password: Option<&Self::ValuePassword>,
         access: &Self::Access
     ) -> bool;
 

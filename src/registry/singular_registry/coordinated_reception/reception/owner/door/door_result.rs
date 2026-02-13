@@ -1,20 +1,15 @@
-use crate::prelude::{PasswordCheckResult, PasswordGeneratorResult};
-
 pub enum DoorAccessPermissionResult {
-    Locked(PasswordCheckResult),
+    Locked(bool),
     Unlocked
 }
 
 impl DoorAccessPermissionResult {
     pub fn ok(&self) -> bool {
-        match self {
-            DoorAccessPermissionResult::Locked(password_manager_access_permission_result) => password_manager_access_permission_result.ok(),
-            DoorAccessPermissionResult::Unlocked => true,
-        }
+        !matches!(self, DoorAccessPermissionResult::Locked(false))
     }
 }
 
 pub enum DoorGeneratePasswordResult<Password> {
-    PasswordManagerResult(PasswordGeneratorResult<Password>),
+    PasswordManagerResult(Option<Password>),
     Unlocked,
 }
