@@ -7,6 +7,7 @@ pub mod manual_registry_input;
 pub mod manual_registry_result;
 pub mod stable_address;
 
+/// Wraps storage using `Accessor`
 pub struct ManualRegistry<S> {
     storage: S,
 }

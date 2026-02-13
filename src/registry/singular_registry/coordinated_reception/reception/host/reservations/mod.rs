@@ -8,6 +8,7 @@ pub mod reservations_input;
 pub mod reservations_result;
 pub mod reservation_storage;
 
+/// Wraps reservation storage with `Accessor` semantics
 pub struct Reservations<RS> {
     reservation_storage: RS,
 }
@@ -20,11 +21,18 @@ impl<
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Debug + Accessor
 {
+    /// A `Conflict` occurs if all:
+    /// 
+    /// There is an existing reserver
+    /// The existing reserver is not the incoming reserver
+    /// The existing reserver's access denies the incoming access using `Accessor`
+    /// 
+    /// Returns on first conflict found
     pub fn permits_access(
         &self,
         ReservationsAccessPermissionInput {
             reserver_id, access_id, access,
-        }: ReservationsAccessPermissionInput<'_, RS::ReserverId, AS::AccessId, AS::Access>
+        }: ReservationsAccessPermissionInput<'_, RS::ReserverId, AS::ValueId, AS::Access>
     ) -> ReservationsAccessPermissionResult {
         trace_function!("Reservations Permits Access");
 
@@ -55,11 +63,14 @@ impl<
         ReservationsAccessPermissionResult::Ok(!conflicts)
     }
 
+    /// Reserves by recording the access with the associated reserver
+    /// 
+    /// If the first reservation by the reserver creates an Access container using the `Default` trait
     pub fn reserve(
         &mut self,
         ReserveInput {
             reserver_id, access_id, access
-        }: ReserveInput<RS::ReserverId, AS::AccessId, AS::Access>
+        }: ReserveInput<RS::ReserverId, AS::ValueId, AS::Access>
     ) -> ReservationsReserveResult {
         trace_function!("Reservations Reserve");
 
@@ -75,11 +86,12 @@ impl<
         }
     }
 
+    /// Unreserves by releasing the access corresponding with the incoming reserver
     pub fn unreserve(
         &mut self,
         UnreserveInput {
             reserver_id, access_id, access
-        }: UnreserveInput<'_, RS::ReserverId, AS::AccessId, AS::Access>
+        }: UnreserveInput<'_, RS::ReserverId, AS::ValueId, AS::Access>
     ) -> ReservationsUnreserveResult {
         trace_function!("Reservations Unreserve");
 

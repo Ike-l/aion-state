@@ -4,6 +4,9 @@ use crate::prelude::{Accessor, ManualRegistry, ManualRegistryAccessInput, Manual
 
 pub mod manual_registry;
 
+/// Provides individual access ability to the underlying storage
+/// 
+/// Requires `Automation` to ensure safety
 pub struct AutomatedRegistry<S> {
     manual_registry: UnsafeCell<ManualRegistry<S>>
 }

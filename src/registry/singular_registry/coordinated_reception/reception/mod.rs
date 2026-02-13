@@ -19,7 +19,7 @@ impl<
     OS: OwnerStorage,
     OSS: OwnershipStorage<ValueId = LS::ValueId, OwnerId = OS::OwnerId>,
     PS: PasswordStorage<Access = AS::Access>,
-    LS: LockStorage<ValueId = AS::AccessId>,
+    LS: LockStorage<ValueId = AS::ValueId>,
 > Reception<RS, AS, OS, PS, LS, OSS> 
     where 
         RS::ReserverId: Debug + PartialEq,
@@ -29,7 +29,7 @@ impl<
         &self,
         ReceptionAccessPermissionInput {
             reserver_id, access_id, access, value_password
-        }: ReceptionAccessPermissionInput<'_, RS::ReserverId, AS::AccessId, AS::Access, PS::ValuePassword>
+        }: ReceptionAccessPermissionInput<'_, RS::ReserverId, AS::ValueId, AS::Access, PS::ValuePassword>
     ) -> ReceptionAccessPermissionResult {
         trace_function!("Reception Permits Access");
 

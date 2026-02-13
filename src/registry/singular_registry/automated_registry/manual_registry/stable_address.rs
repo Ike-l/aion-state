@@ -1,6 +1,7 @@
 use std::rc::Rc;
 use crate::prelude::sync::Arc;
 
+/// The instance can be moved with existing references to the underlying data
 pub trait StableAddress: sealed::Sealed {}
 
 impl<T> StableAddress for Box<T> {}

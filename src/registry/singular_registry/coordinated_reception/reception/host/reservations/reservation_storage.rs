@@ -1,10 +1,9 @@
 use crate::prelude::Accesses;
 
 pub trait ReservationStorage {
-    // ReserverId
     type ReserverId;
 
-    // AccessStorage: AccessStorage
+    /// Needs `AccessStorage: AccessStorage` to use crate functionality
     type AccessStorage;
 
     fn get_mut(

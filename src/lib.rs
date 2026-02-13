@@ -138,21 +138,8 @@ pub mod prelude {
                                         PasswordGeneratorResult
                                     }
                                 },
-                                locker::{
-                                    Locker,
-                                    lock_storage::{
-                                        LockStorage
-                                    },
-                                    locker_input::{
-                                        LockerPermitsAccessInput,
-                                        LockInput,
-                                        UnlockInput
-                                    },
-                                    locker_result::{
-                                        LockerAccessPermissionResult,
-                                        LockResult,
-                                        UnlockResult
-                                    }
+                                lock_storage::{
+                                    LockStorage
                                 },
                             },
                         }
