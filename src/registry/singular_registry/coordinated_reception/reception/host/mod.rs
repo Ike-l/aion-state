@@ -9,7 +9,7 @@ pub mod host_input;
 pub mod host_result;
 
 /// Gates accesses using reservations
-/// (`reservatin` semantics are applied, then `accesses` semantics are applied)
+/// (`reservation` semantics are applied, then `accesses` semantics are applied)
 pub struct Host<RS, AS> {
     reservations: Reservations<RS>,
     accesses: Accesses<AS>,

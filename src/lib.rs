@@ -41,10 +41,12 @@ pub mod prelude {
                     reception::{
                         Reception,
                         reception_input::{
-                            ReceptionAccessPermissionInput
+                            ReceptionAccessPermissionInput,
+                            ReceptionPasswordGeneratorInput
                         },
                         reception_result::{
-                            ReceptionAccessPermissionResult
+                            ReceptionAccessPermissionResult,
+                            
                         },
                         host::{
                             Host,
