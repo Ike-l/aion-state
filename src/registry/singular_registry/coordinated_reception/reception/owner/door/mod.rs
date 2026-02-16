@@ -6,15 +6,15 @@ pub mod lock_storage;
 pub mod door_input;
 pub mod door_result;
 
-/// Wraps `locker storage` 
+/// Wraps `lock storage` 
 /// 
-/// Applies `locker` semantics and then `password storage` semantics
+/// Applies `lock storage` semantics and then `password storage` semantics
 /// 
-/// If locker semantics are a boolean truth about whether a value can be accessed
+/// If lock storage semantics are a boolean truth about whether a value can be accessed
 /// 
 /// Then password semantics allow a spectrum of permissions over a locked value 
 pub struct Door<PS, LS> {
-    locker: LS,
+    lock_storage: LS,
     password_storage: PS,
 }
 
@@ -33,7 +33,7 @@ impl<
     ) -> DoorAccessPermissionResult {
         trace_function!("Door Permits Access");
 
-        if self.locker.check(value_id) {
+        if self.lock_storage.check(value_id) {
             DoorAccessPermissionResult::Locked(self.password_storage.check(value_password, access))
         } else {
             DoorAccessPermissionResult::Unlocked   
@@ -49,7 +49,7 @@ impl<
             value_id, access, policy
         }: DoorGeneratePasswordInput<LS::ValueId, PS::Access, PS::GenerationPolicy>
     ) -> DoorGeneratePasswordResult<PS::ValuePassword> {
-        if self.locker.check(value_id) {
+        if self.lock_storage.check(value_id) {
             DoorGeneratePasswordResult::PasswordManagerResult(self.password_storage.generate_password(access, policy))
         } else {
             DoorGeneratePasswordResult::Unlocked

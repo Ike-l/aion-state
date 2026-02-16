@@ -41,6 +41,10 @@ impl<
         }
     }
 
+    // if locked then deny reservation without password
+    
+
+
     // pub fn locks
     // checks for any reservation or accesses 
     // if !self.host.has_stakeholder {

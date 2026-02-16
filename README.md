@@ -45,6 +45,7 @@ try pattern where input has the logic?
 
 ### Future Considerations
 * Passing a "config" associated type- like in `PasswordStorage`
+* Allow locking of *all* resources- Processor can guarantee no background threads can block
 
 ## Motivation
 This is a helper crate for my big project `Aion`. 
