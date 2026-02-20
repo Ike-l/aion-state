@@ -43,7 +43,8 @@ pub mod prelude {
                         reception_input::{
                             ReceptionAccessPermissionInput,
                             ReceptionPasswordGeneratorInput,
-                            ReceptionReservationInput
+                            ReceptionReservationInput,
+                            ReceptionUnreserveInput
                         },
                         reception_result::{
                             ReceptionAccessPermissionResult,

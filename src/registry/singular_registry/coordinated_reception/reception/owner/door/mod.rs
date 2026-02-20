@@ -39,6 +39,8 @@ impl<
             DoorAccessPermissionResult::Unlocked   
         }
     }
+    // permits_access -> check_value_password
+    // check_reserver_password -> when generating reservations make a password for that reserver
 
     /// If the value is locked then generate a password for the access & policy
     /// 

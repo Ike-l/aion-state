@@ -19,3 +19,9 @@ pub struct ReceptionReservationInput<'a, ValueId, ValuePassword, Access, Reserve
     pub access: Access, 
     pub reserver_id: ReserverId, 
 }
+
+pub struct ReceptionUnreserveInput<'a, ReserverId, AccessId, Access> {
+    pub reserver_id: &'a ReserverId,
+    pub access_id: &'a AccessId,
+    pub access: &'a Access
+}

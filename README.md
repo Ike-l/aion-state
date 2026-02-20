@@ -37,6 +37,8 @@ try pattern where input has the logic?
     * sorry there is still gonna be a lot
 
 ### Future
+* Want to track the reserver to limit who can "unreserve"
+    * either a layer beneath Door, or a layer in reservations
 * Want to exhaustively test like TigerBeetle
 * Want to give a default implementation (will need for testing anyways)
 * Want a tokio feature flag to transform the entire thing into async-aware
