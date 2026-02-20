@@ -6,6 +6,8 @@ pub mod door;
 pub mod owner_result;
 pub mod owner_input;
 
+// move Door to after Host?
+
 /// Applies `Authentication` semantics when ownership of the door is required, then `Door` semantics 
 pub struct Owner<OS, PS, LS, OSS> {
     authenticator: Authenticator<OS, OSS>,
@@ -40,10 +42,19 @@ impl<
     ) -> OwnerPasswordGeneratorResult<PS::ValuePassword> {
         trace_function!("Owner Generates Password");
 
-        if self.authenticator.authenticate(AuthenticateInput { owner_id, owner_password, value_id }).ok() {
+        if self.authenticate(AuthenticateInput { owner_id, owner_password, value_id }).ok() {
             OwnerPasswordGeneratorResult::Door(self.door.generate_password(DoorGeneratePasswordInput { value_id, access, policy }))
         } else {
             OwnerPasswordGeneratorResult::Denied
         }
+    }
+
+    pub fn authenticate(
+        &self,
+        OwnerAuthenticationInput {
+
+        }: OwnerAuthenticationInput
+    ) {
+        self.authenticator.authenticate(AuthenticateInput { owner_id, owner_password, value_id })
     }
 }

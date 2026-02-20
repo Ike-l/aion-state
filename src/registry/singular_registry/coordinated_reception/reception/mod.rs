@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, Host, HostAccessPermissionInput, HostUnreserveResult, LockStorage, Owner, OwnerAccessPermissionInput, OwnerPasswordGeneratorInput, OwnerStorage, OwnershipStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReceptionPasswordGeneratorInput, ReceptionPasswordGeneratorResult, ReceptionReservationInput, ReceptionReservationResult, ReceptionUnreserveInput, ReceptionUnreserveResult, ReservationStorage, ReserveInput, UnreserveInput, trace_function};
+use crate::prelude::{AccessStorage, Accessor, Host, HostAccessPermissionInput, LockStorage, Owner, OwnerAccessPermissionInput, OwnerPasswordGeneratorInput, OwnerStorage, OwnershipStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReceptionPasswordGeneratorInput, ReceptionPasswordGeneratorResult, ReceptionReservationInput, ReceptionReservationResult, ReceptionUnreserveInput, ReceptionUnreserveResult, ReservationStorage, ReserveInput, UnreserveInput, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -52,6 +52,9 @@ impl<
     ) -> ReceptionReservationResult {
         let owner_access_permission = self.owner.permits_access(OwnerAccessPermissionInput { value_id: &value_id, value_password, access: &access });
         if owner_access_permission.ok() {
+            // record reservation with reserver "owning" the access_id if host is okay?
+            // does this mean there are 2 sides?
+            // so need Authenticator -> Host -> Owner
             ReceptionReservationResult::Host(self.host.reserve(ReserveInput { reserver_id, access_id: value_id, access }))
         } else {
             ReceptionReservationResult::Denied
@@ -64,10 +67,11 @@ impl<
             reserver_id, access_id, access
         }: ReceptionUnreserveInput<'_, RS::ReserverId, AS::ValueId, AS::Access>
     ) -> ReceptionUnreserveResult {
-        // self.owner.check reserver (returns if the current function flow is the valid reserver)
-        // could use a password
-        // put this check in host?
-        ReceptionUnreserveResult::Host(self.host.unreserve(UnreserveInput { reserver_id, access_id, access }))
+        if self.owner.authenticate() {
+            ReceptionUnreserveResult::Host(self.host.unreserve(UnreserveInput { reserver_id, access_id, access }))
+        } else {
+            ReceptionUnreserveResult::Denied
+        }
     }
 
     // pub fn locks

@@ -15,5 +15,6 @@ pub enum ReceptionReservationResult {
 }
 
 pub enum ReceptionUnreserveResult {
-    Host(HostUnreserveResult)
+    Host(HostUnreserveResult),
+    Denied
 }
