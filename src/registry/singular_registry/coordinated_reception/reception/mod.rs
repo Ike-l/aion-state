@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, Host, HostAccessPermissionInput, LockStorage, Owner, OwnerAccessPermissionInput, OwnerPasswordGeneratorInput, OwnerStorage, OwnershipStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReceptionPasswordGeneratorInput, ReceptionPasswordGeneratorResult, ReceptionReservationInput, ReceptionReservationResult, ReceptionUnreserveInput, ReservationStorage, ReserveInput, UnreserveInput, trace_function};
+use crate::prelude::{AccessStorage, Accessor, Host, HostAccessPermissionInput, HostUnreserveResult, LockStorage, Owner, OwnerAccessPermissionInput, OwnerPasswordGeneratorInput, OwnerStorage, OwnershipStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReceptionPasswordGeneratorInput, ReceptionPasswordGeneratorResult, ReceptionReservationInput, ReceptionReservationResult, ReceptionUnreserveInput, ReceptionUnreserveResult, ReservationStorage, ReserveInput, UnreserveInput, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -63,11 +63,11 @@ impl<
         ReceptionUnreserveInput {
             reserver_id, access_id, access
         }: ReceptionUnreserveInput<'_, RS::ReserverId, AS::ValueId, AS::Access>
-    ) {
+    ) -> ReceptionUnreserveResult {
         // self.owner.check reserver (returns if the current function flow is the valid reserver)
         // could use a password
         // put this check in host?
-        self.host.unreserve(UnreserveInput { reserver_id, access_id, access });
+        ReceptionUnreserveResult::Host(self.host.unreserve(UnreserveInput { reserver_id, access_id, access }))
     }
 
     // pub fn locks

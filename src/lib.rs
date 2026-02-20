@@ -49,7 +49,8 @@ pub mod prelude {
                         reception_result::{
                             ReceptionAccessPermissionResult,
                             ReceptionPasswordGeneratorResult,
-                            ReceptionReservationResult
+                            ReceptionReservationResult,
+                            ReceptionUnreserveResult,
                         },
                         host::{
                             Host,
@@ -62,7 +63,7 @@ pub mod prelude {
                                 HostRecordAccessResult,
                                 HostReservationResult,
                                 HostUnreserveResult,
-                                HostReleaseAccessResult
+                                HostReleaseAccessResult,
                             },
                             reservations::{
                                 Reservations,
@@ -77,7 +78,7 @@ pub mod prelude {
                                 reservations_result::{
                                     ReservationsAccessPermissionResult,
                                     ReservationsReserveResult,
-                                    ReservationsUnreserveResult
+                                    ReservationsUnreserveResult,
                                 },
                             },
                             accesses::{
