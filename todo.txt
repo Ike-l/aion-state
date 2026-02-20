@@ -1,0 +1,7 @@
+Move Host into Door
+Move Door into Reception
+
+Door has AccessControl
+which is Blacklist & Whitelist
+- Blacklist says "This ValueId is Locked"
+- Whitelist says "This User(Password) can access this ValueId with Access"
