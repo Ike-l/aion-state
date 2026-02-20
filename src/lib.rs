@@ -46,7 +46,7 @@ pub mod prelude {
                         },
                         reception_result::{
                             ReceptionAccessPermissionResult,
-                            
+                            ReceptionPasswordGeneratorResult
                         },
                         host::{
                             Host,

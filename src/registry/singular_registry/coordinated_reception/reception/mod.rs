@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, Host, HostAccessPermissionInput, LockStorage, Owner, OwnerAccessPermissionInput, OwnerPasswordGeneratorInput, OwnerStorage, OwnershipStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReceptionPasswordGeneratorInput, ReservationStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, Host, HostAccessPermissionInput, LockStorage, Owner, OwnerAccessPermissionInput, OwnerPasswordGeneratorInput, OwnerStorage, OwnershipStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReceptionPasswordGeneratorInput, ReceptionPasswordGeneratorResult, ReservationStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -66,13 +66,12 @@ impl<
         ReceptionPasswordGeneratorInput {
             owner_id, owner_password, value_id, access, policy
         }: ReceptionPasswordGeneratorInput<'_, OS::OwnerId, OS::OwnerPassword, LS::ValueId, PS::Access, PS::GenerationPolicy>
-    ) {
+    ) -> ReceptionPasswordGeneratorResult<PS::ValuePassword> {
         trace_function!("Reception Generate Password");
 
         // To generate passwords does the `host` have to do anything? 
         // When generating a password iow do i need `reservation` or `accesses` semantics?
-        self.owner.generate_password(OwnerPasswordGeneratorInput { owner_id, owner_password, value_id, access, policy });
-        todo!("Return result");
-        unreachable!()
+        let result = self.owner.generate_password(OwnerPasswordGeneratorInput { owner_id, owner_password, value_id, access, policy });
+        ReceptionPasswordGeneratorResult::Owner(result)
     }
 }
