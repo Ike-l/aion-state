@@ -1,4 +1,4 @@
-use crate::prelude::{HostAccessPermissionResult, OwnerPasswordGeneratorResult};
+use crate::prelude::{HostAccessPermissionResult, HostReservationResult, OwnerPasswordGeneratorResult};
 
 pub enum ReceptionAccessPermissionResult {
     Host(HostAccessPermissionResult),
@@ -7,4 +7,9 @@ pub enum ReceptionAccessPermissionResult {
 
 pub enum ReceptionPasswordGeneratorResult<Password> {
     Owner(OwnerPasswordGeneratorResult<Password>)
+}
+
+pub enum ReceptionReservationResult {
+    Host(HostReservationResult),
+    Denied,
 }

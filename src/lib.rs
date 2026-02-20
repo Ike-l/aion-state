@@ -42,11 +42,13 @@ pub mod prelude {
                         Reception,
                         reception_input::{
                             ReceptionAccessPermissionInput,
-                            ReceptionPasswordGeneratorInput
+                            ReceptionPasswordGeneratorInput,
+                            ReceptionReservationInput
                         },
                         reception_result::{
                             ReceptionAccessPermissionResult,
-                            ReceptionPasswordGeneratorResult
+                            ReceptionPasswordGeneratorResult,
+                            ReceptionReservationResult
                         },
                         host::{
                             Host,
@@ -56,7 +58,10 @@ pub mod prelude {
                             },
                             host_result::{
                                 HostAccessPermissionResult,
-                                HostRecordAccessResult
+                                HostRecordAccessResult,
+                                HostReservationResult,
+                                HostUnreserveResult,
+                                HostReleaseAccessResult
                             },
                             reservations::{
                                 Reservations,

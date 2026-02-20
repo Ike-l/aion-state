@@ -18,7 +18,7 @@ impl<
     LS: LockStorage,
     OSS: OwnershipStorage<OwnerId = OS::OwnerId, ValueId = LS::ValueId>,
 > Owner<OS, PS, LS, OSS> {
-    /// No owner semantics are need so is a `pass through` function to `Door`
+    /// No `authenticator` semantics are need so is a `pass through` function to `Door`
     pub fn permits_access(
         &self,
         OwnerAccessPermissionInput {

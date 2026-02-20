@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accesses, Accessor, HostAccessPermissionInput, HostAccessPermissionResult, HostRecordAccessInput, HostRecordAccessResult, PermitsAccessInput, RecordAccessInput, RemoveAccessInput, RemoveAccessResult, ReservationStorage, Reservations, ReservationsAccessPermissionInput, ReservationsReserveResult, ReservationsUnreserveResult, ReserveInput, UnreserveInput, trace_function};
+use crate::prelude::{AccessStorage, Accesses, Accessor, HostAccessPermissionInput, HostAccessPermissionResult, HostRecordAccessInput, HostRecordAccessResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, PermitsAccessInput, RecordAccessInput, RemoveAccessInput, ReservationStorage, Reservations, ReservationsAccessPermissionInput, ReserveInput, UnreserveInput, trace_function};
 
 pub mod reservations;
 pub mod accesses;
@@ -68,10 +68,10 @@ impl<
     pub fn release_access(
         &mut self,
         remove_access_input: RemoveAccessInput<'_, AS::ValueId, AS::Access>
-    ) -> RemoveAccessResult {
+    ) -> HostReleaseAccessResult {
         trace_function!("Host Releasing Access");
 
-        self.accesses.release_access(remove_access_input)
+        HostReleaseAccessResult::Accesses(self.accesses.release_access(remove_access_input))
     }
 
     /// Simply a `pass through` function
@@ -80,10 +80,10 @@ impl<
     pub fn unreserve(
         &mut self,
         unreserve_input: UnreserveInput<'_, RS::ReserverId, AS::ValueId, AS::Access>
-    ) -> ReservationsUnreserveResult {
+    ) -> HostUnreserveResult {
         trace_function!("Host Unreserving");
 
-        self.reservations.unreserve(unreserve_input)
+        HostUnreserveResult::Reservations(self.reservations.unreserve(unreserve_input))
     }
 
     /// Simply a `pass through` function
@@ -92,9 +92,9 @@ impl<
     pub fn reserve(
         &mut self,
         reserve_input: ReserveInput<RS::ReserverId, AS::ValueId, AS::Access>
-    ) -> ReservationsReserveResult {
+    ) -> HostReservationResult {
         trace_function!("Host Reserving");
 
-        self.reservations.reserve(reserve_input)
+        HostReservationResult::Reservations(self.reservations.reserve(reserve_input))
     }
 }

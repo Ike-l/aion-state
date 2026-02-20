@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, Host, HostAccessPermissionInput, LockStorage, Owner, OwnerAccessPermissionInput, OwnerPasswordGeneratorInput, OwnerStorage, OwnershipStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReceptionPasswordGeneratorInput, ReceptionPasswordGeneratorResult, ReservationStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, Host, HostAccessPermissionInput, LockStorage, Owner, OwnerAccessPermissionInput, OwnerPasswordGeneratorInput, OwnerStorage, OwnershipStorage, PasswordStorage, ReceptionAccessPermissionInput, ReceptionAccessPermissionResult, ReceptionPasswordGeneratorInput, ReceptionPasswordGeneratorResult, ReceptionReservationInput, ReceptionReservationResult, ReservationStorage, ReserveInput, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -30,21 +30,34 @@ impl<
     pub fn permits_access(
         &self,
         ReceptionAccessPermissionInput {
-            reserver_id, access_id, access, value_password
+            reserver_id, value_id, access, value_password
         }: ReceptionAccessPermissionInput<'_, RS::ReserverId, AS::ValueId, AS::Access, PS::ValuePassword>
     ) -> ReceptionAccessPermissionResult {
         trace_function!("Reception Permits Access");
 
-        let owner_access_permission = self.owner.permits_access(OwnerAccessPermissionInput { value_id: access_id, value_password, access });
+        let owner_access_permission = self.owner.permits_access(OwnerAccessPermissionInput { value_id, value_password, access });
         if owner_access_permission.ok() {
-            ReceptionAccessPermissionResult::Host(self.host.permits_access(HostAccessPermissionInput { reserver_id, access_id, access }))
+            ReceptionAccessPermissionResult::Host(self.host.permits_access(HostAccessPermissionInput { reserver_id, access_id: value_id, access }))
         } else {
             ReceptionAccessPermissionResult::Denied
         }
     }
 
     // if locked then deny reservation without password
-    
+    pub fn reserve(
+        &mut self,
+        ReceptionReservationInput {
+            value_id, value_password, access, reserver_id
+        }: ReceptionReservationInput<'_, AS::ValueId, PS::ValuePassword, AS::Access, RS::ReserverId>
+    ) -> ReceptionReservationResult {
+        let owner_access_permission = self.owner.permits_access(OwnerAccessPermissionInput { value_id: &value_id, value_password, access: &access });
+        if owner_access_permission.ok() {
+            ReceptionReservationResult::Host(self.host.reserve(ReserveInput { reserver_id, access_id: value_id, access }))
+        } else {
+            ReceptionReservationResult::Denied
+        }
+    }
+
 
 
     // pub fn locks
