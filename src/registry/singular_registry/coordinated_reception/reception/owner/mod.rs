@@ -11,6 +11,8 @@ pub mod owner_input;
 /// Applies `Authentication` semantics when ownership of the door is required, then `Door` semantics 
 pub struct Owner<OS, PS, LS, OSS> {
     authenticator: Authenticator<OS, OSS>,
+    // Move Door into Reception
+    // then Host into Door
     door: Door<PS, LS>
 }
 
