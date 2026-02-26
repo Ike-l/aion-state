@@ -67,11 +67,11 @@ impl<
             reserver_id, access_id, access
         }: ReceptionUnreserveInput<'_, RS::ReserverId, AS::ValueId, AS::Access>
     ) -> ReceptionUnreserveResult {
-        if self.owner.authenticate() {
+        // if self.owner.authenticate().ok() {
             ReceptionUnreserveResult::Host(self.host.unreserve(UnreserveInput { reserver_id, access_id, access }))
-        } else {
-            ReceptionUnreserveResult::Denied
-        }
+        // } else {
+        //     ReceptionUnreserveResult::Denied
+        // }
     }
 
     // pub fn locks

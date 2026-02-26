@@ -44,19 +44,19 @@ impl<
     ) -> OwnerPasswordGeneratorResult<PS::ValuePassword> {
         trace_function!("Owner Generates Password");
 
-        if self.authenticate(AuthenticateInput { owner_id, owner_password, value_id }).ok() {
+        // if self.authenticate(AuthenticateInput { owner_id, owner_password, value_id }).ok() {
             OwnerPasswordGeneratorResult::Door(self.door.generate_password(DoorGeneratePasswordInput { value_id, access, policy }))
-        } else {
-            OwnerPasswordGeneratorResult::Denied
-        }
+        // } else {
+        //     OwnerPasswordGeneratorResult::Denied
+        // }
     }
 
-    pub fn authenticate(
-        &self,
-        OwnerAuthenticationInput {
+    // pub fn authenticate(
+    //     &self,
+    //     OwnerAuthenticationInput {
 
-        }: OwnerAuthenticationInput
-    ) {
-        self.authenticator.authenticate(AuthenticateInput { owner_id, owner_password, value_id })
-    }
+    //     }: OwnerAuthenticationInput
+    // ) {
+    //     self.authenticator.authenticate(AuthenticateInput { owner_id, owner_password, value_id })
+    // }
 }
