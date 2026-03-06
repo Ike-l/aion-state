@@ -1,10 +1,9 @@
 pub enum AuthenticationResult {
-    OwnershipVerification(bool),
-    Denied,
+    Verification(bool)
 }
 
 impl AuthenticationResult {
     pub fn ok(&self) -> bool {
-        matches!(self, Self::OwnershipVerification(true))
+        matches!(self, Self::Verification(true))
     }
 }

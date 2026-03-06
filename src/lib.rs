@@ -47,10 +47,6 @@ pub mod prelude {
                             ReceptionUnreserveInput
                         },
                         reception_result::{
-                            ReceptionAccessPermissionResult,
-                            ReceptionPasswordGeneratorResult,
-                            ReceptionReservationResult,
-                            ReceptionUnreserveResult,
                         },
                         host::{
                             Host,
@@ -101,12 +97,8 @@ pub mod prelude {
                         owner::{
                             Owner,
                             owner_input::{
-                                OwnerAccessPermissionInput,
-                                OwnerPasswordGeneratorInput
                             },
                             owner_result::{
-                                OwnerAccessPermissionResult,
-                                OwnerPasswordGeneratorResult
                             },
                             authenticator::{
                                 Authenticator,
@@ -116,30 +108,62 @@ pub mod prelude {
                                 authenticator_result::{
                                     AuthenticationResult
                                 },
-                                owner_storage::{
-                                    OwnerStorage
-                                },
-                                ownership_storage::{
-                                    OwnershipStorage
+                                credential_storage::{
+                                    CredentialStorage
                                 },
                             },
-                            door::{
-                                Door,
-                                door_input::{
-                                    DoorPermitsAccessInput,
-                                    DoorGeneratePasswordInput
+                            controller::{
+                                Controller,
+                                access_control::{
+                                    AccessControl,
+                                    access_control_input::{
+                                        AccessControlAccess
+                                    },
+                                    access_control_result::{
+                                        AccessControlAccessResult
+                                    },
+                                    blacklist::{
+                                        Blacklist,
+                                        blacklist_input::{
+                                            BlacklistAccess,
+                                            BlacklistAllow
+                                        },
+                                        blacklist_result::{
+                                            BlacklistAccessResult,
+                                            BlacklistAllowResult
+                                        },
+                                        blacklist_storage::{
+                                            BlacklistStorage
+                                        }
+                                    },
+                                    whitelist::{
+                                        Whitelist,
+                                        whitelist_input::{
+                                            WhitelistAccess,
+                                            WhitelistAllow
+                                        },
+                                        whitelist_result::{
+                                            WhitelistAccessResult
+                                            WhitelistAllowResult
+                                        },
+                                        whitelist_storage::{
+                                            WhitelistStorage
+                                        }
+                                    }
                                 },
-                                door_result::{
-                                    DoorAccessPermissionResult,
-                                    DoorGeneratePasswordResult
-                                },
-                                password_storage::{
-                                    PasswordStorage
-                                },
-                                lock_storage::{
-                                    LockStorage
-                                },
-                            },
+                                resource_control::{
+                                    ResourceControl,
+                                    control_storage::{
+                                        ControlStorage
+                                    },
+                                    resource_control_input::{
+                                        ResourceControlVerification
+                                    },
+                                    resource_control_result::{
+                                        ResourceControlVerificationResult
+                                    }
+                                }
+                            }
                         }
                     }
                 },

@@ -1,40 +1,29 @@
-use crate::prelude::{AuthenticateInput, AuthenticationResult, OwnerStorage, OwnershipStorage, trace_function};
+use crate::prelude::{AuthenticateInput, AuthenticationResult, CredentialStorage, trace_function};
 
-pub mod owner_storage;
+pub mod credential_storage;
 
 pub mod authenticator_input;
 pub mod authenticator_result;
-pub mod ownership_storage;
 
 /// wraps `owner storage` and `ownership storage`
 /// 
 /// applies `owner storage` semantics and then `ownership storage` semantics
-pub struct Authenticator<OS, OSS> {
-    owner_storage: OS,
-    ownership_storage: OSS,
+pub struct Authenticator<OS> {
+    credentials: OS,
 }
 
 impl<
-    OS: OwnerStorage,
-    OSS: OwnershipStorage<OwnerId = OS::OwnerId>
-> Authenticator<OS, OSS> {
-    /// Are you the owner; 
-    /// 
-    /// Do you own the resource;
-    /// 
-    /// Authenticates by verifying with owner storage then ownership storage
+    OS: CredentialStorage,
+> Authenticator<OS> {
+    /// Authenticates by verifying the `Id` matches the `Password`
     pub fn authenticate(
         &self,
         AuthenticateInput {
-            owner_id, owner_password, value_id
-        }: AuthenticateInput<'_, OS::OwnerId, OS::OwnerPassword, OSS::ValueId> 
+            id, password
+        }: AuthenticateInput<'_, OS::Id, OS::Password> 
     ) -> AuthenticationResult {
-        trace_function!("Authenticating Owner");
+        trace_function!("Authenticating");
 
-        if self.owner_storage.verify(owner_id, owner_password) {
-            AuthenticationResult::OwnershipVerification(self.ownership_storage.verify(owner_id, value_id))
-        } else {
-            AuthenticationResult::Denied
-        }
+        AuthenticationResult::Verification(self.credentials.verify(id, password))
     }
 }
