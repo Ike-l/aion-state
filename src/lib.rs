@@ -161,11 +161,13 @@ pub mod prelude {
                                     },
                                     resource_control_input::{
                                         ResourceControlVerification,
-                                        ResourceControlRelease
+                                        ResourceControlRelease,
+                                        ResourceControlOwn
                                     },
                                     resource_control_result::{
                                         ResourceControlVerificationResult,
-                                        ResourceControlReleaseResult
+                                        ResourceControlReleaseResult,
+                                        ResourceControlOwnResult
                                     }
                                 }
                             }

@@ -1,4 +1,4 @@
-use crate::prelude::{ControlStorage, ResourceControlRelease, ResourceControlReleaseResult, ResourceControlVerification, ResourceControlVerificationResult};
+use crate::prelude::{ControlStorage, ResourceControlOwn, ResourceControlOwnResult, ResourceControlRelease, ResourceControlReleaseResult, ResourceControlVerification, ResourceControlVerificationResult};
 
 pub mod control_storage;
 
@@ -12,7 +12,14 @@ pub struct ResourceControl<CS> {
 impl<
     CS: ControlStorage
 > ResourceControl<CS> {
-    pub fn own() {}
+    pub fn own(
+        &self,
+        ResourceControlOwn {
+            id, resource_id
+        }: ResourceControlOwn<CS::Id, CS::ResourceId>
+    ) -> ResourceControlOwnResult {
+        ResourceControlOwnResult::Own(self.control_storage.own(id, resource_id))
+    }
 
     pub fn release(
         &self,

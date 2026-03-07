@@ -5,3 +5,7 @@ pub enum ResourceControlVerificationResult {
 pub enum ResourceControlReleaseResult {
     Released(bool)
 }
+
+pub enum ResourceControlOwnResult {
+    Own(bool)
+}
