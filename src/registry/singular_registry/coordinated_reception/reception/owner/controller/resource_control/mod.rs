@@ -18,6 +18,10 @@ impl<
             id, resource_id
         }: ResourceControlOwn<CS::Id, CS::ResourceId>
     ) -> ResourceControlOwnResult {
+        if self.control_storage.is_owned(&resource_id) {
+            return ResourceControlOwnResult::OwnershipConflict
+        }
+
         ResourceControlOwnResult::Own(self.control_storage.own(id, resource_id))
     }
 

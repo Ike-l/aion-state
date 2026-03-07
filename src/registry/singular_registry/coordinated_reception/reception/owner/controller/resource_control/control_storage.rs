@@ -34,4 +34,9 @@ pub trait ControlStorage {
         id: Self::Id,
         resource_id: Self::ResourceId
     ) -> bool;
+
+    fn is_owned(
+        &self,
+        resource_id: &Self::ResourceId
+    ) -> bool;
 }

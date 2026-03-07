@@ -114,6 +114,12 @@ pub mod prelude {
                             },
                             controller::{
                                 Controller,
+                                controller_input::{
+                                    ControllerOwn
+                                },
+                                controller_result::{
+                                    ControllerOwnResult
+                                },
                                 access_control::{
                                     AccessControl,
                                     access_control_input::{

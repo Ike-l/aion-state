@@ -7,5 +7,6 @@ pub enum ResourceControlReleaseResult {
 }
 
 pub enum ResourceControlOwnResult {
-    Own(bool)
+    Own(bool),
+    OwnershipConflict
 }
