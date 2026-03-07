@@ -160,10 +160,12 @@ pub mod prelude {
                                         ControlStorage
                                     },
                                     resource_control_input::{
-                                        ResourceControlVerification
+                                        ResourceControlVerification,
+                                        ResourceControlRelease
                                     },
                                     resource_control_result::{
-                                        ResourceControlVerificationResult
+                                        ResourceControlVerificationResult,
+                                        ResourceControlReleaseResult
                                     }
                                 }
                             }

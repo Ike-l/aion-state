@@ -63,6 +63,11 @@ interfaces a Storage trait. This should make each function simple and easily tes
 
 - Storages by generics- each should be almost trivially implemented by a HashMap but maybe would work for a DB (when tokio flag?)
 
+- Results do NOT use associated types for returns.
+
+- Stays away from 'toggle' booleans on functions
+
+
 ## FAQ
 - Q: Why is are results so verbose
     - A: I like always being able to match exhaustively on all "choices" the program made during a function call
