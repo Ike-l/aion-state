@@ -8,3 +8,7 @@ pub struct AccessControlAllow<Id, Access> {
     pub id: Id,
     pub access: Access
 }
+
+pub struct AccessControlRelease<'a, Id> {
+    pub id: &'a Id
+}

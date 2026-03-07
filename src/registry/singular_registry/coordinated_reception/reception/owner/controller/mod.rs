@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControl, BlacklistStorage, ControlStorage, ControllerOwn, ControllerOwnResult, ResourceControl, ResourceControlOwn, WhitelistStorage};
+use crate::prelude::{AccessControl, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, WhitelistStorage};
 
 pub mod access_control;
 pub mod resource_control;
@@ -32,8 +32,17 @@ impl<
     /// 
     /// And all allowances
     pub fn release(
-        &self
-    ) {}
+        &mut self,
+        ControllerRelease {
+            id, resource_id
+        }: ControllerRelease<CS::Id, CS::ResourceId>
+    ) -> ControllerReleaseResult {
+        let access_control_release_result = self.access_control.release(AccessControlRelease { id: resource_id });
+        if access_control_release_result.ok() {
+            return ControllerReleaseResult::ResourceControl(self.resource_control.release(ResourceControlRelease { id, resource_id }))
+        }
+        ControllerReleaseResult::AccessControl(access_control_release_result)
+    }
 
     /// If own a resource then allow certain 
     pub fn allow() {}

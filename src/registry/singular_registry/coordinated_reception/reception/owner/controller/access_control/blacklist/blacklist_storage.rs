@@ -15,4 +15,15 @@ pub trait BlacklistStorage {
         id: Self::Id,
         access: Self::Access
     ) -> Option<Self::Password>;
+
+    fn block(
+        &mut self,
+        id: &Self::Id,
+        access: &Self::Access
+    ) -> bool;
+
+    fn release(
+        &mut self,
+        id: &Self::Id
+    ) -> bool;
 }

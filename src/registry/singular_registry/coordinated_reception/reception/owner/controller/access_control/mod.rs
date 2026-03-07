@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlAccess, AccessControlAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlWhitelistAllowResult, Blacklist, BlacklistAccess, BlacklistAllow, BlacklistStorage, Whitelist, WhitelistAccess, WhitelistAllow, WhitelistStorage};
+use crate::prelude::{AccessControlAccess, AccessControlAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlRelease, AccessControlReleaseResult, AccessControlWhitelistAllowResult, Blacklist, BlacklistAccess, BlacklistAllow, BlacklistRelease, BlacklistStorage, Whitelist, WhitelistAccess, WhitelistAllow, WhitelistRelease, WhitelistStorage};
 
 pub mod whitelist;
 pub mod blacklist;
@@ -57,5 +57,23 @@ impl<
             Some(password) => AccessControlAccessResult::Blacklist(self.blacklist.access(BlacklistAccess { id, access, password })),
             None => AccessControlAccessResult::Whitelist(self.whitelist.access(WhitelistAccess { id, access })),
         }
+    }
+
+    // takes away a single access for a list
+    pub fn block(
+        &mut self,
+    ) {}
+
+    // release all accesses from all lists
+    pub fn release(
+        &mut self,
+        AccessControlRelease {
+            id
+        }: AccessControlRelease<'_, WS::Id>
+    ) -> AccessControlReleaseResult {
+        AccessControlReleaseResult::Lists((
+            self.whitelist.release(WhitelistRelease { id }),
+            self.blacklist.release(BlacklistRelease { id })
+        ))
     }
 }

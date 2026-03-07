@@ -5,3 +5,13 @@ pub enum WhitelistAccessResult {
 pub enum WhitelistAllowResult {
     Allow(bool)
 }
+
+pub enum WhitelistReleaseResult {
+    Release(bool)
+}
+
+impl WhitelistReleaseResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Release(true))
+    }
+}

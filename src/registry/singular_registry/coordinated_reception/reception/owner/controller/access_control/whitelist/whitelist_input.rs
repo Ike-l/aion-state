@@ -7,3 +7,7 @@ pub struct WhitelistAllow<Id, Access> {
     pub id: Id,
     pub access: Access
 }
+
+pub struct WhitelistRelease<'a, Id> {
+    pub id: &'a Id
+}

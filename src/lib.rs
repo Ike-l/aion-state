@@ -115,31 +115,37 @@ pub mod prelude {
                             controller::{
                                 Controller,
                                 controller_input::{
-                                    ControllerOwn
+                                    ControllerOwn,
+                                    ControllerRelease
                                 },
                                 controller_result::{
-                                    ControllerOwnResult
+                                    ControllerOwnResult,
+                                    ControllerReleaseResult
                                 },
                                 access_control::{
                                     AccessControl,
                                     access_control_input::{
                                         AccessControlAccess,
                                         AccessControlAllow,
+                                        AccessControlRelease
                                     },
                                     access_control_result::{
                                         AccessControlAccessResult,
                                         AccessControlBlacklistAllowResult,
-                                        AccessControlWhitelistAllowResult
+                                        AccessControlWhitelistAllowResult,
+                                        AccessControlReleaseResult
                                     },
                                     blacklist::{
                                         Blacklist,
                                         blacklist_input::{
                                             BlacklistAccess,
-                                            BlacklistAllow
+                                            BlacklistAllow,
+                                            BlacklistRelease
                                         },
                                         blacklist_result::{
                                             BlacklistAccessResult,
-                                            BlacklistAllowResult
+                                            BlacklistAllowResult,
+                                            BlacklistReleaseResult
                                         },
                                         blacklist_storage::{
                                             BlacklistStorage
@@ -149,11 +155,13 @@ pub mod prelude {
                                         Whitelist,
                                         whitelist_input::{
                                             WhitelistAccess,
-                                            WhitelistAllow
+                                            WhitelistAllow,
+                                            WhitelistRelease
                                         },
                                         whitelist_result::{
                                             WhitelistAccessResult,
-                                            WhitelistAllowResult
+                                            WhitelistAllowResult,
+                                            WhitelistReleaseResult
                                         },
                                         whitelist_storage::{
                                             WhitelistStorage

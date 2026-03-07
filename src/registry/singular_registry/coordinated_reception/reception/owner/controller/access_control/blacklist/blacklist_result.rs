@@ -5,3 +5,13 @@ pub enum BlacklistAccessResult {
 pub enum BlacklistAllowResult<Password> {
     Allow(Option<Password>)
 }
+
+pub enum BlacklistReleaseResult {
+    Release(bool)
+}
+
+impl BlacklistReleaseResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Release(true))
+    }
+}

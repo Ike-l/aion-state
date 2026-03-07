@@ -8,3 +8,7 @@ pub struct BlacklistAllow<Id, Access> {
     pub id: Id,
     pub access: Access
 }
+
+pub struct BlacklistRelease<'a, Id> {
+    pub id: &'a Id
+}

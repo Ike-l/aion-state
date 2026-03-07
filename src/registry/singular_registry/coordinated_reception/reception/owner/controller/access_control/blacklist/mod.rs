@@ -1,4 +1,4 @@
-use crate::prelude::{BlacklistAccess, BlacklistAccessResult, BlacklistAllow, BlacklistAllowResult, BlacklistStorage};
+use crate::prelude::{BlacklistAccess, BlacklistAccessResult, BlacklistAllow, BlacklistAllowResult, BlacklistRelease, BlacklistReleaseResult, BlacklistStorage};
 
 pub mod blacklist_storage;
 
@@ -28,5 +28,18 @@ impl<
         }: BlacklistAccess<'_, BS::Id, BS::Access, BS::Password>
     ) -> BlacklistAccessResult {
         BlacklistAccessResult::Verification(self.blacklist_storage.verify(id, access, password))
+    }
+
+    pub fn block(
+        &mut self
+    ) {}
+
+    pub fn release(
+        &mut self,
+        BlacklistRelease {
+            id
+        }: BlacklistRelease<'_, BS::Id>
+    ) -> BlacklistReleaseResult {
+        BlacklistReleaseResult::Release(self.blacklist_storage.release(id))
     }
 }
