@@ -19,7 +19,7 @@ pub trait ControlStorage {
     /// 
     /// False for it didn't exist & didn't remove it
     fn release(
-        &self,
+        &mut self,
         id: &Self::Id,
         resource_id: &Self::ResourceId
     ) -> bool;
@@ -30,7 +30,7 @@ pub trait ControlStorage {
     /// 
     /// False for the `id` now does not own the `resource_id`
     fn own(
-        &self,
+        &mut self,
         id: Self::Id,
         resource_id: Self::ResourceId
     ) -> bool;

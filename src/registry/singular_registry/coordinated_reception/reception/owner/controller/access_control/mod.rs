@@ -24,7 +24,7 @@ impl<
 
     /// (currently) allows a whitelisted resource to be blacklisted as well
     pub fn allow_blacklist(
-        &self,
+        &mut self,
         AccessControlAllow {
             id, access
         }: AccessControlAllow<WS::Id, WS::Access>
@@ -34,7 +34,7 @@ impl<
 
     /// (currently) allows a blacklisted resource to be whitelisted as well
     pub fn allow_whitelist(
-        &self,
+        &mut self,
         AccessControlAllow {
             id, access
         }: AccessControlAllow<WS::Id, WS::Access>

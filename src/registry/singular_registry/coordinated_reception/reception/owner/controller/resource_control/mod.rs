@@ -13,7 +13,7 @@ impl<
     CS: ControlStorage
 > ResourceControl<CS> {
     pub fn own(
-        &self,
+        &mut self,
         ResourceControlOwn {
             id, resource_id
         }: ResourceControlOwn<CS::Id, CS::ResourceId>
@@ -26,7 +26,7 @@ impl<
     }
 
     pub fn release(
-        &self,
+        &mut self,
         ResourceControlRelease {
             id, resource_id
         }: ResourceControlRelease<'_, CS::Id, CS::ResourceId>

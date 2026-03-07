@@ -11,7 +11,7 @@ pub trait BlacklistStorage {
     ) -> bool;
 
     fn allow(
-        &self,
+        &mut self,
         id: Self::Id,
         access: Self::Access
     ) -> Option<Self::Password>;

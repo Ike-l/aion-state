@@ -13,7 +13,7 @@ impl<
     BS: BlacklistStorage
 > Blacklist<BS> {
     pub fn allow(
-        &self,
+        &mut self,
         BlacklistAllow {
             id, access
         }: BlacklistAllow<BS::Id, BS::Access>

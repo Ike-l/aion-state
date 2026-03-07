@@ -14,7 +14,7 @@ impl<
     WS: WhitelistStorage
 > Whitelist<WS> {
     pub fn allow(
-        &self,
+        &mut self,
         WhitelistAllow {
             id, access
         }: WhitelistAllow<WS::Id, WS::Access>

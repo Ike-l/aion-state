@@ -20,7 +20,7 @@ impl<
     ///
     /// doesn't need to check access_control because cannot have access control on a resource that isn't owned
     pub fn own(
-        &self,
+        &mut self,
         ControllerOwn {
             id, resource_id
         }: ControllerOwn<CS::Id, CS::ResourceId>
@@ -31,7 +31,9 @@ impl<
     /// Releases ownership of a resource
     /// 
     /// And all allowances
-    pub fn release() {}
+    pub fn release(
+        &self
+    ) {}
 
     /// If own a resource then allow certain 
     pub fn allow() {}

@@ -9,7 +9,7 @@ pub trait WhitelistStorage {
     ) -> bool;
 
     fn allow(
-        &self,
+        &mut self,
         id: Self::Id,
         access: Self::Access
     ) -> bool;
