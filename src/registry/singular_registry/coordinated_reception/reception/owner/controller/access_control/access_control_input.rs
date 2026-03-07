@@ -3,3 +3,8 @@ pub struct AccessControlAccess<'a, Id, Access, Password> {
     pub access: &'a Access,
     pub password: Option<&'a Password>
 }
+
+pub struct AccessControlAllow<Id, Access> {
+    pub id: Id,
+    pub access: Access
+}

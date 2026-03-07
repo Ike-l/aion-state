@@ -117,10 +117,13 @@ pub mod prelude {
                                 access_control::{
                                     AccessControl,
                                     access_control_input::{
-                                        AccessControlAccess
+                                        AccessControlAccess,
+                                        AccessControlAllow,
                                     },
                                     access_control_result::{
-                                        AccessControlAccessResult
+                                        AccessControlAccessResult,
+                                        AccessControlBlacklistAllowResult,
+                                        AccessControlWhitelistAllowResult
                                     },
                                     blacklist::{
                                         Blacklist,
@@ -143,7 +146,7 @@ pub mod prelude {
                                             WhitelistAllow
                                         },
                                         whitelist_result::{
-                                            WhitelistAccessResult
+                                            WhitelistAccessResult,
                                             WhitelistAllowResult
                                         },
                                         whitelist_storage::{
