@@ -15,3 +15,7 @@ impl WhitelistReleaseResult {
         matches!(self, Self::Release(true))
     }
 }
+
+pub enum WhitelistBlockResult {
+    Block(bool)
+}

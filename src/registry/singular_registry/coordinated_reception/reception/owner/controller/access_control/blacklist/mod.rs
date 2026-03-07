@@ -1,4 +1,4 @@
-use crate::prelude::{BlacklistAccess, BlacklistAccessResult, BlacklistAllow, BlacklistAllowResult, BlacklistRelease, BlacklistReleaseResult, BlacklistStorage};
+use crate::prelude::{BlacklistAccess, BlacklistAccessResult, BlacklistAllow, BlacklistAllowResult, BlacklistBlock, BlacklistBlockResult, BlacklistRelease, BlacklistReleaseResult, BlacklistStorage};
 
 pub mod blacklist_storage;
 
@@ -31,8 +31,13 @@ impl<
     }
 
     pub fn block(
-        &mut self
-    ) {}
+        &mut self,
+        BlacklistBlock {
+            id, access   
+        }: BlacklistBlock<'_, BS::Id, BS::Access>
+    ) -> BlacklistBlockResult {
+        BlacklistBlockResult::Block(self.blacklist_storage.block(id, access))
+    }
 
     pub fn release(
         &mut self,

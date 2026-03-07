@@ -12,3 +12,8 @@ pub struct BlacklistAllow<Id, Access> {
 pub struct BlacklistRelease<'a, Id> {
     pub id: &'a Id
 }
+
+pub struct BlacklistBlock<'a, Id, Access> {
+    pub id: &'a Id,
+    pub access: &'a Access
+}

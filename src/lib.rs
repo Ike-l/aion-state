@@ -140,12 +140,14 @@ pub mod prelude {
                                         blacklist_input::{
                                             BlacklistAccess,
                                             BlacklistAllow,
-                                            BlacklistRelease
+                                            BlacklistRelease,
+                                            BlacklistBlock
                                         },
                                         blacklist_result::{
                                             BlacklistAccessResult,
                                             BlacklistAllowResult,
-                                            BlacklistReleaseResult
+                                            BlacklistReleaseResult,
+                                            BlacklistBlockResult
                                         },
                                         blacklist_storage::{
                                             BlacklistStorage
@@ -156,12 +158,14 @@ pub mod prelude {
                                         whitelist_input::{
                                             WhitelistAccess,
                                             WhitelistAllow,
-                                            WhitelistRelease
+                                            WhitelistRelease,
+                                            WhitelistBlock
                                         },
                                         whitelist_result::{
                                             WhitelistAccessResult,
                                             WhitelistAllowResult,
-                                            WhitelistReleaseResult
+                                            WhitelistReleaseResult,
+                                            WhitelistBlockResult
                                         },
                                         whitelist_storage::{
                                             WhitelistStorage

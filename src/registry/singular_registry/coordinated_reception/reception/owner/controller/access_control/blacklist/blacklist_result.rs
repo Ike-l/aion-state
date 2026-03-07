@@ -15,3 +15,7 @@ impl BlacklistReleaseResult {
         matches!(self, Self::Release(true))
     }
 }
+
+pub enum BlacklistBlockResult {
+    Block(bool)
+}
