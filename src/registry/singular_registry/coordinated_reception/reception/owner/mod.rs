@@ -20,6 +20,8 @@ impl<
 > Owner<AS, WS, BS, CS> {
     pub fn register() {}
 
+    pub fn update_password() {}
+
     pub fn own(
         &mut self,
         OwnerOwn {
@@ -32,4 +34,12 @@ impl<
             OwnerOwnResult::Denied
         }
     }
+
+    pub fn release() {}
+
+    pub fn allow_whitelist() {}
+
+    pub fn allow_blacklist() {}
+
+    pub fn access() {}
 }

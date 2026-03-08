@@ -5,6 +5,9 @@ pub mod blacklist_storage;
 pub mod blacklist_input;
 pub mod blacklist_result;
 
+/// Wraps `Blacklist Storage`
+/// 
+/// A `Blacklist` requires a `password` to permit an access
 pub struct Blacklist<BS> {
     blacklist_storage: BS
 }
@@ -12,6 +15,9 @@ pub struct Blacklist<BS> {
 impl<
     BS: BlacklistStorage
 > Blacklist<BS> {
+    /// Makes the `id` accessible with the matching `access`
+    /// 
+    /// Returns the password for this
     pub fn allow(
         &mut self,
         BlacklistAllow {
@@ -21,6 +27,9 @@ impl<
         BlacklistAllowResult::Allow(self.blacklist_storage.allow(id, access))
     }
 
+    /// Attempt to access the `id` with the `access` 
+    /// 
+    /// given the password is the one returned by the corresponding `allow`
     pub fn access(
         &self,
         BlacklistAccess {
@@ -30,6 +39,9 @@ impl<
         BlacklistAccessResult::Verification(self.blacklist_storage.verify(id, access, password))
     }
 
+    /// Attempt to un-allow
+    /// 
+    /// 
     pub fn block(
         &mut self,
         BlacklistBlock {

@@ -6,6 +6,9 @@ pub mod blacklist;
 pub mod access_control_input;
 pub mod access_control_result;
 
+/// Whitelist & Blacklist are unordered
+/// 
+/// AccessControl acts as the single point of communication & future modification center for "owner pin holes"
 pub struct AccessControl<WS, BS> {
     whitelist: Whitelist<WS>,
     blacklist: Blacklist<BS>,

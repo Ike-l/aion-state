@@ -5,9 +5,7 @@ pub mod credential_storage;
 pub mod authenticator_input;
 pub mod authenticator_result;
 
-/// wraps `owner storage` and `ownership storage`
-/// 
-/// applies `owner storage` semantics and then `ownership storage` semantics
+/// wraps `credential storage`
 pub struct Authenticator<CS> {
     credentials: CS,
 }
