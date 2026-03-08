@@ -2,6 +2,12 @@ pub enum BlacklistAccessResult {
     Verification(bool)
 }
 
+impl BlacklistAccessResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Verification(true))
+    }
+}
+
 pub enum BlacklistAllowResult<Password> {
     Allow(Option<Password>)
 }

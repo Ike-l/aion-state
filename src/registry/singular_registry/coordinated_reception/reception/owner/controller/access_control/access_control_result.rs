@@ -5,6 +5,15 @@ pub enum AccessControlAccessResult {
     Blacklist(BlacklistAccessResult)
 }
 
+impl AccessControlAccessResult {
+    pub fn ok(&self) -> bool {
+        match self {
+            AccessControlAccessResult::Whitelist(whitelist_access_result) => whitelist_access_result.ok(),
+            AccessControlAccessResult::Blacklist(blacklist_access_result) => blacklist_access_result.ok(),
+        }
+    }
+}
+
 pub enum AccessControlBlacklistAllowResult<Password> {
     Blacklist(BlacklistAllowResult<Password>)
 }

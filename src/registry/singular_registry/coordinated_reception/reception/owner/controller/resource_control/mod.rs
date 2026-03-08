@@ -12,6 +12,7 @@ pub struct ResourceControl<CS> {
 impl<
     CS: ControlStorage
 > ResourceControl<CS> {
+    /// If `resource_id` is not currently owned will attempt to claim ownership
     pub fn own(
         &mut self,
         ResourceControlOwn {
@@ -25,6 +26,7 @@ impl<
         ResourceControlOwnResult::Own(self.control_storage.own(id, resource_id))
     }
 
+    /// Passes through to `control_storage`
     pub fn release(
         &mut self,
         ResourceControlRelease {
@@ -34,6 +36,7 @@ impl<
         ResourceControlReleaseResult::Released(self.control_storage.release(id, resource_id))
     }
 
+    /// Passes through to `control_storage`
     pub fn verify(
         &self,
         ResourceControlVerification {

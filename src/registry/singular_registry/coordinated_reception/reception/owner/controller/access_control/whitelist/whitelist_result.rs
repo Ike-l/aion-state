@@ -2,6 +2,12 @@ pub enum WhitelistAccessResult {
     Allowed(bool)
 }
 
+impl WhitelistAccessResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Allowed(true))
+    }
+}
+
 pub enum WhitelistAllowResult {
     Allow(bool)
 }

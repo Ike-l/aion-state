@@ -41,7 +41,7 @@ impl<
 
     /// Attempt to un-allow
     /// 
-    /// 
+    /// Passes directly to `blacklist_storage`
     pub fn block(
         &mut self,
         BlacklistBlock {
@@ -51,6 +51,7 @@ impl<
         BlacklistBlockResult::Block(self.blacklist_storage.block(id, access))
     }
 
+    /// Attempts to un-allow all `access` corresponding to `id`
     pub fn release(
         &mut self,
         BlacklistRelease {

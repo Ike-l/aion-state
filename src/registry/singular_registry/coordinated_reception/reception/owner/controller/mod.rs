@@ -44,7 +44,7 @@ impl<
         ControllerReleaseResult::AccessControl(access_control_release_result)
     }
 
-    /// If own a resource then allow certain 
+    /// If `id` owns `resource_id` then allow `access` on whitelist
     pub fn allow_whitelist(
         &mut self,
         ControllerAllow {
@@ -58,6 +58,7 @@ impl<
         }
     }
 
+    /// If `id` owns `resource_id` then allow `access` on blacklist 
     pub fn allow_blacklist(
         &mut self,
         ControllerAllow {
@@ -71,12 +72,19 @@ impl<
         }
     }
     
+    /// If is owner OR password matches then return ok?
+    /// 
+    // Could open the verify api then drop the `id` branch?
     pub fn access(
         &self,
         ControllerAccess {
-            id, access, password
-        }: ControllerAccess<'_, WS::Id, WS::Access, BS::Password>
+            id, resource_id, access, password
+        }: ControllerAccess<'_, CS::Id, WS::Id, WS::Access, BS::Password>
     ) -> ControllerAccessResult {
-        ControllerAccessResult::AccessControl(self.access_control.access(AccessControlAccess { id, access, password }))
+        if let Some(id) = id {
+            return ControllerAccessResult::Verification(self.resource_control.verify(ResourceControlVerification { id, resource_id }))
+        }
+        
+        ControllerAccessResult::AccessControl(self.access_control.access(AccessControlAccess { id: resource_id, access, password }))
     }
 }

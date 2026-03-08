@@ -9,23 +9,25 @@ pub mod access_control_result;
 /// Whitelist & Blacklist are unordered
 /// 
 /// AccessControl acts as the single point of communication & future modification center for "owner pin holes"
+///
+/// Semantic difference between `Whitelist` & `Blacklist` is simply that the blacklist takes a password whereas a whitelist doesn't
+///
+/// Whitelist is good because if a resource is `owned` it is automatically rejected unless it is allowed by the control
 pub struct AccessControl<WS, BS> {
     whitelist: Whitelist<WS>,
     blacklist: Blacklist<BS>,
 }
 
-// semantic difference between `Whitelist` & `Blacklist` is simply that the blacklist takes a password whereas a whitelist doesn't
-// whitelist is good because if a resource is `owned` it is automatically rejected unless it is allowed by the control
-
+/// `allow_blacklist`'s blacklist is linked with the whitelist incase in the future we want to link them in some way
+/// splits the `allow` behaviour into 2 functions instead of the alternative- an enum Target::[Whitelist | Blacklist] 
+/// this is the simpler approach. And allows a combo function later if we decide a reason for it
 impl<
     WS: WhitelistStorage,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>
 > AccessControl<WS, BS> {
-    // `allow_blacklist`'s blacklist is linked with the whitelist incase in the future we want to link them in some way
-    // splits the `allow` behaviour into 2 functions instead of the alternative- an enum Target::[Whitelist | Blacklist] 
-    // this is the simpler approach. And allows a combo function later if we decide a reason for it
-
     /// (currently) allows a whitelisted resource to be blacklisted as well
+    /// 
+    /// Passes through to `blacklist`
     pub fn allow_blacklist(
         &mut self,
         AccessControlAllow {
@@ -35,7 +37,9 @@ impl<
         AccessControlBlacklistAllowResult::Blacklist(self.blacklist.allow(BlacklistAllow { id, access } ))
     }
 
-    /// (currently) allows a blacklisted resource to be whitelisted as well
+    /// (currently) allows a whitelisted resource to be blacklisted as well
+    /// 
+    /// Passes through to `whitelist`
     pub fn allow_whitelist(
         &mut self,
         AccessControlAllow {
@@ -49,7 +53,7 @@ impl<
     /// 
     /// if a password is not given it will check the whitelist
     /// 
-    /// Will not check the whitelist if the blacklist check fails
+    /// Does not (currently) check the whitelist if the blacklist check fails
     pub fn access(
         &self,
         AccessControlAccess {
@@ -62,7 +66,9 @@ impl<
         }
     }
 
-    // takes away a single access for a list
+    /// takes away a single access for a list
+    /// 
+    /// Passes through to `whitelist`
     pub fn block_whitelist(
         &mut self,
         AccessControlBlock {
@@ -72,6 +78,7 @@ impl<
         AccessControlWhitelistBlockResult::Whitelist(self.whitelist.block(WhitelistBlock { id, access }))
     }
 
+    /// Passes through to `blacklist`
     pub fn block_blacklist(
         &mut self,
         AccessControlBlock {
@@ -82,6 +89,9 @@ impl<
     }
 
     // release all accesses from all lists
+    /// Passes through to `blacklist` & `whitelist` equally 
+    /// 
+    /// accesses are done in the order of the return 
     pub fn release(
         &mut self,
         AccessControlRelease {

@@ -13,6 +13,7 @@ pub struct Whitelist<WS> {
 impl<
     WS: WhitelistStorage
 > Whitelist<WS> {
+    /// Passes through to `whitelist_storage`
     pub fn allow(
         &mut self,
         WhitelistAllow {
@@ -22,6 +23,7 @@ impl<
         WhitelistAllowResult::Allow(self.whitelist_storage.allow(id, access))
     }
 
+    /// Passes through to `whitelist_storage`
     pub fn access(
         &self,
         WhitelistAccess {
@@ -32,6 +34,7 @@ impl<
     }
 
     // opposite to allow
+    /// Passes through to `whitelist_storage`
     pub fn block(
         &mut self,
         WhitelistBlock {
@@ -42,6 +45,7 @@ impl<
     }
 
     // remove all allowances
+    /// Passes through to `whitelist_storage`
     pub fn release(
         &mut self,
         WhitelistRelease {
