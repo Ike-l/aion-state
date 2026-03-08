@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControl, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlVerification, WhitelistStorage};
+use crate::prelude::{AccessControl, AccessControlAccess, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerAccess, ControllerAccessResult, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlVerification, WhitelistStorage};
 
 pub mod access_control;
 pub mod resource_control;
@@ -71,5 +71,12 @@ impl<
         }
     }
     
-    pub fn access() {}
+    pub fn access(
+        &self,
+        ControllerAccess {
+            id, access, password
+        }: ControllerAccess<'_, WS::Id, WS::Access, BS::Password>
+    ) -> ControllerAccessResult {
+        ControllerAccessResult::AccessControl(self.access_control.access(AccessControlAccess { id, access, password }))
+    }
 }
