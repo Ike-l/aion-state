@@ -110,11 +110,13 @@ pub mod prelude {
                                 Authenticator,
                                 authenticator_input::{
                                     Authentication,
-                                    AuthenticateRegister
+                                    AuthenticateRegister,
+                                    AuthenticateUpdatePassword
                                 },
                                 authenticator_result::{
                                     AuthenticationResult,
-                                    AuthenticateRegistrationResult
+                                    AuthenticateRegistrationResult,
+                                    AuthenticateUpdatePasswordResult
                                 },
                                 credential_storage::{
                                     CredentialStorage

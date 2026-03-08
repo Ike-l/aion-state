@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegister, AuthenticateRegistrationResult, Authentication, AuthenticationResult, CredentialStorage, trace_function};
+use crate::prelude::{AuthenticateRegister, AuthenticateRegistrationResult, AuthenticateUpdatePassword, AuthenticateUpdatePasswordResult, Authentication, AuthenticationResult, CredentialStorage, trace_function};
 
 pub mod credential_storage;
 
@@ -33,5 +33,14 @@ impl<
     ) -> AuthenticateRegistrationResult {
 
         AuthenticateRegistrationResult::Registration(self.credentials.register(id, password))
+    }
+
+    pub fn update_password(
+        &mut self,
+        AuthenticateUpdatePassword {
+            id, new_password
+        }: AuthenticateUpdatePassword<CS::Id, CS::Password>
+    ) -> AuthenticateUpdatePasswordResult {
+        AuthenticateUpdatePasswordResult::Updated(self.credentials.update_password(id, new_password))
     }
 }

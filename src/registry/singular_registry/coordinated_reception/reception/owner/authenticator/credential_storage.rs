@@ -22,4 +22,10 @@ pub trait CredentialStorage {
         id: Self::Id,
         password: Self::Password
     ) -> bool;
+
+    fn update_password(
+        &mut self,
+        id: &Self::Id,
+        new_password: Self::Password
+    ) -> bool;
 }

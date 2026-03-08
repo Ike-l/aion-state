@@ -7,3 +7,8 @@ pub struct AuthenticateRegister<Id, Password> {
     pub id: Id,
     pub password: Password
 }
+
+pub struct AuthenticateUpdatePassword<'a, Id, Password> {
+    pub id: &'a Id,
+    pub new_password: Password
+}

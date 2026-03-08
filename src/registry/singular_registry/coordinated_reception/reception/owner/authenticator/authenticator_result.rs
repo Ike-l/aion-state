@@ -11,3 +11,8 @@ impl AuthenticationResult {
 pub enum AuthenticateRegistrationResult {
     Registration(bool)
 }
+
+pub enum AuthenticateUpdatePasswordResult {
+    Updated(bool),
+    Denied
+}
