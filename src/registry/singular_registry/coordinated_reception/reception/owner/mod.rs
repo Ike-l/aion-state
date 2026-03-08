@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegister, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerOwn, ControllerRelease, CredentialStorage, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerRelease, OwnerReleaseResult, WhitelistStorage};
+use crate::prelude::{AuthenticateRegister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerOwn, ControllerRelease, CredentialStorage, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerRelease, OwnerReleaseResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, WhitelistStorage};
 
 pub mod authenticator;
 pub mod controller;
@@ -29,13 +29,18 @@ impl<
 
     pub fn unregister() {}
 
+    // this is the layer which checks passwords- why i chose this to be the layer to `authenticate`
     pub fn update_password(
-        // &mut self,
-        // OwnerUpdatePassword {
-        //     id, old_password, new_password
-        // }: OwnerUpdatePassword<AS::Id, AS::Password
-    ) {
+        &mut self,
+        OwnerUpdatePassword {
+            id, old_password, new_password
+        }: OwnerUpdatePassword<AS::Id, AS::Password>
+    ) -> OwnerUpdatePasswordResult {
+        if self.authenticator.authenticate(Authentication { id, password: old_password }).ok() {
+            return OwnerUpdatePasswordResult::Authenticator(self.authenticator.update_password(AuthenticateUpdatePassword { id, new_password }))
+        }
 
+        OwnerUpdatePasswordResult::Denied
     }
 
     pub fn own(

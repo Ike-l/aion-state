@@ -99,12 +99,14 @@ pub mod prelude {
                             owner_input::{
                                 OwnerOwn,
                                 OwnerRegister,
-                                OwnerRelease
+                                OwnerRelease,
+                                OwnerUpdatePassword
                             },
                             owner_result::{
                                 OwnerOwnResult,
                                 OwnerRegisterResult,
-                                OwnerReleaseResult
+                                OwnerReleaseResult,
+                                OwnerUpdatePasswordResult
                             },
                             authenticator::{
                                 Authenticator,
