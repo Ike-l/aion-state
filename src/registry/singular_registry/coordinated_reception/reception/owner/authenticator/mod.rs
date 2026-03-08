@@ -8,19 +8,19 @@ pub mod authenticator_result;
 /// wraps `owner storage` and `ownership storage`
 /// 
 /// applies `owner storage` semantics and then `ownership storage` semantics
-pub struct Authenticator<OS> {
-    credentials: OS,
+pub struct Authenticator<CS> {
+    credentials: CS,
 }
 
 impl<
-    OS: CredentialStorage,
-> Authenticator<OS> {
+    CS: CredentialStorage,
+> Authenticator<CS> {
     /// Authenticates by verifying the `Id` matches the `Password`
     pub fn authenticate(
         &self,
         AuthenticateInput {
             id, password
-        }: AuthenticateInput<'_, OS::Id, OS::Password> 
+        }: AuthenticateInput<'_, CS::Id, CS::Password> 
     ) -> AuthenticationResult {
         trace_function!("Authenticating");
 

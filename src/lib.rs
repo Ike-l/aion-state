@@ -97,8 +97,10 @@ pub mod prelude {
                         owner::{
                             Owner,
                             owner_input::{
+                                OwnerOwn
                             },
                             owner_result::{
+                                OwnerOwnResult
                             },
                             authenticator::{
                                 Authenticator,
