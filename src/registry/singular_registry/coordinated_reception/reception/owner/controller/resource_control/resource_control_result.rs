@@ -2,6 +2,12 @@ pub enum ResourceControlVerificationResult {
     Verification(bool)
 }
 
+impl ResourceControlVerificationResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Verification(true))
+    }
+}
+
 pub enum ResourceControlReleaseResult {
     Released(bool)
 }

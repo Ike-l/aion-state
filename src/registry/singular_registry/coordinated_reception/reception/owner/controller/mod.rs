@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControl, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, WhitelistStorage};
+use crate::prelude::{AccessControl, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlVerification, WhitelistStorage};
 
 pub mod access_control;
 pub mod resource_control;
@@ -45,7 +45,31 @@ impl<
     }
 
     /// If own a resource then allow certain 
-    pub fn allow() {}
+    pub fn allow_whitelist(
+        &mut self,
+        ControllerAllow {
+            id, resource_id, access
+        }: ControllerAllow<'_, CS::Id, CS::ResourceId, WS::Access>
+    ) -> ControllerWhitelistAllowResult {
+        if self.resource_control.verify(ResourceControlVerification { id, resource_id: &resource_id }).ok() {
+            ControllerWhitelistAllowResult::Whitelist(self.access_control.allow_whitelist(AccessControlAllow { id: resource_id, access }))
+        } else {
+            ControllerWhitelistAllowResult::Denied
+        }
+    }
+
+    pub fn allow_blacklist(
+        &mut self,
+        ControllerAllow {
+            id, resource_id, access
+        }: ControllerAllow<'_, CS::Id, CS::ResourceId, BS::Access>
+    ) -> ControllerBlacklistAllowResult<BS::Password> {
+        if self.resource_control.verify(ResourceControlVerification { id, resource_id: &resource_id }).ok() {
+            ControllerBlacklistAllowResult::Blacklist(self.access_control.allow_blacklist(AccessControlAllow { id: resource_id, access }))
+        } else {
+            ControllerBlacklistAllowResult::Denied
+        }
+    }
     
     pub fn access() {}
 }

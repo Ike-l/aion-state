@@ -116,11 +116,14 @@ pub mod prelude {
                                 Controller,
                                 controller_input::{
                                     ControllerOwn,
-                                    ControllerRelease
+                                    ControllerRelease,
+                                    ControllerAllow
                                 },
                                 controller_result::{
                                     ControllerOwnResult,
-                                    ControllerReleaseResult
+                                    ControllerReleaseResult,
+                                    ControllerBlacklistAllowResult,
+                                    ControllerWhitelistAllowResult
                                 },
                                 access_control::{
                                     AccessControl,

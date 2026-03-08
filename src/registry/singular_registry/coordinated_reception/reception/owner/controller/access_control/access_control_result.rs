@@ -21,7 +21,6 @@ impl AccessControlReleaseResult {
     pub fn ok(&self) -> bool {
         match self {
             Self::Lists((w, b)) => w.ok() && b.ok(),
-            _ => false
         }
     }
 }
