@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlAccess, AccessControlAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlRelease, AccessControlReleaseResult, AccessControlWhitelistAllowResult, Blacklist, BlacklistAccess, BlacklistAllow, BlacklistRelease, BlacklistStorage, Whitelist, WhitelistAccess, WhitelistAllow, WhitelistRelease, WhitelistStorage};
+use crate::prelude::{AccessControlAccess, AccessControlAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlBlacklistBlockResult, AccessControlBlock, AccessControlRelease, AccessControlReleaseResult, AccessControlWhitelistAllowResult, AccessControlWhitelistBlockResult, Blacklist, BlacklistAccess, BlacklistAllow, BlacklistBlock, BlacklistRelease, BlacklistStorage, Whitelist, WhitelistAccess, WhitelistAllow, WhitelistBlock, WhitelistRelease, WhitelistStorage};
 
 pub mod whitelist;
 pub mod blacklist;
@@ -60,9 +60,23 @@ impl<
     }
 
     // takes away a single access for a list
-    pub fn block(
+    pub fn block_whitelist(
         &mut self,
-    ) {}
+        AccessControlBlock {
+            id, access
+        }: AccessControlBlock<'_, WS::Id, WS::Access>
+    ) -> AccessControlWhitelistBlockResult {
+        AccessControlWhitelistBlockResult::Whitelist(self.whitelist.block(WhitelistBlock { id, access }))
+    }
+
+    pub fn block_blacklist(
+        &mut self,
+        AccessControlBlock {
+            id, access
+        }: AccessControlBlock<'_, BS::Id, BS::Access>
+    ) -> AccessControlBlacklistBlockResult {
+        AccessControlBlacklistBlockResult::Blacklist(self.blacklist.block(BlacklistBlock { id, access }))
+    }
 
     // release all accesses from all lists
     pub fn release(

@@ -127,13 +127,16 @@ pub mod prelude {
                                     access_control_input::{
                                         AccessControlAccess,
                                         AccessControlAllow,
-                                        AccessControlRelease
+                                        AccessControlRelease,
+                                        AccessControlBlock
                                     },
                                     access_control_result::{
                                         AccessControlAccessResult,
                                         AccessControlBlacklistAllowResult,
                                         AccessControlWhitelistAllowResult,
-                                        AccessControlReleaseResult
+                                        AccessControlReleaseResult,
+                                        AccessControlBlacklistBlockResult,
+                                        AccessControlWhitelistBlockResult,
                                     },
                                     blacklist::{
                                         Blacklist,

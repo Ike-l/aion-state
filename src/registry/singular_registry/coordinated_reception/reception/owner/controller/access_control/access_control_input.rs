@@ -12,3 +12,8 @@ pub struct AccessControlAllow<Id, Access> {
 pub struct AccessControlRelease<'a, Id> {
     pub id: &'a Id
 }
+
+pub struct AccessControlBlock<'a, Id, Access> {
+    pub id: &'a Id,
+    pub access: &'a Access
+}
