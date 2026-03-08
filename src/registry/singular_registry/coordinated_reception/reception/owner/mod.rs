@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegister, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerOwn, CredentialStorage, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, WhitelistStorage};
+use crate::prelude::{AuthenticateRegister, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerOwn, ControllerRelease, CredentialStorage, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerRelease, OwnerReleaseResult, WhitelistStorage};
 
 pub mod authenticator;
 pub mod controller;
@@ -6,7 +6,7 @@ pub mod controller;
 pub mod owner_result;
 pub mod owner_input;
 
-/// Applies `Authentication` semantics when ownership of the door is required, then `Door` semantics 
+/// Applies `authenticator` semantics and then `controller` semantics
 pub struct Owner<AS, WS, BS, CS> {
     authenticator: Authenticator<AS>,
     controller: Controller<WS, BS, CS>,
@@ -27,7 +27,16 @@ impl<
         OwnerRegisterResult::Authenticator(self.authenticator.register(AuthenticateRegister { id, password }))
     }
 
-    pub fn update_password() {}
+    pub fn unregister() {}
+
+    pub fn update_password(
+        // &mut self,
+        // OwnerUpdatePassword {
+        //     id, old_password, new_password
+        // }: OwnerUpdatePassword<AS::Id, AS::Password
+    ) {
+
+    }
 
     pub fn own(
         &mut self,
@@ -42,7 +51,18 @@ impl<
         }
     }
 
-    pub fn release() {}
+    pub fn release(
+        &mut self,
+        OwnerRelease {
+            id, password, resource_id
+        }: OwnerRelease<AS::Id, AS::Password, CS::ResourceId>
+    ) -> OwnerReleaseResult {
+        if self.authenticator.authenticate(Authentication { id, password }).ok() {
+            return OwnerReleaseResult::Controller(self.controller.release(ControllerRelease { id, resource_id }))
+        }
+
+        OwnerReleaseResult::Denied
+    }
 
     pub fn allow_whitelist() {}
 

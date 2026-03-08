@@ -98,11 +98,13 @@ pub mod prelude {
                             Owner,
                             owner_input::{
                                 OwnerOwn,
-                                OwnerRegister
+                                OwnerRegister,
+                                OwnerRelease
                             },
                             owner_result::{
                                 OwnerOwnResult,
-                                OwnerRegisterResult
+                                OwnerRegisterResult,
+                                OwnerReleaseResult
                             },
                             authenticator::{
                                 Authenticator,

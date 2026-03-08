@@ -8,3 +8,9 @@ pub struct OwnerRegister<Id, Password> {
     pub id: Id,
     pub password: Password
 }
+
+pub struct OwnerRelease<'a, Id, Password, ResourceId> {
+    pub id: &'a Id,
+    pub password: &'a Password,
+    pub resource_id: &'a ResourceId
+}

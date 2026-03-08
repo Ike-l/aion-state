@@ -13,6 +13,10 @@ pub trait CredentialStorage {
     /// Registers `id` with `password`
     /// 
     /// so that if `register` returns `true` then `verify` with the same input returns true
+    /// 
+    /// returns false if the register failed
+    /// 
+    /// should fail if `id` already exists
     fn register(
         &mut self,
         id: Self::Id,

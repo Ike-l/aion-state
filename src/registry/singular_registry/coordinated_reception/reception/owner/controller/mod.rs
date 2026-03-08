@@ -6,6 +6,11 @@ pub mod resource_control;
 pub mod controller_input;
 pub mod controller_result;
 
+/// Applies `Access Control` & `Resource Control` semantics
+/// 
+/// `Resource Control` links an `id` with a `resource id`
+/// 
+/// `Access Control` forms `resource id` `access` pairs with an optional password
 pub struct Controller<WS, BS, CS> {
     access_control: AccessControl<WS, BS>,
     resource_control: ResourceControl<CS>
