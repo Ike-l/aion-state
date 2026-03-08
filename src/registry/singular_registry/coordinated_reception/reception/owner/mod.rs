@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateInput, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerOwn, CredentialStorage, OwnerOwn, OwnerOwnResult, WhitelistStorage};
+use crate::prelude::{AuthenticateRegister, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerOwn, CredentialStorage, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, WhitelistStorage};
 
 pub mod authenticator;
 pub mod controller;
@@ -18,7 +18,14 @@ impl<
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = AS::Id, ResourceId = WS::Id>,
 > Owner<AS, WS, BS, CS> {
-    pub fn register() {}
+    pub fn register(
+        &mut self,
+        OwnerRegister {
+            id, password
+        }: OwnerRegister<AS::Id, AS::Password>
+    ) -> OwnerRegisterResult {
+        OwnerRegisterResult::Authenticator(self.authenticator.register(AuthenticateRegister { id, password }))
+    }
 
     pub fn update_password() {}
 
@@ -28,7 +35,7 @@ impl<
             id, resource_id, password
         }: OwnerOwn<'_, AS::Id, WS::Id, AS::Password>
     ) -> OwnerOwnResult {
-        if self.authenticator.authenticate(AuthenticateInput { id: &id, password }).ok() {
+        if self.authenticator.authenticate(Authentication { id: &id, password }).ok() {
             OwnerOwnResult::Controller(self.controller.own(ControllerOwn { id, resource_id }))
         } else {
             OwnerOwnResult::Denied

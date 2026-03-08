@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateInput, AuthenticationResult, CredentialStorage, trace_function};
+use crate::prelude::{AuthenticateRegister, AuthenticateRegistrationResult, Authentication, AuthenticationResult, CredentialStorage, trace_function};
 
 pub mod credential_storage;
 
@@ -16,12 +16,22 @@ impl<
     /// Authenticates by verifying the `Id` matches the `Password`
     pub fn authenticate(
         &self,
-        AuthenticateInput {
+        Authentication {
             id, password
-        }: AuthenticateInput<'_, CS::Id, CS::Password> 
+        }: Authentication<'_, CS::Id, CS::Password> 
     ) -> AuthenticationResult {
         trace_function!("Authenticating");
 
         AuthenticationResult::Verification(self.credentials.verify(id, password))
+    }
+
+    pub fn register(
+        &mut self,
+        AuthenticateRegister {
+            id, password
+        }: AuthenticateRegister<CS::Id, CS::Password>
+    ) -> AuthenticateRegistrationResult {
+
+        AuthenticateRegistrationResult::Registration(self.credentials.register(id, password))
     }
 }

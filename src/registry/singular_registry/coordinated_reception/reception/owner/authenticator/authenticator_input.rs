@@ -1,4 +1,9 @@
-pub struct AuthenticateInput<'a, Id, Password> {
+pub struct Authentication<'a, Id, Password> {
     pub id: &'a Id,
     pub password: &'a Password,
+}
+
+pub struct AuthenticateRegister<Id, Password> {
+    pub id: Id,
+    pub password: Password
 }

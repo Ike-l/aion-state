@@ -7,3 +7,7 @@ impl AuthenticationResult {
         matches!(self, Self::Verification(true))
     }
 }
+
+pub enum AuthenticateRegistrationResult {
+    Registration(bool)
+}

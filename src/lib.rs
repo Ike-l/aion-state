@@ -97,18 +97,22 @@ pub mod prelude {
                         owner::{
                             Owner,
                             owner_input::{
-                                OwnerOwn
+                                OwnerOwn,
+                                OwnerRegister
                             },
                             owner_result::{
-                                OwnerOwnResult
+                                OwnerOwnResult,
+                                OwnerRegisterResult
                             },
                             authenticator::{
                                 Authenticator,
                                 authenticator_input::{
-                                    AuthenticateInput
+                                    Authentication,
+                                    AuthenticateRegister
                                 },
                                 authenticator_result::{
-                                    AuthenticationResult
+                                    AuthenticationResult,
+                                    AuthenticateRegistrationResult
                                 },
                                 credential_storage::{
                                     CredentialStorage
