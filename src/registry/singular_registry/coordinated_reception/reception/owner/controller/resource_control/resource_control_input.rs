@@ -12,3 +12,7 @@ pub struct ResourceControlOwn<Id, ResourceId> {
     pub id: Id,
     pub resource_id: ResourceId
 }
+
+pub struct ResourceControlReleaseId<'a, Id> {
+    pub id: &'a Id
+}

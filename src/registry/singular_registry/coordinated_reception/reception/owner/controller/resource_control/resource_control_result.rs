@@ -22,3 +22,7 @@ pub enum ResourceControlOwnResult {
     Own(bool),
     OwnershipConflict
 }
+
+pub enum ResourceControlReleaseIdResult<T: Iterator> {
+    Released(T)
+}

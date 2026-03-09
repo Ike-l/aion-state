@@ -1,4 +1,4 @@
-use crate::prelude::{ControlStorage, ResourceControlOwn, ResourceControlOwnResult, ResourceControlRelease, ResourceControlReleaseResult, ResourceControlVerification, ResourceControlVerificationResult};
+use crate::prelude::{ControlStorage, ResourceControlOwn, ResourceControlOwnResult, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlReleaseResult, ResourceControlVerification, ResourceControlVerificationResult};
 
 pub mod control_storage;
 
@@ -34,6 +34,15 @@ impl<
         }: ResourceControlRelease<'_, CS::Id, CS::ResourceId>
     ) -> ResourceControlReleaseResult {
         ResourceControlReleaseResult::Released(self.control_storage.release(id, resource_id))
+    }
+
+    pub fn release_id(
+        &mut self,
+        ResourceControlReleaseId {
+            id
+        }: ResourceControlReleaseId<'_, CS::Id>
+    ) -> ResourceControlReleaseIdResult<impl Iterator<Item = CS::ResourceId>> {
+        ResourceControlReleaseIdResult::Released(self.control_storage.release_id(id))
     }
 
     /// Passes through to `control_storage`

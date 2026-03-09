@@ -200,12 +200,14 @@ pub mod prelude {
                                     resource_control_input::{
                                         ResourceControlVerification,
                                         ResourceControlRelease,
-                                        ResourceControlOwn
+                                        ResourceControlOwn,
+                                        ResourceControlReleaseId
                                     },
                                     resource_control_result::{
                                         ResourceControlVerificationResult,
                                         ResourceControlReleaseResult,
-                                        ResourceControlOwnResult
+                                        ResourceControlOwnResult,
+                                        ResourceControlReleaseIdResult
                                     }
                                 }
                             }
