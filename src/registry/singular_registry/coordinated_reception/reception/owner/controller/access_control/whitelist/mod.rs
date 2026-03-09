@@ -1,4 +1,4 @@
-use crate::prelude::{WhitelistAccess, WhitelistAccessResult, WhitelistAllow, WhitelistAllowResult, WhitelistBlock, WhitelistBlockResult, WhitelistRelease, WhitelistReleaseResult, WhitelistStorage};
+use crate::prelude::{WhitelistAccess, WhitelistAccessResult, WhitelistAllow, WhitelistAllowResult, WhitelistBlock, WhitelistBlockResult, WhitelistRelease, WhitelistReleaseAllResult, WhitelistReleaseResult, WhitelistStorage};
 
 pub mod whitelist_storage;
 
@@ -53,5 +53,12 @@ impl<
         }: WhitelistRelease<'_, WS::Id>
     ) -> WhitelistReleaseResult {
         WhitelistReleaseResult::Release(self.whitelist_storage.release(id))
+    }
+
+    pub fn release_all<'a>(
+        &mut self,
+        inputs: impl Iterator<Item = WhitelistRelease<'a, WS::Id>>
+    ) -> WhitelistReleaseAllResult where <WS as WhitelistStorage>::Id: 'a {
+        WhitelistReleaseAllResult::Release(self.whitelist_storage.release_all(inputs.map(|WhitelistRelease { id }| id)))
     }
 }
