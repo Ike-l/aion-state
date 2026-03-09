@@ -32,3 +32,7 @@ impl ControllerAccessResult {
         }
     }
 }
+
+pub enum ControllerReleaseIdResult {
+
+}

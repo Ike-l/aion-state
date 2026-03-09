@@ -20,3 +20,7 @@ pub struct ControllerAccess<'a, Id, ResourceId, Access, Password> {
     pub access: &'a Access,
     pub password: Option<&'a Password>
 }
+
+pub struct ControllerReleaseId<'a, Id> {
+    pub id: &'a Id
+}

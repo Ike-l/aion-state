@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControl, AccessControlAccess, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerAccess, ControllerAccessResult, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlVerification, WhitelistStorage};
+use crate::prelude::{AccessControl, AccessControlAccess, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerAccess, ControllerAccessResult, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseIdResult, ResourceControlVerification, WhitelistStorage};
 
 pub mod access_control;
 pub mod resource_control;
@@ -91,5 +91,20 @@ impl<
         }
         
         ControllerAccessResult::AccessControl(self.access_control.access(AccessControlAccess { id: resource_id, access, password }))
+    }
+
+    pub fn release_id(
+        &mut self,
+        ControllerReleaseId {
+            id
+        }: ControllerReleaseId<'_, CS::Id> 
+    ) -> ControllerReleaseIdResult {
+        let resources = self.resource_control.release_id(id);
+        match resources {
+            ResourceControlReleaseIdResult::Released(resources) => {
+                let release_inputs = resources.map(|resource_id| ControllerRelease { id, resource_id: &resource_id });
+                return ControllerReleaseIdResult::AccessControl(self.access_control.release_all(release_inputs));
+            },
+        }
     }
 }
