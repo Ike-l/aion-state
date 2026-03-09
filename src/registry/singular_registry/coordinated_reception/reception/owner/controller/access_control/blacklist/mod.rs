@@ -1,4 +1,4 @@
-use crate::prelude::{BlacklistAccess, BlacklistAccessResult, BlacklistAllow, BlacklistAllowResult, BlacklistBlock, BlacklistBlockResult, BlacklistRelease, BlacklistReleaseResult, BlacklistStorage};
+use crate::prelude::{BlacklistAccess, BlacklistAccessResult, BlacklistAllow, BlacklistAllowResult, BlacklistBlock, BlacklistBlockResult, BlacklistRelease, BlacklistReleaseAllResult, BlacklistReleaseResult, BlacklistStorage};
 
 pub mod blacklist_storage;
 
@@ -59,5 +59,12 @@ impl<
         }: BlacklistRelease<'_, BS::Id>
     ) -> BlacklistReleaseResult {
         BlacklistReleaseResult::Release(self.blacklist_storage.release(id))
+    }
+
+    pub fn release_all<'a>(
+        &mut self,
+        inputs: impl Iterator<Item = BlacklistRelease<'a, BS::Id>>
+    ) -> BlacklistReleaseAllResult where <BS as BlacklistStorage>::Id: 'a {
+        BlacklistReleaseAllResult::Release(self.blacklist_storage.release_all(inputs.map(|BlacklistRelease { id }| id)))
     }
 }

@@ -130,14 +130,16 @@ pub mod prelude {
                                     ControllerOwn,
                                     ControllerRelease,
                                     ControllerAllow,
-                                    ControllerAccess
+                                    ControllerAccess,
+                                    ControllerReleaseId
                                 },
                                 controller_result::{
                                     ControllerOwnResult,
                                     ControllerReleaseResult,
                                     ControllerBlacklistAllowResult,
                                     ControllerWhitelistAllowResult,
-                                    ControllerAccessResult
+                                    ControllerAccessResult,
+                                    ControllerReleaseIdResult
                                 },
                                 access_control::{
                                     AccessControl,
@@ -167,7 +169,8 @@ pub mod prelude {
                                             BlacklistAccessResult,
                                             BlacklistAllowResult,
                                             BlacklistReleaseResult,
-                                            BlacklistBlockResult
+                                            BlacklistBlockResult,
+                                            BlacklistReleaseAllResult
                                         },
                                         blacklist_storage::{
                                             BlacklistStorage
@@ -185,7 +188,8 @@ pub mod prelude {
                                             WhitelistAccessResult,
                                             WhitelistAllowResult,
                                             WhitelistReleaseResult,
-                                            WhitelistBlockResult
+                                            WhitelistBlockResult,
+                                            WhitelistReleaseAllResult
                                         },
                                         whitelist_storage::{
                                             WhitelistStorage

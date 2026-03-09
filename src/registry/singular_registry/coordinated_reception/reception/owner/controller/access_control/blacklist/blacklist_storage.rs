@@ -38,4 +38,18 @@ pub trait BlacklistStorage {
         &mut self,
         id: &Self::Id
     ) -> bool;
+
+    /// Release all ids simultaneously
+    /// 
+    /// True if successful for all
+    /// 
+    /// False if fails for any
+    /// 
+    /// There is no invariant (yet) that requires this to be atomic
+    /// 
+    /// However if it was not atomic then may as well use `release` iteratively
+    fn release_all<'a>(
+        &mut self,
+        ids: impl Iterator<Item = &'a Self::Id>
+    ) -> bool where <Self as BlacklistStorage>::Id: 'a;
 }
