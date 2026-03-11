@@ -1,4 +1,4 @@
-use crate::prelude::{BlacklistAccessResult, BlacklistAllowResult, BlacklistBlockResult, BlacklistReleaseResult, WhitelistAccessResult, WhitelistAllowResult, WhitelistBlockResult, WhitelistReleaseResult};
+use crate::prelude::{BlacklistAccessResult, BlacklistAllowResult, BlacklistBlockResult, BlacklistReleaseAllResult, BlacklistReleaseResult, WhitelistAccessResult, WhitelistAllowResult, WhitelistBlockResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
 
 pub enum AccessControlAccessResult {
     Whitelist(WhitelistAccessResult),
@@ -23,7 +23,10 @@ pub enum AccessControlWhitelistAllowResult {
 }
 
 pub enum AccessControlReleaseResult {
-    Lists((WhitelistReleaseResult, BlacklistReleaseResult))
+    Lists((
+        WhitelistReleaseResult, 
+        BlacklistReleaseResult
+    ))
 }
 
 impl AccessControlReleaseResult {
@@ -40,4 +43,11 @@ pub enum AccessControlWhitelistBlockResult {
 
 pub enum AccessControlBlacklistBlockResult {
     Blacklist(BlacklistBlockResult)
+}
+
+pub enum AccessControlReleaseAllResult {
+    Lists((
+        WhitelistReleaseAllResult,
+        BlacklistReleaseAllResult
+    ))
 }

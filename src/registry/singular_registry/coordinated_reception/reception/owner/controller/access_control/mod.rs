@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlAccess, AccessControlAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlBlacklistBlockResult, AccessControlBlock, AccessControlRelease, AccessControlReleaseResult, AccessControlWhitelistAllowResult, AccessControlWhitelistBlockResult, Blacklist, BlacklistAccess, BlacklistAllow, BlacklistBlock, BlacklistRelease, BlacklistStorage, Whitelist, WhitelistAccess, WhitelistAllow, WhitelistBlock, WhitelistRelease, WhitelistStorage};
+use crate::prelude::{AccessControlAccess, AccessControlAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlBlacklistBlockResult, AccessControlBlock, AccessControlRelease, AccessControlReleaseAllResult, AccessControlReleaseResult, AccessControlWhitelistAllowResult, AccessControlWhitelistBlockResult, Blacklist, BlacklistAccess, BlacklistAllow, BlacklistBlock, BlacklistRelease, BlacklistStorage, Whitelist, WhitelistAccess, WhitelistAllow, WhitelistBlock, WhitelistRelease, WhitelistStorage};
 
 pub mod whitelist;
 pub mod blacklist;
@@ -101,6 +101,30 @@ impl<
         AccessControlReleaseResult::Lists((
             self.whitelist.release(WhitelistRelease { id }),
             self.blacklist.release(BlacklistRelease { id })
+        ))
+    }
+
+    pub fn release_all(
+        &mut self,
+        inputs: Vec<AccessControlRelease<'_, WS::Id>>
+    ) -> AccessControlReleaseAllResult {
+        let whitelist_input = inputs
+            .iter()
+            .map(
+                |AccessControlRelease { id }| 
+                    WhitelistRelease { id: *id }
+                );
+                
+        let blacklist_input = inputs
+            .iter()
+            .map(
+                |AccessControlRelease { id }| 
+                    BlacklistRelease { id: *id }
+                );
+                
+        AccessControlReleaseAllResult::Lists((
+            self.whitelist.release_all(whitelist_input),
+            self.blacklist.release_all(blacklist_input)
         ))
     }
 }

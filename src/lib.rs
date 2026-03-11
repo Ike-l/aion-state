@@ -156,6 +156,7 @@ pub mod prelude {
                                         AccessControlReleaseResult,
                                         AccessControlBlacklistBlockResult,
                                         AccessControlWhitelistBlockResult,
+                                        AccessControlReleaseAllResult,
                                     },
                                     blacklist::{
                                         Blacklist,
