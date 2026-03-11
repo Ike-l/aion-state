@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControl, AccessControlAccess, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerAccess, ControllerAccessResult, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseIdResult, ResourceControlVerification, WhitelistStorage};
+use crate::prelude::{AccessControl, AccessControlAccess, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerAccess, ControllerAccessResult, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlVerification, WhitelistStorage};
 
 pub mod access_control;
 pub mod resource_control;
@@ -99,11 +99,12 @@ impl<
             id
         }: ControllerReleaseId<'_, CS::Id> 
     ) -> ControllerReleaseIdResult {
-        let resources = self.resource_control.release_id(id);
+        let resources = self.resource_control.release_id(ResourceControlReleaseId { id });
         match resources {
             ResourceControlReleaseIdResult::Released(resources) => {
-                let release_inputs = resources.map(|resource_id| ControllerRelease { id, resource_id: &resource_id });
-                return ControllerReleaseIdResult::AccessControl(self.access_control.release_all(release_inputs));
+                let resources = resources.collect::<Vec<_>>();
+                let release_inputs = resources.iter().map(|resource_id| AccessControlRelease { id: resource_id });
+                return ControllerReleaseIdResult::AccessControl(self.access_control.release_all(release_inputs.collect()));
             },
         }
     }
