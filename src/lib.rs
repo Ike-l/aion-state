@@ -115,12 +115,14 @@ pub mod prelude {
                                 authenticator_input::{
                                     Authentication,
                                     AuthenticateRegister,
-                                    AuthenticateUpdatePassword
+                                    AuthenticateUpdatePassword,
+                                    AuthenticateUnregister
                                 },
                                 authenticator_result::{
                                     AuthenticationResult,
                                     AuthenticateRegistrationResult,
-                                    AuthenticateUpdatePasswordResult
+                                    AuthenticateUpdatePasswordResult,
+                                    AuthenticateUnregisterResult
                                 },
                                 credential_storage::{
                                     CredentialStorage

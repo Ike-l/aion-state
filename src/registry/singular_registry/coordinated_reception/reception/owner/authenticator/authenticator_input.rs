@@ -12,3 +12,7 @@ pub struct AuthenticateUpdatePassword<'a, Id, Password> {
     pub id: &'a Id,
     pub new_password: Password
 }
+
+pub struct AuthenticateUnregister<'a, Id> {
+    pub id: &'a Id
+}

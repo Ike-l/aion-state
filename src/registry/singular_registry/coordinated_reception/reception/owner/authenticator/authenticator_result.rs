@@ -16,3 +16,13 @@ pub enum AuthenticateUpdatePasswordResult {
     Updated(bool),
     Denied
 }
+
+pub enum AuthenticateUnregisterResult {
+    Unregister(bool)
+}
+
+impl AuthenticateUnregisterResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Unregister(true))
+    }
+}

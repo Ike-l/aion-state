@@ -28,4 +28,9 @@ pub trait CredentialStorage {
         id: &Self::Id,
         new_password: Self::Password
     ) -> bool;
+
+    fn unregister(
+        &mut self,
+        id: &Self::Id
+    ) -> bool;
 }
