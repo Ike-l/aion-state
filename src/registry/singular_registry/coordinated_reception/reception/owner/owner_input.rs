@@ -20,3 +20,8 @@ pub struct OwnerUpdatePassword<'a, Id, Password> {
     pub old_password: &'a Password,
     pub new_password: Password
 }
+
+pub struct OwnerUnregister<'a, Id, Password> {
+    pub id: &'a Id,
+    pub password: &'a Password
+}

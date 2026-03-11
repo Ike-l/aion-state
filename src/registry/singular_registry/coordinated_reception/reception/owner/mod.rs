@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerOwn, ControllerRelease, CredentialStorage, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerRelease, OwnerReleaseResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, WhitelistStorage};
+use crate::prelude::{AuthenticateRegister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerOwn, ControllerRelease, ControllerReleaseId, CredentialStorage, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerRelease, OwnerReleaseResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, WhitelistStorage};
 
 pub mod authenticator;
 pub mod controller;
@@ -27,7 +27,23 @@ impl<
         OwnerRegisterResult::Authenticator(self.authenticator.register(AuthenticateRegister { id, password }))
     }
 
-    pub fn unregister() {}
+    pub fn unregister(
+        &mut self,
+        OwnerUnregister {
+            id, password
+        }: OwnerUnregister<'_, AS::Id, AS::Password>
+    ) -> OwnerUnregisterResult {
+        if self.authenticator.authenticate(Authentication { id, password }).ok() {
+            let authenticator_unregister = self.authenticator.unregister(AuthenticateUnregister { id });
+            if authenticator_unregister.ok() {
+                OwnerUnregisterResult::Controller(self.controller.release_id(ControllerReleaseId { id }))
+            } else {
+                OwnerUnregisterResult::Unauthorised
+            }
+        } else {
+            OwnerUnregisterResult::Denied
+        }
+    }
 
     // this is the layer which checks passwords- why i chose this to be the layer to `authenticate`
     pub fn update_password(

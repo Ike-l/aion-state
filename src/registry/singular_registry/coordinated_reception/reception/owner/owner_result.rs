@@ -18,3 +18,9 @@ pub enum OwnerUpdatePasswordResult {
     Authenticator(AuthenticateUpdatePasswordResult),
     Denied
 }
+
+pub enum OwnerUnregisterResult {
+    Controller(ControllerReleaseIdResult),
+    Unauthorised,
+    Denied
+}
