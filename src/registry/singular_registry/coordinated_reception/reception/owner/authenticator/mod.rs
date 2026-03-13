@@ -25,31 +25,45 @@ impl<
         AuthenticationResult::Verification(self.credentials.verify(id, password))
     }
 
+    /// Register a user
+    /// 
+    /// Such that `authenticate` with the same `id` & `password` returns true
     pub fn register(
         &mut self,
         AuthenticateRegister {
             id, password
         }: AuthenticateRegister<CS::Id, CS::Password>
     ) -> AuthenticateRegistrationResult {
+        trace_function!("Registering");
 
         AuthenticateRegistrationResult::Registration(self.credentials.register(id, password))
     }
 
+    /// Update the password
+    /// 
+    /// Assumes the caller has the authority to do so
     pub fn update_password(
         &mut self,
         AuthenticateUpdatePassword {
             id, new_password
         }: AuthenticateUpdatePassword<CS::Id, CS::Password>
     ) -> AuthenticateUpdatePasswordResult {
+        trace_function!("Updating Password");
+
         AuthenticateUpdatePasswordResult::Updated(self.credentials.update_password(id, new_password))
     }
 
+    /// Unregister a user
+    /// 
+    /// Acts as the opposite to `register`
     pub fn unregister(
         &mut self,
         AuthenticateUnregister {
             id
         }: AuthenticateUnregister<'_, CS::Id>
     ) -> AuthenticateUnregisterResult {
+        trace_function!("Unregistering");
+        
         AuthenticateUnregisterResult::Unregister(self.credentials.unregister(id))
     }
 }
