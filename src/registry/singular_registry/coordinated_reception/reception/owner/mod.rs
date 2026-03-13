@@ -38,7 +38,7 @@ impl<
             if authenticator_unregister.ok() {
                 OwnerUnregisterResult::Controller(self.controller.release_id(ControllerReleaseId { id }))
             } else {
-                OwnerUnregisterResult::Unauthorised
+                OwnerUnregisterResult::Authenticator(authenticator_unregister)
             }
         } else {
             OwnerUnregisterResult::Denied
