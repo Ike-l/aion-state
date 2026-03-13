@@ -101,14 +101,19 @@ pub mod prelude {
                                 OwnerRegister,
                                 OwnerRelease,
                                 OwnerUpdatePassword,
-                                OwnerUnregister
+                                OwnerUnregister,
+                                OwnerAllow,
+                                OwnerAccess
                             },
                             owner_result::{
                                 OwnerOwnResult,
                                 OwnerRegisterResult,
                                 OwnerReleaseResult,
                                 OwnerUpdatePasswordResult,
-                                OwnerUnregisterResult
+                                OwnerUnregisterResult,
+                                OwnerBlacklistAllowResult,
+                                OwnerWhitelistAllowResult,
+                                OwnerAccessResult
                             },
                             authenticator::{
                                 Authenticator,
