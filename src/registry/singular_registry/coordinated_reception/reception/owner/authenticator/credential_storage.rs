@@ -23,12 +23,24 @@ pub trait CredentialStorage {
         password: Self::Password
     ) -> bool;
 
+    /// Set the password for `id` as `new_password`
+    /// 
+    /// True for success
+    /// 
+    /// False for fail
     fn update_password(
         &mut self,
         id: &Self::Id,
         new_password: Self::Password
     ) -> bool;
 
+    /// Unregister the user
+    /// 
+    /// The opposite of `register`
+    /// 
+    /// True for success
+    /// 
+    /// False for fail
     fn unregister(
         &mut self,
         id: &Self::Id
