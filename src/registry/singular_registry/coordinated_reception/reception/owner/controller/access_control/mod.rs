@@ -54,15 +54,15 @@ impl<
     /// if a password is not given it will check the whitelist
     /// 
     /// Does not (currently) check the whitelist if the blacklist check fails
-    pub fn access(
+    pub fn check_access(
         &self,
         AccessControlAccess {
             id, access, password
         }: AccessControlAccess<'_, WS::Id, WS::Access, BS::Password>
     ) -> AccessControlAccessResult {
         match password {
-            Some(password) => AccessControlAccessResult::Blacklist(self.blacklist.access(BlacklistAccess { id, access, password })),
-            None => AccessControlAccessResult::Whitelist(self.whitelist.access(WhitelistAccess { id, access })),
+            Some(password) => AccessControlAccessResult::Blacklist(self.blacklist.check_access(BlacklistAccess { id, access, password })),
+            None => AccessControlAccessResult::Whitelist(self.whitelist.check_access(WhitelistAccess { id, access })),
         }
     }
 

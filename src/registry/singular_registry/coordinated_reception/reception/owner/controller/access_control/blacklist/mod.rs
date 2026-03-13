@@ -30,13 +30,13 @@ impl<
     /// Attempt to access the `id` with the `access` 
     /// 
     /// given the password is the one returned by the corresponding `allow`
-    pub fn access(
+    pub fn check_access(
         &self,
         BlacklistAccess {
             id, access, password
         }: BlacklistAccess<'_, BS::Id, BS::Access, BS::Password>
     ) -> BlacklistAccessResult {
-        BlacklistAccessResult::Verification(self.blacklist_storage.verify(id, access, password))
+        BlacklistAccessResult::Verification(self.blacklist_storage.check_access(id, access, password))
     }
 
     /// Attempt to un-allow

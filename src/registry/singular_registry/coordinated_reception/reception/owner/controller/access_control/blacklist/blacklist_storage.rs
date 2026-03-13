@@ -4,7 +4,7 @@ pub trait BlacklistStorage {
     type Password;
 
     /// Verify if the `id` `access` pair corresponds and with the password
-    fn verify(
+    fn check_access(
         &self,
         id: &Self::Id,
         access: &Self::Access,

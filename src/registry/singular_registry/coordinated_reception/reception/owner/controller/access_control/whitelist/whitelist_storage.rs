@@ -3,7 +3,7 @@ pub trait WhitelistStorage {
     type Access;
 
     /// Verify if the `id` `access` pair corresponds to a registered element
-    fn verify(
+    fn check_access(
         &self,
         id: &Self::Id,
         access: &Self::Access 

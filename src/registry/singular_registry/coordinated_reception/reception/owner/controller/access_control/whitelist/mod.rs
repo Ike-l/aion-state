@@ -24,13 +24,13 @@ impl<
     }
 
     /// Passes through to `whitelist_storage`
-    pub fn access(
+    pub fn check_access(
         &self,
         WhitelistAccess {
             id, access,
         }: WhitelistAccess<'_, WS::Id, WS::Access>
     ) -> WhitelistAccessResult {
-        WhitelistAccessResult::Allowed(self.whitelist_storage.verify(id, access))
+        WhitelistAccessResult::Allowed(self.whitelist_storage.check_access(id, access))
     }
 
     // opposite to allow

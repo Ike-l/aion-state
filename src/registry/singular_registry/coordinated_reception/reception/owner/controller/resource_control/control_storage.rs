@@ -7,7 +7,7 @@ pub trait ControlStorage {
     /// True for the `id` `owns` the `resource_id`
     /// 
     /// False for the `id` does not `own` the `resource_id`
-    fn verify(
+    fn check_resource_owner(
         &self,
         id: &Self::Id,
         resource_id: &Self::ResourceId

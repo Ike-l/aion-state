@@ -46,12 +46,12 @@ impl<
     }
 
     /// Passes through to `control_storage`
-    pub fn verify(
+    pub fn check_resource_owner(
         &self,
         ResourceControlVerification {
             id, resource_id
         }: ResourceControlVerification<'_, CS::Id, CS::ResourceId>
     ) -> ResourceControlVerificationResult {
-        ResourceControlVerificationResult::Verification(self.control_storage.verify(id, resource_id))
+        ResourceControlVerificationResult::Verification(self.control_storage.check_resource_owner(id, resource_id))
     }
 }

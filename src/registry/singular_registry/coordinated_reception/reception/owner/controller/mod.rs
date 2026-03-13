@@ -56,7 +56,7 @@ impl<
             id, resource_id, access
         }: ControllerAllow<'_, CS::Id, CS::ResourceId, WS::Access>
     ) -> ControllerWhitelistAllowResult {
-        if self.resource_control.verify(ResourceControlVerification { id, resource_id: &resource_id }).ok() {
+        if self.resource_control.check_resource_owner(ResourceControlVerification { id, resource_id: &resource_id }).ok() {
             ControllerWhitelistAllowResult::Whitelist(self.access_control.allow_whitelist(AccessControlAllow { id: resource_id, access }))
         } else {
             ControllerWhitelistAllowResult::Denied
@@ -70,7 +70,7 @@ impl<
             id, resource_id, access
         }: ControllerAllow<'_, CS::Id, CS::ResourceId, BS::Access>
     ) -> ControllerBlacklistAllowResult<BS::Password> {
-        if self.resource_control.verify(ResourceControlVerification { id, resource_id: &resource_id }).ok() {
+        if self.resource_control.check_resource_owner(ResourceControlVerification { id, resource_id: &resource_id }).ok() {
             ControllerBlacklistAllowResult::Blacklist(self.access_control.allow_blacklist(AccessControlAllow { id: resource_id, access }))
         } else {
             ControllerBlacklistAllowResult::Denied
@@ -80,17 +80,17 @@ impl<
     /// If is owner OR password matches then return ok?
     /// 
     // Could open the verify api then drop the `id` branch?
-    pub fn access(
+    pub fn check_access(
         &self,
         ControllerAccess {
             id, resource_id, access, password
         }: ControllerAccess<'_, CS::Id, WS::Id, WS::Access, BS::Password>
     ) -> ControllerAccessResult {
         if let Some(id) = id {
-            return ControllerAccessResult::Verification(self.resource_control.verify(ResourceControlVerification { id, resource_id }))
+            return ControllerAccessResult::Verification(self.resource_control.check_resource_owner(ResourceControlVerification { id, resource_id }))
         }
         
-        ControllerAccessResult::AccessControl(self.access_control.access(AccessControlAccess { id: resource_id, access, password }))
+        ControllerAccessResult::AccessControl(self.access_control.check_access(AccessControlAccess { id: resource_id, access, password }))
     }
 
     pub fn release_id(
