@@ -1,4 +1,4 @@
-use crate::prelude::{WhitelistAccess, WhitelistAccessResult, WhitelistAllow, WhitelistAllowResult, WhitelistBlock, WhitelistBlockResult, WhitelistRelease, WhitelistReleaseAllResult, WhitelistReleaseResult, WhitelistStorage};
+use crate::prelude::{WhitelistAccess, WhitelistAccessResult, WhitelistAllow, WhitelistAllowResult, WhitelistBlock, WhitelistBlockResult, WhitelistRelease, WhitelistReleaseAllResult, WhitelistReleaseResult, WhitelistStorage, trace_function};
 
 pub mod whitelist_storage;
 
@@ -20,6 +20,8 @@ impl<
             id, access
         }: WhitelistAllow<WS::Id, WS::Access>
     ) -> WhitelistAllowResult {
+        trace_function!("Whitelist Allow");
+
         WhitelistAllowResult::Allow(self.whitelist_storage.allow(id, access))
     }
 
@@ -30,6 +32,8 @@ impl<
             id, access,
         }: WhitelistAccess<'_, WS::Id, WS::Access>
     ) -> WhitelistAccessResult {
+        trace_function!("Whitelist Check Access");
+
         WhitelistAccessResult::Allowed(self.whitelist_storage.check_access(id, access))
     }
 
@@ -41,6 +45,8 @@ impl<
             id, access
         }: WhitelistBlock<'_, WS::Id, WS::Access>
     ) -> WhitelistBlockResult {
+        trace_function!("Whitelist Block");
+
         WhitelistBlockResult::Block(self.whitelist_storage.block(id, access))
     }
 
@@ -52,6 +58,8 @@ impl<
             id
         }: WhitelistRelease<'_, WS::Id>
     ) -> WhitelistReleaseResult {
+        trace_function!("Whitelist Release");
+
         WhitelistReleaseResult::Release(self.whitelist_storage.release(id))
     }
 
@@ -62,6 +70,8 @@ impl<
         &mut self,
         inputs: impl Iterator<Item = WhitelistRelease<'a, WS::Id>>
     ) -> WhitelistReleaseAllResult where <WS as WhitelistStorage>::Id: 'a {
+        trace_function!("Whitelist Release All");
+
         WhitelistReleaseAllResult::Release(self.whitelist_storage.release_all(inputs.map(|WhitelistRelease { id }| id)))
     }
 }

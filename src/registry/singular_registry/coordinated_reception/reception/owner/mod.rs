@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerAccess, ControllerAllow, ControllerOwn, ControllerRelease, ControllerReleaseId, CredentialStorage, OwnerAccess, OwnerAccessResult, OwnerAllow, OwnerBlacklistAllowResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerRelease, OwnerReleaseResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage};
+use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerAccess, ControllerAllow, ControllerOwn, ControllerRelease, ControllerReleaseId, CredentialStorage, OwnerAccess, OwnerAccessResult, OwnerAllow, OwnerBlacklistAllowResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerRelease, OwnerReleaseResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage, trace_function};
 
 pub mod authenticator;
 pub mod controller;
@@ -27,6 +27,8 @@ impl<
             id, password
         }: OwnerRegister<AS::Id, AS::Password>
     ) -> OwnerRegisterResult {
+        trace_function!("Owner Register");
+
         OwnerRegisterResult::Authenticator(self.authenticator.register(AuthenticateRegister { id, password }))
     }
 
@@ -39,6 +41,8 @@ impl<
             id, password
         }: OwnerUnregister<'_, AS::Id, AS::Password>
     ) -> OwnerUnregisterResult {
+        trace_function!("Owner Unregister");
+
         if self.authenticator.authenticate(Authentication { id, password }).ok() {
             let authenticator_unregister = self.authenticator.unregister(AuthenticateUnregister { id });
             if authenticator_unregister.ok() {
@@ -59,6 +63,8 @@ impl<
             id, old_password, new_password
         }: OwnerUpdatePassword<AS::Id, AS::Password>
     ) -> OwnerUpdatePasswordResult {
+        trace_function!("Owner Update Password");
+
         if self.authenticator.authenticate(Authentication { id, password: old_password }).ok() {
             return OwnerUpdatePasswordResult::Authenticator(self.authenticator.update_password(AuthenticateUpdatePassword { id, new_password }))
         }
@@ -73,6 +79,8 @@ impl<
             id, password, resource_id
         }: OwnerOwn<'_, AS::Id, WS::Id, AS::Password>
     ) -> OwnerOwnResult {
+        trace_function!("Owner Own");
+
         if self.authenticator.authenticate(Authentication { id: &id, password }).ok() {
             return OwnerOwnResult::Controller(self.controller.own(ControllerOwn { id, resource_id }))
         }
@@ -87,6 +95,8 @@ impl<
             id, password, resource_id
         }: OwnerRelease<AS::Id, AS::Password, CS::ResourceId>
     ) -> OwnerReleaseResult {
+        trace_function!("Owner Release");
+
         if self.authenticator.authenticate(Authentication { id, password }).ok() {
             return OwnerReleaseResult::Controller(self.controller.release(ControllerRelease { id, resource_id }))
         }
@@ -103,6 +113,8 @@ impl<
             id, password, resource_id, access
         }: OwnerAllow<'_, AS::Id, AS::Password, CS::ResourceId, WS::Access>
     ) -> OwnerWhitelistAllowResult {
+        trace_function!("Owner Allow Whitelist");
+
         if self.authenticator.authenticate(Authentication { id, password }).ok() {
             return OwnerWhitelistAllowResult::Controller(self.controller.allow_whitelist(ControllerAllow { id, resource_id, access }))
         }
@@ -119,6 +131,8 @@ impl<
             id, password, resource_id, access
         }: OwnerAllow<'_, AS::Id, AS::Password, CS::ResourceId, WS::Access>
     ) -> OwnerBlacklistAllowResult<BS::Password> {
+        trace_function!("Owner Allow Blacklist");
+
         if self.authenticator.authenticate(Authentication { id, password }).ok() {
             return OwnerBlacklistAllowResult::Controller(self.controller.allow_blacklist(ControllerAllow { id, resource_id, access }))
         }
@@ -139,6 +153,12 @@ impl<
             id, resource_id, access, password
         }: OwnerAccess<'_, AS::Id, WS::Id, WS::Access, BS::Password>
     ) -> OwnerAccessResult {
+        trace_function!("Owner Check Access");
+
         OwnerAccessResult::Controller(self.controller.check_access(ControllerAccess { id, resource_id, access, password }))
     }
+
+    pub fn block_whitelist() {}
+    pub fn block_blacklist() {}
+    pub fn release_all() {}
 }

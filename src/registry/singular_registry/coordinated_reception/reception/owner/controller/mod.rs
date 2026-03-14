@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControl, AccessControlAccess, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerAccess, ControllerAccessResult, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlVerification, WhitelistStorage};
+use crate::prelude::{AccessControl, AccessControlAccess, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerAccess, ControllerAccessResult, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlVerification, WhitelistStorage, trace_function};
 
 pub mod access_control;
 pub mod resource_control;
@@ -30,6 +30,8 @@ impl<
             id, resource_id
         }: ControllerOwn<CS::Id, CS::ResourceId>
     ) -> ControllerOwnResult {
+        trace_function!("Controller Own");
+
         ControllerOwnResult::ResourceControl(self.resource_control.own(ResourceControlOwn { id, resource_id }))
     }
 
@@ -42,6 +44,8 @@ impl<
             id, resource_id
         }: ControllerRelease<CS::Id, CS::ResourceId>
     ) -> ControllerReleaseResult {
+        trace_function!("Controller Release");
+
         let access_control_release_result = self.access_control.release(AccessControlRelease { id: resource_id });
         if access_control_release_result.ok() {
             return ControllerReleaseResult::ResourceControl(self.resource_control.release(ResourceControlRelease { id, resource_id }))
@@ -56,6 +60,8 @@ impl<
             id, resource_id, access
         }: ControllerAllow<'_, CS::Id, CS::ResourceId, WS::Access>
     ) -> ControllerWhitelistAllowResult {
+        trace_function!("Controller Allow Whitelist");
+
         if self.resource_control.check_resource_owner(ResourceControlVerification { id, resource_id: &resource_id }).ok() {
             ControllerWhitelistAllowResult::Whitelist(self.access_control.allow_whitelist(AccessControlAllow { id: resource_id, access }))
         } else {
@@ -70,6 +76,8 @@ impl<
             id, resource_id, access
         }: ControllerAllow<'_, CS::Id, CS::ResourceId, BS::Access>
     ) -> ControllerBlacklistAllowResult<BS::Password> {
+        trace_function!("Controller Allow Blacklist");
+
         if self.resource_control.check_resource_owner(ResourceControlVerification { id, resource_id: &resource_id }).ok() {
             ControllerBlacklistAllowResult::Blacklist(self.access_control.allow_blacklist(AccessControlAllow { id: resource_id, access }))
         } else {
@@ -86,6 +94,8 @@ impl<
             id, resource_id, access, password
         }: ControllerAccess<'_, CS::Id, WS::Id, WS::Access, BS::Password>
     ) -> ControllerAccessResult {
+        trace_function!("Controller Check Access");
+
         if let Some(id) = id {
             return ControllerAccessResult::Verification(self.resource_control.check_resource_owner(ResourceControlVerification { id, resource_id }))
         }
@@ -102,6 +112,8 @@ impl<
             id
         }: ControllerReleaseId<'_, CS::Id> 
     ) -> ControllerReleaseIdResult {
+        trace_function!("Controller Release Id");
+
         let resources = self.resource_control.release_id(ResourceControlReleaseId { id });
         match resources {
             ResourceControlReleaseIdResult::Released(resources) => {
@@ -111,4 +123,8 @@ impl<
             },
         }
     }
+
+    pub fn block_whitelist() {}
+    pub fn block_blacklist() {}
+    pub fn release_all() {}
 }

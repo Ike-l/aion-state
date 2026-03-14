@@ -20,7 +20,7 @@ impl<
             id, password
         }: Authentication<'_, CS::Id, CS::Password> 
     ) -> AuthenticationResult {
-        trace_function!("Authenticating");
+        trace_function!("Authenticator Authenticating");
 
         AuthenticationResult::Verification(self.credentials.verify(id, password))
     }
@@ -34,7 +34,7 @@ impl<
             id, password
         }: AuthenticateRegister<CS::Id, CS::Password>
     ) -> AuthenticateRegistrationResult {
-        trace_function!("Registering");
+        trace_function!("Authenticator Registering");
 
         AuthenticateRegistrationResult::Registration(self.credentials.register(id, password))
     }
@@ -48,7 +48,7 @@ impl<
             id, new_password
         }: AuthenticateUpdatePassword<CS::Id, CS::Password>
     ) -> AuthenticateUpdatePasswordResult {
-        trace_function!("Updating Password");
+        trace_function!("Authenticator Updating Password");
 
         AuthenticateUpdatePasswordResult::Updated(self.credentials.update_password(id, new_password))
     }
@@ -62,7 +62,7 @@ impl<
             id
         }: AuthenticateUnregister<'_, CS::Id>
     ) -> AuthenticateUnregisterResult {
-        trace_function!("Unregistering");
+        trace_function!("Authenticator Unregistering");
         
         AuthenticateUnregisterResult::Unregister(self.credentials.unregister(id))
     }

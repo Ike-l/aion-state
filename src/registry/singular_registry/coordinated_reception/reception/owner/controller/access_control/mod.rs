@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlAccess, AccessControlAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlBlacklistBlockResult, AccessControlBlock, AccessControlRelease, AccessControlReleaseAllResult, AccessControlReleaseResult, AccessControlWhitelistAllowResult, AccessControlWhitelistBlockResult, Blacklist, BlacklistAccess, BlacklistAllow, BlacklistBlock, BlacklistRelease, BlacklistStorage, Whitelist, WhitelistAccess, WhitelistAllow, WhitelistBlock, WhitelistRelease, WhitelistStorage};
+use crate::prelude::{AccessControlAccess, AccessControlAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlBlacklistBlockResult, AccessControlBlock, AccessControlRelease, AccessControlReleaseAllResult, AccessControlReleaseResult, AccessControlWhitelistAllowResult, AccessControlWhitelistBlockResult, Blacklist, BlacklistAccess, BlacklistAllow, BlacklistBlock, BlacklistRelease, BlacklistStorage, Whitelist, WhitelistAccess, WhitelistAllow, WhitelistBlock, WhitelistRelease, WhitelistStorage, trace_function};
 
 pub mod whitelist;
 pub mod blacklist;
@@ -34,6 +34,8 @@ impl<
             id, access
         }: AccessControlAllow<WS::Id, WS::Access>
     ) -> AccessControlBlacklistAllowResult<BS::Password> {
+        trace_function!("AccessControl Allow Blacklist");
+
         AccessControlBlacklistAllowResult::Blacklist(self.blacklist.allow(BlacklistAllow { id, access } ))
     }
 
@@ -46,6 +48,8 @@ impl<
             id, access
         }: AccessControlAllow<WS::Id, WS::Access>
     ) -> AccessControlWhitelistAllowResult {
+        trace_function!("AccessControl Allow Whitelist");
+
         AccessControlWhitelistAllowResult::Whitelist(self.whitelist.allow(WhitelistAllow { id, access } ))
     }
 
@@ -60,6 +64,8 @@ impl<
             id, access, password
         }: AccessControlAccess<'_, WS::Id, WS::Access, BS::Password>
     ) -> AccessControlAccessResult {
+        trace_function!("AccessControl Check Access");
+
         match password {
             Some(password) => AccessControlAccessResult::Blacklist(self.blacklist.check_access(BlacklistAccess { id, access, password })),
             None => AccessControlAccessResult::Whitelist(self.whitelist.check_access(WhitelistAccess { id, access })),
@@ -75,6 +81,8 @@ impl<
             id, access
         }: AccessControlBlock<'_, WS::Id, WS::Access>
     ) -> AccessControlWhitelistBlockResult {
+        trace_function!("AccessControl Block Whitelist");
+
         AccessControlWhitelistBlockResult::Whitelist(self.whitelist.block(WhitelistBlock { id, access }))
     }
 
@@ -85,6 +93,8 @@ impl<
             id, access
         }: AccessControlBlock<'_, BS::Id, BS::Access>
     ) -> AccessControlBlacklistBlockResult {
+        trace_function!("AccessControl Block Blacklist");
+
         AccessControlBlacklistBlockResult::Blacklist(self.blacklist.block(BlacklistBlock { id, access }))
     }
 
@@ -98,6 +108,8 @@ impl<
             id
         }: AccessControlRelease<'_, WS::Id>
     ) -> AccessControlReleaseResult {
+        trace_function!("AccessControl Release");
+
         AccessControlReleaseResult::Lists((
             self.whitelist.release(WhitelistRelease { id }),
             self.blacklist.release(BlacklistRelease { id })
@@ -117,6 +129,8 @@ impl<
         &mut self,
         inputs: Vec<AccessControlRelease<'_, WS::Id>>
     ) -> AccessControlReleaseAllResult {
+        trace_function!("AccessControl Release All");
+
         let whitelist_input = inputs
             .iter()
             .map(
