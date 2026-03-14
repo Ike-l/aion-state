@@ -93,6 +93,9 @@ impl<
         ControllerAccessResult::AccessControl(self.access_control.check_access(AccessControlAccess { id: resource_id, access, password }))
     }
 
+    /// Release all resources associated with `id`
+    /// 
+    /// Release all `accesses` associated with all the resources released in the above
     pub fn release_id(
         &mut self,
         ControllerReleaseId {

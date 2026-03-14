@@ -104,6 +104,15 @@ impl<
         ))
     }
 
+    /// Passes through to `whitelist` & `blacklist` 
+    /// 
+    /// The order should not be considered when analysing the semantics of the function 
+    /// 
+    /// So if either `whitelist` or `blacklist` panics the progress of the other is unknown
+    /// 
+    /// Semantics of `release_all` follow from the implementation of `whitelist_storage`
+    /// 
+    /// So it could be better than just iterating over `release`
     pub fn release_all(
         &mut self,
         inputs: Vec<AccessControlRelease<'_, WS::Id>>

@@ -18,6 +18,9 @@ impl<
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = AS::Id, ResourceId = WS::Id>,
 > Owner<AS, WS, BS, CS> {
+    /// Register the `id` with the `password`
+    ///
+    /// Such that to identify as `id`- `password` is required
     pub fn register(
         &mut self,
         OwnerRegister {
@@ -27,6 +30,9 @@ impl<
         OwnerRegisterResult::Authenticator(self.authenticator.register(AuthenticateRegister { id, password }))
     }
 
+    /// Unregister `yourself`
+    /// 
+    /// Then releases all `control` associated with `id`
     pub fn unregister(
         &mut self,
         OwnerUnregister {
@@ -46,6 +52,7 @@ impl<
     }
 
     // this is the layer which checks passwords- why i chose this to be the layer to `authenticate`
+    /// update `your` password to `new_password`
     pub fn update_password(
         &mut self,
         OwnerUpdatePassword {
@@ -59,10 +66,11 @@ impl<
         OwnerUpdatePasswordResult::Denied
     }
 
+    /// Take `controller` ownership over `resource_id`
     pub fn own(
         &mut self,
         OwnerOwn {
-            id, resource_id, password
+            id, password, resource_id
         }: OwnerOwn<'_, AS::Id, WS::Id, AS::Password>
     ) -> OwnerOwnResult {
         if self.authenticator.authenticate(Authentication { id: &id, password }).ok() {
@@ -72,6 +80,7 @@ impl<
         OwnerOwnResult::Denied
     }
 
+    /// relinquish `resource_id` from `controller`
     pub fn release(
         &mut self,
         OwnerRelease {
@@ -85,6 +94,9 @@ impl<
         OwnerReleaseResult::Denied
     }
 
+    /// create an allowance over `whitelist` semantics
+    /// 
+    /// for `resource_id` with `access`
     pub fn allow_whitelist(
         &mut self,
         OwnerAllow {
@@ -98,6 +110,9 @@ impl<
         OwnerWhitelistAllowResult::Denied
     }
 
+    /// create an allowance over `blacklist` semantics
+    /// 
+    /// for `resource_id` with `access`
     pub fn allow_blacklist(
         &mut self,
         OwnerAllow {
@@ -111,7 +126,14 @@ impl<
         OwnerBlacklistAllowResult::Denied
     }
 
-    pub fn access(
+    /// Check if `resource_id` can be accessed with `access`
+    /// 
+    /// If a `password` exists then it will check the `blacklist`
+    /// 
+    /// Otherwise will check the `whitelist`
+    /// 
+    /// If the `password` check fails `on` `blacklist` it will not check `whitelist`
+    pub fn check_access(
         &self,
         OwnerAccess {
             id, resource_id, access, password

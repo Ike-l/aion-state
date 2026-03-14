@@ -61,6 +61,9 @@ impl<
         BlacklistReleaseResult::Release(self.blacklist_storage.release(id))
     }
 
+    /// release all accesses corresponding to the `ids` in `inputs`
+    /// 
+    /// use this over iterating over `release` if the implementator of `BlacklistStorage` has additional semantics on their `release_all`
     pub fn release_all<'a>(
         &mut self,
         inputs: impl Iterator<Item = BlacklistRelease<'a, BS::Id>>

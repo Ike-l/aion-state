@@ -55,6 +55,9 @@ impl<
         WhitelistReleaseResult::Release(self.whitelist_storage.release(id))
     }
 
+    /// release all `ids` in `inputs`
+    /// 
+    /// use this over iterating over `release` if the implementator of `WhitelistStorage` has additional semantics on their `release_all`
     pub fn release_all<'a>(
         &mut self,
         inputs: impl Iterator<Item = WhitelistRelease<'a, WS::Id>>

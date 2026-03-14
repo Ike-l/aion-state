@@ -36,6 +36,7 @@ impl<
         ResourceControlReleaseResult::Released(self.control_storage.release(id, resource_id))
     }
 
+    /// Passes through to `control_storage`
     pub fn release_id(
         &mut self,
         ResourceControlReleaseId {
