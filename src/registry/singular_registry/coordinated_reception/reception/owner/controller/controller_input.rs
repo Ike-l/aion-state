@@ -14,7 +14,7 @@ pub struct ControllerAllow<'a, Id, ResourceId, Access> {
     pub access: Access
 }
 
-pub struct ControllerAccess<'a, Id, ResourceId, Access, Password> {
+pub struct ControllerCheckAccess<'a, Id, ResourceId, Access, Password> {
     pub id: Option<&'a Id>,
     pub resource_id: &'a ResourceId,
     pub access: &'a Access,

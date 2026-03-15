@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControl, AccessControlAccess, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerAccess, ControllerAccessResult, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlVerification, WhitelistStorage, trace_function};
+use crate::prelude::{AccessControl, AccessControlCheckAccess, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerCheckAccess, ControllerCheckAccessResult, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerRelease, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlCheckResourceOwner, WhitelistStorage, trace_function};
 
 pub mod access_control;
 pub mod resource_control;
@@ -62,7 +62,7 @@ impl<
     ) -> ControllerWhitelistAllowResult {
         trace_function!("Controller Allow Whitelist");
 
-        if self.resource_control.check_resource_owner(ResourceControlVerification { id, resource_id: &resource_id }).ok() {
+        if self.resource_control.check_resource_owner(ResourceControlCheckResourceOwner { id, resource_id: &resource_id }).ok() {
             ControllerWhitelistAllowResult::Whitelist(self.access_control.allow_whitelist(AccessControlAllow { id: resource_id, access }))
         } else {
             ControllerWhitelistAllowResult::Denied
@@ -78,7 +78,7 @@ impl<
     ) -> ControllerBlacklistAllowResult<BS::Password> {
         trace_function!("Controller Allow Blacklist");
 
-        if self.resource_control.check_resource_owner(ResourceControlVerification { id, resource_id: &resource_id }).ok() {
+        if self.resource_control.check_resource_owner(ResourceControlCheckResourceOwner { id, resource_id: &resource_id }).ok() {
             ControllerBlacklistAllowResult::Blacklist(self.access_control.allow_blacklist(AccessControlAllow { id: resource_id, access }))
         } else {
             ControllerBlacklistAllowResult::Denied
@@ -90,17 +90,17 @@ impl<
     // Could open the verify api then drop the `id` branch?
     pub fn check_access(
         &self,
-        ControllerAccess {
+        ControllerCheckAccess {
             id, resource_id, access, password
-        }: ControllerAccess<'_, CS::Id, WS::Id, WS::Access, BS::Password>
-    ) -> ControllerAccessResult {
+        }: ControllerCheckAccess<'_, CS::Id, WS::Id, WS::Access, BS::Password>
+    ) -> ControllerCheckAccessResult {
         trace_function!("Controller Check Access");
 
         if let Some(id) = id {
-            return ControllerAccessResult::Verification(self.resource_control.check_resource_owner(ResourceControlVerification { id, resource_id }))
+            return ControllerCheckAccessResult::Verification(self.resource_control.check_resource_owner(ResourceControlCheckResourceOwner { id, resource_id }))
         }
         
-        ControllerAccessResult::AccessControl(self.access_control.check_access(AccessControlAccess { id: resource_id, access, password }))
+        ControllerCheckAccessResult::AccessControl(self.access_control.check_access(AccessControlCheckAccess { id: resource_id, access, password }))
     }
 
     /// Release all resources associated with `id`

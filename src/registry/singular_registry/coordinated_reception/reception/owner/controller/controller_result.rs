@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlAccessResult, AccessControlBlacklistAllowResult, AccessControlReleaseAllResult, AccessControlReleaseResult, AccessControlWhitelistAllowResult, ResourceControlOwnResult, ResourceControlReleaseResult, ResourceControlVerificationResult};
+use crate::prelude::{AccessControlCheckAccessResult, AccessControlBlacklistAllowResult, AccessControlReleaseAllResult, AccessControlReleaseResult, AccessControlWhitelistAllowResult, ResourceControlOwnResult, ResourceControlReleaseResult, ResourceControlCheckResourceOwnerResult};
 
 pub enum ControllerOwnResult {
     ResourceControl(ResourceControlOwnResult)
@@ -19,16 +19,16 @@ pub enum ControllerWhitelistAllowResult {
     Denied
 }
 
-pub enum ControllerAccessResult {
-    Verification(ResourceControlVerificationResult),
-    AccessControl(AccessControlAccessResult)
+pub enum ControllerCheckAccessResult {
+    Verification(ResourceControlCheckResourceOwnerResult),
+    AccessControl(AccessControlCheckAccessResult)
 }
 
-impl ControllerAccessResult {
+impl ControllerCheckAccessResult {
     pub fn ok(&self) -> bool {
         match self {
-            ControllerAccessResult::Verification(resource_control_verification_result) => resource_control_verification_result.ok(),
-            ControllerAccessResult::AccessControl(access_control_access_result) => access_control_access_result.ok(),
+            ControllerCheckAccessResult::Verification(resource_control_verification_result) => resource_control_verification_result.ok(),
+            ControllerCheckAccessResult::AccessControl(access_control_access_result) => access_control_access_result.ok(),
         }
     }
 }
