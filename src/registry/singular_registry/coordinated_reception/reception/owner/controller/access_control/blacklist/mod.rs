@@ -1,4 +1,4 @@
-use crate::prelude::{BlacklistCheckAccess, BlacklistCheckAccessResult, BlacklistAllow, BlacklistAllowResult, BlacklistBlock, BlacklistBlockResult, BlacklistRelease, BlacklistReleaseAllResult, BlacklistReleaseResult, BlacklistStorage, trace_function};
+use crate::prelude::{BlacklistCheckAccess, BlacklistCheckAccessResult, BlacklistAllow, BlacklistAllowResult, BlacklistUnallow, BlacklistUnallowResult, BlacklistRelease, BlacklistReleaseAllResult, BlacklistReleaseResult, BlacklistStorage, trace_function};
 
 pub mod blacklist_storage;
 
@@ -46,15 +46,15 @@ impl<
     /// Attempt to un-allow
     /// 
     /// Passes directly to `blacklist_storage`
-    pub fn block(
+    pub fn unallow(
         &mut self,
-        BlacklistBlock {
+        BlacklistUnallow {
             id, access   
-        }: BlacklistBlock<'_, BS::Id, BS::Access>
-    ) -> BlacklistBlockResult {
-        trace_function!("Blacklist Block");
+        }: BlacklistUnallow<'_, BS::Id, BS::Access>
+    ) -> BlacklistUnallowResult {
+        trace_function!("Blacklist Unallow");
 
-        BlacklistBlockResult::Block(self.blacklist_storage.block(id, access))
+        BlacklistUnallowResult::Unallow(self.blacklist_storage.unallow(id, access))
     }
 
     /// Attempts to un-allow all `access` corresponding to `id`

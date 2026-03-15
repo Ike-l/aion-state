@@ -102,7 +102,7 @@ pub mod prelude {
                             owner_input::{
                                 OwnerOwn,
                                 OwnerRegister,
-                                OwnerRelease,
+                                OwnerReleaseResource,
                                 OwnerUpdatePassword,
                                 OwnerUnregister,
                                 OwnerAllow,
@@ -111,7 +111,7 @@ pub mod prelude {
                             owner_result::{
                                 OwnerOwnResult,
                                 OwnerRegisterResult,
-                                OwnerReleaseResult,
+                                OwnerReleaseResourceResult,
                                 OwnerUpdatePasswordResult,
                                 OwnerUnregisterResult,
                                 OwnerBlacklistAllowResult,
@@ -140,14 +140,14 @@ pub mod prelude {
                                 Controller,
                                 controller_input::{
                                     ControllerOwn,
-                                    ControllerRelease,
+                                    ControllerReleaseResource,
                                     ControllerAllow,
                                     ControllerCheckAccess,
                                     ControllerReleaseId
                                 },
                                 controller_result::{
                                     ControllerOwnResult,
-                                    ControllerReleaseResult,
+                                    ControllerReleaseResourceResult,
                                     ControllerBlacklistAllowResult,
                                     ControllerWhitelistAllowResult,
                                     ControllerCheckAccessResult,
@@ -159,15 +159,15 @@ pub mod prelude {
                                         AccessControlCheckAccess,
                                         AccessControlAllow,
                                         AccessControlRelease,
-                                        AccessControlBlock
+                                        AccessControlUnallow
                                     },
                                     access_control_result::{
                                         AccessControlCheckAccessResult,
                                         AccessControlBlacklistAllowResult,
                                         AccessControlWhitelistAllowResult,
                                         AccessControlReleaseResult,
-                                        AccessControlBlacklistBlockResult,
-                                        AccessControlWhitelistBlockResult,
+                                        AccessControlBlacklistUnallowResult,
+                                        AccessControlWhitelistUnallowResult,
                                         AccessControlReleaseAllResult,
                                     },
                                     blacklist::{
@@ -176,13 +176,13 @@ pub mod prelude {
                                             BlacklistCheckAccess,
                                             BlacklistAllow,
                                             BlacklistRelease,
-                                            BlacklistBlock
+                                            BlacklistUnallow
                                         },
                                         blacklist_result::{
                                             BlacklistCheckAccessResult,
                                             BlacklistAllowResult,
                                             BlacklistReleaseResult,
-                                            BlacklistBlockResult,
+                                            BlacklistUnallowResult,
                                             BlacklistReleaseAllResult
                                         },
                                         blacklist_storage::{
@@ -195,13 +195,13 @@ pub mod prelude {
                                             WhitelistCheckAccess,
                                             WhitelistAllow,
                                             WhitelistRelease,
-                                            WhitelistBlock
+                                            WhitelistUnallow
                                         },
                                         whitelist_result::{
                                             WhitelistCheckAccessResult,
                                             WhitelistAllowResult,
                                             WhitelistReleaseResult,
-                                            WhitelistBlockResult,
+                                            WhitelistUnallowResult,
                                             WhitelistReleaseAllResult
                                         },
                                         whitelist_storage::{
@@ -215,13 +215,13 @@ pub mod prelude {
                                         ControlStorage
                                     },
                                     resource_control_input::{
-                                        ResourceControlCheckResourceOwner,
+                                        ResourceControlCheckOwner,
                                         ResourceControlRelease,
                                         ResourceControlOwn,
                                         ResourceControlReleaseId
                                     },
                                     resource_control_result::{
-                                        ResourceControlCheckResourceOwnerResult,
+                                        ResourceControlCheckOwnerResult,
                                         ResourceControlReleaseResult,
                                         ResourceControlOwnResult,
                                         ResourceControlReleaseIdResult

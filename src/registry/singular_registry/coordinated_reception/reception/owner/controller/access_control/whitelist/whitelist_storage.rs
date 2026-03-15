@@ -49,7 +49,7 @@ pub trait WhitelistStorage {
     /// returns True if successful
     /// 
     /// returns False if unsuccessful
-    fn block(
+    fn unallow(
         &mut self,
         id: &Self::Id,
         access: &Self::Access

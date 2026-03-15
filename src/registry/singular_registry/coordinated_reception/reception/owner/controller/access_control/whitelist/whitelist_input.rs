@@ -12,7 +12,7 @@ pub struct WhitelistRelease<'a, Id> {
     pub id: &'a Id
 }
 
-pub struct WhitelistBlock<'a, Id, Access> {
+pub struct WhitelistUnallow<'a, Id, Access> {
     pub id: &'a Id,
     pub access: &'a Access
 }

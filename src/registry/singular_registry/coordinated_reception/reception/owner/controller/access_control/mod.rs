@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlCheckAccess, AccessControlCheckAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlBlacklistBlockResult, AccessControlBlock, AccessControlRelease, AccessControlReleaseAllResult, AccessControlReleaseResult, AccessControlWhitelistAllowResult, AccessControlWhitelistBlockResult, Blacklist, BlacklistCheckAccess, BlacklistAllow, BlacklistBlock, BlacklistRelease, BlacklistStorage, Whitelist, WhitelistCheckAccess, WhitelistAllow, WhitelistBlock, WhitelistRelease, WhitelistStorage, trace_function};
+use crate::prelude::{AccessControlCheckAccess, AccessControlCheckAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlUnallow, AccessControlRelease, AccessControlReleaseAllResult, AccessControlReleaseResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, Blacklist, BlacklistCheckAccess, BlacklistAllow, BlacklistUnallow, BlacklistRelease, BlacklistStorage, Whitelist, WhitelistCheckAccess, WhitelistAllow, WhitelistUnallow, WhitelistRelease, WhitelistStorage, trace_function};
 
 pub mod whitelist;
 pub mod blacklist;
@@ -75,27 +75,27 @@ impl<
     /// takes away a single access for a list
     /// 
     /// Passes through to `whitelist`
-    pub fn block_whitelist(
+    pub fn unallow_whitelist(
         &mut self,
-        AccessControlBlock {
+        AccessControlUnallow {
             id, access
-        }: AccessControlBlock<'_, WS::Id, WS::Access>
-    ) -> AccessControlWhitelistBlockResult {
-        trace_function!("AccessControl Block Whitelist");
+        }: AccessControlUnallow<'_, WS::Id, WS::Access>
+    ) -> AccessControlWhitelistUnallowResult {
+        trace_function!("AccessControl Unallow Whitelist");
 
-        AccessControlWhitelistBlockResult::Whitelist(self.whitelist.block(WhitelistBlock { id, access }))
+        AccessControlWhitelistUnallowResult::Whitelist(self.whitelist.unallow(WhitelistUnallow { id, access }))
     }
 
     /// Passes through to `blacklist`
-    pub fn block_blacklist(
+    pub fn unallow_blacklist(
         &mut self,
-        AccessControlBlock {
+        AccessControlUnallow {
             id, access
-        }: AccessControlBlock<'_, BS::Id, BS::Access>
-    ) -> AccessControlBlacklistBlockResult {
-        trace_function!("AccessControl Block Blacklist");
+        }: AccessControlUnallow<'_, BS::Id, BS::Access>
+    ) -> AccessControlBlacklistUnallowResult {
+        trace_function!("AccessControl Unallow Blacklist");
 
-        AccessControlBlacklistBlockResult::Blacklist(self.blacklist.block(BlacklistBlock { id, access }))
+        AccessControlBlacklistUnallowResult::Blacklist(self.blacklist.unallow(BlacklistUnallow { id, access }))
     }
 
     // release all accesses from all lists

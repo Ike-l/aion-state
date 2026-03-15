@@ -22,8 +22,8 @@ impl WhitelistReleaseResult {
     }
 }
 
-pub enum WhitelistBlockResult {
-    Block(bool)
+pub enum WhitelistUnallowResult {
+    Unallow(bool)
 }
 
 pub enum WhitelistReleaseAllResult {

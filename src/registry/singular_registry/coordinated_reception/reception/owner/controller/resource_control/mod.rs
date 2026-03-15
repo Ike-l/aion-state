@@ -1,4 +1,4 @@
-use crate::prelude::{ControlStorage, ResourceControlOwn, ResourceControlOwnResult, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlReleaseResult, ResourceControlCheckResourceOwner, ResourceControlCheckResourceOwnerResult};
+use crate::prelude::{ControlStorage, ResourceControlOwn, ResourceControlOwnResult, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlReleaseResult, ResourceControlCheckOwner, ResourceControlCheckOwnerResult};
 
 pub mod control_storage;
 
@@ -47,12 +47,12 @@ impl<
     }
 
     /// Passes through to `control_storage`
-    pub fn check_resource_owner(
+    pub fn check_owner(
         &self,
-        ResourceControlCheckResourceOwner {
+        ResourceControlCheckOwner {
             id, resource_id
-        }: ResourceControlCheckResourceOwner<'_, CS::Id, CS::ResourceId>
-    ) -> ResourceControlCheckResourceOwnerResult {
-        ResourceControlCheckResourceOwnerResult::Verification(self.control_storage.check_resource_owner(id, resource_id))
+        }: ResourceControlCheckOwner<'_, CS::Id, CS::ResourceId>
+    ) -> ResourceControlCheckOwnerResult {
+        ResourceControlCheckOwnerResult::Verification(self.control_storage.check_owner(id, resource_id))
     }
 }

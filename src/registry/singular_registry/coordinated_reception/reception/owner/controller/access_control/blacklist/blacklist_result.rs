@@ -22,8 +22,8 @@ impl BlacklistReleaseResult {
     }
 }
 
-pub enum BlacklistBlockResult {
-    Block(bool)
+pub enum BlacklistUnallowResult {
+    Unallow(bool)
 }
 
 pub enum BlacklistReleaseAllResult {

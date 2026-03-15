@@ -1,8 +1,8 @@
-pub enum ResourceControlCheckResourceOwnerResult {
+pub enum ResourceControlCheckOwnerResult {
     Verification(bool)
 }
 
-impl ResourceControlCheckResourceOwnerResult {
+impl ResourceControlCheckOwnerResult {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Verification(true))
     }

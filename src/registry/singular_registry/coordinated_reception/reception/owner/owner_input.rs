@@ -9,7 +9,7 @@ pub struct OwnerRegister<Id, Password> {
     pub password: Password
 }
 
-pub struct OwnerRelease<'a, Id, Password, ResourceId> {
+pub struct OwnerReleaseResource<'a, Id, Password, ResourceId> {
     pub id: &'a Id,
     pub password: &'a Password,
     pub resource_id: &'a ResourceId

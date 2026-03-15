@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerCheckAccess, ControllerAllow, ControllerOwn, ControllerRelease, ControllerReleaseId, CredentialStorage, OwnerCheckAccess, OwnerCheckAccessResult, OwnerAllow, OwnerBlacklistAllowResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerRelease, OwnerReleaseResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage, trace_function};
+use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerCheckAccess, ControllerAllow, ControllerOwn, ControllerReleaseResource, ControllerReleaseId, CredentialStorage, OwnerCheckAccess, OwnerCheckAccessResult, OwnerAllow, OwnerBlacklistAllowResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerReleaseResource, OwnerReleaseResourceResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage, trace_function};
 
 pub mod authenticator;
 pub mod controller;
@@ -89,19 +89,19 @@ impl<
     }
 
     /// relinquish `resource_id` from `controller`
-    pub fn release(
+    pub fn release_resource(
         &mut self,
-        OwnerRelease {
+        OwnerReleaseResource {
             id, password, resource_id
-        }: OwnerRelease<AS::Id, AS::Password, CS::ResourceId>
-    ) -> OwnerReleaseResult {
-        trace_function!("Owner Release");
+        }: OwnerReleaseResource<AS::Id, AS::Password, CS::ResourceId>
+    ) -> OwnerReleaseResourceResult {
+        trace_function!("Owner Release Resource");
 
         if self.authenticator.authenticate(Authentication { id, password }).ok() {
-            return OwnerReleaseResult::Controller(self.controller.release(ControllerRelease { id, resource_id }))
+            return OwnerReleaseResourceResult::Controller(self.controller.release_resource(ControllerReleaseResource { id, resource_id }))
         }
 
-        OwnerReleaseResult::Denied
+        OwnerReleaseResourceResult::Denied
     }
 
     /// create an allowance over `whitelist` semantics

@@ -23,7 +23,7 @@ pub trait BlacklistStorage {
     /// Returns True if successfully found & removed the registry element
     /// 
     /// Returns False if not found & not removed the registry element
-    fn block(
+    fn unallow(
         &mut self,
         id: &Self::Id,
         access: &Self::Access

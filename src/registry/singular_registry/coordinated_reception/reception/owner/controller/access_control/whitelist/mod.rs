@@ -1,4 +1,4 @@
-use crate::prelude::{WhitelistCheckAccess, WhitelistCheckAccessResult, WhitelistAllow, WhitelistAllowResult, WhitelistBlock, WhitelistBlockResult, WhitelistRelease, WhitelistReleaseAllResult, WhitelistReleaseResult, WhitelistStorage, trace_function};
+use crate::prelude::{WhitelistCheckAccess, WhitelistCheckAccessResult, WhitelistAllow, WhitelistAllowResult, WhitelistUnallow, WhitelistUnallowResult, WhitelistRelease, WhitelistReleaseAllResult, WhitelistReleaseResult, WhitelistStorage, trace_function};
 
 pub mod whitelist_storage;
 
@@ -39,15 +39,15 @@ impl<
 
     // opposite to allow
     /// Passes through to `whitelist_storage`
-    pub fn block(
+    pub fn unallow(
         &mut self,
-        WhitelistBlock {
+        WhitelistUnallow {
             id, access
-        }: WhitelistBlock<'_, WS::Id, WS::Access>
-    ) -> WhitelistBlockResult {
-        trace_function!("Whitelist Block");
+        }: WhitelistUnallow<'_, WS::Id, WS::Access>
+    ) -> WhitelistUnallowResult {
+        trace_function!("Whitelist Unallow");
 
-        WhitelistBlockResult::Block(self.whitelist_storage.block(id, access))
+        WhitelistUnallowResult::Unallow(self.whitelist_storage.unallow(id, access))
     }
 
     // remove all allowances
