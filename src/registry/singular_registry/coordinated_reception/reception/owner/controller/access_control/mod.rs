@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlAccess, AccessControlAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlBlacklistBlockResult, AccessControlBlock, AccessControlRelease, AccessControlReleaseAllResult, AccessControlReleaseResult, AccessControlWhitelistAllowResult, AccessControlWhitelistBlockResult, Blacklist, BlacklistAccess, BlacklistAllow, BlacklistBlock, BlacklistRelease, BlacklistStorage, Whitelist, WhitelistAccess, WhitelistAllow, WhitelistBlock, WhitelistRelease, WhitelistStorage, trace_function};
+use crate::prelude::{AccessControlCheckAccess, AccessControlCheckAccessResult, AccessControlAllow, AccessControlBlacklistAllowResult, AccessControlBlacklistBlockResult, AccessControlBlock, AccessControlRelease, AccessControlReleaseAllResult, AccessControlReleaseResult, AccessControlWhitelistAllowResult, AccessControlWhitelistBlockResult, Blacklist, BlacklistCheckAccess, BlacklistAllow, BlacklistBlock, BlacklistRelease, BlacklistStorage, Whitelist, WhitelistCheckAccess, WhitelistAllow, WhitelistBlock, WhitelistRelease, WhitelistStorage, trace_function};
 
 pub mod whitelist;
 pub mod blacklist;
@@ -60,15 +60,15 @@ impl<
     /// Does not (currently) check the whitelist if the blacklist check fails
     pub fn check_access(
         &self,
-        AccessControlAccess {
+        AccessControlCheckAccess {
             id, access, password
-        }: AccessControlAccess<'_, WS::Id, WS::Access, BS::Password>
-    ) -> AccessControlAccessResult {
+        }: AccessControlCheckAccess<'_, WS::Id, WS::Access, BS::Password>
+    ) -> AccessControlCheckAccessResult {
         trace_function!("AccessControl Check Access");
 
         match password {
-            Some(password) => AccessControlAccessResult::Blacklist(self.blacklist.check_access(BlacklistAccess { id, access, password })),
-            None => AccessControlAccessResult::Whitelist(self.whitelist.check_access(WhitelistAccess { id, access })),
+            Some(password) => AccessControlCheckAccessResult::Blacklist(self.blacklist.check_access(BlacklistCheckAccess { id, access, password })),
+            None => AccessControlCheckAccessResult::Whitelist(self.whitelist.check_access(WhitelistCheckAccess { id, access })),
         }
     }
 

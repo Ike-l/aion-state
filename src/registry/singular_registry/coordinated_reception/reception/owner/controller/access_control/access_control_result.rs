@@ -1,15 +1,15 @@
-use crate::prelude::{BlacklistAccessResult, BlacklistAllowResult, BlacklistBlockResult, BlacklistReleaseAllResult, BlacklistReleaseResult, WhitelistAccessResult, WhitelistAllowResult, WhitelistBlockResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
+use crate::prelude::{BlacklistCheckAccessResult, BlacklistAllowResult, BlacklistBlockResult, BlacklistReleaseAllResult, BlacklistReleaseResult, WhitelistCheckAccessResult, WhitelistAllowResult, WhitelistBlockResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
 
-pub enum AccessControlAccessResult {
-    Whitelist(WhitelistAccessResult),
-    Blacklist(BlacklistAccessResult)
+pub enum AccessControlCheckAccessResult {
+    Whitelist(WhitelistCheckAccessResult),
+    Blacklist(BlacklistCheckAccessResult)
 }
 
-impl AccessControlAccessResult {
+impl AccessControlCheckAccessResult {
     pub fn ok(&self) -> bool {
         match self {
-            AccessControlAccessResult::Whitelist(whitelist_access_result) => whitelist_access_result.ok(),
-            AccessControlAccessResult::Blacklist(blacklist_access_result) => blacklist_access_result.ok(),
+            AccessControlCheckAccessResult::Whitelist(whitelist_access_result) => whitelist_access_result.ok(),
+            AccessControlCheckAccessResult::Blacklist(blacklist_access_result) => blacklist_access_result.ok(),
         }
     }
 }
