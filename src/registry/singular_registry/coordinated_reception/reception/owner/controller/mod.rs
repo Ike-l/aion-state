@@ -161,9 +161,9 @@ impl<
     pub fn check_owner(
         &self,
         ControllerCheckOwner {
-            
-        }: ControllerCheckOwner
+            id, resource_id
+        }: ControllerCheckOwner<'_, CS::Id, CS::ResourceId>
     ) -> ControllerCheckOwnerResult {
-
+        ControllerCheckOwnerResult::ResourceControl(self.resource_control.check_owner(ResourceControlCheckOwner { id, resource_id }))
     }
 }

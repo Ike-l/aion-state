@@ -31,7 +31,8 @@ pub struct ControllerUnallow<'a, Id, ResourceId, Access> {
     pub access: &'a Access
 }
 
-pub struct ControllerCheckOwner {
-
+pub struct ControllerCheckOwner<'a, Id, ResourceId> {
+    pub id: &'a Id,
+    pub resource_id: &'a ResourceId
 }
 

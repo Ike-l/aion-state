@@ -48,5 +48,5 @@ pub enum ControllerUnallowWhitelistResult {
 }
 
 pub enum ControllerCheckOwnerResult {
-
+    ResourceControl(ResourceControlCheckOwnerResult)
 }
