@@ -33,7 +33,7 @@ pub struct OwnerAllow<'a, Id, Password, ResourceId, Access> {
     pub access: Access
 }
 
-pub struct OwnerAccess<'a, Id, ResourceId, Access, Password> {
+pub struct OwnerCheckAccess<'a, Id, ResourceId, Access, Password> {
     pub id: Option<&'a Id>,
     pub resource_id: &'a ResourceId,
     pub access: &'a Access,

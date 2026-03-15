@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerAccess, ControllerAllow, ControllerOwn, ControllerRelease, ControllerReleaseId, CredentialStorage, OwnerAccess, OwnerAccessResult, OwnerAllow, OwnerBlacklistAllowResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerRelease, OwnerReleaseResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage, trace_function};
+use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerCheckAccess, ControllerAllow, ControllerOwn, ControllerRelease, ControllerReleaseId, CredentialStorage, OwnerCheckAccess, OwnerCheckAccessResult, OwnerAllow, OwnerBlacklistAllowResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerRelease, OwnerReleaseResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage, trace_function};
 
 pub mod authenticator;
 pub mod controller;
@@ -149,13 +149,13 @@ impl<
     /// If the `password` check fails `on` `blacklist` it will not check `whitelist`
     pub fn check_access(
         &self,
-        OwnerAccess {
+        OwnerCheckAccess {
             id, resource_id, access, password
-        }: OwnerAccess<'_, AS::Id, WS::Id, WS::Access, BS::Password>
-    ) -> OwnerAccessResult {
+        }: OwnerCheckAccess<'_, AS::Id, WS::Id, WS::Access, BS::Password>
+    ) -> OwnerCheckAccessResult {
         trace_function!("Owner Check Access");
 
-        OwnerAccessResult::Controller(self.controller.check_access(ControllerAccess { id, resource_id, access, password }))
+        OwnerCheckAccessResult::Controller(self.controller.check_access(ControllerCheckAccess { id, resource_id, access, password }))
     }
 
     pub fn block_whitelist() {}

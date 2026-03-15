@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, ControllerAccessResult, ControllerBlacklistAllowResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResult, ControllerWhitelistAllowResult};
+use crate::prelude::{AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, ControllerCheckAccessResult, ControllerBlacklistAllowResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResult, ControllerWhitelistAllowResult};
 
 pub enum OwnerOwnResult {
     Controller(ControllerOwnResult),
@@ -35,6 +35,6 @@ pub enum OwnerBlacklistAllowResult<Password> {
     Denied
 }
 
-pub enum OwnerAccessResult {
-    Controller(ControllerAccessResult)
+pub enum OwnerCheckAccessResult {
+    Controller(ControllerCheckAccessResult)
 }
