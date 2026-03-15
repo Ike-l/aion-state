@@ -1,13 +1,13 @@
-use crate::prelude::RemoveAccessResult;
+use crate::prelude::AccessesReleaseResult;
 
-pub enum ReservationsAccessPermissionResult {
+pub enum ReservationsCheckAccessResult {
     Ok(bool)
 }
 
-impl ReservationsAccessPermissionResult {
+impl ReservationsCheckAccessResult {
     pub fn ok(&self) -> bool {
         match self {
-            ReservationsAccessPermissionResult::Ok(ok) => *ok,
+            ReservationsCheckAccessResult::Ok(ok) => *ok,
         }
     }
 }
@@ -18,6 +18,6 @@ pub enum ReservationsReserveResult {
 }
 
 pub enum ReservationsUnreserveResult {
-    Accesses(RemoveAccessResult),
+    Accesses(AccessesReleaseResult),
     NoReserver
 }
