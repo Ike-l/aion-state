@@ -1,11 +1,28 @@
-pub struct HostAccessPermissionInput<'a, ReserverId, AccessId, Access> {
+pub struct HostCheckAccess<'a, ReserverId, AccessId, Access> {
     pub reserver_id: Option<&'a ReserverId>,
     pub access_id: &'a AccessId,
     pub access: &'a Access
 }
 
-pub struct HostRecordAccessInput<'a, ReserverId, AccessId, Access> {
+pub struct HostRecordAccess<'a, ReserverId, AccessId, Access> {
     pub reserver_id: Option<&'a ReserverId>,
     pub access_id: AccessId,
     pub access: Access
+}
+
+pub struct HostReleaseAccess<'a, AccessId, Access> {
+    pub access_id: &'a AccessId,
+    pub access: &'a Access
+}
+
+pub struct HostReserve<ReserverId, AccessId, Access> {
+    pub reserver_id: ReserverId,
+    pub access_id: AccessId,
+    pub access: Access
+}
+
+pub struct HostUnreserve<'a, ReserverId, AccessId, Access> {
+    pub reserver_id: &'a ReserverId,
+    pub access_id: &'a AccessId,
+    pub access: &'a Access
 }

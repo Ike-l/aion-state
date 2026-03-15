@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accesses, Accessor, HostAccessPermissionInput, HostAccessPermissionResult, HostRecordAccessInput, HostRecordAccessResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, PermitsAccessInput, RecordAccessInput, RemoveAccessInput, ReservationStorage, Reservations, ReservationsAccessPermissionInput, ReserveInput, UnreserveInput, trace_function};
+use crate::prelude::{AccessStorage, Accesses, AccessesCheckAccess, AccessesRecordAccess, AccessesRelease, Accessor, HostCheckAccess, HostCheckAccessResult, HostRecordAccess, HostRecordAccessResult, HostReleaseAccess, HostReleaseAccessResult, HostReservationResult, HostReserve, HostUnreserve, HostUnreserveResult, ReservationStorage, Reservations, ReservationsCheckAccess, ReservationsReserve, ReservationsUnreserve, trace_function};
 
 pub mod reservations;
 pub mod accesses;
@@ -26,36 +26,36 @@ impl<
     /// Permits access if there are no conflicting reservations
     /// 
     /// And then applies `Accessor` semantics to the incoming access
-    pub fn permits_access(
+    pub fn check_access(
         &self,
-        HostAccessPermissionInput {
+        HostCheckAccess {
             reserver_id, access_id, access
-        }: HostAccessPermissionInput<'_, RS::ReserverId, AS::ValueId, AS::Access>
-    ) -> HostAccessPermissionResult {
+        }: HostCheckAccess<'_, RS::ReserverId, AS::ValueId, AS::Access>
+    ) -> HostCheckAccessResult {
         trace_function!("Host Permits Access");
 
-        let reservations_permission = self.reservations.permits_access(ReservationsAccessPermissionInput { reserver_id, access_id, access });
+        let reservations_permission = self.reservations.check_access(ReservationsCheckAccess { reserver_id, access_id, access });
         if reservations_permission.ok() {
-            HostAccessPermissionResult::Accesses(self.accesses.permits_access(PermitsAccessInput { access_id, access }))
+            HostCheckAccessResult::Accesses(self.accesses.check_access(AccessesCheckAccess { access_id, access }))
         } else {
-            HostAccessPermissionResult::ReservationConflict
+            HostCheckAccessResult::ReservationConflict
         }
     }
 
     /// Automatically unreserves the access then records it
     pub fn record_access(
         &mut self,
-        HostRecordAccessInput {
+        HostRecordAccess {
             reserver_id, access_id, access
-        }: HostRecordAccessInput<RS::ReserverId, AS::ValueId, AS::Access>
+        }: HostRecordAccess<RS::ReserverId, AS::ValueId, AS::Access>
     ) -> HostRecordAccessResult {
         trace_function!("Host Recording Access");
 
         let unreserve_result = if let Some(reserver_id) = reserver_id {
-            Some(self.unreserve(UnreserveInput { reserver_id, access_id: &access_id, access: &access }))
+            Some(self.unreserve(HostUnreserve { reserver_id, access_id: &access_id, access: &access }))
         } else { None };
 
-        let record_access_result = self.accesses.record_access(RecordAccessInput { access_id, access });
+        let record_access_result = self.accesses.record_access(AccessesRecordAccess { access_id, access });
 
         HostRecordAccessResult {
             unreserve_result, record_access_result
@@ -67,11 +67,13 @@ impl<
     /// Reservation semantics do not apply to releasing a current access
     pub fn release_access(
         &mut self,
-        remove_access_input: RemoveAccessInput<'_, AS::ValueId, AS::Access>
+        HostReleaseAccess {
+            access_id, access
+        }: HostReleaseAccess<AS::ValueId, AS::Access>
     ) -> HostReleaseAccessResult {
         trace_function!("Host Releasing Access");
 
-        HostReleaseAccessResult::Accesses(self.accesses.release_access(remove_access_input))
+        HostReleaseAccessResult::Accesses(self.accesses.release(AccessesRelease { access_id, access }))
     }
 
     /// Simply a `pass through` function
@@ -79,11 +81,13 @@ impl<
     /// `Accesses` semantics do not apply to `reservations`
     pub fn unreserve(
         &mut self,
-        unreserve_input: UnreserveInput<'_, RS::ReserverId, AS::ValueId, AS::Access>
+        HostUnreserve {
+            reserver_id, access_id, access
+        }: HostUnreserve<'_, RS::ReserverId, AS::ValueId, AS::Access>
     ) -> HostUnreserveResult {
         trace_function!("Host Unreserving");
 
-        HostUnreserveResult::Reservations(self.reservations.unreserve(unreserve_input))
+        HostUnreserveResult::Reservations(self.reservations.unreserve(ReservationsUnreserve { reserver_id, access_id, access }))
     }
 
     /// Simply a `pass through` function
@@ -91,10 +95,12 @@ impl<
     /// `Accesses` semantics do not apply to `reservations`
     pub fn reserve(
         &mut self,
-        reserve_input: ReserveInput<RS::ReserverId, AS::ValueId, AS::Access>
+        HostReserve {
+            reserver_id, access_id, access
+        }: HostReserve<RS::ReserverId, AS::ValueId, AS::Access>
     ) -> HostReservationResult {
         trace_function!("Host Reserving");
 
-        HostReservationResult::Reservations(self.reservations.reserve(reserve_input))
+        HostReservationResult::Reservations(self.reservations.reserve(ReservationsReserve { reserver_id, access_id, access }))
     }
 }

@@ -51,11 +51,14 @@ pub mod prelude {
                         host::{
                             Host,
                             host_input::{
-                                HostAccessPermissionInput,
-                                HostRecordAccessInput
+                                HostCheckAccess,
+                                HostRecordAccess,
+                                HostReleaseAccess,
+                                HostReserve,
+                                HostUnreserve
                             },
                             host_result::{
-                                HostAccessPermissionResult,
+                                HostCheckAccessResult,
                                 HostRecordAccessResult,
                                 HostReservationResult,
                                 HostUnreserveResult,
@@ -67,12 +70,12 @@ pub mod prelude {
                                     ReservationStorage
                                 },
                                 reservations_input::{
-                                    ReservationsAccessPermissionInput, 
-                                    ReserveInput,
-                                    UnreserveInput
+                                    ReservationsCheckAccess, 
+                                    ReservationsReserve,
+                                    ReservationsUnreserve
                                 },
                                 reservations_result::{
-                                    ReservationsAccessPermissionResult,
+                                    ReservationsCheckAccessResult,
                                     ReservationsReserveResult,
                                     ReservationsUnreserveResult,
                                 },
@@ -83,14 +86,14 @@ pub mod prelude {
                                     AccessStorage
                                 },
                                 accesses_result::{
-                                    AccessPermission,
-                                    RecordAccessResult,
-                                    RemoveAccessResult
+                                    AccessesCheckAccessResult,
+                                    AccessesRecordAccessResult,
+                                    AccessesReleaseResult
                                 },
                                 accesses_input::{
-                                    PermitsAccessInput, 
-                                    RecordAccessInput,
-                                    RemoveAccessInput
+                                    AccessesCheckAccess, 
+                                    AccessesRecordAccess,
+                                    AccessesRelease
                                 }
                             }
                         },
@@ -103,7 +106,7 @@ pub mod prelude {
                                 OwnerUpdatePassword,
                                 OwnerUnregister,
                                 OwnerAllow,
-                                OwnerAccess
+                                OwnerCheckAccess
                             },
                             owner_result::{
                                 OwnerOwnResult,
@@ -113,7 +116,7 @@ pub mod prelude {
                                 OwnerUnregisterResult,
                                 OwnerBlacklistAllowResult,
                                 OwnerWhitelistAllowResult,
-                                OwnerAccessResult
+                                OwnerCheckAccessResult
                             },
                             authenticator::{
                                 Authenticator,
@@ -139,7 +142,7 @@ pub mod prelude {
                                     ControllerOwn,
                                     ControllerRelease,
                                     ControllerAllow,
-                                    ControllerAccess,
+                                    ControllerCheckAccess,
                                     ControllerReleaseId
                                 },
                                 controller_result::{
@@ -147,19 +150,19 @@ pub mod prelude {
                                     ControllerReleaseResult,
                                     ControllerBlacklistAllowResult,
                                     ControllerWhitelistAllowResult,
-                                    ControllerAccessResult,
+                                    ControllerCheckAccessResult,
                                     ControllerReleaseIdResult
                                 },
                                 access_control::{
                                     AccessControl,
                                     access_control_input::{
-                                        AccessControlAccess,
+                                        AccessControlCheckAccess,
                                         AccessControlAllow,
                                         AccessControlRelease,
                                         AccessControlBlock
                                     },
                                     access_control_result::{
-                                        AccessControlAccessResult,
+                                        AccessControlCheckAccessResult,
                                         AccessControlBlacklistAllowResult,
                                         AccessControlWhitelistAllowResult,
                                         AccessControlReleaseResult,
@@ -170,13 +173,13 @@ pub mod prelude {
                                     blacklist::{
                                         Blacklist,
                                         blacklist_input::{
-                                            BlacklistAccess,
+                                            BlacklistCheckAccess,
                                             BlacklistAllow,
                                             BlacklistRelease,
                                             BlacklistBlock
                                         },
                                         blacklist_result::{
-                                            BlacklistAccessResult,
+                                            BlacklistCheckAccessResult,
                                             BlacklistAllowResult,
                                             BlacklistReleaseResult,
                                             BlacklistBlockResult,
@@ -189,13 +192,13 @@ pub mod prelude {
                                     whitelist::{
                                         Whitelist,
                                         whitelist_input::{
-                                            WhitelistAccess,
+                                            WhitelistCheckAccess,
                                             WhitelistAllow,
                                             WhitelistRelease,
                                             WhitelistBlock
                                         },
                                         whitelist_result::{
-                                            WhitelistAccessResult,
+                                            WhitelistCheckAccessResult,
                                             WhitelistAllowResult,
                                             WhitelistReleaseResult,
                                             WhitelistBlockResult,
@@ -212,13 +215,13 @@ pub mod prelude {
                                         ControlStorage
                                     },
                                     resource_control_input::{
-                                        ResourceControlVerification,
+                                        ResourceControlCheckResourceOwner,
                                         ResourceControlRelease,
                                         ResourceControlOwn,
                                         ResourceControlReleaseId
                                     },
                                     resource_control_result::{
-                                        ResourceControlVerificationResult,
+                                        ResourceControlCheckResourceOwnerResult,
                                         ResourceControlReleaseResult,
                                         ResourceControlOwnResult,
                                         ResourceControlReleaseIdResult

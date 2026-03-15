@@ -1,13 +1,13 @@
-use crate::prelude::{AccessPermission, RecordAccessResult, RemoveAccessResult, ReservationsReserveResult, ReservationsUnreserveResult};
+use crate::prelude::{AccessesCheckAccessResult, AccessesRecordAccessResult, AccessesReleaseResult, ReservationsReserveResult, ReservationsUnreserveResult};
 
-pub enum HostAccessPermissionResult {
-    Accesses(AccessPermission),
+pub enum HostCheckAccessResult {
+    Accesses(AccessesCheckAccessResult),
     ReservationConflict,
 }
 
 pub struct HostRecordAccessResult {
     pub unreserve_result: Option<HostUnreserveResult>,
-    pub record_access_result: RecordAccessResult
+    pub record_access_result: AccessesRecordAccessResult
 }
 
 pub enum HostUnreserveResult {
@@ -19,5 +19,5 @@ pub enum HostReservationResult {
 }
 
 pub enum HostReleaseAccessResult {
-    Accesses(RemoveAccessResult)
+    Accesses(AccessesReleaseResult)
 }
