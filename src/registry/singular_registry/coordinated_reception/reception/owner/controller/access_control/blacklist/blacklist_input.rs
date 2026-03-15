@@ -1,4 +1,4 @@
-pub struct BlacklistAccess<'a, Id, Access, Password> {
+pub struct BlacklistCheckAccess<'a, Id, Access, Password> {
     pub id: &'a Id,
     pub access: &'a Access,
     pub password: &'a Password

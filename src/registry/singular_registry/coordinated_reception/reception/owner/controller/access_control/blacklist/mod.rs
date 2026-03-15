@@ -1,4 +1,4 @@
-use crate::prelude::{BlacklistAccess, BlacklistAccessResult, BlacklistAllow, BlacklistAllowResult, BlacklistBlock, BlacklistBlockResult, BlacklistRelease, BlacklistReleaseAllResult, BlacklistReleaseResult, BlacklistStorage, trace_function};
+use crate::prelude::{BlacklistCheckAccess, BlacklistCheckAccessResult, BlacklistAllow, BlacklistAllowResult, BlacklistBlock, BlacklistBlockResult, BlacklistRelease, BlacklistReleaseAllResult, BlacklistReleaseResult, BlacklistStorage, trace_function};
 
 pub mod blacklist_storage;
 
@@ -34,13 +34,13 @@ impl<
     /// given the password is the one returned by the corresponding `allow`
     pub fn check_access(
         &self,
-        BlacklistAccess {
+        BlacklistCheckAccess {
             id, access, password
-        }: BlacklistAccess<'_, BS::Id, BS::Access, BS::Password>
-    ) -> BlacklistAccessResult {
+        }: BlacklistCheckAccess<'_, BS::Id, BS::Access, BS::Password>
+    ) -> BlacklistCheckAccessResult {
         trace_function!("Blacklist Check Access");
 
-        BlacklistAccessResult::Verification(self.blacklist_storage.check_access(id, access, password))
+        BlacklistCheckAccessResult::Verification(self.blacklist_storage.check_access(id, access, password))
     }
 
     /// Attempt to un-allow

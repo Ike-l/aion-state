@@ -1,8 +1,8 @@
-pub enum BlacklistAccessResult {
+pub enum BlacklistCheckAccessResult {
     Verification(bool)
 }
 
-impl BlacklistAccessResult {
+impl BlacklistCheckAccessResult {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Verification(true))
     }
