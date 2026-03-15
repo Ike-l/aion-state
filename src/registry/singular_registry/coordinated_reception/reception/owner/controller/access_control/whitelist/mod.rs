@@ -1,4 +1,4 @@
-use crate::prelude::{WhitelistAccess, WhitelistAccessResult, WhitelistAllow, WhitelistAllowResult, WhitelistBlock, WhitelistBlockResult, WhitelistRelease, WhitelistReleaseAllResult, WhitelistReleaseResult, WhitelistStorage, trace_function};
+use crate::prelude::{WhitelistCheckAccess, WhitelistCheckAccessResult, WhitelistAllow, WhitelistAllowResult, WhitelistBlock, WhitelistBlockResult, WhitelistRelease, WhitelistReleaseAllResult, WhitelistReleaseResult, WhitelistStorage, trace_function};
 
 pub mod whitelist_storage;
 
@@ -28,13 +28,13 @@ impl<
     /// Passes through to `whitelist_storage`
     pub fn check_access(
         &self,
-        WhitelistAccess {
+        WhitelistCheckAccess {
             id, access,
-        }: WhitelistAccess<'_, WS::Id, WS::Access>
-    ) -> WhitelistAccessResult {
+        }: WhitelistCheckAccess<'_, WS::Id, WS::Access>
+    ) -> WhitelistCheckAccessResult {
         trace_function!("Whitelist Check Access");
 
-        WhitelistAccessResult::Allowed(self.whitelist_storage.check_access(id, access))
+        WhitelistCheckAccessResult::Allowed(self.whitelist_storage.check_access(id, access))
     }
 
     // opposite to allow

@@ -1,4 +1,4 @@
-pub struct WhitelistAccess<'a, Id, Access> {
+pub struct WhitelistCheckAccess<'a, Id, Access> {
     pub id: &'a Id,
     pub access: &'a Access
 } 

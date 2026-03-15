@@ -1,8 +1,8 @@
-pub enum WhitelistAccessResult {
+pub enum WhitelistCheckAccessResult {
     Allowed(bool)
 }
 
-impl WhitelistAccessResult {
+impl WhitelistCheckAccessResult {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Allowed(true))
     }
