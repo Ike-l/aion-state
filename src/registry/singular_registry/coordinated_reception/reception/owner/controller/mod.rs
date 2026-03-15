@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControl, AccessControlCheckAccess, AccessControlAllow, AccessControlRelease, BlacklistStorage, ControlStorage, ControllerCheckAccess, ControllerCheckAccessResult, ControllerAllow, ControllerBlacklistAllowResult, ControllerOwn, ControllerOwnResult, ControllerReleaseResource, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlCheckOwner, WhitelistStorage, trace_function};
+use crate::prelude::{AccessControl, AccessControlAllow, AccessControlCheckAccess, AccessControlRelease, AccessControlUnallow, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerCheckAccess, ControllerCheckAccessResult, ControllerCheckOwner, ControllerCheckOwnerResult, ControllerOwn, ControllerOwnResult, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResource, ControllerReleaseResourceResult, ControllerUnallow, ControllerUnallowBlacklistResult, ControllerUnallowWhitelistResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlCheckOwner, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, WhitelistStorage, trace_function};
 
 pub mod access_control;
 pub mod resource_control;
@@ -124,8 +124,46 @@ impl<
         }
     }
 
-    pub fn unallow_whitelist() {}
-    pub fn unallow_blacklist() {}
-    pub fn release_all() {}
-    pub fn check_owner() {} // ?
+    pub fn unallow_whitelist(
+        &mut self,
+        ControllerUnallow {
+            id, resource_id, access
+        }: ControllerUnallow<'_, CS::Id, CS::ResourceId, WS::Access>
+    ) -> ControllerUnallowWhitelistResult {
+        trace_function!("Controller Unallow Whitelist");
+
+        if self.resource_control.check_owner(ResourceControlCheckOwner { id, resource_id }).ok() {
+            return ControllerUnallowWhitelistResult::Whitelist(self.access_control.unallow_whitelist(AccessControlUnallow { id: resource_id, access }))
+        }
+
+        ControllerUnallowWhitelistResult::Denied
+    }
+
+    pub fn unallow_blacklist(
+        &mut self,
+        ControllerUnallow {
+            id, resource_id, access
+        }: ControllerUnallow<'_, CS::Id, CS::ResourceId, BS::Access>
+    ) -> ControllerUnallowBlacklistResult {
+        trace_function!("Controller Unallow Blacklist");
+
+        if self.resource_control.check_owner(ResourceControlCheckOwner { id, resource_id }).ok() {
+            return ControllerUnallowBlacklistResult::Blacklist(self.access_control.unallow_blacklist(AccessControlUnallow { id: resource_id, access }))
+        }
+
+        ControllerUnallowBlacklistResult::Denied
+    }
+
+    pub fn release_all(
+        &mut self,
+    ) {}
+
+    pub fn check_owner(
+        &self,
+        ControllerCheckOwner {
+            
+        }: ControllerCheckOwner
+    ) -> ControllerCheckOwnerResult {
+
+    }
 }

@@ -24,3 +24,14 @@ pub struct ControllerCheckAccess<'a, Id, ResourceId, Access, Password> {
 pub struct ControllerReleaseId<'a, Id> {
     pub id: &'a Id
 }
+
+pub struct ControllerUnallow<'a, Id, ResourceId, Access> {
+    pub id: &'a Id,
+    pub resource_id: &'a ResourceId,
+    pub access: &'a Access
+}
+
+pub struct ControllerCheckOwner {
+
+}
+

@@ -143,7 +143,9 @@ pub mod prelude {
                                     ControllerReleaseResource,
                                     ControllerAllow,
                                     ControllerCheckAccess,
-                                    ControllerReleaseId
+                                    ControllerReleaseId,
+                                    ControllerCheckOwner,
+                                    ControllerUnallow,
                                 },
                                 controller_result::{
                                     ControllerOwnResult,
@@ -151,7 +153,10 @@ pub mod prelude {
                                     ControllerBlacklistAllowResult,
                                     ControllerWhitelistAllowResult,
                                     ControllerCheckAccessResult,
-                                    ControllerReleaseIdResult
+                                    ControllerReleaseIdResult,
+                                    ControllerCheckOwnerResult,
+                                    ControllerUnallowBlacklistResult,
+                                    ControllerUnallowWhitelistResult
                                 },
                                 access_control::{
                                     AccessControl,
