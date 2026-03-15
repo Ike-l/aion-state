@@ -1,4 +1,4 @@
-use crate::prelude::{ControlStorage, ResourceControlOwn, ResourceControlOwnResult, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlReleaseResult, ResourceControlCheckOwner, ResourceControlCheckOwnerResult};
+use crate::prelude::{ControlStorage, ResourceControlCheckOwner, ResourceControlCheckOwnerResult, ResourceControlOwn, ResourceControlOwnResult, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlReleaseResult, trace_function};
 
 pub mod control_storage;
 
@@ -19,6 +19,8 @@ impl<
             id, resource_id
         }: ResourceControlOwn<CS::Id, CS::ResourceId>
     ) -> ResourceControlOwnResult {
+        trace_function!("Resource Control Own");
+
         if self.control_storage.is_owned(&resource_id) {
             return ResourceControlOwnResult::OwnershipConflict
         }
@@ -33,6 +35,8 @@ impl<
             id, resource_id
         }: ResourceControlRelease<'_, CS::Id, CS::ResourceId>
     ) -> ResourceControlReleaseResult {
+        trace_function!("Resource Control Release");
+
         ResourceControlReleaseResult::Released(self.control_storage.release(id, resource_id))
     }
 
@@ -43,6 +47,8 @@ impl<
             id
         }: ResourceControlReleaseId<'_, CS::Id>
     ) -> ResourceControlReleaseIdResult<impl Iterator<Item = CS::ResourceId>> {
+        trace_function!("ResourceControl ReleaseId");
+
         ResourceControlReleaseIdResult::Released(self.control_storage.release_id(id))
     }
 
@@ -53,6 +59,8 @@ impl<
             id, resource_id
         }: ResourceControlCheckOwner<'_, CS::Id, CS::ResourceId>
     ) -> ResourceControlCheckOwnerResult {
+        trace_function!("Resource Control Check Owner");
+
         ResourceControlCheckOwnerResult::Verification(self.control_storage.check_owner(id, resource_id))
     }
 }
