@@ -1,20 +1,20 @@
-pub enum AccessPermission {
+pub enum AccessesCheckAccessResult {
     Ok(bool),
     NoCurrentAccess
 }
 
-impl AccessPermission {
+impl AccessesCheckAccessResult {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Ok(true))
     }
 }
 
-pub enum RecordAccessResult {
+pub enum AccessesRecordAccessResult {
     Merged,
     Inserted
 }
 
-pub enum RemoveAccessResult {
+pub enum AccessesReleaseResult {
     Split,
     NoCurrentAccess
 }

@@ -29,14 +29,19 @@ impl<
     pub fn register() {}
     pub fn unregister() {}
     pub fn update_password() {}
+
     pub fn own() {}
     pub fn release() {}
+    pub fn release_all() {}
+
     pub fn allow_whitelist() {}
     pub fn allow_blacklist() {}
-    pub fn check_access() {}
     pub fn block_whitelist() {}
     pub fn block_blacklist() {}
-    pub fn release_all() {}
+
+    pub fn check_access() {}
+    pub fn record_access() {}
+
     pub fn reserve() {}
     pub fn unreserve() {}
 }
