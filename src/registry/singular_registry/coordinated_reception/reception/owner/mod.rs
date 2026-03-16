@@ -39,14 +39,14 @@ impl<
         &mut self,
         OwnerUnregister {
             id, password
-        }: OwnerUnregister<'_, AS::Id, AS::Password>
+        }: &OwnerUnregister<'_, AS::Id, AS::Password>
     ) -> OwnerUnregisterResult {
         trace_function!("Owner Unregister");
 
-        if self.authenticator.authenticate(Authentication { id, password }).ok() {
-            let authenticator_unregister = self.authenticator.unregister(AuthenticateUnregister { id });
+        if self.authenticator.authenticate(&Authentication { id, password }).ok() {
+            let authenticator_unregister = self.authenticator.unregister(&AuthenticateUnregister { id });
             if authenticator_unregister.ok() {
-                return OwnerUnregisterResult::Controller(self.controller.release_id(ControllerReleaseId { id }))
+                return OwnerUnregisterResult::Controller(self.controller.release_id(&ControllerReleaseId { id }))
             } else {
                 return OwnerUnregisterResult::Authenticator(authenticator_unregister)
             }
@@ -65,7 +65,7 @@ impl<
     ) -> OwnerUpdatePasswordResult {
         trace_function!("Owner Update Password");
 
-        if self.authenticator.authenticate(Authentication { id, password: old_password }).ok() {
+        if self.authenticator.authenticate(&Authentication { id, password: old_password }).ok() {
             return OwnerUpdatePasswordResult::Authenticator(self.authenticator.update_password(AuthenticateUpdatePassword { id, new_password }))
         }
 
@@ -81,7 +81,7 @@ impl<
     ) -> OwnerOwnResult {
         trace_function!("Owner Own");
 
-        if self.authenticator.authenticate(Authentication { id: &id, password }).ok() {
+        if self.authenticator.authenticate(&Authentication { id: &id, password }).ok() {
             return OwnerOwnResult::Controller(self.controller.own(ControllerOwn { id, resource_id }))
         }
 
@@ -93,12 +93,12 @@ impl<
         &mut self,
         OwnerReleaseResource {
             id, password, resource_id
-        }: OwnerReleaseResource<AS::Id, AS::Password, CS::ResourceId>
+        }: &OwnerReleaseResource<AS::Id, AS::Password, CS::ResourceId>
     ) -> OwnerReleaseResourceResult {
         trace_function!("Owner Release Resource");
 
-        if self.authenticator.authenticate(Authentication { id, password }).ok() {
-            return OwnerReleaseResourceResult::Controller(self.controller.release_resource(ControllerReleaseResource { id, resource_id }))
+        if self.authenticator.authenticate(&Authentication { id, password }).ok() {
+            return OwnerReleaseResourceResult::Controller(self.controller.release_resource(&ControllerReleaseResource { id, resource_id }))
         }
 
         OwnerReleaseResourceResult::Denied
@@ -115,7 +115,7 @@ impl<
     ) -> OwnerWhitelistAllowResult {
         trace_function!("Owner Allow Whitelist");
 
-        if self.authenticator.authenticate(Authentication { id, password }).ok() {
+        if self.authenticator.authenticate(&Authentication { id, password }).ok() {
             return OwnerWhitelistAllowResult::Controller(self.controller.allow_whitelist(ControllerAllow { id, resource_id, access }))
         }
 
@@ -133,7 +133,7 @@ impl<
     ) -> OwnerBlacklistAllowResult<BS::Password> {
         trace_function!("Owner Allow Blacklist");
 
-        if self.authenticator.authenticate(Authentication { id, password }).ok() {
+        if self.authenticator.authenticate(&Authentication { id, password }).ok() {
             return OwnerBlacklistAllowResult::Controller(self.controller.allow_blacklist(ControllerAllow { id, resource_id, access }))
         }
 
@@ -151,11 +151,11 @@ impl<
         &self,
         OwnerCheckAccess {
             id, resource_id, access, password
-        }: OwnerCheckAccess<'_, AS::Id, WS::Id, WS::Access, BS::Password>
+        }: &OwnerCheckAccess<'_, AS::Id, WS::Id, WS::Access, BS::Password>
     ) -> OwnerCheckAccessResult {
         trace_function!("Owner Check Access");
 
-        OwnerCheckAccessResult::Controller(self.controller.check_access(ControllerCheckAccess { id, resource_id, access, password }))
+        OwnerCheckAccessResult::Controller(self.controller.check_access(&ControllerCheckAccess { id: *id, resource_id, access, password: *password }))
     }
 
     pub fn block_whitelist() {}

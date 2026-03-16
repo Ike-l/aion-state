@@ -18,7 +18,7 @@ impl<
         &self,
         Authentication {
             id, password
-        }: Authentication<'_, CS::Id, CS::Password> 
+        }: &Authentication<'_, CS::Id, CS::Password> 
     ) -> AuthenticationResult {
         trace_function!("Authenticator Authenticating");
 
@@ -60,7 +60,7 @@ impl<
         &mut self,
         AuthenticateUnregister {
             id
-        }: AuthenticateUnregister<'_, CS::Id>
+        }: &AuthenticateUnregister<'_, CS::Id>
     ) -> AuthenticateUnregisterResult {
         trace_function!("Authenticator Unregistering");
         

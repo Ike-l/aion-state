@@ -36,7 +36,7 @@ impl<
         &self,
         BlacklistCheckAccess {
             id, access, password
-        }: BlacklistCheckAccess<'_, BS::Id, BS::Access, BS::Password>
+        }: &BlacklistCheckAccess<'_, BS::Id, BS::Access, BS::Password>
     ) -> BlacklistCheckAccessResult {
         trace_function!("Blacklist Check Access");
 
@@ -50,7 +50,7 @@ impl<
         &mut self,
         BlacklistUnallow {
             id, access   
-        }: BlacklistUnallow<'_, BS::Id, BS::Access>
+        }: &BlacklistUnallow<'_, BS::Id, BS::Access>
     ) -> BlacklistUnallowResult {
         trace_function!("Blacklist Unallow");
 
@@ -62,7 +62,7 @@ impl<
         &mut self,
         BlacklistRelease {
             id
-        }: BlacklistRelease<'_, BS::Id>
+        }: &BlacklistRelease<'_, BS::Id>
     ) -> BlacklistReleaseResult {
         trace_function!("Blacklist Release");
 

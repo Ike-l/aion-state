@@ -24,7 +24,7 @@ impl<AS: AccessStorage> Accesses<AS>
         &self,
         AccessesCheckAccess {
             access_id, access
-        }: AccessesCheckAccess<'_, AS::ValueId, AS::Access>
+        }: &AccessesCheckAccess<'_, AS::ValueId, AS::Access>
     ) -> AccessesCheckAccessResult {
         let span = span!(FUNCTION_LEVEL, "Accesses Permits Access", current_access = field::Empty);
         let _enter = span.enter();
@@ -67,7 +67,7 @@ impl<AS: AccessStorage> Accesses<AS>
         &mut self,
         AccessesRelease {
             access_id, access
-        }: AccessesRelease<AS::ValueId, AS::Access>
+        }: &AccessesRelease<AS::ValueId, AS::Access>
     ) -> AccessesReleaseResult {
         let span = span!(FUNCTION_LEVEL, "Accesses Release Access", current_access = field::Empty);
         let _enter = span.enter();

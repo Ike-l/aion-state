@@ -34,7 +34,7 @@ impl<
         &self,
         ReservationsCheckAccess {
             reserver_id, access_id, access,
-        }: ReservationsCheckAccess<'_, RS::ReserverId, AS::ValueId, AS::Access>
+        }: &ReservationsCheckAccess<'_, RS::ReserverId, AS::ValueId, AS::Access>
     ) -> ReservationsCheckAccessResult {
         trace_function!("Reservations Permits Access");
 
@@ -47,7 +47,7 @@ impl<
                     );
 
                 if !is_current_reserver {
-                    let permission = access_map.check_access(AccessesCheckAccess { access_id, access });
+                    let permission = access_map.check_access(&AccessesCheckAccess { access_id, access });
                     if permission.ok() {
                         false
                     } else {
@@ -93,12 +93,12 @@ impl<
         &mut self,
         ReservationsUnreserve {
             reserver_id, access_id, access
-        }: ReservationsUnreserve<'_, RS::ReserverId, AS::ValueId, AS::Access>
+        }: &ReservationsUnreserve<'_, RS::ReserverId, AS::ValueId, AS::Access>
     ) -> ReservationsUnreserveResult {
         trace_function!("Reservations Unreserve");
 
         if let Some(access_map) = self.reservation_storage.get_mut(reserver_id) {
-            ReservationsUnreserveResult::Accesses(access_map.release(AccessesRelease { access, access_id }))
+            ReservationsUnreserveResult::Accesses(access_map.release(&AccessesRelease { access, access_id }))
         } else {
             ReservationsUnreserveResult::NoReserver
         }

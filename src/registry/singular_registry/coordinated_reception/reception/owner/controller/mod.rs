@@ -42,13 +42,13 @@ impl<
         &mut self,
         ControllerReleaseResource {
             id, resource_id
-        }: ControllerReleaseResource<CS::Id, CS::ResourceId>
+        }: &ControllerReleaseResource<CS::Id, CS::ResourceId>
     ) -> ControllerReleaseResourceResult {
         trace_function!("Controller Release Resource");
 
-        let access_control_release_result = self.access_control.release(AccessControlRelease { id: resource_id });
+        let access_control_release_result = self.access_control.release(&AccessControlRelease { id: resource_id });
         if access_control_release_result.ok() {
-            return ControllerReleaseResourceResult::ResourceControl(self.resource_control.release(ResourceControlRelease { id, resource_id }))
+            return ControllerReleaseResourceResult::ResourceControl(self.resource_control.release(&ResourceControlRelease { id, resource_id }))
         }
         ControllerReleaseResourceResult::AccessControl(access_control_release_result)
     }
@@ -62,7 +62,7 @@ impl<
     ) -> ControllerWhitelistAllowResult {
         trace_function!("Controller Allow Whitelist");
 
-        if self.resource_control.check_owner(ResourceControlCheckOwner { id, resource_id: &resource_id }).ok() {
+        if self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id: &resource_id }).ok() {
             ControllerWhitelistAllowResult::Whitelist(self.access_control.allow_whitelist(AccessControlAllow { id: resource_id, access }))
         } else {
             ControllerWhitelistAllowResult::Denied
@@ -78,7 +78,7 @@ impl<
     ) -> ControllerBlacklistAllowResult<BS::Password> {
         trace_function!("Controller Allow Blacklist");
 
-        if self.resource_control.check_owner(ResourceControlCheckOwner { id, resource_id: &resource_id }).ok() {
+        if self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id: &resource_id }).ok() {
             ControllerBlacklistAllowResult::Blacklist(self.access_control.allow_blacklist(AccessControlAllow { id: resource_id, access }))
         } else {
             ControllerBlacklistAllowResult::Denied
@@ -92,15 +92,15 @@ impl<
         &self,
         ControllerCheckAccess {
             id, resource_id, access, password
-        }: ControllerCheckAccess<'_, CS::Id, WS::Id, WS::Access, BS::Password>
+        }: &ControllerCheckAccess<'_, CS::Id, WS::Id, WS::Access, BS::Password>
     ) -> ControllerCheckAccessResult {
         trace_function!("Controller Check Access");
 
         if let Some(id) = id {
-            return ControllerCheckAccessResult::Verification(self.resource_control.check_owner(ResourceControlCheckOwner { id, resource_id }))
+            return ControllerCheckAccessResult::Verification(self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id }))
         }
         
-        ControllerCheckAccessResult::AccessControl(self.access_control.check_access(AccessControlCheckAccess { id: resource_id, access, password }))
+        ControllerCheckAccessResult::AccessControl(self.access_control.check_access(&AccessControlCheckAccess { id: resource_id, access, password: *password }))
     }
 
     /// Release all resources associated with `id`
@@ -110,11 +110,12 @@ impl<
         &mut self,
         ControllerReleaseId {
             id
-        }: ControllerReleaseId<'_, CS::Id> 
+        }: &ControllerReleaseId<'_, CS::Id> 
     ) -> ControllerReleaseIdResult {
         trace_function!("Controller Release Id");
 
-        let resources = self.resource_control.release_id(ResourceControlReleaseId { id });
+        let resource_control_input = ResourceControlReleaseId { id: *id };
+        let resources = self.resource_control.release_id(&resource_control_input);
         match resources {
             ResourceControlReleaseIdResult::Released(resources) => {
                 let resources = resources.collect::<Vec<_>>();
@@ -128,12 +129,12 @@ impl<
         &mut self,
         ControllerUnallow {
             id, resource_id, access
-        }: ControllerUnallow<'_, CS::Id, CS::ResourceId, WS::Access>
+        }: &ControllerUnallow<'_, CS::Id, CS::ResourceId, WS::Access>
     ) -> ControllerUnallowWhitelistResult {
         trace_function!("Controller Unallow Whitelist");
 
-        if self.resource_control.check_owner(ResourceControlCheckOwner { id, resource_id }).ok() {
-            return ControllerUnallowWhitelistResult::Whitelist(self.access_control.unallow_whitelist(AccessControlUnallow { id: resource_id, access }))
+        if self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id }).ok() {
+            return ControllerUnallowWhitelistResult::Whitelist(self.access_control.unallow_whitelist(&AccessControlUnallow { id: resource_id, access }))
         }
 
         ControllerUnallowWhitelistResult::Denied
@@ -143,12 +144,12 @@ impl<
         &mut self,
         ControllerUnallow {
             id, resource_id, access
-        }: ControllerUnallow<'_, CS::Id, CS::ResourceId, BS::Access>
+        }: &ControllerUnallow<'_, CS::Id, CS::ResourceId, BS::Access>
     ) -> ControllerUnallowBlacklistResult {
         trace_function!("Controller Unallow Blacklist");
 
-        if self.resource_control.check_owner(ResourceControlCheckOwner { id, resource_id }).ok() {
-            return ControllerUnallowBlacklistResult::Blacklist(self.access_control.unallow_blacklist(AccessControlUnallow { id: resource_id, access }))
+        if self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id }).ok() {
+            return ControllerUnallowBlacklistResult::Blacklist(self.access_control.unallow_blacklist(&AccessControlUnallow { id: resource_id, access }))
         }
 
         ControllerUnallowBlacklistResult::Denied
@@ -158,8 +159,11 @@ impl<
         &mut self,
         inputs: Vec<ControllerReleaseResource<'_, CS::Id, CS::ResourceId>>
     ) -> ControllerReleaseResourceAllResult<'_, CS::Id, CS::ResourceId> {
+        trace_function!("Controller Release Resource All");
+
         let check_owners_input = inputs;
         let release_all_input = inputs;
+        
         let check_owners_result = self.resource_control.check_owners(check_owners_input);
         if check_owners_result.ok() {
             return ControllerReleaseResourceAllResult::AccessControl(self.access_control.release_all(release_all_input))
@@ -172,8 +176,10 @@ impl<
         &self,
         ControllerCheckOwner {
             id, resource_id
-        }: ControllerCheckOwner<'_, CS::Id, CS::ResourceId>
+        }: &ControllerCheckOwner<'_, CS::Id, CS::ResourceId>
     ) -> ControllerCheckOwnerResult {
-        ControllerCheckOwnerResult::ResourceControl(self.resource_control.check_owner(ResourceControlCheckOwner { id, resource_id }))
+        trace_function!("Controller Check Owner");
+
+        ControllerCheckOwnerResult::ResourceControl(self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id }))
     }
 }

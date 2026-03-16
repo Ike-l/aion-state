@@ -30,13 +30,13 @@ impl<
         &self,
         HostCheckAccess {
             reserver_id, access_id, access
-        }: HostCheckAccess<'_, RS::ReserverId, AS::ValueId, AS::Access>
+        }: &HostCheckAccess<'_, RS::ReserverId, AS::ValueId, AS::Access>
     ) -> HostCheckAccessResult {
         trace_function!("Host Permits Access");
 
-        let reservations_permission = self.reservations.check_access(ReservationsCheckAccess { reserver_id, access_id, access });
+        let reservations_permission = self.reservations.check_access(&ReservationsCheckAccess { reserver_id: *reserver_id, access_id, access });
         if reservations_permission.ok() {
-            HostCheckAccessResult::Accesses(self.accesses.check_access(AccessesCheckAccess { access_id, access }))
+            HostCheckAccessResult::Accesses(self.accesses.check_access(&AccessesCheckAccess { access_id, access }))
         } else {
             HostCheckAccessResult::ReservationConflict
         }
@@ -52,7 +52,7 @@ impl<
         trace_function!("Host Recording Access");
 
         let unreserve_result = if let Some(reserver_id) = reserver_id {
-            Some(self.unreserve(HostUnreserve { reserver_id, access_id: &access_id, access: &access }))
+            Some(self.unreserve(&HostUnreserve { reserver_id, access_id: &access_id, access: &access }))
         } else { None };
 
         let record_access_result = self.accesses.record_access(AccessesRecordAccess { access_id, access });
@@ -69,11 +69,11 @@ impl<
         &mut self,
         HostReleaseAccess {
             access_id, access
-        }: HostReleaseAccess<AS::ValueId, AS::Access>
+        }: &HostReleaseAccess<AS::ValueId, AS::Access>
     ) -> HostReleaseAccessResult {
         trace_function!("Host Releasing Access");
 
-        HostReleaseAccessResult::Accesses(self.accesses.release(AccessesRelease { access_id, access }))
+        HostReleaseAccessResult::Accesses(self.accesses.release(&AccessesRelease { access_id, access }))
     }
 
     /// Simply a `pass through` function
@@ -83,11 +83,11 @@ impl<
         &mut self,
         HostUnreserve {
             reserver_id, access_id, access
-        }: HostUnreserve<'_, RS::ReserverId, AS::ValueId, AS::Access>
+        }: &HostUnreserve<'_, RS::ReserverId, AS::ValueId, AS::Access>
     ) -> HostUnreserveResult {
         trace_function!("Host Unreserving");
 
-        HostUnreserveResult::Reservations(self.reservations.unreserve(ReservationsUnreserve { reserver_id, access_id, access }))
+        HostUnreserveResult::Reservations(self.reservations.unreserve(&ReservationsUnreserve { reserver_id, access_id, access }))
     }
 
     /// Simply a `pass through` function

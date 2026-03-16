@@ -30,7 +30,7 @@ impl<
         &self,
         WhitelistCheckAccess {
             id, access,
-        }: WhitelistCheckAccess<'_, WS::Id, WS::Access>
+        }: &WhitelistCheckAccess<'_, WS::Id, WS::Access>
     ) -> WhitelistCheckAccessResult {
         trace_function!("Whitelist Check Access");
 
@@ -43,7 +43,7 @@ impl<
         &mut self,
         WhitelistUnallow {
             id, access
-        }: WhitelistUnallow<'_, WS::Id, WS::Access>
+        }: &WhitelistUnallow<'_, WS::Id, WS::Access>
     ) -> WhitelistUnallowResult {
         trace_function!("Whitelist Unallow");
 
@@ -56,7 +56,7 @@ impl<
         &mut self,
         WhitelistRelease {
             id
-        }: WhitelistRelease<'_, WS::Id>
+        }: &WhitelistRelease<'_, WS::Id>
     ) -> WhitelistReleaseResult {
         trace_function!("Whitelist Release");
 

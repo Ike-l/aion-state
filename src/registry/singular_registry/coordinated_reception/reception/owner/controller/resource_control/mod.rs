@@ -33,7 +33,7 @@ impl<
         &mut self,
         ResourceControlRelease {
             id, resource_id
-        }: ResourceControlRelease<'_, CS::Id, CS::ResourceId>
+        }: &ResourceControlRelease<'_, CS::Id, CS::ResourceId>
     ) -> ResourceControlReleaseResult {
         trace_function!("Resource Control Release");
 
@@ -45,7 +45,7 @@ impl<
         &mut self,
         ResourceControlReleaseId {
             id
-        }: ResourceControlReleaseId<'_, CS::Id>
+        }: &ResourceControlReleaseId<'_, CS::Id>
     ) -> ResourceControlReleaseIdResult<impl Iterator<Item = CS::ResourceId>> {
         trace_function!("ResourceControl ReleaseId");
 

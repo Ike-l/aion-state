@@ -62,13 +62,13 @@ impl<
         &self,
         AccessControlCheckAccess {
             id, access, password
-        }: AccessControlCheckAccess<'_, WS::Id, WS::Access, BS::Password>
+        }: &AccessControlCheckAccess<'_, WS::Id, WS::Access, BS::Password>
     ) -> AccessControlCheckAccessResult {
         trace_function!("AccessControl Check Access");
 
         match password {
-            Some(password) => AccessControlCheckAccessResult::Blacklist(self.blacklist.check_access(BlacklistCheckAccess { id, access, password })),
-            None => AccessControlCheckAccessResult::Whitelist(self.whitelist.check_access(WhitelistCheckAccess { id, access })),
+            Some(password) => AccessControlCheckAccessResult::Blacklist(self.blacklist.check_access(&BlacklistCheckAccess { id, access, password })),
+            None => AccessControlCheckAccessResult::Whitelist(self.whitelist.check_access(&WhitelistCheckAccess { id, access })),
         }
     }
 
@@ -79,11 +79,11 @@ impl<
         &mut self,
         AccessControlUnallow {
             id, access
-        }: AccessControlUnallow<'_, WS::Id, WS::Access>
+        }: &AccessControlUnallow<'_, WS::Id, WS::Access>
     ) -> AccessControlWhitelistUnallowResult {
         trace_function!("AccessControl Unallow Whitelist");
 
-        AccessControlWhitelistUnallowResult::Whitelist(self.whitelist.unallow(WhitelistUnallow { id, access }))
+        AccessControlWhitelistUnallowResult::Whitelist(self.whitelist.unallow(&WhitelistUnallow { id, access }))
     }
 
     /// Passes through to `blacklist`
@@ -91,11 +91,11 @@ impl<
         &mut self,
         AccessControlUnallow {
             id, access
-        }: AccessControlUnallow<'_, BS::Id, BS::Access>
+        }: &AccessControlUnallow<'_, BS::Id, BS::Access>
     ) -> AccessControlBlacklistUnallowResult {
         trace_function!("AccessControl Unallow Blacklist");
 
-        AccessControlBlacklistUnallowResult::Blacklist(self.blacklist.unallow(BlacklistUnallow { id, access }))
+        AccessControlBlacklistUnallowResult::Blacklist(self.blacklist.unallow(&BlacklistUnallow { id, access }))
     }
 
     // release all accesses from all lists
@@ -106,13 +106,13 @@ impl<
         &mut self,
         AccessControlRelease {
             id
-        }: AccessControlRelease<'_, WS::Id>
+        }: &AccessControlRelease<'_, WS::Id>
     ) -> AccessControlReleaseResult {
         trace_function!("AccessControl Release");
 
         AccessControlReleaseResult::Lists((
-            self.whitelist.release(WhitelistRelease { id }),
-            self.blacklist.release(BlacklistRelease { id })
+            self.whitelist.release(&WhitelistRelease { id }),
+            self.blacklist.release(&BlacklistRelease { id })
         ))
     }
 
