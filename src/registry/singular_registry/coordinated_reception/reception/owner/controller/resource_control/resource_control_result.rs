@@ -1,3 +1,5 @@
+use crate::prelude::ResourceControlCheckOwner;
+
 pub enum ResourceControlCheckOwnerResult {
     Verification(bool)
 }
@@ -25,4 +27,14 @@ pub enum ResourceControlOwnResult {
 
 pub enum ResourceControlReleaseIdResult<T: Iterator> {
     Released(T)
+}
+
+pub enum ResourceControlCheckOwnersResult<'a, Id, ResourceId> {
+    Invalid(Option<ResourceControlCheckOwner<'a, Id, ResourceId>>)
+}
+
+impl<Id, ResourceId> ResourceControlCheckOwnersResult<'_, Id, ResourceId> {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Invalid(None))
+    }
 }

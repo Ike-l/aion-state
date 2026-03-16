@@ -1,4 +1,4 @@
-use crate::prelude::{ControlStorage, ResourceControlCheckOwner, ResourceControlCheckOwnerResult, ResourceControlOwn, ResourceControlOwnResult, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlReleaseResult, trace_function};
+use crate::prelude::{ControlStorage, ResourceControlCheckOwner, ResourceControlCheckOwnerResult, ResourceControlCheckOwnersResult, ResourceControlOwn, ResourceControlOwnResult, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlReleaseResult, trace_function};
 
 pub mod control_storage;
 
@@ -57,10 +57,19 @@ impl<
         &self,
         ResourceControlCheckOwner {
             id, resource_id
-        }: ResourceControlCheckOwner<'_, CS::Id, CS::ResourceId>
+        }: &ResourceControlCheckOwner<'_, CS::Id, CS::ResourceId>
     ) -> ResourceControlCheckOwnerResult {
         trace_function!("Resource Control Check Owner");
 
         ResourceControlCheckOwnerResult::Verification(self.control_storage.check_owner(id, resource_id))
+    }
+
+    pub fn check_owners<'a>(
+        &self,
+        mut inputs: impl Iterator<Item = ResourceControlCheckOwner<'a, CS::Id, CS::ResourceId>>
+    ) -> ResourceControlCheckOwnersResult<'a, CS::Id, CS::ResourceId>  {
+        trace_function!("Resource Control Check Owners");
+
+        ResourceControlCheckOwnersResult::Invalid(inputs.find(|input| !self.check_owner(input).ok()))
     }
 }

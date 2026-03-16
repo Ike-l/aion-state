@@ -229,7 +229,8 @@ pub mod prelude {
                                         ResourceControlCheckOwnerResult,
                                         ResourceControlReleaseResult,
                                         ResourceControlOwnResult,
-                                        ResourceControlReleaseIdResult
+                                        ResourceControlReleaseIdResult,
+                                        ResourceControlCheckOwnersResult
                                     }
                                 }
                             }
