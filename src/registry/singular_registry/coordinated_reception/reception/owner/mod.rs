@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerAllow, ControllerCheckAccess, ControllerOwn, ControllerReleaseId, ControllerReleaseResource, ControllerUnallow, CredentialStorage, OwnerAllow, OwnerBlacklistAllowResult, OwnerCheckAccess, OwnerCheckAccessResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerReleaseResource, OwnerReleaseResourceResult, OwnerUnallow, OwnerUnallowBlacklistResult, OwnerUnallowWhitelistResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage, trace_function};
+use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerAllow, ControllerCheckAccess, ControllerOwn, ControllerReleaseId, ControllerReleaseResource, ControllerUnallow, CredentialStorage, OwnerAllow, OwnerBlacklistAllowResult, OwnerCheckAccess, OwnerCheckAccessResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnallow, OwnerUnallowBlacklistResult, OwnerUnallowWhitelistResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage, trace_function};
 
 pub mod authenticator;
 pub mod controller;
@@ -201,5 +201,23 @@ impl<
         OwnerUnallowBlacklistResult::Denied(authentication_result)
     }
 
-    pub fn release_all() {}
+    pub fn release_resource_all<'a>(
+        &mut self,
+        OwnerReleaseResourceAll {
+            id, password,
+            inputs
+        }: OwnerReleaseResourceAll<'a, AS::Id, AS::Password, CS::ResourceId>
+    ) -> OwnerReleaseResourceAllResult<'a, CS::Id, CS::ResourceId> {
+        let authentication_result = self.authenticator.authenticate(&Authentication { id, password });
+
+        if authentication_result.ok() {
+            let controller_inputs = inputs
+                .into_iter()
+                .map(|resource_id| ControllerReleaseResource { id, resource_id });
+
+            return OwnerReleaseResourceAllResult::Controller(self.controller.release_resource_all(controller_inputs.collect()))
+        }
+
+        OwnerReleaseResourceAllResult::Denied(authentication_result)
+    }
 }

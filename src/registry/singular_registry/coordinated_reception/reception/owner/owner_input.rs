@@ -46,3 +46,9 @@ pub struct OwnerUnallow<'a, Id, Password, ResourceId, Access> {
     pub resource_id: &'a ResourceId,
     pub access: &'a Access
 }
+
+pub struct OwnerReleaseResourceAll<'a, Id, Password, ResourceId> {
+    pub id: &'a Id,
+    pub password: &'a Password,
+    pub inputs: Vec<&'a ResourceId>
+}
