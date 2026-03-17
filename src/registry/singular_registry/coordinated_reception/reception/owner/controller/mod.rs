@@ -155,18 +155,29 @@ impl<
         ControllerUnallowBlacklistResult::Denied
     }
 
-    pub fn release_resource_all(
+    pub fn release_resource_all<'a>(
         &mut self,
-        inputs: Vec<ControllerReleaseResource<'_, CS::Id, CS::ResourceId>>
-    ) -> ControllerReleaseResourceAllResult<'_, CS::Id, CS::ResourceId> {
+        inputs: Vec<ControllerReleaseResource<'a, CS::Id, CS::ResourceId>>
+    ) -> ControllerReleaseResourceAllResult<'a, CS::Id, CS::ResourceId> {
         trace_function!("Controller Release Resource All");
 
-        let check_owners_input = inputs;
-        let release_all_input = inputs;
-        
+        let check_owners_input = inputs
+            .iter()
+            .map(
+                |ControllerReleaseResource { id, resource_id }| 
+                    ResourceControlCheckOwner { id: *id, resource_id: *resource_id }
+                );
+
+        let release_all_input = inputs
+            .iter()
+            .map(
+                |ControllerReleaseResource { resource_id, .. }| 
+                    AccessControlRelease { id: *resource_id }
+                );
+
         let check_owners_result = self.resource_control.check_owners(check_owners_input);
         if check_owners_result.ok() {
-            return ControllerReleaseResourceAllResult::AccessControl(self.access_control.release_all(release_all_input))
+            return ControllerReleaseResourceAllResult::AccessControl(self.access_control.release_all(release_all_input.collect()))
         }
 
         ControllerReleaseResourceAllResult::ResourceControl(check_owners_result)
