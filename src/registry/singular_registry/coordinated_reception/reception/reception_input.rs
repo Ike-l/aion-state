@@ -25,3 +25,10 @@ pub struct ReceptionReleaseResource<'a, Id, Password, ResourceId> {
     pub password: &'a Password,
     pub resource_id: &'a ResourceId
 }
+
+pub struct ReceptionAllow<'a, Id, Password, ResourceId, Access> {
+    pub id: &'a Id,
+    pub password: &'a Password,
+    pub resource_id: ResourceId,
+    pub access: Access
+}

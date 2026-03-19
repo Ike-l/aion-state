@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerUnregister, OwnerUpdatePassword, ReceptionOwn, ReceptionOwnResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseResource, ReceptionReleaseResourceResult, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReservationStorage, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerAllow, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionOwn, ReceptionOwnResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseResource, ReceptionReleaseResourceResult, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReservationStorage, WhitelistStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -108,9 +108,20 @@ impl<
 
         ReceptionReleaseResourceResult::Owner(self.owner.release_resource(&OwnerReleaseResource { id, password, resource_id }))
     }
+
     pub fn release_resource_all() {}
 
-    pub fn allow_whitelist() {}
+    pub fn allow_whitelist(
+        &mut self,
+        ReceptionAllow {
+            id, password, resource_id, access
+        }: ReceptionAllow<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
+    ) -> ReceptionWhitelistAllowResult {
+        trace_function!("Reception Allow Whitelist");
+
+        ReceptionWhitelistAllowResult::Owner(self.owner.allow_whitelist(OwnerAllow { id, password, resource_id, access }))
+    }
+
     pub fn allow_blacklist() {}
     pub fn unallow_whitelist() {}
     pub fn unallow_blacklist() {}
