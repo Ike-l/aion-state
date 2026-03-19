@@ -44,13 +44,15 @@ pub mod prelude {
                             ReceptionRegister,
                             ReceptionUnregister,
                             ReceptionUpdatePassword,
-                            ReceptionOwn
+                            ReceptionOwn,
+                            ReceptionReleaseResource
                         },
                         reception_result::{
                             ReceptionRegisterResult,
                             ReceptionUnregisterResult,
                             ReceptionUpdatePasswordResult,
-                            ReceptionOwnResult
+                            ReceptionOwnResult,
+                            ReceptionReleaseResourceResult
                         },
                         host::{
                             Host,

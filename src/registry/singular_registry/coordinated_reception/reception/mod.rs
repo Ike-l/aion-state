@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerOwn, OwnerRegister, OwnerUnregister, OwnerUpdatePassword, ReceptionOwn, ReceptionOwnResult, ReceptionRegister, ReceptionRegisterResult, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReservationStorage, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerUnregister, OwnerUpdatePassword, ReceptionOwn, ReceptionOwnResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseResource, ReceptionReleaseResourceResult, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReservationStorage, WhitelistStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -43,11 +43,14 @@ impl<
     
     // does this need to release ReserverId ownership?
     // ^ would need a method to "remove" the access map associated with the reserver map
+    // for: Simpler and more predictable (you know your reservations will be dropped)
+    // ^-> Make drop_reservations function
+    // against: Means you can deauthenticate and pass "ownership" of reservations to someone else
     pub fn unregister(
         &mut self,
         ReceptionUnregister {
             id, password
-        }: ReceptionUnregister<'_, OS::Id, OS::Password>
+        }: &ReceptionUnregister<'_, OS::Id, OS::Password>
     ) -> ReceptionUnregisterResult {
         trace_function!("Reception Unregister");
         
@@ -65,6 +68,25 @@ impl<
         ReceptionUpdatePasswordResult::Owner(self.owner.update_password(OwnerUpdatePassword { id, old_password, new_password }))
     }
 
+    // does this need to check if a reservation is made?
+    // since there can be reservations via ReserverId with an Unregistered Owner Id,
+    // if someone:
+    // registers: IdA
+    // makes reservations: ReserverA, ResourceA
+    // unregisters
+    // someone else registers: IdB
+    // claims ownership over the resource: IdB, ResourceA
+    // there would be a reservation conflict: ReserverA & ResourceA
+    // maybe this is intentional?
+    // maybe when "owning" a resource is converts all reservations to update the ReserverId to the new 
+
+    // requires: Need to be registered (owner.authenticate().ok()) to make reservations
+    // When Owning; if successful: Convert all reservations over `resource_id` to `id`
+    // since can only make reservations if registered, if new ownership is successful- means they unregistered
+    // so when "owning"- semantically they also claim ownership over reservations itself
+    // NO, because multiple different users can hold reservations.
+    // The unregisterer will need to provide or drop their reservations otherwise it "locks" the resource for an id (could just use access control)
+
     pub fn own(
         &mut self,
         ReceptionOwn {
@@ -76,7 +98,16 @@ impl<
         ReceptionOwnResult::Owner(self.owner.own(OwnerOwn { id, password, resource_id }))
     }
 
-    pub fn release_resource() {}
+    pub fn release_resource(
+        &mut self,
+        ReceptionReleaseResource {
+            id, password, resource_id
+        }: &ReceptionReleaseResource<'_, OS::Id, OS::Password, AS::ValueId>
+    ) -> ReceptionReleaseResourceResult {
+        trace_function!("Reception Release Resource");
+
+        ReceptionReleaseResourceResult::Owner(self.owner.release_resource(&OwnerReleaseResource { id, password, resource_id }))
+    }
     pub fn release_resource_all() {}
 
     pub fn allow_whitelist() {}
@@ -91,4 +122,5 @@ impl<
 
     pub fn reserve() {}
     pub fn unreserve() {}
+    pub fn drop_reservations() {}
 }
