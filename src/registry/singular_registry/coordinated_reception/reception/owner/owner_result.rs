@@ -57,3 +57,11 @@ pub enum OwnerReleaseResourceAllResult<'a, Id, ResourceId> {
 pub enum OwnerAuthenticationResult {
     Authenticator(AuthenticationResult)
 }
+
+impl OwnerAuthenticationResult {
+    pub fn ok(&self) -> bool {
+        match self {
+            OwnerAuthenticationResult::Authenticator(authentication_result) => authentication_result.ok(),
+        }
+    }
+}
