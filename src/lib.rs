@@ -46,7 +46,8 @@ pub mod prelude {
                             ReceptionUpdatePassword,
                             ReceptionOwn,
                             ReceptionReleaseResource,
-                            ReceptionAllow
+                            ReceptionAllow,
+                            ReceptionUnallow
                         },
                         reception_result::{
                             ReceptionRegisterResult,
@@ -55,7 +56,8 @@ pub mod prelude {
                             ReceptionOwnResult,
                             ReceptionReleaseResourceResult,
                             ReceptionWhitelistAllowResult,
-                            ReceptionBlacklistAllowResult
+                            ReceptionBlacklistAllowResult,
+                            ReceptionWhitelistUnallowResult
                         },
                         host::{
                             Host,
@@ -129,8 +131,8 @@ pub mod prelude {
                                 OwnerBlacklistAllowResult,
                                 OwnerWhitelistAllowResult,
                                 OwnerCheckAccessResult,
-                                OwnerUnallowWhitelistResult,
-                                OwnerUnallowBlacklistResult,
+                                OwnerWhitelistUnallowResult,
+                                OwnerBlacklistUnallowResult,
                                 OwnerReleaseResourceAllResult,
                                 OwnerAuthenticationResult
                             },
@@ -171,8 +173,8 @@ pub mod prelude {
                                     ControllerCheckAccessResult,
                                     ControllerReleaseIdResult,
                                     ControllerCheckOwnerResult,
-                                    ControllerUnallowBlacklistResult,
-                                    ControllerUnallowWhitelistResult
+                                    ControllerBlacklistUnallowResult,
+                                    ControllerWhitelistUnallowResult
                                 },
                                 access_control::{
                                     AccessControl,

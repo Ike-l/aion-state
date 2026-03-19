@@ -1,4 +1,4 @@
-use crate::{prelude::{AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, ControllerBlacklistAllowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceResult, ControllerUnallowBlacklistResult, ControllerUnallowWhitelistResult, ControllerWhitelistAllowResult}, registry::singular_registry::coordinated_reception::reception::owner::controller::controller_result::ControllerReleaseResourceAllResult};
+use crate::{prelude::{AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, ControllerBlacklistAllowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceResult, ControllerBlacklistUnallowResult, ControllerWhitelistUnallowResult, ControllerWhitelistAllowResult}, registry::singular_registry::coordinated_reception::reception::owner::controller::controller_result::ControllerReleaseResourceAllResult};
 
 pub enum OwnerOwnResult {
     Controller(ControllerOwnResult),
@@ -39,13 +39,13 @@ pub enum OwnerCheckAccessResult {
     Controller(ControllerCheckAccessResult)
 }
 
-pub enum OwnerUnallowWhitelistResult {
-    Controller(ControllerUnallowWhitelistResult),
+pub enum OwnerWhitelistUnallowResult {
+    Controller(ControllerWhitelistUnallowResult),
     Denied(AuthenticationResult)
 }
 
-pub enum OwnerUnallowBlacklistResult {
-    Controller(ControllerUnallowBlacklistResult),
+pub enum OwnerBlacklistUnallowResult {
+    Controller(ControllerBlacklistUnallowResult),
     Denied(AuthenticationResult)
 }
 

@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerAllow, ControllerCheckAccess, ControllerOwn, ControllerReleaseId, ControllerReleaseResource, ControllerUnallow, CredentialStorage, OwnerAllow, OwnerAuthenticate, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerCheckAccess, OwnerCheckAccessResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnallow, OwnerUnallowBlacklistResult, OwnerUnallowWhitelistResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage, trace_function};
+use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerAllow, ControllerCheckAccess, ControllerOwn, ControllerReleaseId, ControllerReleaseResource, ControllerUnallow, CredentialStorage, OwnerAllow, OwnerAuthenticate, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerCheckAccess, OwnerCheckAccessResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnallow, OwnerBlacklistUnallowResult, OwnerWhitelistUnallowResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage, trace_function};
 
 pub mod authenticator;
 pub mod controller;
@@ -175,30 +175,30 @@ impl<
         &mut self,
         OwnerUnallow {
             id, password, resource_id, access
-        }: OwnerUnallow<'_, AS::Id, AS::Password, CS::ResourceId, WS::Access>
-    ) -> OwnerUnallowWhitelistResult {
+        }: &OwnerUnallow<'_, AS::Id, AS::Password, CS::ResourceId, WS::Access>
+    ) -> OwnerWhitelistUnallowResult {
         let authentication_result = self.authenticator.authenticate(&Authentication { id, password });
         
         if authentication_result.ok() {
-            return OwnerUnallowWhitelistResult::Controller(self.controller.unallow_whitelist(&ControllerUnallow { id, resource_id, access }))
+            return OwnerWhitelistUnallowResult::Controller(self.controller.unallow_whitelist(&ControllerUnallow { id, resource_id, access }))
         }
 
-        OwnerUnallowWhitelistResult::Denied(authentication_result)
+        OwnerWhitelistUnallowResult::Denied(authentication_result)
     }
 
     pub fn unallow_blacklist(
         &mut self,
         OwnerUnallow {
             id, password, resource_id, access
-        }: OwnerUnallow<'_, AS::Id, AS::Password, CS::ResourceId, WS::Access>
-    ) -> OwnerUnallowBlacklistResult {
+        }: &OwnerUnallow<'_, AS::Id, AS::Password, CS::ResourceId, WS::Access>
+    ) -> OwnerBlacklistUnallowResult {
         let authentication_result = self.authenticator.authenticate(&Authentication { id, password });
         
         if authentication_result.ok() {
-            return OwnerUnallowBlacklistResult::Controller(self.controller.unallow_blacklist(&ControllerUnallow { id, resource_id, access }))
+            return OwnerBlacklistUnallowResult::Controller(self.controller.unallow_blacklist(&ControllerUnallow { id, resource_id, access }))
         }
 
-        OwnerUnallowBlacklistResult::Denied(authentication_result)
+        OwnerBlacklistUnallowResult::Denied(authentication_result)
     }
 
     pub fn release_resource_all<'a>(

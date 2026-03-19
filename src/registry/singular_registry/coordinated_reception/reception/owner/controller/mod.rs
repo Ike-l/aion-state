@@ -1,4 +1,4 @@
-use crate::{prelude::{AccessControl, AccessControlAllow, AccessControlCheckAccess, AccessControlRelease, AccessControlUnallow, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerCheckAccess, ControllerCheckAccessResult, ControllerCheckOwner, ControllerCheckOwnerResult, ControllerOwn, ControllerOwnResult, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResource, ControllerReleaseResourceResult, ControllerUnallow, ControllerUnallowBlacklistResult, ControllerUnallowWhitelistResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlCheckOwner, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, WhitelistStorage, trace_function}, registry::singular_registry::coordinated_reception::reception::owner::controller::controller_result::ControllerReleaseResourceAllResult};
+use crate::{prelude::{AccessControl, AccessControlAllow, AccessControlCheckAccess, AccessControlRelease, AccessControlUnallow, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerCheckAccess, ControllerCheckAccessResult, ControllerCheckOwner, ControllerCheckOwnerResult, ControllerOwn, ControllerOwnResult, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResource, ControllerReleaseResourceResult, ControllerUnallow, ControllerBlacklistUnallowResult, ControllerWhitelistUnallowResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlCheckOwner, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, WhitelistStorage, trace_function}, registry::singular_registry::coordinated_reception::reception::owner::controller::controller_result::ControllerReleaseResourceAllResult};
 
 pub mod access_control;
 pub mod resource_control;
@@ -130,14 +130,14 @@ impl<
         ControllerUnallow {
             id, resource_id, access
         }: &ControllerUnallow<'_, CS::Id, CS::ResourceId, WS::Access>
-    ) -> ControllerUnallowWhitelistResult {
+    ) -> ControllerWhitelistUnallowResult {
         trace_function!("Controller Unallow Whitelist");
 
         if self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id }).ok() {
-            return ControllerUnallowWhitelistResult::Whitelist(self.access_control.unallow_whitelist(&AccessControlUnallow { id: resource_id, access }))
+            return ControllerWhitelistUnallowResult::Whitelist(self.access_control.unallow_whitelist(&AccessControlUnallow { id: resource_id, access }))
         }
 
-        ControllerUnallowWhitelistResult::Denied
+        ControllerWhitelistUnallowResult::Denied
     }
 
     pub fn unallow_blacklist(
@@ -145,14 +145,14 @@ impl<
         ControllerUnallow {
             id, resource_id, access
         }: &ControllerUnallow<'_, CS::Id, CS::ResourceId, BS::Access>
-    ) -> ControllerUnallowBlacklistResult {
+    ) -> ControllerBlacklistUnallowResult {
         trace_function!("Controller Unallow Blacklist");
 
         if self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id }).ok() {
-            return ControllerUnallowBlacklistResult::Blacklist(self.access_control.unallow_blacklist(&AccessControlUnallow { id: resource_id, access }))
+            return ControllerBlacklistUnallowResult::Blacklist(self.access_control.unallow_blacklist(&AccessControlUnallow { id: resource_id, access }))
         }
 
-        ControllerUnallowBlacklistResult::Denied
+        ControllerBlacklistUnallowResult::Denied
     }
 
     pub fn release_resource_all<'a>(

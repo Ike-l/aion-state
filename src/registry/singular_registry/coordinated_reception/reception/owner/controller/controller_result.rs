@@ -37,12 +37,12 @@ pub enum ControllerReleaseIdResult {
     AccessControl(AccessControlReleaseAllResult)
 }
 
-pub enum ControllerUnallowBlacklistResult {
+pub enum ControllerBlacklistUnallowResult {
     Blacklist(AccessControlBlacklistUnallowResult),
     Denied
 }
 
-pub enum ControllerUnallowWhitelistResult {
+pub enum ControllerWhitelistUnallowResult {
     Whitelist(AccessControlWhitelistUnallowResult),
     Denied
 }

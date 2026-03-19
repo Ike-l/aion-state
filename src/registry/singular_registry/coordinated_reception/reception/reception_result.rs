@@ -1,4 +1,4 @@
-use crate::prelude::{OwnerBlacklistAllowResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult};
+use crate::prelude::{OwnerBlacklistAllowResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult};
 
 pub enum ReceptionRegisterResult {
     Owner(OwnerRegisterResult)
@@ -26,4 +26,8 @@ pub enum ReceptionWhitelistAllowResult {
 
 pub enum ReceptionBlacklistAllowResult<Password> {
     Owner(OwnerBlacklistAllowResult<Password>)
+}
+
+pub enum ReceptionWhitelistUnallowResult {
+    Owner(OwnerWhitelistUnallowResult)
 }
