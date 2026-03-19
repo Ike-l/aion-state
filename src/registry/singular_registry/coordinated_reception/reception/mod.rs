@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerAllow, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionOwn, ReceptionOwnResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseResource, ReceptionReleaseResourceResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerAllow, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionOwn, ReceptionOwnResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -109,7 +109,17 @@ impl<
         ReceptionReleaseResourceResult::Owner(self.owner.release_resource(&OwnerReleaseResource { id, password, resource_id }))
     }
 
-    pub fn release_resource_all() {}
+    pub fn release_resource_all<'a>(
+        &mut self,
+        ReceptionReleaseResourceAll {
+            id, password,
+            inputs
+        }: ReceptionReleaseResourceAll<'a, OS::Id, OS::Password, AS::ValueId>
+    ) -> ReceptionReleaseResourceAllResult<'a, OS::Id, AS::ValueId> {
+        trace_function!("Reception Release Reosurce All");
+
+        ReceptionReleaseResourceAllResult::Owner(self.owner.release_resource_all(OwnerReleaseResourceAll { id, password, inputs}))
+    }
 
     pub fn allow_whitelist(
         &mut self,

@@ -39,3 +39,9 @@ pub struct ReceptionUnallow<'a, Id, Password, ResourceId, Access> {
     pub resource_id: &'a ResourceId,
     pub access: &'a Access
 }
+
+pub struct ReceptionReleaseResourceAll<'a, Id, Password, ResourceId> {
+    pub id: &'a Id,
+    pub password: &'a Password,
+    pub inputs: Vec<&'a ResourceId>,
+}

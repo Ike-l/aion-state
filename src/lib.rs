@@ -47,7 +47,8 @@ pub mod prelude {
                             ReceptionOwn,
                             ReceptionReleaseResource,
                             ReceptionAllow,
-                            ReceptionUnallow
+                            ReceptionUnallow,
+                            ReceptionReleaseResourceAll
                         },
                         reception_result::{
                             ReceptionRegisterResult,
@@ -58,7 +59,8 @@ pub mod prelude {
                             ReceptionWhitelistAllowResult,
                             ReceptionBlacklistAllowResult,
                             ReceptionWhitelistUnallowResult,
-                            ReceptionBlacklistUnallowResult
+                            ReceptionBlacklistUnallowResult,
+                            ReceptionReleaseResourceAllResult
                         },
                         host::{
                             Host,

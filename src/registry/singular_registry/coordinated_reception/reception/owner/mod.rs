@@ -207,7 +207,7 @@ impl<
             id, password,
             inputs
         }: OwnerReleaseResourceAll<'a, AS::Id, AS::Password, CS::ResourceId>
-    ) -> OwnerReleaseResourceAllResult<'a, CS::Id, CS::ResourceId> {
+    ) -> OwnerReleaseResourceAllResult<'a, AS::Id, CS::ResourceId> {
         let authentication_result = self.authenticator.authenticate(&Authentication { id, password });
 
         if authentication_result.ok() {
