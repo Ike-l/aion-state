@@ -57,7 +57,8 @@ pub mod prelude {
                             ReceptionReleaseResourceResult,
                             ReceptionWhitelistAllowResult,
                             ReceptionBlacklistAllowResult,
-                            ReceptionWhitelistUnallowResult
+                            ReceptionWhitelistUnallowResult,
+                            ReceptionBlacklistUnallowResult
                         },
                         host::{
                             Host,

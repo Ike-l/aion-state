@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerAllow, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionOwn, ReceptionOwnResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseResource, ReceptionReleaseResourceResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerAllow, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionOwn, ReceptionOwnResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseResource, ReceptionReleaseResourceResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -143,7 +143,17 @@ impl<
 
         ReceptionWhitelistUnallowResult::Owner(self.owner.unallow_whitelist(&OwnerUnallow { id, password, resource_id, access }))
     }
-    pub fn unallow_blacklist() {}
+
+    pub fn unallow_blacklist(
+        &mut self,
+        ReceptionUnallow {
+            id, password, resource_id, access
+        }: &ReceptionUnallow<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
+    ) -> ReceptionBlacklistUnallowResult {
+        trace_function!("Reception Unallow Blacklist");
+
+        ReceptionBlacklistUnallowResult::Owner(self.owner.unallow_blacklist(&OwnerUnallow { id, password, resource_id, access }))
+    }
 
     // Host Specific 
     pub fn check_access() {}
