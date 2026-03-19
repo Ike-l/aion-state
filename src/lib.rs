@@ -54,7 +54,8 @@ pub mod prelude {
                             ReceptionUpdatePasswordResult,
                             ReceptionOwnResult,
                             ReceptionReleaseResourceResult,
-                            ReceptionWhitelistAllowResult
+                            ReceptionWhitelistAllowResult,
+                            ReceptionBlacklistAllowResult
                         },
                         host::{
                             Host,
