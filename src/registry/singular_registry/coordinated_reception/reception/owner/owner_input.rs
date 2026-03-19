@@ -1,4 +1,4 @@
-pub struct OwnerOwn<'a, Id, ResourceId, Password> {
+pub struct OwnerOwn<'a, Id, Password, ResourceId> {
     pub id: Id,
     pub password: &'a Password,
     pub resource_id: ResourceId,

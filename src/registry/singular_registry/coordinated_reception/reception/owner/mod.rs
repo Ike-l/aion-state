@@ -82,7 +82,7 @@ impl<
         &mut self,
         OwnerOwn {
             id, password, resource_id
-        }: OwnerOwn<'_, AS::Id, WS::Id, AS::Password>
+        }: OwnerOwn<'_, AS::Id, AS::Password, WS::Id>
     ) -> OwnerOwnResult {
         trace_function!("Owner Own");
 
