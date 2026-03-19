@@ -17,9 +17,9 @@ pub trait ReservationStorage {
         accesses: Accesses<Self::AccessStorage>
     ) -> Option<Accesses<Self::AccessStorage>>;
 
-    type Iter<'a>: Iterator<Item = (&'a Self::ReserverId, &'a Accesses<Self::AccessStorage>)>
-    where
-        Self: 'a;
-
-    fn iter(&self) -> Self::Iter<'_>;
+    fn iter<'a>(&self) -> impl Iterator<Item = (
+        &'a Self::ReserverId, 
+        &'a Accesses<Self::AccessStorage>
+    )> 
+        where Self: 'a;
 }
