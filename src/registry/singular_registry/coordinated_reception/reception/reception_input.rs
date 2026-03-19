@@ -13,3 +13,9 @@ pub struct ReceptionUpdatePassword<'a, Id, Password> {
     pub old_password: &'a Password,
     pub new_password: Password,
 }
+
+pub struct ReceptionOwn<'a, Id, Password, ResourceId> {
+    pub id: Id,
+    pub password: &'a Password,
+    pub resource_id: ResourceId
+}

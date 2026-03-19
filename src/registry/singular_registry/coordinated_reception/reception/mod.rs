@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerRegister, OwnerUnregister, OwnerUpdatePassword, ReceptionRegister, ReceptionRegisterResult, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReservationStorage, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerOwn, OwnerRegister, OwnerUnregister, OwnerUpdatePassword, ReceptionOwn, ReceptionOwnResult, ReceptionRegister, ReceptionRegisterResult, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReservationStorage, WhitelistStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -41,6 +41,8 @@ impl<
         ReceptionRegisterResult::Owner(self.owner.register(OwnerRegister { id, password }))
     }
     
+    // does this need to release ReserverId ownership?
+    // ^ would need a method to "remove" the access map associated with the reserver map
     pub fn unregister(
         &mut self,
         ReceptionUnregister {
@@ -58,10 +60,22 @@ impl<
             id, old_password, new_password
         }: ReceptionUpdatePassword<'_, OS::Id, OS::Password>
     ) -> ReceptionUpdatePasswordResult {
+        trace_function!("Reception Update Password");
+
         ReceptionUpdatePasswordResult::Owner(self.owner.update_password(OwnerUpdatePassword { id, old_password, new_password }))
     }
 
-    pub fn own() {}
+    pub fn own(
+        &mut self,
+        ReceptionOwn {
+            id, password, resource_id
+        }: ReceptionOwn<'_, OS::Id, OS::Password, AS::ValueId>
+    ) -> ReceptionOwnResult {
+        trace_function!("Reception Own");
+
+        ReceptionOwnResult::Owner(self.owner.own(OwnerOwn { id, password, resource_id }))
+    }
+
     pub fn release_resource() {}
     pub fn release_resource_all() {}
 
