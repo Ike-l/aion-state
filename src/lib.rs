@@ -112,7 +112,8 @@ pub mod prelude {
                                 OwnerAllow,
                                 OwnerCheckAccess,
                                 OwnerUnallow,
-                                OwnerReleaseResourceAll
+                                OwnerReleaseResourceAll,
+                                OwnerAuthenticate
                             },
                             owner_result::{
                                 OwnerOwnResult,
@@ -125,7 +126,8 @@ pub mod prelude {
                                 OwnerCheckAccessResult,
                                 OwnerUnallowWhitelistResult,
                                 OwnerUnallowBlacklistResult,
-                                OwnerReleaseResourceAllResult
+                                OwnerReleaseResourceAllResult,
+                                OwnerAuthenticationResult
                             },
                             authenticator::{
                                 Authenticator,

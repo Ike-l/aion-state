@@ -53,3 +53,7 @@ pub enum OwnerReleaseResourceAllResult<'a, Id, ResourceId> {
     Controller(ControllerReleaseResourceAllResult<'a, Id, ResourceId>),
     Denied(AuthenticationResult)
 }
+
+pub enum OwnerAuthenticationResult {
+    Authenticator(AuthenticationResult)
+}

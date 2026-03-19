@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerAllow, ControllerCheckAccess, ControllerOwn, ControllerReleaseId, ControllerReleaseResource, ControllerUnallow, CredentialStorage, OwnerAllow, OwnerBlacklistAllowResult, OwnerCheckAccess, OwnerCheckAccessResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnallow, OwnerUnallowBlacklistResult, OwnerUnallowWhitelistResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage, trace_function};
+use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerAllow, ControllerCheckAccess, ControllerOwn, ControllerReleaseId, ControllerReleaseResource, ControllerUnallow, CredentialStorage, OwnerAllow, OwnerAuthenticate, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerCheckAccess, OwnerCheckAccessResult, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnallow, OwnerUnallowBlacklistResult, OwnerUnallowWhitelistResult, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, WhitelistStorage, trace_function};
 
 pub mod authenticator;
 pub mod controller;
@@ -219,5 +219,14 @@ impl<
         }
 
         OwnerReleaseResourceAllResult::Denied(authentication_result)
+    }
+
+    pub fn authenticate(
+        &self,
+        OwnerAuthenticate {
+            id, password
+        }: OwnerAuthenticate<'_, AS::Id, AS::Password>
+    ) -> OwnerAuthenticationResult {
+        OwnerAuthenticationResult::Authenticator(self.authenticator.authenticate(&Authentication { id, password }))
     }
 }

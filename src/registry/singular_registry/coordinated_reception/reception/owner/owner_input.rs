@@ -52,3 +52,8 @@ pub struct OwnerReleaseResourceAll<'a, Id, Password, ResourceId> {
     pub password: &'a Password,
     pub inputs: Vec<&'a ResourceId>
 }
+
+pub struct OwnerAuthenticate<'a, Id, Password> {
+    pub id: &'a Id,
+    pub password: &'a Password
+}
