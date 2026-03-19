@@ -45,3 +45,10 @@ pub struct ReceptionReleaseResourceAll<'a, Id, Password, ResourceId> {
     pub password: &'a Password,
     pub inputs: Vec<&'a ResourceId>,
 }
+
+pub struct ReceptionCheckAccess<'a, Id, ResourceId, Access, Password> {
+    pub id: Option<&'a Id>,
+    pub resource_id: &'a ResourceId,
+    pub access: &'a Access,
+    pub password: Option<&'a Password>
+}
