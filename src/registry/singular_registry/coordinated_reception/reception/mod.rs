@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerRegister, OwnerUnregister, ReceptionRegister, ReceptionRegisterResult, ReceptionUnregister, ReceptionUnregisterResult, ReservationStorage, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, Owner, OwnerRegister, OwnerUnregister, OwnerUpdatePassword, ReceptionRegister, ReceptionRegisterResult, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReservationStorage, WhitelistStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -52,7 +52,14 @@ impl<
         ReceptionUnregisterResult::Owner(self.owner.unregister(&OwnerUnregister { id, password }))
     }
     
-    pub fn update_password() {}
+    pub fn update_password(
+        &mut self,
+        ReceptionUpdatePassword {
+            id, old_password, new_password
+        }: ReceptionUpdatePassword<'_, OS::Id, OS::Password>
+    ) -> ReceptionUpdatePasswordResult {
+        ReceptionUpdatePasswordResult::Owner(self.owner.update_password(OwnerUpdatePassword { id, old_password, new_password }))
+    }
 
     pub fn own() {}
     pub fn release_resource() {}
