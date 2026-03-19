@@ -41,10 +41,12 @@ pub mod prelude {
                     reception::{
                         Reception,
                         reception_input::{
-                            ReceptionRegister
+                            ReceptionRegister,
+                            ReceptionUnregister
                         },
                         reception_result::{
-                            ReceptionRegisterResult
+                            ReceptionRegisterResult,
+                            ReceptionUnregisterResult
                         },
                         host::{
                             Host,
