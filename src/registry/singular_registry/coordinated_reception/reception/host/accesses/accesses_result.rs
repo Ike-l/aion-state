@@ -18,3 +18,7 @@ pub enum AccessesReleaseResult {
     Split,
     NoCurrentAccess
 }
+
+pub enum AccessesDrainResult<T> {
+    Drain(T)
+}

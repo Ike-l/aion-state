@@ -112,7 +112,8 @@ pub mod prelude {
                                 accesses_result::{
                                     AccessesCheckAccessResult,
                                     AccessesRecordAccessResult,
-                                    AccessesReleaseResult
+                                    AccessesReleaseResult,
+                                    AccessesDrainResult
                                 },
                                 accesses_input::{
                                     AccessesCheckAccess, 

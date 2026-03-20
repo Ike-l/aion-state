@@ -19,4 +19,9 @@ pub trait AccessStorage {
         value_id: Self::ValueId,
         access: Self::Access
     ) -> Option<Self::Access>;
+
+    fn drain(&mut self) -> impl Iterator<Item = (
+        Self::ValueId, 
+        Self::Access
+    )>; 
 }

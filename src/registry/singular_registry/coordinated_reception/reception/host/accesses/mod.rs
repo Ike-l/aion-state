@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use tracing::{field, span};
 
-use crate::prelude::{AccessesCheckAccessResult, AccessStorage, Accessor, FUNCTION_LEVEL, AccessesCheckAccess, AccessesRecordAccess, AccessesRecordAccessResult, AccessesRelease, AccessesReleaseResult};
+use crate::prelude::{AccessStorage, AccessesCheckAccess, AccessesCheckAccessResult, AccessesDrainResult, AccessesRecordAccess, AccessesRecordAccessResult, AccessesRelease, AccessesReleaseResult, Accessor, FUNCTION_LEVEL, trace_function};
 
 pub mod accesses_input;
 pub mod accesses_result;
@@ -15,7 +15,9 @@ pub struct Accesses<AS> {
 }
 
 impl<AS: AccessStorage> Accesses<AS> 
-    where AS::Access: Accessor + Debug
+    where 
+        AS::Access: Accessor + Debug,
+        AS::ValueId: Debug
 {
     /// Permits access if there are no current accesses
     /// 
@@ -31,6 +33,7 @@ impl<AS: AccessStorage> Accesses<AS>
 
         if let Some(current_access) = self.access_storage.get(access_id) {
             span.record("current_access", format!("{current_access:?}"));
+
             AccessesCheckAccessResult::Ok(current_access.accepts_incoming(access))
         } else {
             AccessesCheckAccessResult::NoCurrentAccess
@@ -40,7 +43,8 @@ impl<AS: AccessStorage> Accesses<AS>
     /// Records the incoming access by using <Accessor>::merge or <Accessor>::insert if no current access exists
     /// 
     /// Does not check if `Accessor` is ok with the incoming access
-    /// Use in conjunction with `permits_access` 
+    /// ^because it is assumed ok therefore making this function always return successfully
+    /// Use in conjunction with `check_access` 
     pub fn record_access(
         &mut self,
         AccessesRecordAccess {
@@ -52,6 +56,7 @@ impl<AS: AccessStorage> Accesses<AS>
 
         if let Some(current_access) = self.access_storage.get_mut(&access_id) {
             span.record("current_access", format!("{current_access:?}"));
+
             current_access.merge(access);
             AccessesRecordAccessResult::Merged
         } else {
@@ -80,5 +85,13 @@ impl<AS: AccessStorage> Accesses<AS>
         } else {
             AccessesReleaseResult::NoCurrentAccess
         }
+    }
+
+    pub fn drain(
+        &mut self,
+    ) -> AccessesDrainResult<impl Iterator<Item = (AS::ValueId, AS::Access)>> {
+        trace_function!("Accesses Drain");
+
+        AccessesDrainResult::Drain(self.access_storage.drain())
     }
 }
