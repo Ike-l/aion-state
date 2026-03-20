@@ -53,6 +53,7 @@ pub mod prelude {
                             ReceptionReleaseAccess,
                             ReceptionRecordAccess,
                             ReceptionReservation,
+                            ReceptionUnreserve,
                         },
                         reception_result::{
                             ReceptionRegisterResult,
@@ -69,6 +70,7 @@ pub mod prelude {
                             ReceptionReleaseAccessResult,
                             ReceptionRecordAccessResult,
                             ReceptionReservationResult,
+                            ReceptionUnreserveResult,
                         },
                         host::{
                             Host,
