@@ -198,15 +198,23 @@ impl<
         ReceptionReleaseAccessResult::Host(self.host.release_access(&HostReleaseAccess { access_id: *resource_id, access }))
     }
 
+    // authenticate?
+    // when recording- check access as well?
+    // 
     pub fn record_access(
         &mut self,
         ReceptionRecordAccess {
-            id, resource_id, access
-        }: ReceptionRecordAccess<'_, OS::Id, AS::ValueId, AS::Access>
+            id, resource_id, access, password
+        }: ReceptionRecordAccess<'_, OS::Id, AS::ValueId, AS::Access, BS::Password>
     ) -> ReceptionRecordAccessResult {
         trace_function!("Reception Record Access");
 
-        ReceptionRecordAccessResult::Host(self.host.record_access(HostRecordAccess { reserver_id: id, access_id: resource_id, access}))
+        let check_owner = self.owner.check_access(&OwnerCheckAccess { id, resource_id: &resource_id, access: &access, password });
+        if check_owner.ok() {
+            return ReceptionRecordAccessResult::Host(self.host.record_access(HostRecordAccess { reserver_id: id, access_id: resource_id, access}))
+        }
+
+        ReceptionRecordAccessResult::Denied(check_owner)
     }
 
     pub fn reserve() {}

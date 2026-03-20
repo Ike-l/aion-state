@@ -47,9 +47,9 @@ pub enum ReceptionCheckAccessResult {
 
 pub enum ReceptionReleaseAccessResult {
     Host(HostReleaseAccessResult),
-    Denied(OwnerAuthenticationResult)
 }
 
 pub enum ReceptionRecordAccessResult {
-    Host(HostRecordAccessResult)
+    Host(HostRecordAccessResult),
+    Denied(OwnerCheckAccessResult)
 }
