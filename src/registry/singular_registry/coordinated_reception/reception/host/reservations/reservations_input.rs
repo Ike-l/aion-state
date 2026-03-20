@@ -15,3 +15,7 @@ pub struct ReservationsUnreserve<'a, ReserverId, AccessId, Access> {
     pub access_id: &'a AccessId,
     pub access: &'a Access
 }
+
+pub struct ReservationsDrainReservations<'a, ReserverId> {
+    pub reserver_id: &'a ReserverId
+}

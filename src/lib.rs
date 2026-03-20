@@ -96,12 +96,14 @@ pub mod prelude {
                                 reservations_input::{
                                     ReservationsCheckAccess, 
                                     ReservationsReservation,
-                                    ReservationsUnreserve
+                                    ReservationsUnreserve,
+                                    ReservationsDrainReservations,
                                 },
                                 reservations_result::{
                                     ReservationsCheckAccessResult,
                                     ReservationsReserveResult,
                                     ReservationsUnreserveResult,
+                                    ReservationsDrainReservationsResult
                                 },
                             },
                             accesses::{

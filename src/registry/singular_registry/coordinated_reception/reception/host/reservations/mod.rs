@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use tracing::{Level, event};
 
-use crate::prelude::{AccessStorage, Accesses, Accessor, AccessesCheckAccess, AccessesRecordAccess, AccessesRelease, ReservationStorage, ReservationsCheckAccess, ReservationsCheckAccessResult, ReservationsReserveResult, ReservationsUnreserveResult, ReservationsReservation, ReservationsUnreserve, trace_function};
+use crate::prelude::{AccessStorage, Accesses, AccessesCheckAccess, AccessesRecordAccess, AccessesRelease, Accessor, ReservationStorage, ReservationsCheckAccess, ReservationsCheckAccessResult, ReservationsDrainReservations, ReservationsDrainReservationsResult, ReservationsReservation, ReservationsReserveResult, ReservationsUnreserve, ReservationsUnreserveResult, trace_function};
 
 pub mod reservations_input;
 pub mod reservations_result;
@@ -21,7 +21,8 @@ impl<
 > Reservations<RS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Accessor
+        AS::Access: Debug + Accessor,
+        AS::ValueId: Debug
 {
     /// A `Conflict` occurs if all:
     /// 
@@ -101,6 +102,23 @@ impl<
             ReservationsUnreserveResult::Accesses(access_map.release(&AccessesRelease { access, access_id }))
         } else {
             ReservationsUnreserveResult::NoReserver
+        }
+    }
+
+    pub fn drain_reservations<'a>(
+        &'a mut self,
+        ReservationsDrainReservations {
+            reserver_id
+        }: &ReservationsDrainReservations<'_, RS::ReserverId>
+    ) -> ReservationsDrainReservationsResult<impl Iterator<Item = (AS::ValueId, AS::Access)>> 
+        where AS: 'a 
+    {
+        trace_function!("Reservations Drain Reservations");
+
+        if let Some(access_map) = self.reservation_storage.get_mut(reserver_id) {
+            ReservationsDrainReservationsResult::Accesses(access_map.drain())
+        } else {
+            ReservationsDrainReservationsResult::NoReserver
         }
     }
 }

@@ -1,4 +1,4 @@
-use crate::prelude::AccessesReleaseResult;
+use crate::prelude::{AccessesDrainResult, AccessesReleaseResult};
 
 pub enum ReservationsCheckAccessResult {
     Ok(bool)
@@ -19,5 +19,10 @@ pub enum ReservationsReserveResult {
 
 pub enum ReservationsUnreserveResult {
     Accesses(AccessesReleaseResult),
+    NoReserver
+}
+
+pub enum ReservationsDrainReservationsResult<T> {
+    Accesses(AccessesDrainResult<T>),
     NoReserver
 }
