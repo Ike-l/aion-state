@@ -50,7 +50,8 @@ pub mod prelude {
                             ReceptionUnallow,
                             ReceptionReleaseResourceAll,
                             ReceptionCheckAccess,
-                            ReceptionReleaseAccess
+                            ReceptionReleaseAccess,
+                            ReceptionRecordAccess,
                         },
                         reception_result::{
                             ReceptionRegisterResult,
@@ -64,7 +65,8 @@ pub mod prelude {
                             ReceptionBlacklistUnallowResult,
                             ReceptionReleaseResourceAllResult,
                             ReceptionCheckAccessResult,
-                            ReceptionReleaseAccessResult
+                            ReceptionReleaseAccessResult,
+                            ReceptionRecordAccessResult,
                         },
                         host::{
                             Host,

@@ -57,3 +57,9 @@ pub struct ReceptionReleaseAccess<'a, ResourceId, Access> {
     pub resource_id: &'a ResourceId,
     pub access: &'a Access
 }
+
+pub struct ReceptionRecordAccess<'a, Id, ResourceId, Access> {
+    pub id: Option<&'a Id>,
+    pub resource_id: ResourceId,
+    pub access: Access
+}
