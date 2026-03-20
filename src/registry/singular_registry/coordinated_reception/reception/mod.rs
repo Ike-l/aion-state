@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, HostCheckAccess, Owner, OwnerAllow, OwnerCheckAccess, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionOwn, ReceptionOwnResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, HostCheckAccess, HostReleaseAccess, Owner, OwnerAllow, OwnerAuthenticate, OwnerCheckAccess, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionOwn, ReceptionOwnResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseAccess, ReceptionReleaseAccessResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -182,8 +182,25 @@ impl<
         ReceptionCheckAccessResult::Denied(check_owner)
     }
 
-    pub fn release_access() {}
-    pub fn record_access() {}
+    // anyone can release any access?
+    // unless i track which id gets which access
+    // i suppose anyone should be able to release accesses- the parent struct can make the caller "unsafe" for implementers to ensure
+    // i.e An implementor can implement `release` as a drop behaviour of a struct holding the resource
+    // but since the resource is not associated with this level there is no reason to add those semantics
+    pub fn release_access(
+        &mut self,
+        ReceptionReleaseAccess {
+            resource_id, access
+        }: &ReceptionReleaseAccess<'_, AS::ValueId, AS::Access>
+    ) -> ReceptionReleaseAccessResult {
+        trace_function!("Reception Release Access");
+
+        ReceptionReleaseAccessResult::Host(self.host.release_access(&HostReleaseAccess { access_id: *resource_id, access }))
+    }
+
+    pub fn record_access(
+        &mut self,
+    ) {}
 
     pub fn reserve() {}
     pub fn unreserve() {}

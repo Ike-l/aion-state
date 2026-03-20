@@ -1,4 +1,4 @@
-use crate::prelude::{HostCheckAccessResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAll, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult};
+use crate::prelude::{HostCheckAccessResult, HostReleaseAccessResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAll, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult};
 
 pub enum ReceptionRegisterResult {
     Owner(OwnerRegisterResult)
@@ -43,4 +43,9 @@ pub enum ReceptionReleaseResourceAllResult<'a, Id, ResourceId> {
 pub enum ReceptionCheckAccessResult {
     Host(HostCheckAccessResult),
     Denied(OwnerCheckAccessResult)
+}
+
+pub enum ReceptionReleaseAccessResult {
+    Host(HostReleaseAccessResult),
+    Denied(OwnerAuthenticationResult)
 }

@@ -221,12 +221,12 @@ impl<
         OwnerReleaseResourceAllResult::Denied(authentication_result)
     }
 
-    pub fn authenticate(
-        &self,
-        OwnerAuthenticate {
-            id, password
-        }: OwnerAuthenticate<'_, AS::Id, AS::Password>
-    ) -> OwnerAuthenticationResult {
-        OwnerAuthenticationResult::Authenticator(self.authenticator.authenticate(&Authentication { id, password }))
-    }
+    // pub fn authenticate(
+    //     &self,
+    //     OwnerAuthenticate {
+    //         id, password
+    //     }: OwnerAuthenticate<'_, AS::Id, AS::Password>
+    // ) -> OwnerAuthenticationResult {
+    //     OwnerAuthenticationResult::Authenticator(self.authenticator.authenticate(&Authentication { id, password }))
+    // }
 }
