@@ -117,7 +117,7 @@ impl<
             inputs
         }: ReceptionReleaseResourceAll<'a, OS::Id, OS::Password, AS::ValueId>
     ) -> ReceptionReleaseResourceAllResult<'a, OS::Id, AS::ValueId> {
-        trace_function!("Reception Release Reosurce All");
+        trace_function!("Reception Release Resource All");
 
         ReceptionReleaseResourceAllResult::Owner(self.owner.release_resource_all(OwnerReleaseResourceAll { id, password, inputs}))
     }
