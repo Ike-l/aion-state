@@ -4,7 +4,7 @@ pub struct ReservationsCheckAccess<'a, ReserverId, AccessId, Access> {
     pub access: &'a Access
 }
 
-pub struct ReservationsReserve<ReserverId, AccessId, Access> {
+pub struct ReservationsReservation<ReserverId, AccessId, Access> {
     pub reserver_id: ReserverId,
     pub access_id: AccessId,
     pub access: Access,

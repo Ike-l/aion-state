@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, HostCheckAccess, HostRecordAccess, HostReleaseAccess, Owner, OwnerAllow, OwnerAuthenticate, OwnerCheckAccess, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionOwn, ReceptionOwnResult, ReceptionRecordAccess, ReceptionRecordAccessResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseAccess, ReceptionReleaseAccessResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, HostCheckAccess, HostRecordAccess, HostReleaseAccess, HostReservation, Owner, OwnerAllow, OwnerAuthenticate, OwnerCheckAccess, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionOwn, ReceptionOwnResult, ReceptionRecordAccess, ReceptionRecordAccessResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseAccess, ReceptionReleaseAccessResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservation, ReceptionReservationResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -217,7 +217,22 @@ impl<
         ReceptionRecordAccessResult::Denied(check_owner)
     }
 
-    pub fn reserve() {}
+    pub fn reserve(
+        &mut self,
+        ReceptionReservation {
+            id, password, resource_id, access
+        }: ReceptionReservation<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
+    ) -> ReceptionReservationResult {
+        trace_function!("Reception Reserve");
+
+        let authentication_result = self.owner.authenticate(&OwnerAuthenticate { id: &id, password  });
+        if authentication_result.ok() {
+            return ReceptionReservationResult::Host(self.host.reserve(HostReservation { reserver_id: id, access_id: resource_id, access }))
+        }
+
+        ReceptionReservationResult::Denied(authentication_result)
+    }
+    
     pub fn unreserve() {}
     pub fn drop_reservations() {}
 }

@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accesses, AccessesCheckAccess, AccessesRecordAccess, AccessesRelease, Accessor, HostCheckAccess, HostCheckAccessResult, HostRecordAccess, HostRecordAccessResult, HostReleaseAccess, HostReleaseAccessResult, HostReservationResult, HostReserve, HostUnreserve, HostUnreserveResult, ReservationStorage, Reservations, ReservationsCheckAccess, ReservationsReserve, ReservationsUnreserve, trace_function};
+use crate::prelude::{AccessStorage, Accesses, AccessesCheckAccess, AccessesRecordAccess, AccessesRelease, Accessor, HostCheckAccess, HostCheckAccessResult, HostRecordAccess, HostRecordAccessResult, HostReleaseAccess, HostReleaseAccessResult, HostReservationResult, HostReservation, HostUnreserve, HostUnreserveResult, ReservationStorage, Reservations, ReservationsCheckAccess, ReservationsReservation, ReservationsUnreserve, trace_function};
 
 pub mod reservations;
 pub mod accesses;
@@ -95,12 +95,12 @@ impl<
     /// `Accesses` semantics do not apply to `reservations`
     pub fn reserve(
         &mut self,
-        HostReserve {
+        HostReservation {
             reserver_id, access_id, access
-        }: HostReserve<RS::ReserverId, AS::ValueId, AS::Access>
+        }: HostReservation<RS::ReserverId, AS::ValueId, AS::Access>
     ) -> HostReservationResult {
         trace_function!("Host Reserving");
 
-        HostReservationResult::Reservations(self.reservations.reserve(ReservationsReserve { reserver_id, access_id, access }))
+        HostReservationResult::Reservations(self.reservations.reserve(ReservationsReservation { reserver_id, access_id, access }))
     }
 }

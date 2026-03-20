@@ -64,3 +64,10 @@ pub struct ReceptionRecordAccess<'a, Id, ResourceId, Access, Password> {
     pub access: Access,
     pub password: Option<&'a Password>
 }
+
+pub struct ReceptionReservation<'a, Id, Password, ResourceId, Access> {
+    pub id: Id,
+    pub password: &'a Password,
+    pub resource_id: ResourceId,
+    pub access: Access
+}

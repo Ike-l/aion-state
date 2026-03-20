@@ -15,7 +15,7 @@ pub struct HostReleaseAccess<'a, AccessId, Access> {
     pub access: &'a Access
 }
 
-pub struct HostReserve<ReserverId, AccessId, Access> {
+pub struct HostReservation<ReserverId, AccessId, Access> {
     pub reserver_id: ReserverId,
     pub access_id: AccessId,
     pub access: Access

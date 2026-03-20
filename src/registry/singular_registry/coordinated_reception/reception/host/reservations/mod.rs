@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use tracing::{Level, event};
 
-use crate::prelude::{AccessStorage, Accesses, Accessor, AccessesCheckAccess, AccessesRecordAccess, AccessesRelease, ReservationStorage, ReservationsCheckAccess, ReservationsCheckAccessResult, ReservationsReserveResult, ReservationsUnreserveResult, ReservationsReserve, ReservationsUnreserve, trace_function};
+use crate::prelude::{AccessStorage, Accesses, Accessor, AccessesCheckAccess, AccessesRecordAccess, AccessesRelease, ReservationStorage, ReservationsCheckAccess, ReservationsCheckAccessResult, ReservationsReserveResult, ReservationsUnreserveResult, ReservationsReservation, ReservationsUnreserve, trace_function};
 
 pub mod reservations_input;
 pub mod reservations_result;
@@ -70,9 +70,9 @@ impl<
     /// If the first reservation by the reserver creates an Access container using the `Default` trait
     pub fn reserve(
         &mut self,
-        ReservationsReserve {
+        ReservationsReservation {
             reserver_id, access_id, access
-        }: ReservationsReserve<RS::ReserverId, AS::ValueId, AS::Access>
+        }: ReservationsReservation<RS::ReserverId, AS::ValueId, AS::Access>
     ) -> ReservationsReserveResult {
         trace_function!("Reservations Reserve");
 
