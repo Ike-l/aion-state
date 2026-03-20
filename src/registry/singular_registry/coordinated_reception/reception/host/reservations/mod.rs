@@ -105,14 +105,12 @@ impl<
         }
     }
 
-    pub fn drain_reservations<'a>(
-        &'a mut self,
+    pub fn drain_reservations(
+        &mut self,
         ReservationsDrainReservations {
             reserver_id
         }: &ReservationsDrainReservations<'_, RS::ReserverId>
-    ) -> ReservationsDrainReservationsResult<impl Iterator<Item = (AS::ValueId, AS::Access)>> 
-        where AS: 'a 
-    {
+    ) -> ReservationsDrainReservationsResult<Vec<(AS::ValueId, AS::Access)>> {
         trace_function!("Reservations Drain Reservations");
 
         if let Some(access_map) = self.reservation_storage.get_mut(reserver_id) {

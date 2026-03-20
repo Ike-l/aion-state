@@ -1,4 +1,4 @@
-use crate::prelude::{AccessesCheckAccessResult, AccessesRecordAccessResult, AccessesReleaseResult, ReservationsReserveResult, ReservationsUnreserveResult};
+use crate::prelude::{AccessesCheckAccessResult, AccessesRecordAccessResult, AccessesReleaseResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult};
 
 pub enum HostCheckAccessResult {
     Accesses(AccessesCheckAccessResult),
@@ -20,4 +20,8 @@ pub enum HostReservationResult {
 
 pub enum HostReleaseAccessResult {
     Accesses(AccessesReleaseResult)
+}
+
+pub enum HostDrainReservationsResult<T> {
+    Reservations(ReservationsDrainReservationsResult<T>)
 }

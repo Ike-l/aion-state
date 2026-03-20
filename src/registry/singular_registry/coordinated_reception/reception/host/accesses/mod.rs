@@ -89,9 +89,9 @@ impl<AS: AccessStorage> Accesses<AS>
 
     pub fn drain(
         &mut self,
-    ) -> AccessesDrainResult<impl Iterator<Item = (AS::ValueId, AS::Access)>> {
+    ) -> AccessesDrainResult<Vec<(AS::ValueId, AS::Access)>> {
         trace_function!("Accesses Drain");
 
-        AccessesDrainResult::Drain(self.access_storage.drain())
+        AccessesDrainResult::Drain(self.access_storage.drain().collect())
     }
 }

@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accesses, AccessesCheckAccess, AccessesRecordAccess, AccessesRelease, Accessor, HostCheckAccess, HostCheckAccessResult, HostRecordAccess, HostRecordAccessResult, HostReleaseAccess, HostReleaseAccessResult, HostReservationResult, HostReservation, HostUnreserve, HostUnreserveResult, ReservationStorage, Reservations, ReservationsCheckAccess, ReservationsReservation, ReservationsUnreserve, trace_function};
+use crate::prelude::{AccessStorage, Accesses, AccessesCheckAccess, AccessesRecordAccess, AccessesRelease, Accessor, HostCheckAccess, HostCheckAccessResult, HostDrainReservations, HostDrainReservationsResult, HostRecordAccess, HostRecordAccessResult, HostReleaseAccess, HostReleaseAccessResult, HostReservation, HostReservationResult, HostUnreserve, HostUnreserveResult, ReservationStorage, Reservations, ReservationsCheckAccess, ReservationsDrainReservations, ReservationsReservation, ReservationsUnreserve, trace_function};
 
 pub mod reservations;
 pub mod accesses;
@@ -21,7 +21,8 @@ impl<
 > Host<RS, AS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Accessor
+        AS::Access: Debug + Accessor,
+        AS::ValueId: Debug
 {
     /// Permits access if there are no conflicting reservations
     /// 
@@ -102,5 +103,16 @@ impl<
         trace_function!("Host Reserving");
 
         HostReservationResult::Reservations(self.reservations.reserve(ReservationsReservation { reserver_id, access_id, access }))
+    }
+
+    pub fn drain_reservations(
+        &mut self,
+        HostDrainReservations {
+            reserver_id
+        }: &HostDrainReservations<'_, RS::ReserverId>
+    ) -> HostDrainReservationsResult<Vec<(AS::ValueId, AS::Access)>> {
+        trace_function!("Host Drain Reservations");
+
+        HostDrainReservationsResult::Reservations(self.reservations.drain_reservations(&ReservationsDrainReservations { reserver_id }))
     }
 }
