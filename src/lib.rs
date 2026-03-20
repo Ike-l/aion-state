@@ -54,6 +54,7 @@ pub mod prelude {
                             ReceptionRecordAccess,
                             ReceptionReservation,
                             ReceptionUnreserve,
+                            ReceptionDrainReservations
                         },
                         reception_result::{
                             ReceptionRegisterResult,
@@ -71,6 +72,7 @@ pub mod prelude {
                             ReceptionRecordAccessResult,
                             ReceptionReservationResult,
                             ReceptionUnreserveResult,
+                            ReceptionDrainReservationsResult
                         },
                         host::{
                             Host,
@@ -79,7 +81,8 @@ pub mod prelude {
                                 HostRecordAccess,
                                 HostReleaseAccess,
                                 HostReservation,
-                                HostUnreserve
+                                HostUnreserve,
+                                HostDrainReservations,
                             },
                             host_result::{
                                 HostCheckAccessResult,
@@ -87,6 +90,7 @@ pub mod prelude {
                                 HostReservationResult,
                                 HostUnreserveResult,
                                 HostReleaseAccessResult,
+                                HostDrainReservationsResult,
                             },
                             reservations::{
                                 Reservations,

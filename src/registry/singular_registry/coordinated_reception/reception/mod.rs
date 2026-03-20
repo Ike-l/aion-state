@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, HostCheckAccess, HostRecordAccess, HostReleaseAccess, HostReservation, HostUnreserve, Owner, OwnerAllow, OwnerAuthenticate, OwnerCheckAccess, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionOwn, ReceptionOwnResult, ReceptionRecordAccess, ReceptionRecordAccessResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseAccess, ReceptionReleaseAccessResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservation, ReceptionReservationResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUnreserve, ReceptionUnreserveResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, HostCheckAccess, HostDrainReservations, HostRecordAccess, HostReleaseAccess, HostReservation, HostUnreserve, Owner, OwnerAllow, OwnerAuthenticate, OwnerCheckAccess, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionDrainReservations, ReceptionDrainReservationsResult, ReceptionOwn, ReceptionOwnResult, ReceptionRecordAccess, ReceptionRecordAccessResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseAccess, ReceptionReleaseAccessResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservation, ReceptionReservationResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUnreserve, ReceptionUnreserveResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -24,7 +24,8 @@ impl<
 > Reception<RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Accessor
+        AS::Access: Debug + Accessor,
+        AS::ValueId: Debug
 {
     // Owner Specific 
 
@@ -237,7 +238,7 @@ impl<
         &mut self,
         ReceptionUnreserve {
             id, password, resource_id, access
-        }: ReceptionUnreserve<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
+        }: &ReceptionUnreserve<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
     ) -> ReceptionUnreserveResult {
         trace_function!("Reception Unreserve");
 
@@ -249,5 +250,19 @@ impl<
         ReceptionUnreserveResult::Denied(authentication_result)
     }
 
-    pub fn drop_reservations() {}
+    pub fn drain_reservations(
+        &mut self,
+        ReceptionDrainReservations {
+            id, password
+        }: &ReceptionDrainReservations<'_, OS::Id, OS::Password>
+    ) -> ReceptionDrainReservationsResult<Vec<(AS::ValueId, AS::Access)>> {
+        trace_function!("Reception Drain Reservations");
+
+        let authentication_result = self.owner.authenticate(&OwnerAuthenticate { id, password });
+        if authentication_result.ok() {
+            return ReceptionDrainReservationsResult::Host(self.host.drain_reservations(&HostDrainReservations { reserver_id: id }))
+        }
+
+        ReceptionDrainReservationsResult::Denied(authentication_result)
+    }
 }
