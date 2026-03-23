@@ -50,7 +50,8 @@ pub mod prelude {
                     SingularRegistryOwnResult,
                     SingularRegistryReleaseResourceResult,
                     SingularRegistryReleaseResourceAllResult,
-                    SingularRegistryBlacklistAllowResult
+                    SingularRegistryBlacklistAllowResult,
+                    SingularRegistryWhitelistAllowResult
                 },
                 coordinated_reception::{
                     CoordinatedReception,
