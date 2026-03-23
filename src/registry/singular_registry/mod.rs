@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ReceptionOwn, ReceptionRegister, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionUnregister, ReceptionUpdatePassword, RegistryStorage, ReservationStorage, SingularRegistryOwn, SingularRegistryOwnResult, SingularRegistryRegister, SingularRegistryRegisterResult, SingularRegistryReleaseResource, SingularRegistryReleaseResourceAll, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryUnregister, SingularRegistryUnregisterResult, SingularRegistryUpdatePassword, SingularRegistryUpdatePasswordResult, WhitelistStorage};
+use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ReceptionAllow, ReceptionOwn, ReceptionRegister, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionUnregister, ReceptionUpdatePassword, RegistryStorage, ReservationStorage, SingularRegistryAllow, SingularRegistryBlacklistAllowResult, SingularRegistryOwn, SingularRegistryOwnResult, SingularRegistryRegister, SingularRegistryRegisterResult, SingularRegistryReleaseResource, SingularRegistryReleaseResourceAll, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryUnregister, SingularRegistryUnregisterResult, SingularRegistryUpdatePassword, SingularRegistryUpdatePasswordResult, WhitelistStorage};
 
 pub mod automated_registry;
 pub mod coordinated_reception;
@@ -83,7 +83,15 @@ impl<
     }
 
 
-    pub fn allow_blacklist() {}
+    pub fn allow_blacklist(
+        &mut self,
+        SingularRegistryAllow {
+            id, password, resource_id, access
+        }: SingularRegistryAllow<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
+    ) -> SingularRegistryBlacklistAllowResult<BS::Password> {
+        SingularRegistryBlacklistAllowResult::Reception(self.reception.allow_blacklist(ReceptionAllow { id, password, resource_id, access }))
+    }
+    
     pub fn allow_whitelist() {}
     pub fn unallow_blacklist() {}
     pub fn unallow_whitelist() {}

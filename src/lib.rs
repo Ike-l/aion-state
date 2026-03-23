@@ -40,7 +40,8 @@ pub mod prelude {
                     SingularRegistryUpdatePassword,
                     SingularRegistryOwn,
                     SingularRegistryReleaseResource,
-                    SingularRegistryReleaseResourceAll
+                    SingularRegistryReleaseResourceAll,
+                    SingularRegistryAllow
                 },
                 singular_registry_result::{
                     SingularRegistryRegisterResult,
@@ -48,7 +49,8 @@ pub mod prelude {
                     SingularRegistryUpdatePasswordResult,
                     SingularRegistryOwnResult,
                     SingularRegistryReleaseResourceResult,
-                    SingularRegistryReleaseResourceAllResult
+                    SingularRegistryReleaseResourceAllResult,
+                    SingularRegistryBlacklistAllowResult
                 },
                 coordinated_reception::{
                     CoordinatedReception,

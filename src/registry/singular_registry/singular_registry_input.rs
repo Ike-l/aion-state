@@ -31,3 +31,10 @@ pub struct SingularRegistryReleaseResourceAll<'a, Id, Password, ResourceId> {
     pub password: &'a Password,
     pub inputs: Vec<&'a ResourceId>
 }
+
+pub struct SingularRegistryAllow<'a, Id, Password, ResourceId, Access> {
+    pub id: &'a Id,
+    pub password: &'a Password,
+    pub resource_id: ResourceId,
+    pub access: Access
+}
