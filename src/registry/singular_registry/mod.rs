@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ReceptionAllow, ReceptionOwn, ReceptionRegister, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionUnregister, ReceptionUpdatePassword, RegistryStorage, ReservationStorage, SingularRegistryAllow, SingularRegistryBlacklistAllowResult, SingularRegistryOwn, SingularRegistryOwnResult, SingularRegistryRegister, SingularRegistryRegisterResult, SingularRegistryReleaseResource, SingularRegistryReleaseResourceAll, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryUnregister, SingularRegistryUnregisterResult, SingularRegistryUpdatePassword, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, WhitelistStorage};
+use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ReceptionAllow, ReceptionOwn, ReceptionRegister, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionUnallow, ReceptionUnregister, ReceptionUpdatePassword, RegistryStorage, ReservationStorage, SingularRegistryAllow, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryOwn, SingularRegistryOwnResult, SingularRegistryRegister, SingularRegistryRegisterResult, SingularRegistryReleaseResource, SingularRegistryReleaseResourceAll, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryUnallow, SingularRegistryUnregister, SingularRegistryUnregisterResult, SingularRegistryUpdatePassword, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistStorage};
 
 pub mod automated_registry;
 pub mod coordinated_reception;
@@ -100,8 +100,24 @@ impl<
     ) -> SingularRegistryWhitelistAllowResult {
         SingularRegistryWhitelistAllowResult::Reception(self.reception.allow_whitelist(ReceptionAllow { id, password, resource_id, access }))
     }
-    pub fn unallow_blacklist() {}
-    pub fn unallow_whitelist() {}
+
+    pub fn unallow_blacklist(
+        &mut self,
+        SingularRegistryUnallow {
+            id, password, resource_id, access
+        }: &SingularRegistryUnallow<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
+    ) -> SingularRegistryBlacklistUnallowResult {
+        SingularRegistryBlacklistUnallowResult::Reception(self.reception.unallow_blacklist(&ReceptionUnallow { id, password, resource_id, access }))
+    }
+
+    pub fn unallow_whitelist(
+        &mut self,
+        SingularRegistryUnallow {
+            id, password, resource_id, access
+        }: &SingularRegistryUnallow<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
+    ) -> SingularRegistryWhitelistUnallowResult {
+        SingularRegistryWhitelistUnallowResult::Reception(self.reception.unallow_whitelist(&ReceptionUnallow { id, password, resource_id, access }))
+    }
 
     pub fn check_access() {}
     pub fn release_access() {}

@@ -53,7 +53,8 @@ pub mod prelude {
                     SingularRegistryReleaseResourceAllResult,
                     SingularRegistryBlacklistAllowResult,
                     SingularRegistryWhitelistAllowResult,
-                    SingularRegistryBlacklistUnallowResult
+                    SingularRegistryBlacklistUnallowResult,
+                    SingularRegistryWhitelistUnallowResult
                 },
                 coordinated_reception::{
                     CoordinatedReception,
