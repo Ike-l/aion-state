@@ -39,14 +39,16 @@ pub mod prelude {
                     SingularRegistryUnregister,
                     SingularRegistryUpdatePassword,
                     SingularRegistryOwn,
-                    SingularRegistryReleaseResource
+                    SingularRegistryReleaseResource,
+                    SingularRegistryReleaseResourceAll
                 },
                 singular_registry_result::{
                     SingularRegistryRegisterResult,
                     SingularRegistryUnregisterResult,
                     SingularRegistryUpdatePasswordResult,
                     SingularRegistryOwnResult,
-                    SingularRegistryReleaseResourceResult
+                    SingularRegistryReleaseResourceResult,
+                    SingularRegistryReleaseResourceAllResult
                 },
                 coordinated_reception::{
                     CoordinatedReception,
