@@ -35,10 +35,18 @@ pub mod prelude {
             singular_registry::{
                 SingularRegistry,
                 singular_registry_input::{
-                    SingularRegistryAccessInput
+                    SingularRegistryRegister,
+                    SingularRegistryUnregister,
+                    SingularRegistryUpdatePassword,
+                    SingularRegistryOwn,
+                    SingularRegistryReleaseResource
                 },
                 singular_registry_result::{
-                    SingularRegistryAccessResult
+                    SingularRegistryRegisterResult,
+                    SingularRegistryUnregisterResult,
+                    SingularRegistryUpdatePasswordResult,
+                    SingularRegistryOwnResult,
+                    SingularRegistryReleaseResourceResult
                 },
                 coordinated_reception::{
                     CoordinatedReception,
