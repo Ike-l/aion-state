@@ -47,7 +47,8 @@ pub mod prelude {
                     SingularRegistryReleaseAccess,
                     SingularRegistryReservation,
                     SingularRegistryUnreserve,
-                    SingularRegistryDrainReservations
+                    SingularRegistryDrainReservations,
+                    SingularRegistryAcquireAccess,
                 },
                 singular_registry_result::{
                     SingularRegistryRegisterResult,
@@ -64,7 +65,8 @@ pub mod prelude {
                     SingularRegistryReleaseAccessResult,
                     SingularRegistryReservationResult,
                     SingularRegistryUnreserveResult,
-                    SingularRegistryDrainReservationsResult
+                    SingularRegistryDrainReservationsResult,
+                    SingularRegistryAcquireAccessResult
                 },
                 coordinated_reception::{
                     CoordinatedReception,

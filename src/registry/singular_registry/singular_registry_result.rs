@@ -1,4 +1,4 @@
-use crate::prelude::{ManualRegistryCheckAccessResult, ManualRegistryReleaseResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult};
+use crate::prelude::{ManualRegistryAccessResult, ManualRegistryCheckAccessResult, ManualRegistryReleaseResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult};
 
 pub enum SingularRegistryRegisterResult {
     Reception(ReceptionRegisterResult)
@@ -60,4 +60,9 @@ pub enum SingularRegistryUnreserveResult {
 
 pub enum SingularRegistryDrainReservationsResult<T> {
     Reception(ReceptionDrainReservationsResult<T>)
+}
+
+pub enum SingularRegistryAcquireAccessResult<AccessResult> {
+    AutomatedRegistry(ManualRegistryAccessResult<AccessResult>),
+    Reception(ReceptionCheckAccessResult)
 }

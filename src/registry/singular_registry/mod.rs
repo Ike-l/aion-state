@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryCheckAccess, ManualRegistryRelease, ReceptionAllow, ReceptionCheckAccess, ReceptionDrainReservations, ReceptionOwn, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryStorage, ReservationStorage, SingularRegistryAllow, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccess, SingularRegistryCheckAccessResult, SingularRegistryDrainReservations, SingularRegistryDrainReservationsResult, SingularRegistryOwn, SingularRegistryOwnResult, SingularRegistryRegister, SingularRegistryRegisterResult, SingularRegistryReleaseAccess, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResource, SingularRegistryReleaseResourceAll, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservation, SingularRegistryReservationResult, SingularRegistryUnallow, SingularRegistryUnregister, SingularRegistryUnregisterResult, SingularRegistryUnreserve, SingularRegistryUnreserveResult, SingularRegistryUpdatePassword, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryCheckAccess, ManualRegistryRelease, ReceptionAllow, ReceptionCheckAccess, ReceptionDrainReservations, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryStorage, ReservationStorage, SingularRegistryAcquireAccess, SingularRegistryAcquireAccessResult, SingularRegistryAllow, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccess, SingularRegistryCheckAccessResult, SingularRegistryDrainReservations, SingularRegistryDrainReservationsResult, SingularRegistryOwn, SingularRegistryOwnResult, SingularRegistryRegister, SingularRegistryRegisterResult, SingularRegistryReleaseAccess, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResource, SingularRegistryReleaseResourceAll, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservation, SingularRegistryReservationResult, SingularRegistryUnallow, SingularRegistryUnregister, SingularRegistryUnregisterResult, SingularRegistryUnreserve, SingularRegistryUnreserveResult, SingularRegistryUpdatePassword, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistStorage, trace_function};
 
 pub mod automated_registry;
 pub mod coordinated_reception;
@@ -211,7 +211,31 @@ impl<
         SingularRegistryDrainReservationsResult::Reception(self.reception.drain_reservations(&ReceptionDrainReservations { id, password }))
     }
 
-    pub fn acquire_access() {}
+
+    pub fn acquire_access(
+        &mut self,
+        SingularRegistryAcquireAccess {
+            id, resource_id, access, password
+        }: SingularRegistryAcquireAccess<'_, OS::Id, S::ValueId, AS::Access, BS::Password>
+    ) -> SingularRegistryAcquireAccessResult<<AS::Access as Accessor>::AccessResult<'_>> {
+        trace_function!("Singular Registry Acquire Access");
+
+        let check_reception = self.reception.check_access(&ReceptionCheckAccess { id, resource_id: &resource_id, access: &access, password });
+
+        if check_reception.ok() {
+            let registry_result = unsafe { self.automated_registry.acquire_access(ManualRegistryAccessInput { value_id: &resource_id, access: &access }) };
+    
+            if registry_result.ok() {
+                let reception_result = self.reception.record_access(ReceptionRecordAccess { id, resource_id, access, password });
+
+                assert!(reception_result.ok())
+            }
+    
+            return SingularRegistryAcquireAccessResult::AutomatedRegistry(registry_result)
+        }
+
+        SingularRegistryAcquireAccessResult::Reception(check_reception)
+    }
     pub fn safer_replace() {}
     pub fn contains_resource() {}
 }

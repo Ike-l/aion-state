@@ -63,6 +63,15 @@ pub enum ReceptionRecordAccessResult {
     Denied(OwnerCheckAccessResult)
 }
 
+impl ReceptionRecordAccessResult {
+    pub fn ok(&self) -> bool {
+        match self {
+            Self::Host(host) => host.ok(),
+            _ => false
+        }
+    }
+}
+
 pub enum ReceptionReservationResult {
     Host(HostReservationResult),
     Denied(OwnerAuthenticationResult),

@@ -76,3 +76,10 @@ pub struct SingularRegistryDrainReservations<'a, Id, Password> {
     pub id: &'a Id,
     pub password: &'a Password
 }
+
+pub struct SingularRegistryAcquireAccess<'a, Id, ResourceId, Access, Password> {
+    pub id: Option<&'a Id>,
+    pub resource_id: ResourceId,
+    pub access: Access,
+    pub password: Option<&'a Password>
+}

@@ -22,6 +22,15 @@ pub enum ReservationsUnreserveResult {
     NoReserver
 }
 
+impl ReservationsUnreserveResult {
+    pub fn ok(&self) -> bool {
+        match self {
+            Self::Accesses(accesses) => accesses.ok(),
+            _ => false
+        }
+    }
+}
+
 pub enum ReservationsDrainReservationsResult<T> {
     Accesses(AccessesDrainResult<T>),
     NoReserver
