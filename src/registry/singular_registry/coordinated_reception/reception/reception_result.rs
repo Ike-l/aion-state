@@ -45,6 +45,15 @@ pub enum ReceptionCheckAccessResult {
     Denied(OwnerCheckAccessResult)
 }
 
+impl ReceptionCheckAccessResult {
+    pub fn ok(&self) -> bool {
+        match self {
+            Self::Host(host) => host.ok(),
+            _ => false
+        }
+    }
+}
+
 pub enum ReceptionReleaseAccessResult {
     Host(HostReleaseAccessResult),
 }

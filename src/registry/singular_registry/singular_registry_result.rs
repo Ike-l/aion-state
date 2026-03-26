@@ -1,4 +1,4 @@
-use crate::prelude::{ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult};
+use crate::prelude::{ManualRegistryCheckAccessResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult};
 
 pub enum SingularRegistryRegisterResult {
     Reception(ReceptionRegisterResult)
@@ -38,4 +38,9 @@ pub enum SingularRegistryBlacklistUnallowResult {
 
 pub enum SingularRegistryWhitelistUnallowResult {
     Reception(ReceptionWhitelistUnallowResult)
+}
+
+pub enum SingularRegistryCheckAccessResult {
+    Reception(ReceptionCheckAccessResult),
+    AutomatedRegistry(ManualRegistryCheckAccessResult)
 }

@@ -45,3 +45,10 @@ pub struct SingularRegistryUnallow<'a, Id, Password, ResourceId, Access> {
     pub resource_id: &'a ResourceId,
     pub access: &'a Access
 }
+
+pub struct SingularRegistryCheckAccess<'a, Id, ResourceId, Access, Password> {
+    pub id: Option<&'a Id>,
+    pub resource_id: &'a ResourceId,
+    pub access: &'a Access,
+    pub password: Option<&'a Password>
+}

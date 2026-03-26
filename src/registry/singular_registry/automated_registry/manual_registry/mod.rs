@@ -1,6 +1,6 @@
 use tracing::span;
 
-use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress};
+use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryCheckAccess, ManualRegistryCheckAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
@@ -15,11 +15,26 @@ pub struct ManualRegistry<S> {
 impl<
     S: RegistryStorage,
 > ManualRegistry<S> {
+    pub fn check_access<Access: Accessor<StoredValue = S::Value>>(
+        &self,
+        ManualRegistryCheckAccess {
+            value_id, access
+        }: &ManualRegistryCheckAccess<'_, S::ValueId, Access>
+    ) -> ManualRegistryCheckAccessResult {
+        trace_function!("Manual Registry Check Access");
+
+        if self.storage.contains_key(value_id) {
+            return ManualRegistryCheckAccessResult::Found
+        }
+
+        ManualRegistryCheckAccessResult::NotFound
+    }
+
     pub fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
         &self, 
         ManualRegistryAccessInput {
             value_id, access
-        }: ManualRegistryAccessInput<'_, Access, S::ValueId>
+        }: ManualRegistryAccessInput<'_, S::ValueId, Access>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_>> {
         let span = span!(FUNCTION_LEVEL, "Manual Acquire Access");
         let _enter = span.enter();

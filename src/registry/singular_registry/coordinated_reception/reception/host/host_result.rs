@@ -5,6 +5,15 @@ pub enum HostCheckAccessResult {
     ReservationConflict,
 }
 
+impl HostCheckAccessResult {
+    pub fn ok(&self) -> bool {
+        match self {
+            Self::Accesses(accesses) => accesses.ok(),
+            _ => false
+        }
+    }
+}
+
 pub struct HostRecordAccessResult {
     pub unreserve_result: Option<HostUnreserveResult>,
     pub record_access_result: AccessesRecordAccessResult

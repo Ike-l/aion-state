@@ -1,6 +1,6 @@
 use std::cell::UnsafeCell;
 
-use crate::prelude::{Accessor, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
+use crate::prelude::{Accessor, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryCheckAccess, ManualRegistryCheckAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
 
 pub mod manual_registry;
 
@@ -25,9 +25,9 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// Safety: No Concurrent Unique References
     pub unsafe fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
         &self,
-        input: ManualRegistryAccessInput<'_, Access, S::ValueId>
+        input: ManualRegistryAccessInput<'_, S::ValueId, Access>
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_>> {
-        trace_function!("Automated Acquire Access");
+        trace_function!("Automated Registry Acquire Access");
 
         unsafe { self.get_inner() }.acquire_access(input)
     }
@@ -48,10 +48,21 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
         unsafe { self.get_inner_mut().safer_replace(manual_registry_replacement_input) }
     }
 
+    pub fn check_access<Access: Accessor<StoredValue = S::Value>>(
+        &self,
+        input: &ManualRegistryCheckAccess<'_, S::ValueId, Access>
+    ) -> ManualRegistryCheckAccessResult {
+        trace_function!("Automated Registry Check Access");
+
+        unsafe { self.get_inner().check_access(input) }
+    }
+
     pub fn contains_key(
         &self,
         key: &S::ValueId
     ) -> bool {
+        trace_function!("Automated Registry Contains Key");
+
         unsafe { self.get_inner() }.contains_key(key)
     }
 }
