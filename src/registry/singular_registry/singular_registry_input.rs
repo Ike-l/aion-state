@@ -83,3 +83,9 @@ pub struct SingularRegistryAcquireAccess<'a, Id, ResourceId, Access, Password> {
     pub access: Access,
     pub password: Option<&'a Password>
 }
+
+pub struct SingularRegistrySaferReplacement<'a, Access, ResourceId, Resource> {
+    pub access: &'a Access,
+    pub resource_id: ResourceId,
+    pub resource: Option<Resource>
+}
