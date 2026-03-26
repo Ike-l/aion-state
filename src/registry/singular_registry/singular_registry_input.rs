@@ -64,3 +64,15 @@ pub struct SingularRegistryReservation<'a, Id, Password, ResourceId, Access> {
     pub resource_id: ResourceId,
     pub access: Access
 }
+
+pub struct SingularRegistryUnreserve<'a, Id, Password, ResourceId, Access> {
+    pub id: &'a Id,
+    pub password: &'a Password,
+    pub resource_id: &'a ResourceId,
+    pub access: &'a Access
+}
+
+pub struct SingularRegistryDrainReservations<'a, Id, Password> {
+    pub id: &'a Id,
+    pub password: &'a Password
+}
