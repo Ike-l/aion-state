@@ -43,7 +43,9 @@ pub mod prelude {
                     SingularRegistryReleaseResourceAll,
                     SingularRegistryAllow,
                     SingularRegistryUnallow,
-                    SingularRegistryCheckAccess
+                    SingularRegistryCheckAccess,
+                    SingularRegistryReleaseAccess,
+                    SingularRegistryReservation
                 },
                 singular_registry_result::{
                     SingularRegistryRegisterResult,
@@ -56,7 +58,9 @@ pub mod prelude {
                     SingularRegistryWhitelistAllowResult,
                     SingularRegistryBlacklistUnallowResult,
                     SingularRegistryWhitelistUnallowResult,
-                    SingularRegistryCheckAccessResult
+                    SingularRegistryCheckAccessResult,
+                    SingularRegistryReleaseAccessResult,
+                    SingularRegistryReservationResult
                 },
                 coordinated_reception::{
                     CoordinatedReception,
@@ -307,12 +311,14 @@ pub mod prelude {
                         manual_registry_input::{
                             ManualRegistryAccessInput, 
                             ManualRegistryReplacementInput,
-                            ManualRegistryCheckAccess
+                            ManualRegistryCheckAccess,
+                            ManualRegistryRelease
                         },
                         manual_registry_result::{
                             ManualRegistryAccessResult, 
                             ManualRegistryReplacementResult,
-                            ManualRegistryCheckAccessResult
+                            ManualRegistryCheckAccessResult,
+                            ManualRegistryReleaseResult
                         },
                         registry_storage::{
                             RegistryStorage

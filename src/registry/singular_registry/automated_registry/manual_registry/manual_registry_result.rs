@@ -20,3 +20,13 @@ impl ManualRegistryCheckAccessResult {
         matches!(self, Self::Found)
     }
 }
+
+pub enum ManualRegistryReleaseResult {
+    Storage(bool)
+}
+
+impl ManualRegistryReleaseResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Storage(true))
+    }
+}

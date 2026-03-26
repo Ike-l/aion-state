@@ -1,6 +1,6 @@
 use tracing::span;
 
-use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryCheckAccess, ManualRegistryCheckAccessResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
+use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryCheckAccess, ManualRegistryCheckAccessResult, ManualRegistryRelease, ManualRegistryReleaseResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
@@ -28,6 +28,17 @@ impl<
         }
 
         ManualRegistryCheckAccessResult::NotFound
+    }
+
+    pub fn release<Access: Accessor<StoredValue = S::Value>>(
+        &mut self,
+        ManualRegistryRelease {
+            value_id, access
+        }: &ManualRegistryRelease<'_, S::ValueId, Access>
+    ) -> ManualRegistryReleaseResult {
+        trace_function!("Manual Registry Release");
+
+        ManualRegistryReleaseResult::Storage(self.storage.release(value_id, *access))
     }
 
     pub fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
@@ -62,8 +73,8 @@ impl<
         let old_resource = match (
             value,
             self.storage.contains_key(&value_id),
-            access.can_insert(),
-            access.can_remove(),
+            access.can_insert_resource(),
+            access.can_remove_resource(),
         ) {
             // if contains resource (so remove) but denied removal
             (_, true, _, false) |

@@ -13,12 +13,12 @@ pub trait Accessor {
     /// Can self be used to insert a resource
     /// 
     /// In combination with `can_remove` allows `replace`
-    fn can_insert(&self) -> bool;
+    fn can_insert_resource(&self) -> bool;
 
     /// Can self be used to remove a resource
     /// 
     /// In combination with `can_insert` allows `replace`
-    fn can_remove(&self) -> bool;
+    fn can_remove_resource(&self) -> bool;
 
     /// When acquiring a resource the stored value is passed through `acquire` and the result is returned by the function
     fn acquire<'a>(

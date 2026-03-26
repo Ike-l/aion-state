@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryCheckAccess, ReceptionAllow, ReceptionCheckAccess, ReceptionOwn, ReceptionRegister, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionUnallow, ReceptionUnregister, ReceptionUpdatePassword, RegistryStorage, ReservationStorage, SingularRegistryAllow, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccess, SingularRegistryCheckAccessResult, SingularRegistryOwn, SingularRegistryOwnResult, SingularRegistryRegister, SingularRegistryRegisterResult, SingularRegistryReleaseResource, SingularRegistryReleaseResourceAll, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryUnallow, SingularRegistryUnregister, SingularRegistryUnregisterResult, SingularRegistryUpdatePassword, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryCheckAccess, ManualRegistryRelease, ReceptionAllow, ReceptionCheckAccess, ReceptionOwn, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUpdatePassword, RegistryStorage, ReservationStorage, SingularRegistryAllow, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccess, SingularRegistryCheckAccessResult, SingularRegistryOwn, SingularRegistryOwnResult, SingularRegistryRegister, SingularRegistryRegisterResult, SingularRegistryReleaseAccess, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResource, SingularRegistryReleaseResourceAll, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistryReservation, SingularRegistryUnallow, SingularRegistryUnregister, SingularRegistryUnregisterResult, SingularRegistryUpdatePassword, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistStorage, trace_function};
 
 pub mod automated_registry;
 pub mod coordinated_reception;
@@ -156,13 +156,39 @@ impl<
         SingularRegistryCheckAccessResult::Reception(reception_result)
     }
 
-    pub fn release_access(
+    /// Safety:
+    /// 
+    /// Resource `resource_id` corresponding with `access` MUST actually be releasedz
+    pub unsafe fn release_access(
         &mut self,
-    
-    ) {}
+        SingularRegistryReleaseAccess {
+            resource_id, access
+        }: SingularRegistryReleaseAccess<'_, S::ValueId, AS::Access>
+    ) -> SingularRegistryReleaseAccessResult {
+        trace_function!("Singular Registry Release Access");
+
+        let registry_result = self.automated_registry.release(&ManualRegistryRelease { value_id: resource_id, access });
+        
+        if registry_result.ok() {
+            return SingularRegistryReleaseAccessResult::Reception(self.reception.release_access(&ReceptionReleaseAccess { resource_id, access }))
+        }
+
+        SingularRegistryReleaseAccessResult::AutomatedRegistry(registry_result)
+    }
     // pub fn record_access() {} Done in Acquire Access
 
-    pub fn reserve() {}
+
+    pub fn reserve(
+        &mut self,
+        SingularRegistryReservation {
+            id, password, resource_id, access
+        }: SingularRegistryReservation<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+    ) -> SingularRegistryReservationResult {
+        trace_function!("Singular Registry Reserve");
+
+        SingularRegistryReservationResult::Reception(self.reception.reserve(ReceptionReservation { id, password, resource_id, access }))
+    }
+
     pub fn unreserve() {}
     pub fn drain_reservations() {}
 

@@ -52,3 +52,15 @@ pub struct SingularRegistryCheckAccess<'a, Id, ResourceId, Access, Password> {
     pub access: &'a Access,
     pub password: Option<&'a Password>
 }
+
+pub struct SingularRegistryReleaseAccess<'a, ResourceId, Access> {
+    pub resource_id: &'a ResourceId,
+    pub access: &'a Access
+}
+
+pub struct SingularRegistryReservation<'a, Id, Password, ResourceId, Access> {
+    pub id: Id,
+    pub password: &'a Password,
+    pub resource_id: ResourceId,
+    pub access: Access
+}
