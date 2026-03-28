@@ -70,3 +70,7 @@ pub enum SingularRegistryAcquireAccessResult<AccessResult> {
 pub enum SingularRegistrySaferReplacementResult<ReplacementResult> {
     AutomatedRegistry(ManualRegistryReplacementResult<ReplacementResult>)
 }
+
+pub enum SingularRegistryContainsResourceResult {
+    AutomatedRegistry(bool)
+}

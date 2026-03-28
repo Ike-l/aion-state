@@ -89,3 +89,7 @@ pub struct SingularRegistrySaferReplacement<'a, Access, ResourceId, Resource> {
     pub resource_id: ResourceId,
     pub resource: Option<Resource>
 }
+
+pub struct SingularRegistryContainsResource<'a, ResourceId> {
+    pub resource_id: &'a ResourceId
+}

@@ -49,7 +49,8 @@ pub mod prelude {
                     SingularRegistryUnreserve,
                     SingularRegistryDrainReservations,
                     SingularRegistryAcquireAccess,
-                    SingularRegistrySaferReplacement
+                    SingularRegistrySaferReplacement,
+                    SingularRegistryContainsResource
                 },
                 singular_registry_result::{
                     SingularRegistryRegisterResult,
@@ -68,7 +69,8 @@ pub mod prelude {
                     SingularRegistryUnreserveResult,
                     SingularRegistryDrainReservationsResult,
                     SingularRegistryAcquireAccessResult,
-                    SingularRegistrySaferReplacementResult
+                    SingularRegistrySaferReplacementResult,
+                    SingularRegistryContainsResourceResult
                 },
                 coordinated_reception::{
                     CoordinatedReception,
