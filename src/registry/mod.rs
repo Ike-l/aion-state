@@ -60,7 +60,7 @@ impl<
 
 
     pub fn own(
-        &mut self,
+        &self,
         input: SingularRegistryOwn<'_, OS::Id, OS::Password, S::ValueId>
     ) -> SingularRegistryOwnResult {
         trace_function!("Registry Own");
@@ -71,7 +71,7 @@ impl<
     }
 
     pub fn release_resource(
-        &mut self, 
+        &self, 
         input: &SingularRegistryReleaseResource<'_, OS::Id, OS::Password, S::ValueId>
     ) -> SingularRegistryReleaseResourceResult {
         trace_function!("Registry Release Resource");
@@ -82,7 +82,7 @@ impl<
     } 
 
     pub fn release_resource_all<'a>(
-        &mut self,
+        &self,
         input: SingularRegistryReleaseResourceAll<'a, OS::Id, OS::Password, S::ValueId>
     ) -> SingularRegistryReleaseResourceAllResult<'a, OS::Id, AS::ValueId> {
         trace_function!("Registry Release Resource All");
@@ -94,7 +94,7 @@ impl<
 
 
     pub fn allow_blacklist(
-        &mut self,
+        &self,
         input: SingularRegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
     ) -> SingularRegistryBlacklistAllowResult<BS::Password> {
         trace_function!("Registry Allow Blacklist");
@@ -105,7 +105,7 @@ impl<
     }
 
     pub fn allow_whitelist(
-        &mut self,
+        &self,
         input: SingularRegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
     ) -> SingularRegistryWhitelistAllowResult {
         trace_function!("Registry Allow Whitelist");
@@ -116,7 +116,7 @@ impl<
     }
 
     pub fn unallow_blacklist(
-        &mut self,
+        &self,
         input: &SingularRegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
     ) -> SingularRegistryBlacklistUnallowResult {
         trace_function!("Registry Unallow Blacklist");
@@ -127,7 +127,7 @@ impl<
     }
 
     pub fn unallow_whitelist(
-        &mut self,
+        &self,
         input: &SingularRegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
     ) -> SingularRegistryWhitelistUnallowResult {
         trace_function!("Registry Unallow Whitelist");
@@ -138,12 +138,12 @@ impl<
     }
 
     pub fn check_access(
-        &mut self,
+        &self,
         input: &SingularRegistryCheckAccess<'_, OS::Id, S::ValueId, AS::Access, BS::Password>
     ) -> SingularRegistryCheckAccessResult {
         trace_function!("Registry Check Access");
 
-        let _sync = self.sync.write();
+        let _sync = self.sync.read();
 
         self.singular_registry.check_access(input)
     }
@@ -152,7 +152,7 @@ impl<
     /// 
     /// Resource `resource_id` corresponding with `access` MUST actually be released
     pub unsafe fn release_access(
-        &mut self,
+        &self,
         input: SingularRegistryReleaseAccess<'_, S::ValueId, AS::Access>
     ) -> SingularRegistryReleaseAccessResult {
         trace_function!("Registry Release Access");
@@ -165,7 +165,7 @@ impl<
 
 
     pub fn reserve(
-        &mut self,
+        &self,
         input: SingularRegistryReservation<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
     ) -> SingularRegistryReservationResult {
         trace_function!("Registry Reserve");
@@ -176,7 +176,7 @@ impl<
     }
 
     pub fn unreserve(
-        &mut self,
+        &self,
         input: &SingularRegistryUnreserve<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
     ) -> SingularRegistryUnreserveResult {
         trace_function!("Registry Unreserve");
@@ -187,7 +187,7 @@ impl<
     }
 
     pub fn drain_reservations(
-        &mut self,
+        &self,
         input: &SingularRegistryDrainReservations<'_, OS::Id, OS::Password>
     ) -> SingularRegistryDrainReservationsResult<Vec<(S::ValueId, AS::Access)>> {
         trace_function!("Registry Drain Reservations");
@@ -199,7 +199,7 @@ impl<
 
 
     pub fn acquire_access(
-        &mut self,
+        &self,
         input: SingularRegistryAcquireAccess<'_, OS::Id, S::ValueId, AS::Access, BS::Password>
     ) -> SingularRegistryAcquireAccessResult<<AS::Access as Accessor>::AccessResult<'_>> {
         trace_function!("Registry Acquire Access");
@@ -210,7 +210,7 @@ impl<
     }
 
     pub unsafe fn safer_replace(
-        &mut self,
+        &self,
         input: SingularRegistrySaferReplacement<'_, AS::Access, S::ValueId, <AS::Access as Accessor>::Value>
     ) -> SingularRegistrySaferReplacementResult<<AS::Access as Accessor>::StoredValue>
         where

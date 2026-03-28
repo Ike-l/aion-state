@@ -16,17 +16,6 @@ pub enum ManualRegistryReplacementResult<ReplacementResult> {
     NoOp
 }
 
-pub enum ManualRegistryCheckAccessResult {
-    NotFound,
-    Found
-}
-
-impl ManualRegistryCheckAccessResult {
-    pub fn ok(&self) -> bool {
-        matches!(self, Self::Found)
-    }
-}
-
 pub enum ManualRegistryReleaseResult {
     Storage(bool)
 }

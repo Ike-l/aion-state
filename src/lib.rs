@@ -9,7 +9,7 @@ pub mod prelude {
 
     #[cfg(not(all(test, feature = "loom")))]
     pub(crate) mod sync {
-        pub use parking_lot::Mutex;
+        // pub use parking_lot::Mutex;
         pub use parking_lot::RwLock;
         pub use std::sync::Arc;
     }
@@ -321,13 +321,11 @@ pub mod prelude {
                         manual_registry_input::{
                             ManualRegistryAccessInput, 
                             ManualRegistryReplacementInput,
-                            ManualRegistryCheckAccess,
                             ManualRegistryRelease
                         },
                         manual_registry_result::{
                             ManualRegistryAccessResult, 
                             ManualRegistryReplacementResult,
-                            ManualRegistryCheckAccessResult,
                             ManualRegistryReleaseResult
                         },
                         registry_storage::{

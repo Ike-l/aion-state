@@ -1,6 +1,6 @@
 use std::cell::UnsafeCell;
 
-use crate::prelude::{Accessor, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryCheckAccess, ManualRegistryCheckAccessResult, ManualRegistryRelease, ManualRegistryReleaseResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
+use crate::prelude::{Accessor, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryRelease, ManualRegistryReleaseResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
 
 pub mod manual_registry;
 
@@ -38,7 +38,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// Insert won't invalidate concurrent access
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn safer_replace<Access: Accessor<StoredValue = S::Value>>(
-        &mut self,
+        &self,
         manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, Access::Value>
     ) -> ManualRegistryReplacementResult<Access::StoredValue> 
         where Access::StoredValue: StableAddress
@@ -48,17 +48,8 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
         unsafe { self.get_inner_mut().safer_replace(manual_registry_replacement_input) }
     }
 
-    pub fn check_access<Access: Accessor<StoredValue = S::Value>>(
-        &self,
-        input: &ManualRegistryCheckAccess<'_, S::ValueId, Access>
-    ) -> ManualRegistryCheckAccessResult {
-        trace_function!("Automated Registry Check Access");
-
-        unsafe { self.get_inner().check_access(input) }
-    }
-
     pub fn release<Access: Accessor<StoredValue = S::Value>>(
-        &mut self,
+        &self,
         input: &ManualRegistryRelease<'_, S::ValueId, Access> 
     ) -> ManualRegistryReleaseResult {
         trace_function!("Automated Registry Release");

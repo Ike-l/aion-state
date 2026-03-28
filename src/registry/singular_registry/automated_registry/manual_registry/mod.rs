@@ -1,6 +1,6 @@
 use tracing::span;
 
-use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryCheckAccess, ManualRegistryCheckAccessResult, ManualRegistryRelease, ManualRegistryReleaseResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
+use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryRelease, ManualRegistryReleaseResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
@@ -15,21 +15,6 @@ pub struct ManualRegistry<S> {
 impl<
     S: RegistryStorage,
 > ManualRegistry<S> {
-    pub fn check_access<Access: Accessor<StoredValue = S::Value>>(
-        &self,
-        ManualRegistryCheckAccess {
-            value_id, access
-        }: &ManualRegistryCheckAccess<'_, S::ValueId, Access>
-    ) -> ManualRegistryCheckAccessResult {
-        trace_function!("Manual Registry Check Access");
-
-        if self.storage.contains_key(value_id) {
-            return ManualRegistryCheckAccessResult::Found
-        }
-
-        ManualRegistryCheckAccessResult::NotFound
-    }
-
     pub fn release<Access: Accessor<StoredValue = S::Value>>(
         &mut self,
         ManualRegistryRelease {

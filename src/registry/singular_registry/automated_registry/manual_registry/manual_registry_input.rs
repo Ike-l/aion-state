@@ -9,11 +9,6 @@ pub struct ManualRegistryReplacementInput<'a, Access, ValueId, Value> {
     pub value: Option<Value>
 }
 
-pub struct ManualRegistryCheckAccess<'a, ValueId, Access> {
-    pub value_id: &'a ValueId,
-    pub access: &'a Access
-}
-
 pub struct ManualRegistryRelease<'a, ValueId, Access> {
     pub value_id: &'a ValueId,
     pub access: &'a Access

@@ -47,7 +47,7 @@ impl<
     }
 
     pub fn own(
-        &mut self,
+        &self,
         input: ReceptionOwn<'_, OS::Id, OS::Password, AS::ValueId>
     ) -> ReceptionOwnResult {
         trace_function!("Coordinated Reception Own");
@@ -56,7 +56,7 @@ impl<
     }
 
     pub fn release_resource(
-        &mut self,
+        &self,
         input: &ReceptionReleaseResource<'_, OS::Id, OS::Password, AS::ValueId>
     ) -> ReceptionReleaseResourceResult {
         trace_function!("Coordinated Reception Release Resource");
@@ -65,7 +65,7 @@ impl<
     }
 
     pub fn release_resource_all<'a>(
-        &mut self,
+        &self,
         input: ReceptionReleaseResourceAll<'a, OS::Id, OS::Password, AS::ValueId>
     ) -> ReceptionReleaseResourceAllResult<'a, OS::Id, AS::ValueId> {
         trace_function!("Coordinated Reception Release Resource All");
@@ -74,7 +74,7 @@ impl<
     }
 
     pub fn allow_whitelist(
-        &mut self,
+        &self,
         input: ReceptionAllow<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
     ) -> ReceptionWhitelistAllowResult {
         trace_function!("Coordinated Reception Allow Whitelist");
@@ -83,7 +83,7 @@ impl<
     }
 
     pub fn allow_blacklist(
-        &mut self,
+        &self,
         input: ReceptionAllow<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
     ) -> ReceptionBlacklistAllowResult<BS::Password> {
         trace_function!("Coordinated Reception Allow Blacklist");
@@ -92,7 +92,7 @@ impl<
     }
 
     pub fn unallow_whitelist(
-        &mut self,
+        &self,
         input: &ReceptionUnallow<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
     ) -> ReceptionWhitelistUnallowResult {
         trace_function!("Coordinated Reception Unallow Whitelist");
@@ -101,7 +101,7 @@ impl<
     }
 
     pub fn unallow_blacklist(
-        &mut self,
+        &self,
         input: &ReceptionUnallow<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
     ) -> ReceptionBlacklistUnallowResult {
         trace_function!("Coordinated Reception Unallow Blacklist");
@@ -119,7 +119,7 @@ impl<
     }
 
     pub fn release_access(
-        &mut self,
+        &self,
         input: &ReceptionReleaseAccess<'_, AS::ValueId, AS::Access>
     ) -> ReceptionReleaseAccessResult {
         trace_function!("Coordinated Reception Release Access");
@@ -128,7 +128,7 @@ impl<
     }
 
     pub fn record_access(
-        &mut self,
+        &self,
         input: ReceptionRecordAccess<'_, OS::Id, AS::ValueId, AS::Access, BS::Password>
     ) -> ReceptionRecordAccessResult {
         trace_function!("Coordinated Reception Record Access");
@@ -137,7 +137,7 @@ impl<
     }
 
     pub fn reserve(
-        &mut self,
+        &self,
         input: ReceptionReservation<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
     ) -> ReceptionReservationResult {
         trace_function!("Coordinated Reception Reserve");
@@ -146,7 +146,7 @@ impl<
     }
     
     pub fn unreserve(
-        &mut self,
+        &self,
         input: &ReceptionUnreserve<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
     ) -> ReceptionUnreserveResult {
         trace_function!("Coordinated Reception Unreserve");
@@ -155,7 +155,7 @@ impl<
     }
 
     pub fn drain_reservations(
-        &mut self,
+        &self,
         input: &ReceptionDrainReservations<'_, OS::Id, OS::Password>
     ) -> ReceptionDrainReservationsResult<Vec<(AS::ValueId, AS::Access)>> {
         trace_function!("Coordinated Reception Drain Reservations");

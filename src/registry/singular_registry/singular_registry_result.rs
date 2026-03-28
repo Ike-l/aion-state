@@ -1,4 +1,4 @@
-use crate::prelude::{ManualRegistryAccessResult, ManualRegistryCheckAccessResult, ManualRegistryReleaseResult, ManualRegistryReplacementResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult};
+use crate::prelude::{ManualRegistryAccessResult, ManualRegistryReleaseResult, ManualRegistryReplacementResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult};
 
 pub enum SingularRegistryRegisterResult {
     Reception(ReceptionRegisterResult)
@@ -42,7 +42,12 @@ pub enum SingularRegistryWhitelistUnallowResult {
 
 pub enum SingularRegistryCheckAccessResult {
     Reception(ReceptionCheckAccessResult),
-    AutomatedRegistry(ManualRegistryCheckAccessResult)
+    /// bool 
+    /// 
+    /// True if resource exists
+    /// 
+    /// False if resource does not exist
+    AutomatedRegistry(bool)
 }
 
 pub enum SingularRegistryReleaseAccessResult {
