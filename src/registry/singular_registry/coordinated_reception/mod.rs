@@ -22,14 +22,14 @@ impl<
         AS::ValueId: Debug
 {
     pub fn register(
-        &mut self,
+        &self,
         input: ReceptionRegister<OS::Id, OS::Password>
     ) -> ReceptionRegisterResult {
         self.reception.write().register(input)
     }
     
     pub fn unregister(
-        &mut self,
+        &self,
         input: &ReceptionUnregister<'_, OS::Id, OS::Password>
     ) -> ReceptionUnregisterResult {
         trace_function!("Coordinated Reception Unregister");
@@ -38,10 +38,11 @@ impl<
     }
     
     pub fn update_password(
-        &mut self,
+        &self,
         input: ReceptionUpdatePassword<'_, OS::Id, OS::Password>
     ) -> ReceptionUpdatePasswordResult {
         trace_function!("Coordinated Reception Update Password");
+        
         self.reception.write().update_password(input)
     }
 

@@ -27,7 +27,7 @@ impl<
         AS::ValueId: Debug
 {
     pub fn register(
-        &mut self, 
+        &self, 
         SingularRegistryRegister {
             id, password
         }: SingularRegistryRegister<OS::Id, OS::Password>
@@ -38,7 +38,7 @@ impl<
     }
 
     pub fn unregister(
-        &mut self,
+        &self,
         SingularRegistryUnregister {
             id, password
         }: &SingularRegistryUnregister<'_, OS::Id, OS::Password>
@@ -49,7 +49,7 @@ impl<
     }
 
     pub fn update_password(
-        &mut self,
+        &self,
         SingularRegistryUpdatePassword {
             id, old_password, new_password
         }: SingularRegistryUpdatePassword<'_, OS::Id, OS::Password>
@@ -158,7 +158,7 @@ impl<
 
     /// Safety:
     /// 
-    /// Resource `resource_id` corresponding with `access` MUST actually be releasedz
+    /// Resource `resource_id` corresponding with `access` MUST actually be released
     pub unsafe fn release_access(
         &mut self,
         SingularRegistryReleaseAccess {
@@ -237,7 +237,7 @@ impl<
         SingularRegistryAcquireAccessResult::Reception(check_reception)
     }
 
-    pub fn safer_replace(
+    pub unsafe fn safer_replace(
         &mut self,
         SingularRegistrySaferReplacement {
             access, resource_id, resource
