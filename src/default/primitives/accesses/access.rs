@@ -1,10 +1,11 @@
 use crate::default::{AccessResult, Resource, StoredResource};
 
+#[derive(Debug, PartialEq)]
 enum BorrowType {
     Held, Instant
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Access {
     Shared(usize),
     Unique,
@@ -64,27 +65,53 @@ impl crate::accessor::Accessor for Access {
         &mut self,
         incoming_access: Self
     ) {
-        todo!()
+        if self.borrow_type() == BorrowType::Instant {
+            *self = incoming_access;
+            return
+        }
+
+        assert_eq!(self.borrow_type(), BorrowType::Held);
+
+        if incoming_access.borrow_type() == BorrowType::Instant {
+            assert_ne!(incoming_access, Access::Replace, "Tried replacing a held borrow");
+
+            return;
+        }
+
+        assert_eq!(incoming_access.borrow_type(), BorrowType::Held);
+
+        match (self.borrow_type(), incoming_access.borrow_type()) {
+            (BorrowType::Held, BorrowType::Held) => {
+                match (self, incoming_access) {
+                    (Access::Shared(n), Access::Shared(m)) => *n += m,
+                    _ => panic!("Tried merging unique held accesses")
+                }
+            },
+            _ => unreachable!()
+        }
     }
 
     fn release(
         &mut self,
         other: &Self
     ) {
-        todo!()
+        match (self, other) {
+            (Access::Shared(n), Access::Shared(m)) => *n -= m,     
+            _ => ()
+        }  
     }
 
     fn insert<'a>(
         &self,
         value: Self::Value
     ) -> Self::StoredValue {
-        todo!()
+        Self::StoredValue::new(value)
     }
 
     fn remove<'a>(
         &self,
         stored_value: Self::StoredValue
     ) -> Self::StoredValue {
-        todo!()
+        stored_value
     }
 }
