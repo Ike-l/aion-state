@@ -208,15 +208,16 @@ impl<
             id, password,
             inputs
         }: OwnerReleaseResourceAll<'a, AS::Id, AS::Password, CS::ResourceId>
-    ) -> OwnerReleaseResourceAllResult<'a, AS::Id, CS::ResourceId> {
+    ) -> OwnerReleaseResourceAllResult {
         let authentication_result = self.authenticator.authenticate(&Authentication { id, password });
 
         if authentication_result.ok() {
             let controller_inputs = inputs
                 .into_iter()
-                .map(|resource_id| ControllerReleaseResource { id, resource_id });
+                .map(|resource_id| ControllerReleaseResource { id, resource_id })
+                .collect::<Vec<_>>();
 
-            return OwnerReleaseResourceAllResult::Controller(self.controller.release_resource_all(controller_inputs.collect()))
+            return OwnerReleaseResourceAllResult::Controller(self.controller.release_resource_all(controller_inputs.iter().collect()))
         }
 
         OwnerReleaseResourceAllResult::Denied(authentication_result)

@@ -20,8 +20,8 @@ pub enum SingularRegistryReleaseResourceResult {
     Reception(ReceptionReleaseResourceResult)
 }
 
-pub enum SingularRegistryReleaseResourceAllResult<'a, Id, ResourceId> {
-    Reception(ReceptionReleaseResourceAllResult<'a, Id, ResourceId>)
+pub enum SingularRegistryReleaseResourceAllResult {
+    Reception(ReceptionReleaseResourceAllResult)
 }
 
 pub enum SingularRegistryBlacklistAllowResult<Password> {

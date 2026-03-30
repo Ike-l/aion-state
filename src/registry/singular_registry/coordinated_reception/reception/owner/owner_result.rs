@@ -57,8 +57,8 @@ pub enum OwnerBlacklistUnallowResult {
     Denied(AuthenticationResult)
 }
 
-pub enum OwnerReleaseResourceAllResult<'a, Id, ResourceId> {
-    Controller(ControllerReleaseResourceAllResult<'a, Id, ResourceId>),
+pub enum OwnerReleaseResourceAllResult{
+    Controller(ControllerReleaseResourceAllResult),
     Denied(AuthenticationResult)
 }
 

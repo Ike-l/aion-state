@@ -230,7 +230,8 @@ pub mod prelude {
                                     ControllerReleaseIdResult,
                                     ControllerCheckOwnerResult,
                                     ControllerBlacklistUnallowResult,
-                                    ControllerWhitelistUnallowResult
+                                    ControllerWhitelistUnallowResult,
+                                    ControllerReleaseResourceAllResult
                                 },
                                 access_control::{
                                     AccessControl,

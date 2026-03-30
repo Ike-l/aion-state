@@ -36,8 +36,8 @@ pub enum ReceptionBlacklistUnallowResult {
     Owner(OwnerBlacklistUnallowResult)
 }
 
-pub enum ReceptionReleaseResourceAllResult<'a, Id, ResourceId> {
-    Owner(OwnerReleaseResourceAllResult<'a, Id, ResourceId>)
+pub enum ReceptionReleaseResourceAllResult {
+    Owner(OwnerReleaseResourceAllResult)
 }
 
 pub enum ReceptionCheckAccessResult {

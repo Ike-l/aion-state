@@ -89,7 +89,7 @@ impl<
             id, password, 
             inputs
         }: SingularRegistryReleaseResourceAll<'a, OS::Id, OS::Password, S::ValueId>
-    ) -> SingularRegistryReleaseResourceAllResult<'a, OS::Id, AS::ValueId> {
+    ) -> SingularRegistryReleaseResourceAllResult {
         trace_function!("Singular Registry Release Resource All");
 
         SingularRegistryReleaseResourceAllResult::Reception(self.reception.release_resource_all(ReceptionReleaseResourceAll { id, password, inputs }))

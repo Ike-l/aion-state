@@ -3,8 +3,7 @@ pub struct ResourceControlCheckOwner<'a, Id, ResourceId> {
     pub resource_id: &'a ResourceId
 }
 
-pub struct ResourceControlRelease<'a, Id, ResourceId> {
-    pub id: &'a Id,
+pub struct ResourceControlRelease<'a, ResourceId> {
     pub resource_id: &'a ResourceId
 }
 

@@ -6,7 +6,8 @@ pub enum ControllerOwnResult {
 
 pub enum ControllerReleaseResourceResult {
     ResourceControl(ResourceControlReleaseResult),
-    AccessControl(AccessControlReleaseResult)
+    AccessControl(AccessControlReleaseResult),
+    Denied
 }
 
 pub enum ControllerBlacklistAllowResult<Password> {
@@ -51,7 +52,6 @@ pub enum ControllerCheckOwnerResult {
     ResourceControl(ResourceControlCheckOwnerResult)
 }
 
-pub enum ControllerReleaseResourceAllResult<'a, Id, ResourceId> {
-    AccessControl(AccessControlReleaseAllResult),
-    ResourceControl(ResourceControlCheckOwnersResult<'a, Id, ResourceId>)
+pub enum ControllerReleaseResourceAllResult {
+    All(Vec<ControllerReleaseResourceResult>)
 }

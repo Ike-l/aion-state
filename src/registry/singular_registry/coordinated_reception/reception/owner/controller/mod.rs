@@ -1,4 +1,4 @@
-use crate::{prelude::{AccessControl, AccessControlAllow, AccessControlCheckAccess, AccessControlRelease, AccessControlUnallow, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerCheckAccess, ControllerCheckAccessResult, ControllerCheckOwner, ControllerCheckOwnerResult, ControllerOwn, ControllerOwnResult, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResource, ControllerReleaseResourceResult, ControllerUnallow, ControllerBlacklistUnallowResult, ControllerWhitelistUnallowResult, ControllerWhitelistAllowResult, ResourceControl, ResourceControlCheckOwner, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, WhitelistStorage, trace_function}, registry::singular_registry::coordinated_reception::reception::owner::controller::controller_result::ControllerReleaseResourceAllResult};
+use crate::prelude::{AccessControl, AccessControlAllow, AccessControlCheckAccess, AccessControlRelease, AccessControlUnallow, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccess, ControllerCheckAccessResult, ControllerCheckOwner, ControllerCheckOwnerResult, ControllerOwn, ControllerOwnResult, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResource, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerUnallow, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, ResourceControl, ResourceControlCheckOwner, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, WhitelistStorage, trace_function};
 
 pub mod access_control;
 pub mod resource_control;
@@ -43,13 +43,19 @@ impl<
         &mut self,
         ControllerReleaseResource {
             id, resource_id
-        }: &ControllerReleaseResource<CS::Id, CS::ResourceId>
+        }: &ControllerReleaseResource<'_, CS::Id, CS::ResourceId>
     ) -> ControllerReleaseResourceResult {
         trace_function!("Controller Release Resource");
 
+        let checked_owner = self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id });
+
+        if !checked_owner.ok() {
+            return ControllerReleaseResourceResult::Denied
+        }
+
         let access_control_release_result = self.access_control.release(&AccessControlRelease { id: resource_id });
         if access_control_release_result.ok() {
-            return ControllerReleaseResourceResult::ResourceControl(self.resource_control.release(&ResourceControlRelease { id, resource_id }))
+            return ControllerReleaseResourceResult::ResourceControl(self.resource_control.release(&ResourceControlRelease { resource_id }))
         }
         ControllerReleaseResourceResult::AccessControl(access_control_release_result)
     }
@@ -158,30 +164,11 @@ impl<
 
     pub fn release_resource_all<'a>(
         &mut self,
-        inputs: Vec<ControllerReleaseResource<'a, CS::Id, CS::ResourceId>>
-    ) -> ControllerReleaseResourceAllResult<'a, CS::Id, CS::ResourceId> {
+        inputs: Vec<&ControllerReleaseResource<'a, CS::Id, CS::ResourceId>>
+    ) -> ControllerReleaseResourceAllResult {
         trace_function!("Controller Release Resource All");
 
-        let check_owners_input = inputs
-            .iter()
-            .map(
-                |ControllerReleaseResource { id, resource_id }| 
-                    ResourceControlCheckOwner { id: *id, resource_id: *resource_id }
-                );
-
-        let release_all_input = inputs
-            .iter()
-            .map(
-                |ControllerReleaseResource { resource_id, .. }| 
-                    AccessControlRelease { id: *resource_id }
-                );
-
-        let check_owners_result = self.resource_control.check_owners(check_owners_input);
-        if check_owners_result.ok() {
-            return ControllerReleaseResourceAllResult::AccessControl(self.access_control.release_all(release_all_input.collect()))
-        }
-
-        ControllerReleaseResourceAllResult::ResourceControl(check_owners_result)
+        ControllerReleaseResourceAllResult::All(inputs.into_iter().map(|input| self.release_resource(input)).collect())  
     }
 
     pub fn check_owner(

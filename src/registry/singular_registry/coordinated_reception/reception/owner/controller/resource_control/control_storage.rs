@@ -20,7 +20,6 @@ pub trait ControlStorage {
     /// False for it didn't exist & didn't remove it
     fn release(
         &mut self,
-        id: &Self::Id,
         resource_id: &Self::ResourceId
     ) -> bool;
 

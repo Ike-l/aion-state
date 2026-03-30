@@ -19,7 +19,7 @@ impl<
     OS: CredentialStorage<Id = RS::ReserverId>,
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
-    CS: ControlStorage<ResourceId = BS::Id, Id = OS::Id>
+    CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
 > Registry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
@@ -85,7 +85,7 @@ impl<
     pub fn release_resource_all<'a>(
         &self,
         input: SingularRegistryReleaseResourceAll<'a, OS::Id, OS::Password, S::ValueId>
-    ) -> SingularRegistryReleaseResourceAllResult<'a, OS::Id, AS::ValueId> {
+    ) -> SingularRegistryReleaseResourceAllResult {
         trace_function!("Registry Release Resource All");
 
         let _sync = self.sync.write();

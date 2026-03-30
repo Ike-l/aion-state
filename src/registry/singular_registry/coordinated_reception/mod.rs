@@ -68,7 +68,7 @@ impl<
     pub fn release_resource_all<'a>(
         &self,
         input: ReceptionReleaseResourceAll<'a, OS::Id, OS::Password, AS::ValueId>
-    ) -> ReceptionReleaseResourceAllResult<'a, OS::Id, AS::ValueId> {
+    ) -> ReceptionReleaseResourceAllResult {
         trace_function!("Coordinated Reception Release Resource All");
 
         self.reception.write().release_resource_all(input)

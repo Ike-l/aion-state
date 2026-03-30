@@ -33,12 +33,12 @@ impl<
     pub fn release(
         &mut self,
         ResourceControlRelease {
-            id, resource_id
-        }: &ResourceControlRelease<'_, CS::Id, CS::ResourceId>
+            resource_id
+        }: &ResourceControlRelease<'_, CS::ResourceId>
     ) -> ResourceControlReleaseResult {
         trace_function!("Resource Control Release");
 
-        ResourceControlReleaseResult::Released(self.control_storage.release(id, resource_id))
+        ResourceControlReleaseResult::Released(self.control_storage.release(resource_id))
     }
 
     /// Passes through to `control_storage`
