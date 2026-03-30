@@ -59,17 +59,3 @@ pub mod prelude {
         }
     };
 }
-
-pub use prelude::*;
-
-pub fn create_registry() -> Registry<
-    RegistryStorage<ResourceId, StoredResource>,
-    ReservationStorage<ReserverId, AccessStorage<ResourceId, Access>>,
-    AccessStorage<ResourceId, Access>,
-    CredentialStorage<ReserverId, Password>,
-    WhitelistStorage<ResourceId, Access>,
-    BlacklistStorage<ResourceId, Access, Password>,
-    ControlStorage<ReserverId, ResourceId>
-> {
-    Registry::default()
-}

@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryRelease, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionDrainReservations, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryStorage, ReservationStorage, SingularRegistryAcquireAccess, SingularRegistryAcquireAccessResult, SingularRegistryAllow, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccess, SingularRegistryCheckAccessResult, SingularRegistryContainsResource, SingularRegistryContainsResourceResult, SingularRegistryDrainReservations, SingularRegistryDrainReservationsResult, SingularRegistryOwn, SingularRegistryOwnResult, SingularRegistryRegister, SingularRegistryRegisterResult, SingularRegistryReleaseAccess, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResource, SingularRegistryReleaseResourceAll, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservation, SingularRegistryReservationResult, SingularRegistrySaferReplacement, SingularRegistrySaferReplacementResult, SingularRegistryUnallow, SingularRegistryUnregister, SingularRegistryUnregisterResult, SingularRegistryUnreserve, SingularRegistryUnreserveResult, SingularRegistryUpdatePassword, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, StableAddress, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryRelease, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionDrainReservations, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryStorage, ReservationStorage, RegistryAcquireAccess, RegistryAcquireAccessResult, RegistryAllow, RegistryBlacklistAllowResult, RegistryBlacklistUnallowResult, RegistryCheckAccess, RegistryCheckAccessResult, RegistryContainsResource, RegistryContainsResourceResult, RegistryDrainReservations, RegistryDrainReservationsResult, RegistryOwn, RegistryOwnResult, RegistryRegister, RegistryRegisterResult, RegistryReleaseAccess, RegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult, RegistryReleaseResourceResult, RegistryReservation, RegistryReservationResult, RegistrySaferReplacement, RegistrySaferReplacementResult, RegistryUnallow, RegistryUnregister, RegistryUnregisterResult, RegistryUnreserve, RegistryUnreserveResult, RegistryUpdatePassword, RegistryUpdatePasswordResult, RegistryWhitelistAllowResult, RegistryWhitelistUnallowResult, StableAddress, WhitelistStorage, trace_function};
 
 pub mod automated_registry;
 pub mod coordinated_reception;
@@ -29,132 +29,132 @@ impl<
 {
     pub fn register(
         &self, 
-        SingularRegistryRegister {
+        RegistryRegister {
             id, password
-        }: SingularRegistryRegister<OS::Id, OS::Password>
-    ) -> SingularRegistryRegisterResult {
+        }: RegistryRegister<OS::Id, OS::Password>
+    ) -> RegistryRegisterResult {
         trace_function!("Singular Registry Register");
 
-        SingularRegistryRegisterResult::Reception(self.reception.register(ReceptionRegister { id, password }))
+        RegistryRegisterResult::Reception(self.reception.register(ReceptionRegister { id, password }))
     }
 
     pub fn unregister(
         &self,
-        SingularRegistryUnregister {
+        RegistryUnregister {
             id, password
-        }: &SingularRegistryUnregister<'_, OS::Id, OS::Password>
-    ) -> SingularRegistryUnregisterResult {
+        }: &RegistryUnregister<'_, OS::Id, OS::Password>
+    ) -> RegistryUnregisterResult {
         trace_function!("Singular Registry Unregister");
 
-        SingularRegistryUnregisterResult::Reception(self.reception.unregister(&ReceptionUnregister { id, password }))
+        RegistryUnregisterResult::Reception(self.reception.unregister(&ReceptionUnregister { id, password }))
     }
 
     pub fn update_password(
         &self,
-        SingularRegistryUpdatePassword {
+        RegistryUpdatePassword {
             id, old_password, new_password
-        }: SingularRegistryUpdatePassword<'_, OS::Id, OS::Password>
-    ) -> SingularRegistryUpdatePasswordResult {
+        }: RegistryUpdatePassword<'_, OS::Id, OS::Password>
+    ) -> RegistryUpdatePasswordResult {
         trace_function!("Singular Registry Update Password");
 
-        SingularRegistryUpdatePasswordResult::Reception(self.reception.update_password(ReceptionUpdatePassword { id, old_password, new_password }))
+        RegistryUpdatePasswordResult::Reception(self.reception.update_password(ReceptionUpdatePassword { id, old_password, new_password }))
     }
 
 
     pub fn own(
         &self,
-        SingularRegistryOwn {
+        RegistryOwn {
             id, password, resource_id
-        }: SingularRegistryOwn<'_, OS::Id, OS::Password, S::ValueId>
-    ) -> SingularRegistryOwnResult {
+        }: RegistryOwn<'_, OS::Id, OS::Password, S::ValueId>
+    ) -> RegistryOwnResult {
         trace_function!("Singular Registry Own");
 
-        SingularRegistryOwnResult::Reception(self.reception.own(ReceptionOwn { id, password, resource_id }))
+        RegistryOwnResult::Reception(self.reception.own(ReceptionOwn { id, password, resource_id }))
     }
 
     pub fn release_resource(
         &self, 
-        SingularRegistryReleaseResource {
+        RegistryReleaseResource {
             id, password, resource_id
-        }: &SingularRegistryReleaseResource<'_, OS::Id, OS::Password, S::ValueId>
-    ) -> SingularRegistryReleaseResourceResult {
+        }: &RegistryReleaseResource<'_, OS::Id, OS::Password, S::ValueId>
+    ) -> RegistryReleaseResourceResult {
         trace_function!("Singular Registry Release Resource");
 
-        SingularRegistryReleaseResourceResult::Reception(self.reception.release_resource(&ReceptionReleaseResource { id, password, resource_id }))
+        RegistryReleaseResourceResult::Reception(self.reception.release_resource(&ReceptionReleaseResource { id, password, resource_id }))
     } 
 
     pub fn release_resource_all<'a>(
         &self,
-        SingularRegistryReleaseResourceAll {
+        RegistryReleaseResourceAll {
             id, password, 
             inputs
-        }: SingularRegistryReleaseResourceAll<'a, OS::Id, OS::Password, S::ValueId>
-    ) -> SingularRegistryReleaseResourceAllResult {
+        }: RegistryReleaseResourceAll<'a, OS::Id, OS::Password, S::ValueId>
+    ) -> RegistryReleaseResourceAllResult {
         trace_function!("Singular Registry Release Resource All");
 
-        SingularRegistryReleaseResourceAllResult::Reception(self.reception.release_resource_all(ReceptionReleaseResourceAll { id, password, inputs }))
+        RegistryReleaseResourceAllResult::Reception(self.reception.release_resource_all(ReceptionReleaseResourceAll { id, password, inputs }))
     }
 
 
     pub fn allow_blacklist(
         &self,
-        SingularRegistryAllow {
+        RegistryAllow {
             id, password, resource_id, access
-        }: SingularRegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> SingularRegistryBlacklistAllowResult<BS::Password> {
+        }: RegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+    ) -> RegistryBlacklistAllowResult<BS::Password> {
         trace_function!("Singular Registry Allow Blacklist");
 
-        SingularRegistryBlacklistAllowResult::Reception(self.reception.allow_blacklist(ReceptionAllow { id, password, resource_id, access }))
+        RegistryBlacklistAllowResult::Reception(self.reception.allow_blacklist(ReceptionAllow { id, password, resource_id, access }))
     }
 
     pub fn allow_whitelist(
         &self,
-        SingularRegistryAllow {
+        RegistryAllow {
             id, password, resource_id, access
-        }: SingularRegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> SingularRegistryWhitelistAllowResult {
+        }: RegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+    ) -> RegistryWhitelistAllowResult {
         trace_function!("Singular Registry Allow Whitelist");
 
-        SingularRegistryWhitelistAllowResult::Reception(self.reception.allow_whitelist(ReceptionAllow { id, password, resource_id, access }))
+        RegistryWhitelistAllowResult::Reception(self.reception.allow_whitelist(ReceptionAllow { id, password, resource_id, access }))
     }
 
     pub fn unallow_blacklist(
         &self,
-        SingularRegistryUnallow {
+        RegistryUnallow {
             id, password, resource_id, access
-        }: &SingularRegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> SingularRegistryBlacklistUnallowResult {
+        }: &RegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+    ) -> RegistryBlacklistUnallowResult {
         trace_function!("Singular Registry Unallow Blacklist");
 
-        SingularRegistryBlacklistUnallowResult::Reception(self.reception.unallow_blacklist(&ReceptionUnallow { id, password, resource_id, access }))
+        RegistryBlacklistUnallowResult::Reception(self.reception.unallow_blacklist(&ReceptionUnallow { id, password, resource_id, access }))
     }
 
     pub fn unallow_whitelist(
         &self,
-        SingularRegistryUnallow {
+        RegistryUnallow {
             id, password, resource_id, access
-        }: &SingularRegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> SingularRegistryWhitelistUnallowResult {
+        }: &RegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+    ) -> RegistryWhitelistUnallowResult {
         trace_function!("Singular Registry Unallow Whitelist");
 
-        SingularRegistryWhitelistUnallowResult::Reception(self.reception.unallow_whitelist(&ReceptionUnallow { id, password, resource_id, access }))
+        RegistryWhitelistUnallowResult::Reception(self.reception.unallow_whitelist(&ReceptionUnallow { id, password, resource_id, access }))
     }
 
     pub fn check_access(
         &self,
-        SingularRegistryCheckAccess {
+        RegistryCheckAccess {
             id, resource_id, access, password
-        }: &SingularRegistryCheckAccess<'_, OS::Id, S::ValueId, AS::Access, BS::Password>
-    ) -> SingularRegistryCheckAccessResult {
+        }: &RegistryCheckAccess<'_, OS::Id, S::ValueId, AS::Access, BS::Password>
+    ) -> RegistryCheckAccessResult {
         trace_function!("Singular Registry Check Access");
 
         let reception_result = self.reception.check_access(&ReceptionCheckAccess { id: *id, resource_id, access, password: *password });
 
         if reception_result.ok() {
-            return SingularRegistryCheckAccessResult::AutomatedRegistry(self.automated_registry.contains_key(*resource_id))
+            return RegistryCheckAccessResult::AutomatedRegistry(self.automated_registry.contains_key(*resource_id))
         }
 
-        SingularRegistryCheckAccessResult::Reception(reception_result)
+        RegistryCheckAccessResult::Reception(reception_result)
     }
 
     /// Safety:
@@ -162,63 +162,63 @@ impl<
     /// Resource `resource_id` corresponding with `access` MUST actually be released
     pub unsafe fn release_access(
         &self,
-        SingularRegistryReleaseAccess {
+        RegistryReleaseAccess {
             resource_id, access
-        }: SingularRegistryReleaseAccess<'_, S::ValueId, AS::Access>
-    ) -> SingularRegistryReleaseAccessResult {
+        }: RegistryReleaseAccess<'_, S::ValueId, AS::Access>
+    ) -> RegistryReleaseAccessResult {
         trace_function!("Singular Registry Release Access");
 
         let registry_result = self.automated_registry.release(&ManualRegistryRelease { value_id: resource_id, access });
         
         if registry_result.ok() {
-            return SingularRegistryReleaseAccessResult::Reception(self.reception.release_access(&ReceptionReleaseAccess { resource_id, access }))
+            return RegistryReleaseAccessResult::Reception(self.reception.release_access(&ReceptionReleaseAccess { resource_id, access }))
         }
 
-        SingularRegistryReleaseAccessResult::AutomatedRegistry(registry_result)
+        RegistryReleaseAccessResult::AutomatedRegistry(registry_result)
     }
     // pub fn record_access() {} Done in Acquire Access
 
 
     pub fn reserve(
         &self,
-        SingularRegistryReservation {
+        RegistryReservation {
             id, password, resource_id, access
-        }: SingularRegistryReservation<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> SingularRegistryReservationResult {
+        }: RegistryReservation<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+    ) -> RegistryReservationResult {
         trace_function!("Singular Registry Reserve");
 
-        SingularRegistryReservationResult::Reception(self.reception.reserve(ReceptionReservation { id, password, resource_id, access }))
+        RegistryReservationResult::Reception(self.reception.reserve(ReceptionReservation { id, password, resource_id, access }))
     }
 
     pub fn unreserve(
         &self,
-        SingularRegistryUnreserve {
+        RegistryUnreserve {
             id, password, resource_id, access
-        }: &SingularRegistryUnreserve<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> SingularRegistryUnreserveResult {
+        }: &RegistryUnreserve<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+    ) -> RegistryUnreserveResult {
         trace_function!("Singular Registry Unreserve");
 
-        SingularRegistryUnreserveResult::Reception(self.reception.unreserve(&ReceptionUnreserve { id, password, resource_id, access }))
+        RegistryUnreserveResult::Reception(self.reception.unreserve(&ReceptionUnreserve { id, password, resource_id, access }))
     }
 
     pub fn drain_reservations(
         &self,
-        SingularRegistryDrainReservations {
+        RegistryDrainReservations {
             id, password
-        }: &SingularRegistryDrainReservations<'_, OS::Id, OS::Password>
-    ) -> SingularRegistryDrainReservationsResult<Vec<(S::ValueId, AS::Access)>> {
+        }: &RegistryDrainReservations<'_, OS::Id, OS::Password>
+    ) -> RegistryDrainReservationsResult<Vec<(S::ValueId, AS::Access)>> {
         trace_function!("Singular Registry Drain Reservations");
 
-        SingularRegistryDrainReservationsResult::Reception(self.reception.drain_reservations(&ReceptionDrainReservations { id, password }))
+        RegistryDrainReservationsResult::Reception(self.reception.drain_reservations(&ReceptionDrainReservations { id, password }))
     }
 
 
     pub fn acquire_access(
         &self,
-        SingularRegistryAcquireAccess {
+        RegistryAcquireAccess {
             id, resource_id, access, password
-        }: SingularRegistryAcquireAccess<'_, OS::Id, S::ValueId, AS::Access, BS::Password>
-    ) -> SingularRegistryAcquireAccessResult<<AS::Access as Accessor>::AccessResult<'_>> {
+        }: RegistryAcquireAccess<'_, OS::Id, S::ValueId, AS::Access, BS::Password>
+    ) -> RegistryAcquireAccessResult<<AS::Access as Accessor>::AccessResult<'_>> {
         trace_function!("Singular Registry Acquire Access");
 
         let check_reception = self.reception.check_access(&ReceptionCheckAccess { id, resource_id: &resource_id, access: &access, password });
@@ -232,34 +232,34 @@ impl<
                 assert!(reception_result.ok())
             }
     
-            return SingularRegistryAcquireAccessResult::AutomatedRegistry(registry_result)
+            return RegistryAcquireAccessResult::AutomatedRegistry(registry_result)
         }
 
-        SingularRegistryAcquireAccessResult::Reception(check_reception)
+        RegistryAcquireAccessResult::Reception(check_reception)
     }
 
     pub unsafe fn safer_replace(
         &self,
-        SingularRegistrySaferReplacement {
+        RegistrySaferReplacement {
             access, resource_id, resource
-        }: SingularRegistrySaferReplacement<'_, AS::Access, S::ValueId, <AS::Access as Accessor>::Value>
-    ) -> SingularRegistrySaferReplacementResult<<AS::Access as Accessor>::StoredValue>
+        }: RegistrySaferReplacement<'_, AS::Access, S::ValueId, <AS::Access as Accessor>::Value>
+    ) -> RegistrySaferReplacementResult<<AS::Access as Accessor>::StoredValue>
         where
             <AS::Access as Accessor>::StoredValue: StableAddress
     {
         trace_function!("Singular Registry Safer Replace");
 
-        SingularRegistrySaferReplacementResult::AutomatedRegistry(unsafe { self.automated_registry.safer_replace(ManualRegistryReplacementInput { access, value_id: resource_id, value: resource }) })
+        RegistrySaferReplacementResult::AutomatedRegistry(unsafe { self.automated_registry.safer_replace(ManualRegistryReplacementInput { access, value_id: resource_id, value: resource }) })
     }
 
     pub fn contains_resource(
         &self,
-        SingularRegistryContainsResource {
+        RegistryContainsResource {
             resource_id
-        }: &SingularRegistryContainsResource<'_, S::ValueId>
-    ) -> SingularRegistryContainsResourceResult {
+        }: &RegistryContainsResource<'_, S::ValueId>
+    ) -> RegistryContainsResourceResult {
         trace_function!("Singular Registry Contains Resource");
 
-        SingularRegistryContainsResourceResult::AutomatedRegistry(self.automated_registry.contains_key(resource_id))
+        RegistryContainsResourceResult::AutomatedRegistry(self.automated_registry.contains_key(resource_id))
     }
 }

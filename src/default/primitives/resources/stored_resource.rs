@@ -1,4 +1,4 @@
-use crate::default::Resource;
+use crate::default::prelude::Resource;
 
 pub struct StoredResource {
     inner: Resource

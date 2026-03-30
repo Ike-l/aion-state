@@ -1,3 +1,4 @@
+#[derive(PartialEq, Clone)]
 pub struct Password {
     inner: u64
 }

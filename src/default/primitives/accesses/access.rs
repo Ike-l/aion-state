@@ -1,4 +1,4 @@
-use crate::default::{AccessResult, Resource, StoredResource};
+use crate::default::prelude::{AccessResult, Resource, StoredResource};
 
 #[derive(Debug, PartialEq)]
 enum BorrowType {
