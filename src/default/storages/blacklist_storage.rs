@@ -1,22 +1,33 @@
 use std::{collections::HashMap, hash::Hash};
 
+use rand::{Rng, rngs::ThreadRng};
+
 pub struct BlacklistStorage<ResourceId, Access, Password> {
-    inner: HashMap<ResourceId, Vec<(Access, Password)>>
+    inner: HashMap<ResourceId, Vec<(Access, Password)>>,
+    rng: ThreadRng
 }
 
 impl<ResourceId, Access, Password> Default for BlacklistStorage<ResourceId, Access, Password> {
     fn default() -> Self {
-        Self { inner: Default::default() }
+        Self { inner: Default::default(), rng: ThreadRng::default() }
     }
 }
 
-impl<ResourceId, Access, Password> BlacklistStorage<ResourceId, Access, Password> {
+impl<ResourceId, Access, Password> BlacklistStorage<ResourceId, Access, Password>
+    where u64: Into<Password>
+{
     pub fn generate_password(&mut self) -> Password {
-        todo!()
+        self.rng.next_u64().into()
     }
 }
 
-impl<ResourceId: Eq + Hash, Access: PartialEq, Password: PartialEq + Clone> crate::prelude::BlacklistStorage for BlacklistStorage<ResourceId, Access, Password> {
+impl<ResourceId, Access, Password:> crate::prelude::BlacklistStorage for BlacklistStorage<ResourceId, Access, Password> 
+    where
+        ResourceId: Eq + Hash,
+        Access: PartialEq,
+        Password: PartialEq + Clone,
+        u64: Into<Password>
+{
     type Id = ResourceId;
     type Access = Access;
     type Password = Password;
