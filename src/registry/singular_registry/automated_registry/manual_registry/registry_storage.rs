@@ -6,10 +6,10 @@ pub trait RegistryStorage {
     // Accessor::StoredResource
     type Value;
 
-    fn get(
-        &self, 
+    fn get_mut(
+        &mut self, 
         value_id: &Self::ValueId
-    ) -> Option<&Self::Value>;
+    ) -> Option<&mut Self::Value>;
 
     fn insert(
         &mut self, 

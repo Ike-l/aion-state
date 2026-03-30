@@ -28,7 +28,7 @@ impl<
     }
 
     pub fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
-        &self, 
+        &mut self, 
         ManualRegistryAccessInput {
             value_id, access
         }: ManualRegistryAccessInput<'_, S::ValueId, Access>
@@ -36,7 +36,7 @@ impl<
         let span = span!(FUNCTION_LEVEL, "Manual Acquire Access");
         let _enter = span.enter();
 
-        match self.storage.get(value_id) {
+        match self.storage.get_mut(value_id) {
             Some(stored_value) => ManualRegistryAccessResult::Found(access.acquire(stored_value)),
             None => ManualRegistryAccessResult::NotFound,
         }

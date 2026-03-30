@@ -14,11 +14,11 @@ impl<ResourceId: Eq + Hash, StoredResource> crate::prelude::RegistryStorage for 
     type ValueId = ResourceId;
     type Value = StoredResource;
 
-    fn get(
-        &self, 
+    fn get_mut(
+        &mut self, 
         value_id: &Self::ValueId
-    ) -> Option<&Self::Value> {
-        self.inner.get(value_id)
+    ) -> Option<&mut Self::Value> {
+        self.inner.get_mut(value_id)
     }
 
     fn insert(

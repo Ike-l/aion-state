@@ -30,7 +30,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     ) -> ManualRegistryAccessResult<Access::AccessResult<'_>> {
         trace_function!("Automated Registry Acquire Access");
 
-        unsafe { self.get_inner() }.acquire_access(input)
+        unsafe { self.get_inner_mut() }.acquire_access(input)
     }
 
     /// Safety: 

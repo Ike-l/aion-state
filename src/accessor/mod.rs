@@ -23,7 +23,7 @@ pub trait Accessor {
     /// When acquiring a resource the stored value is passed through `acquire` and the result is returned by the function
     fn acquire<'a>(
         &self, 
-        stored_value: &'a Self::StoredValue
+        stored_value: &'a mut Self::StoredValue
     ) -> Self::AccessResult<'a>;
 
     /// If `can_access(self, other)` then `merge(self, other)`
