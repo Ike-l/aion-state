@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlReleaseResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, ResourceControlCheckOwnerResult, ResourceControlCheckOwnersResult, ResourceControlOwnResult, ResourceControlReleaseResult};
+use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlReleaseResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult};
 
 pub enum ControllerOwnResult {
     ResourceControl(ResourceControlOwnResult)
