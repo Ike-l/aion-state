@@ -6,6 +6,7 @@ pub mod authenticator_input;
 pub mod authenticator_result;
 
 /// wraps `credential storage`
+#[derive(Default)]
 pub struct Authenticator<CS> {
     credentials: CS,
 }

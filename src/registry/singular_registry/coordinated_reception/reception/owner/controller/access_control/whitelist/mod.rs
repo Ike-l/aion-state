@@ -6,6 +6,7 @@ pub mod whitelist_input;
 pub mod whitelist_result;
 
 /// Accesses are allowed without password
+#[derive(Default)]
 pub struct Whitelist<WS> {
     whitelist_storage: WS
 }

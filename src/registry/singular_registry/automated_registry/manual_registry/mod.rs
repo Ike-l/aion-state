@@ -8,6 +8,7 @@ pub mod manual_registry_result;
 pub mod stable_address;
 
 /// Wraps storage using `Accessor`
+#[derive(Default)]
 pub struct ManualRegistry<S> {
     storage: S,
 }

@@ -1,7 +1,7 @@
 pub mod registry;
 pub mod accessor;
 
-#[cfg(feature = "default-implementation")]
+#[cfg(any(feature = "default-implementation", test))]
 pub mod default;
 
 pub mod prelude {

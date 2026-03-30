@@ -7,6 +7,7 @@ pub mod manual_registry;
 /// Provides individual access ability to the underlying storage
 /// 
 /// Requires `Automation` to ensure safety
+#[derive(Default)]
 pub struct AutomatedRegistry<S> {
     manual_registry: UnsafeCell<ManualRegistry<S>>
 }

@@ -5,6 +5,7 @@ pub mod control_storage;
 pub mod resource_control_input;
 pub mod resource_control_result;
 
+#[derive(Default)]
 pub struct ResourceControl<CS> {
     control_storage: CS
 }

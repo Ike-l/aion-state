@@ -7,6 +7,7 @@ pub mod coordinated_reception;
 pub mod singular_registry_result;
 pub mod singular_registry_input;
 
+#[derive(Default)]
 pub struct SingularRegistry<S, RS, AS, OS, WL, BL, CS> {
     automated_registry: AutomatedRegistry<S>,
     reception: CoordinatedReception<RS, AS, OS, WL, BL, CS>,

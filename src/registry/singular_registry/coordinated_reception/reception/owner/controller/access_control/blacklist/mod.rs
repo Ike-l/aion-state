@@ -8,6 +8,7 @@ pub mod blacklist_result;
 /// Wraps `Blacklist Storage`
 /// 
 /// A `Blacklist` requires a `password` to permit an access
+#[derive(Default)]
 pub struct Blacklist<BS> {
     blacklist_storage: BS
 }

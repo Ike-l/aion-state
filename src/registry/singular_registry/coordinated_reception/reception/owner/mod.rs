@@ -7,6 +7,7 @@ pub mod owner_result;
 pub mod owner_input;
 
 /// Applies `authenticator` semantics and then `controller` semantics
+#[derive(Default)]
 pub struct Owner<AS, WS, BS, CS> {
     authenticator: Authenticator<AS>,
     controller: Controller<WS, BS, CS>,

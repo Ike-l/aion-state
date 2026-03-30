@@ -4,6 +4,7 @@ use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, 
 
 pub mod reception;
 
+#[derive(Default)]
 pub struct CoordinatedReception<RS, AS, OS, PS, LS, OSS> {
     reception: RwLock<Reception<RS, AS, OS, PS, LS, OSS>>
 }

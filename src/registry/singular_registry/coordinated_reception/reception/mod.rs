@@ -9,6 +9,7 @@ pub mod reception_input;
 pub mod reception_result;
 
 /// Applies `Owner` semantics, then `Host` semantics
+#[derive(Default)]
 pub struct Reception<RS, AS, OS, WS, BS, CS> {
     owner: Owner<OS, WS, BS, CS>,
     host: Host<RS, AS>
