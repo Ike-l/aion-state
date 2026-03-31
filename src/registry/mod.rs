@@ -47,7 +47,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.unregister(input)
+        self.singular_registry.unregister(input).into()
     }
 
     pub fn update_password(

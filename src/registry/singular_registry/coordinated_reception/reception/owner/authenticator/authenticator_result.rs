@@ -14,7 +14,6 @@ pub enum AuthenticateRegistrationResult {
 
 pub enum AuthenticateUpdatePasswordResult {
     Updated(bool),
-    Denied
 }
 
 pub enum AuthenticateUnregisterResult {

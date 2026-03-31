@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlReleaseAllResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticationResult, BlacklistReleaseAllResult, ControllerReleaseIdResult, OwnerRegisterResult, OwnerUnregisterResult, ReceptionRegisterResult, ReceptionUnregisterResult, SingularRegistryRegisterResult, SingularRegistryUnregisterResult, WhitelistReleaseAllResult};
+use crate::prelude::{AccessControlReleaseAllResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistReleaseAllResult, ControllerReleaseIdResult, OwnerRegisterResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionRegisterResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, SingularRegistryRegisterResult, SingularRegistryUnregisterResult, SingularRegistryUpdatePasswordResult, WhitelistReleaseAllResult};
 
 pub enum RegistryRegisterResult {
     Ok,
@@ -34,7 +34,7 @@ pub enum RegistryUnregisterResult {
     Ok,
     Err,
     Lists{whitelist_result: bool, blacklist_result: bool},
-    Verification(bool)
+    VerificationFailure
 }
 
 impl From<SingularRegistryUnregisterResult> for RegistryUnregisterResult {
@@ -72,8 +72,8 @@ impl From<SingularRegistryUnregisterResult> for RegistryUnregisterResult {
                             OwnerUnregisterResult::Denied(authentication_result) => {
                                 match authentication_result {
                                     AuthenticationResult::Verification(result) => {
-                                        todo!("Check if this is always false");
-                                        Self::Verification(result)
+                                        assert_eq!(result, false);
+                                        Self::VerificationFailure
                                     },
                                 }
                             },
@@ -86,9 +86,44 @@ impl From<SingularRegistryUnregisterResult> for RegistryUnregisterResult {
 }
 
 pub enum RegistryUpdatePasswordResult {
-
+    Ok,
+    Err,
+    VerificationFailure
 }
 
+impl From<SingularRegistryUpdatePasswordResult> for RegistryUpdatePasswordResult {
+    fn from(value: SingularRegistryUpdatePasswordResult) -> Self {
+        match value {
+            SingularRegistryUpdatePasswordResult::Reception(reception_update_password_result) => {
+                match reception_update_password_result {
+                    ReceptionUpdatePasswordResult::Owner(owner_update_password_result) => {
+                        match owner_update_password_result {
+                            OwnerUpdatePasswordResult::Authenticator(authenticate_update_password_result) => {
+                                match authenticate_update_password_result {
+                                    AuthenticateUpdatePasswordResult::Updated(result) => {
+                                        match result {
+                                            true => Self::Ok,
+                                            false => Self::Err,
+                                        }
+                                    },
+                                }
+                            },
+                            OwnerUpdatePasswordResult::Denied(authentication_result) => {
+                                match authentication_result {
+                                    AuthenticationResult::Verification(result) => {
+                                        assert_eq!(result, false);
+
+                                        Self::VerificationFailure
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+        }
+    }
+}
 pub enum RegistryOwnResult {
 
 }
