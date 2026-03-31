@@ -221,6 +221,7 @@ impl From<SingularRegistryReleaseResourceResult> for RegistryReleaseResourceResu
 }
 
 pub enum RegistryReleaseResourceAllResult {
+    /// RegistryReleaseResourceResult::VerificationFailure is unreachable!()
     All(Vec<RegistryReleaseResourceResult>),
     VerificationFailure
 }
