@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlReleaseAllResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistReleaseAllResult, ControllerOwnResult, ControllerReleaseIdResult, OwnerOwnResult, OwnerRegisterResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ResourceControlOwnResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryUnregisterResult, SingularRegistryUpdatePasswordResult, WhitelistReleaseAllResult};
+use crate::prelude::{AccessControlReleaseAllResult, AccessControlReleaseResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistReleaseAllResult, BlacklistReleaseResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseResourceResult, SingularRegistryUnregisterResult, SingularRegistryUpdatePasswordResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
 
 pub enum RegistryRegisterResult {
     Ok,
@@ -173,7 +173,63 @@ impl From<SingularRegistryOwnResult> for RegistryOwnResult {
 }
 
 pub enum RegistryReleaseResourceResult {
+    Ok,
+    Err,
+    Lists{whitelist_result: bool, blacklist_result: bool},
+    OwnershipDenied,
+    VerificationFailure
+}
 
+impl From<SingularRegistryReleaseResourceResult> for RegistryReleaseResourceResult {
+    fn from(value: SingularRegistryReleaseResourceResult) -> Self {
+        match value {
+            SingularRegistryReleaseResourceResult::Reception(reception_release_resource_result) => {
+                match reception_release_resource_result {
+                    ReceptionReleaseResourceResult::Owner(owner_release_resource_result) => {
+                        match owner_release_resource_result {
+                            OwnerReleaseResourceResult::Controller(controller_release_resource_result) => {
+                                match controller_release_resource_result {
+                                    ControllerReleaseResourceResult::ResourceControl(resource_control_release_result) => {
+                                        match resource_control_release_result {
+                                            ResourceControlReleaseResult::Released(result) => {
+                                                match result {
+                                                    true => Self::Ok,
+                                                    false => Self::Err,
+                                                }
+                                            },
+                                        }
+                                    },
+                                    ControllerReleaseResourceResult::AccessControl(access_control_release_result) => {
+                                        match access_control_release_result {
+                                            AccessControlReleaseResult::Lists((whitelist, blacklist)) => {
+                                                match (whitelist, blacklist) {
+                                                    (WhitelistReleaseResult::Release(whitelist_result), BlacklistReleaseResult::Release(blacklist_result)) => {
+                                                        Self::Lists{whitelist_result, blacklist_result}
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    },
+                                    ControllerReleaseResourceResult::Denied => {
+                                        Self::OwnershipDenied
+                                    },
+                                }
+                            },
+                            OwnerReleaseResourceResult::Denied(authentication_result) => {
+                                match authentication_result {
+                                    AuthenticationResult::Verification(result) => {
+                                        assert_eq!(result, false);
+
+                                        Self::VerificationFailure
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+        }
+    }
 }
 
 pub enum RegistryReleaseResourceAllResult {
