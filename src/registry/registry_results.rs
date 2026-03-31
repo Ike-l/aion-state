@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlReleaseAllResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistReleaseAllResult, ControllerReleaseIdResult, OwnerRegisterResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionRegisterResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, SingularRegistryRegisterResult, SingularRegistryUnregisterResult, SingularRegistryUpdatePasswordResult, WhitelistReleaseAllResult};
+use crate::prelude::{AccessControlReleaseAllResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistReleaseAllResult, ControllerOwnResult, ControllerReleaseIdResult, OwnerOwnResult, OwnerRegisterResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ResourceControlOwnResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryUnregisterResult, SingularRegistryUpdatePasswordResult, WhitelistReleaseAllResult};
 
 pub enum RegistryRegisterResult {
     Ok,
@@ -125,7 +125,51 @@ impl From<SingularRegistryUpdatePasswordResult> for RegistryUpdatePasswordResult
     }
 }
 pub enum RegistryOwnResult {
+    Ok,
+    Err,
+    OwnershipConflict,
+    VerificationFailure
+}
 
+impl From<SingularRegistryOwnResult> for RegistryOwnResult {
+    fn from(value: SingularRegistryOwnResult) -> Self {
+        match value {
+            SingularRegistryOwnResult::Reception(reception_own_result) => {
+                match reception_own_result {
+                    ReceptionOwnResult::Owner(owner_own_result) => {
+                        match owner_own_result {
+                            OwnerOwnResult::Controller(controller_own_result) => {
+                                match controller_own_result {
+                                    ControllerOwnResult::ResourceControl(resource_control_own_result) => {
+                                        match resource_control_own_result {
+                                            ResourceControlOwnResult::Own(result) => {
+                                                match result {
+                                                    true => Self::Ok,
+                                                    false => Self::Err,
+                                                }
+                                            },
+                                            ResourceControlOwnResult::OwnershipConflict => {
+                                                Self::OwnershipConflict
+                                            },
+                                        }
+                                    },
+                                }
+                            },
+                            OwnerOwnResult::Denied(authentication_result) => {
+                                match authentication_result {
+                                    AuthenticationResult::Verification(result) => {
+                                        assert_eq!(result, false);
+
+                                        Self::VerificationFailure
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+        }
+    }
 }
 
 pub enum RegistryReleaseResourceResult {

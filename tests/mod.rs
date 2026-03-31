@@ -27,15 +27,10 @@ pub fn a() {
         id, password
     };
     
-    let RegistryRegisterResult::Reception(
-        ReceptionRegisterResult::Owner(
-            OwnerRegisterResult::Authenticator(
-                AuthenticateRegistrationResult::Registration(register_result)
-            )
-        )
-    ) = registry.register(input);
+    let register_result = registry.register(input);
 
-    if register_result {
-        
-    }
+    // match register_result {
+    //     RegistryRegisterResult::Ok => todo!(),
+    //     RegistryRegisterResult::Err => todo!(),
+    // }
 }

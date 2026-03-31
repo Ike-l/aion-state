@@ -58,7 +58,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.update_password(input)
+        self.singular_registry.update_password(input).into()
     }
 
 
@@ -70,7 +70,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.own(input)
+        self.singular_registry.own(input).into()
     }
 
     pub fn release_resource(
