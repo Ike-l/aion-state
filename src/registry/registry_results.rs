@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlReleaseAllResult, AccessControlReleaseResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistReleaseAllResult, BlacklistReleaseResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseResourceResult, SingularRegistryUnregisterResult, SingularRegistryUpdatePasswordResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
+use crate::prelude::{AccessControlReleaseAllResult, AccessControlReleaseResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistReleaseAllResult, BlacklistReleaseResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
 
 pub enum RegistryRegisterResult {
     Ok,
@@ -236,50 +236,128 @@ pub enum RegistryReleaseResourceAllResult {
 
 }
 
-pub enum RegistryBlacklistAllowResult {
+impl From<SingularRegistryReleaseResourceAllResult> for RegistryReleaseResourceAllResult {
+    fn from(value: SingularRegistryReleaseResourceAllResult) -> Self {
+        todo!()
+    }
+}
 
+pub enum RegistryBlacklistAllowResult<Password> {
+    Ok(Password)
+}
+
+impl<Password> From<SingularRegistryBlacklistAllowResult<Password>> for RegistryBlacklistAllowResult<Password> {
+    fn from(value: SingularRegistryBlacklistAllowResult<Password>) -> Self {
+        todo!()
+    }
 }
 
 pub enum RegistryWhitelistAllowResult {
 
 }
 
+impl From<SingularRegistryWhitelistAllowResult> for RegistryWhitelistAllowResult {
+    fn from(value: SingularRegistryWhitelistAllowResult) -> Self {
+        todo!()
+    }
+}
+
 pub enum RegistryBlacklistUnallowResult {
 
+}
+
+impl From<SingularRegistryBlacklistUnallowResult> for RegistryBlacklistUnallowResult {
+    fn from(value: SingularRegistryBlacklistUnallowResult) -> Self {
+        todo!()
+    }
 }
 
 pub enum RegistryWhitelistUnallowResult {
 
 }
 
+impl From<SingularRegistryWhitelistUnallowResult> for RegistryWhitelistUnallowResult {
+    fn from(value: SingularRegistryWhitelistUnallowResult) -> Self {
+        todo!()
+    }
+}
+
 pub enum RegistryCheckAccessResult {
 
+}
+
+impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
+    fn from(value: SingularRegistryCheckAccessResult) -> Self {
+        todo!()
+    }
 }
 
 pub enum RegistryReleaseAccessResult {
 
 }
 
+impl From<SingularRegistryReleaseAccessResult> for RegistryReleaseAccessResult {
+    fn from(value: SingularRegistryReleaseAccessResult) -> Self {
+        todo!()
+    }
+}
+
 pub enum RegistryReservationResult {
 
+}
+
+impl From<SingularRegistryReservationResult> for RegistryReservationResult {
+    fn from(value: SingularRegistryReservationResult) -> Self {
+        todo!()
+    }
 }
 
 pub enum RegistryUnreserveResult {
 
 }
 
-pub enum RegistryDrainReservationsResult {
-
+impl From<SingularRegistryUnreserveResult> for RegistryUnreserveResult {
+    fn from(value: SingularRegistryUnreserveResult) -> Self {
+        todo!()
+    }
 }
 
-pub enum RegistryAcquireAccessResult {
-
+pub enum RegistryDrainReservationsResult<T> {
+    Drain(T)
 }
 
-pub enum RegistrySaferReplacementResult {
+impl<T> From<SingularRegistryDrainReservationsResult<T>> for RegistryDrainReservationsResult<T> {
+    fn from(value: SingularRegistryDrainReservationsResult<T>) -> Self {
+        todo!()
+    }
+}
 
+pub enum RegistryAcquireAccessResult<AccessResult> {
+    Found(AccessResult)
+}
+
+impl<AccessResult> From<SingularRegistryAcquireAccessResult<AccessResult>> for RegistryAcquireAccessResult<AccessResult> {
+    fn from(value: SingularRegistryAcquireAccessResult<AccessResult>) -> Self {
+        todo!()
+    }
+}
+
+pub enum RegistrySaferReplacementResult<ReplacementResult> {
+    Found(ReplacementResult)
+}
+
+impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementResult>> for RegistrySaferReplacementResult<ReplacementResult> {
+    fn from(value: SingularRegistrySaferReplacementResult<ReplacementResult>) -> Self {
+        todo!()
+    }
 }
 
 pub enum RegistryContainsResourceResult {
 
+}
+
+impl From<SingularRegistryContainsResourceResult> for RegistryContainsResourceResult {
+    fn from(value: SingularRegistryContainsResourceResult) -> Self {
+        todo!()
+    }
 }
