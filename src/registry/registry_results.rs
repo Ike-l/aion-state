@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlReleaseAllResult, AccessControlReleaseResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistReleaseAllResult, BlacklistReleaseResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
+use crate::prelude::{AccessControlReleaseAllResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistReleaseAllResult, BlacklistReleaseResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
 
 pub enum RegistryRegisterResult {
     Ok,
@@ -221,12 +221,52 @@ impl From<SingularRegistryReleaseResourceResult> for RegistryReleaseResourceResu
 }
 
 pub enum RegistryReleaseResourceAllResult {
-
+    All(Vec<RegistryReleaseResourceResult>),
+    VerificationFailure
 }
 
 impl From<SingularRegistryReleaseResourceAllResult> for RegistryReleaseResourceAllResult {
     fn from(value: SingularRegistryReleaseResourceAllResult) -> Self {
-        todo!()
+        match value {
+            SingularRegistryReleaseResourceAllResult::Reception(reception_release_resource_all_result) => {
+                match reception_release_resource_all_result {
+                    ReceptionReleaseResourceAllResult::Owner(owner_release_resource_all_result) => {
+                        match owner_release_resource_all_result {
+                            OwnerReleaseResourceAllResult::Controller(controller_release_resource_all_result) => {
+                                match controller_release_resource_all_result {
+                                    ControllerReleaseResourceAllResult::All(controller_release_resource_results) => {
+                                        Self::All(controller_release_resource_results.into_iter().map(|result| {
+                                            match result {
+                                                ControllerReleaseResourceResult::ResourceControl(resource_control_release_result) => {
+                                                    match resource_control_release_result {
+                                                        ResourceControlReleaseResult::Released(result) => {
+                                                            match result {
+                                                                true => RegistryReleaseResourceResult::Ok,
+                                                                false => RegistryReleaseResourceResult::Err,
+                                                            }
+                                                        },
+                                                    }
+                                                },
+                                                ControllerReleaseResourceResult::Denied => RegistryReleaseResourceResult::OwnershipDenied,
+                                            }
+                                        }).collect())
+                                    },
+                                }
+                            },
+                            OwnerReleaseResourceAllResult::Denied(authentication_result) => {
+                                match authentication_result {
+                                    AuthenticationResult::Verification(result) => {
+                                        assert_eq!(result, false);
+
+                                        Self::VerificationFailure
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+        }
     }
 }
 

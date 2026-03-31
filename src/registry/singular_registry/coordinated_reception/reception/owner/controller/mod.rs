@@ -129,7 +129,7 @@ impl<
             ResourceControlReleaseIdResult::Released(resources) => {
                 let resources = resources.collect::<Vec<_>>();
                 let release_inputs = resources.iter().map(|resource_id| AccessControlRelease { id: resource_id });
-                return ControllerReleaseIdResult::AccessControl(self.access_control.release_all(release_inputs.collect()));
+                ControllerReleaseIdResult::AccessControl(self.access_control.release_all(release_inputs.collect()))
             },
         }
     }
