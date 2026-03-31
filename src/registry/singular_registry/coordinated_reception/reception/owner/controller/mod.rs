@@ -1,4 +1,6 @@
-use crate::prelude::{AccessControl, AccessControlAllow, AccessControlCheckAccess, AccessControlRelease, AccessControlUnallow, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccess, ControllerCheckAccessResult, ControllerCheckOwner, ControllerCheckOwnerResult, ControllerOwn, ControllerOwnResult, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResource, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerUnallow, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, ResourceControl, ResourceControlCheckOwner, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, WhitelistStorage, trace_function};
+use tracing::event;
+
+use crate::prelude::{AccessControl, AccessControlAllow, AccessControlCheckAccess, AccessControlRelease, AccessControlUnallow, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccess, ControllerCheckAccessResult, ControllerCheckOwner, ControllerCheckOwnerResult, ControllerOwn, ControllerOwnResult, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResource, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerUnallow, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, FUNCTION_LEVEL, ResourceControl, ResourceControlCheckOwner, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, WhitelistStorage, trace_function};
 
 pub mod access_control;
 pub mod resource_control;
@@ -54,10 +56,10 @@ impl<
         }
 
         let access_control_release_result = self.access_control.release(&AccessControlRelease { id: resource_id });
-        if access_control_release_result.ok() {
-            return ControllerReleaseResourceResult::ResourceControl(self.resource_control.release(&ResourceControlRelease { resource_id }))
-        }
-        ControllerReleaseResourceResult::AccessControl(access_control_release_result)
+        
+        event!(FUNCTION_LEVEL, result =? access_control_release_result.ok(), "Access Control Release Result");
+
+        ControllerReleaseResourceResult::ResourceControl(self.resource_control.release(&ResourceControlRelease { resource_id }))
     }
 
     /// If `id` owns `resource_id` then allow `access` on whitelist

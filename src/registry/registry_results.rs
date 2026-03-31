@@ -175,7 +175,6 @@ impl From<SingularRegistryOwnResult> for RegistryOwnResult {
 pub enum RegistryReleaseResourceResult {
     Ok,
     Err,
-    Lists{whitelist_result: bool, blacklist_result: bool},
     OwnershipDenied,
     VerificationFailure
 }
@@ -195,17 +194,6 @@ impl From<SingularRegistryReleaseResourceResult> for RegistryReleaseResourceResu
                                                 match result {
                                                     true => Self::Ok,
                                                     false => Self::Err,
-                                                }
-                                            },
-                                        }
-                                    },
-                                    ControllerReleaseResourceResult::AccessControl(access_control_release_result) => {
-                                        match access_control_release_result {
-                                            AccessControlReleaseResult::Lists((whitelist, blacklist)) => {
-                                                match (whitelist, blacklist) {
-                                                    (WhitelistReleaseResult::Release(whitelist_result), BlacklistReleaseResult::Release(blacklist_result)) => {
-                                                        Self::Lists{whitelist_result, blacklist_result}
-                                                    },
                                                 }
                                             },
                                         }

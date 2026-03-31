@@ -1,6 +1,6 @@
 #![cfg(feature = "default-implementation")]
 
-use aion_state::prelude::{OwnerRegisterResult, ReceptionRegisterResult, Registry, RegistryRegister, RegistryRegisterResult, AuthenticateRegistrationResult};
+use aion_state::prelude::{Registry, RegistryReleaseResource};
 
 use aion_state::default::prelude::*;
 
@@ -20,17 +20,20 @@ pub fn create_registry() -> Registry<
 pub fn a() {
     let registry = create_registry();
 
-    let id = ReserverId::new("Foo");
+    let id = ReserverId::new("foo");
     let password = Password::from(1);
+    let resource_id = ResourceId::new_label("Bar");
 
-    let input = RegistryRegister {
-        id, password
+    let input = RegistryReleaseResource {
+        id: &id, password: &password, resource_id: &resource_id
     };
-    
-    let register_result = registry.register(input);
 
-    // match register_result {
-    //     RegistryRegisterResult::Ok => todo!(),
-    //     RegistryRegisterResult::Err => todo!(),
-    // }
+    let result = registry.release_resource(&input);
+
+    match result {
+        aion_state::prelude::RegistryReleaseResourceResult::Ok => todo!(),
+        aion_state::prelude::RegistryReleaseResourceResult::Err => todo!(),
+        aion_state::prelude::RegistryReleaseResourceResult::OwnershipDenied => todo!(),
+        aion_state::prelude::RegistryReleaseResourceResult::VerificationFailure => todo!(),
+    }
 }

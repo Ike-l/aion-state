@@ -6,7 +6,6 @@ pub enum ControllerOwnResult {
 
 pub enum ControllerReleaseResourceResult {
     ResourceControl(ResourceControlReleaseResult),
-    AccessControl(AccessControlReleaseResult),
     Denied
 }
 
