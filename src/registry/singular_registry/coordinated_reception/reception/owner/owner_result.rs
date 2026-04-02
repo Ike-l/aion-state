@@ -36,13 +36,16 @@ pub enum OwnerBlacklistAllowResult<Password> {
 }
 
 pub enum OwnerCheckAccessResult {
-    Controller(ControllerCheckAccessResult)
+    Controller(ControllerCheckAccessResult),
+    Denied(AuthenticationResult),
+    NeedIdPassword,
 }
 
 impl OwnerCheckAccessResult {
     pub fn ok(&self) -> bool {
         match self {
             OwnerCheckAccessResult::Controller(controller_check_access_result) => controller_check_access_result.ok(),
+            _ => false
         }
     }
 }

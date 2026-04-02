@@ -73,7 +73,8 @@ pub enum SingularRegistryAcquireAccessResult<AccessResult> {
 }
 
 pub enum SingularRegistrySaferReplacementResult<ReplacementResult> {
-    AutomatedRegistry(ManualRegistryReplacementResult<ReplacementResult>)
+    AutomatedRegistry(ManualRegistryReplacementResult<ReplacementResult>),
+    Reception(ReceptionCheckAccessResult)
 }
 
 pub enum SingularRegistryContainsResourceResult {

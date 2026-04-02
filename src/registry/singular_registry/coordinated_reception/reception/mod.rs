@@ -171,12 +171,12 @@ impl<
     pub fn check_access(
         &self,
         ReceptionCheckAccess {
-            id, resource_id, access, password
-        }: &ReceptionCheckAccess<'_, OS::Id, AS::ValueId, AS::Access, BS::Password>
+            id, id_password, resource_id, access, password
+        }: &ReceptionCheckAccess<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
     ) -> ReceptionCheckAccessResult {
         trace_function!("Reception Check Access");
 
-        let check_owner = self.owner.check_access(&OwnerCheckAccess { id: *id, resource_id, access, password: *password });
+        let check_owner = self.owner.check_access(&OwnerCheckAccess { id: *id, id_password: *id_password, resource_id, access, password: *password });
         if check_owner.ok() {
             return ReceptionCheckAccessResult::Host(self.host.check_access(&HostCheckAccess { reserver_id: *id, access_id: *resource_id, access }))
         }
@@ -206,12 +206,12 @@ impl<
     pub fn record_access(
         &mut self,
         ReceptionRecordAccess {
-            id, resource_id, access, password
-        }: ReceptionRecordAccess<'_, OS::Id, AS::ValueId, AS::Access, BS::Password>
+            id, id_password, resource_id, access, password
+        }: ReceptionRecordAccess<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
     ) -> ReceptionRecordAccessResult {
         trace_function!("Reception Record Access");
 
-        let check_owner = self.owner.check_access(&OwnerCheckAccess { id, resource_id: &resource_id, access: &access, password });
+        let check_owner = self.owner.check_access(&OwnerCheckAccess { id, id_password, resource_id: &resource_id, access: &access, password });
         if check_owner.ok() {
             return ReceptionRecordAccessResult::Host(self.host.record_access(HostRecordAccess { reserver_id: id, access_id: resource_id, access}))
         }

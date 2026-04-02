@@ -46,8 +46,9 @@ pub struct SingularRegistryUnallow<'a, Id, Password, ResourceId, Access> {
     pub access: &'a Access
 }
 
-pub struct SingularRegistryCheckAccess<'a, Id, ResourceId, Access, Password> {
+pub struct SingularRegistryCheckAccess<'a, Id, IdPassword, ResourceId, Access, Password> {
     pub id: Option<&'a Id>,
+    pub id_password: Option<&'a IdPassword>,
     pub resource_id: &'a ResourceId,
     pub access: &'a Access,
     pub password: Option<&'a Password>
@@ -77,17 +78,21 @@ pub struct SingularRegistryDrainReservations<'a, Id, Password> {
     pub password: &'a Password
 }
 
-pub struct SingularRegistryAcquireAccess<'a, Id, ResourceId, Access, Password> {
+pub struct SingularRegistryAcquireAccess<'a, Id, IdPassword, ResourceId, Access, Password> {
     pub id: Option<&'a Id>,
+    pub id_password: Option<&'a IdPassword>,
     pub resource_id: ResourceId,
     pub access: Access,
     pub password: Option<&'a Password>
 }
 
-pub struct SingularRegistrySaferReplacement<'a, Access, ResourceId, Resource> {
+pub struct SingularRegistrySaferReplacement<'a, Id, IdPassword, Access, ResourceId, Resource, Password> {
+    pub id: Option<&'a Id>,
+    pub id_password: Option<&'a IdPassword>,
     pub access: &'a Access,
     pub resource_id: ResourceId,
-    pub resource: Option<Resource>
+    pub resource: Option<Resource>,
+    pub password: Option<&'a Password>,
 }
 
 pub struct SingularRegistryContainsResource<'a, ResourceId> {

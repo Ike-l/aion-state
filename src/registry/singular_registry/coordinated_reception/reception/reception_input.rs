@@ -46,8 +46,9 @@ pub struct ReceptionReleaseResourceAll<'a, Id, Password, ResourceId> {
     pub inputs: Vec<&'a ResourceId>,
 }
 
-pub struct ReceptionCheckAccess<'a, Id, ResourceId, Access, Password> {
+pub struct ReceptionCheckAccess<'a, Id, IdPassword, ResourceId, Access, Password> {
     pub id: Option<&'a Id>,
+    pub id_password: Option<&'a IdPassword>,
     pub resource_id: &'a ResourceId,
     pub access: &'a Access,
     pub password: Option<&'a Password>
@@ -58,8 +59,9 @@ pub struct ReceptionReleaseAccess<'a, ResourceId, Access> {
     pub access: &'a Access
 }
 
-pub struct ReceptionRecordAccess<'a, Id, ResourceId, Access, Password> {
+pub struct ReceptionRecordAccess<'a, Id, IdPassword, ResourceId, Access, Password> {
     pub id: Option<&'a Id>,
+    pub id_password: Option<&'a IdPassword>,
     pub resource_id: ResourceId,
     pub access: Access,
     pub password: Option<&'a Password>

@@ -112,7 +112,7 @@ impl<
 
     pub fn check_access(
         &self,
-        input: &ReceptionCheckAccess<'_, OS::Id, AS::ValueId, AS::Access, BS::Password>
+        input: &ReceptionCheckAccess<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
     ) -> ReceptionCheckAccessResult {
         trace_function!("Coordinated Reception Check Access");
 
@@ -130,7 +130,7 @@ impl<
 
     pub fn record_access(
         &self,
-        input: ReceptionRecordAccess<'_, OS::Id, AS::ValueId, AS::Access, BS::Password>
+        input: ReceptionRecordAccess<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
     ) -> ReceptionRecordAccessResult {
         trace_function!("Coordinated Reception Record Access");
 
