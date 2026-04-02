@@ -102,7 +102,7 @@ impl<
 
         let accesses_result = self.accesses.check_access(&AccessesCheckAccess { access_id: &access_id, access: &access });
 
-        if !accesses_result.err() {
+        if accesses_result.ok() {
             return HostReservationResult::Reservations(self.reservations.reserve(ReservationsReservation { reserver_id, access_id, access }))
         }
 

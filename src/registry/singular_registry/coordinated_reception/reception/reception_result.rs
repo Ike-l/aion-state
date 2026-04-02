@@ -52,13 +52,6 @@ impl ReceptionCheckAccessResult {
             _ => false
         }
     }
-
-    pub fn err(&self) -> bool {
-        match self {
-            Self::Denied(_) => true,
-            Self::Host(host) => host.err()
-        }
-    }
 }
 
 pub enum ReceptionReleaseAccessResult {

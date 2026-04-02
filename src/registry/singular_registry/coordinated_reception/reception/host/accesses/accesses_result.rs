@@ -5,11 +5,11 @@ pub enum AccessesCheckAccessResult {
 
 impl AccessesCheckAccessResult {
     pub fn ok(&self) -> bool {
-        matches!(self, Self::Ok(true))
-    }
-
-    pub fn err(&self) -> bool {
-        matches!(self, Self::Ok(false))
+        match self {
+            Self::Ok(true) | 
+            Self::NoCurrentAccess => true,
+            _ => false
+        }
     }
 }
 

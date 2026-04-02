@@ -223,7 +223,7 @@ impl<
 
         let check_reception = self.reception.check_access(&ReceptionCheckAccess { id, id_password, resource_id: &resource_id, access: &access, password });
 
-        if !check_reception.err() {
+        if check_reception.ok() {
             let registry_result = unsafe { self.automated_registry.acquire_access(ManualRegistryAccessInput { value_id: &resource_id, access: &access }) };
     
             if registry_result.ok() {
@@ -251,7 +251,7 @@ impl<
 
         let reception_result = self.reception.check_access(&ReceptionCheckAccess { id, id_password, resource_id: &resource_id, access, password });
 
-        if !reception_result.err() {
+        if reception_result.ok() {
             return SingularRegistrySaferReplacementResult::AutomatedRegistry(unsafe { self.automated_registry.safer_replace(ManualRegistryReplacementInput { access, value_id: resource_id, value: resource }) })
         }
 

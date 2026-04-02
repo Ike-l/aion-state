@@ -654,7 +654,7 @@ impl From<SingularRegistryReservationResult> for RegistryReservationResult {
                                 }
                             },
                             crate::prelude::HostReservationResult::AccessConflict(accesses_check_access_result) => {
-                                assert!(accesses_check_access_result.err());
+                                assert!(!accesses_check_access_result.ok());
                                 
                                 Self::AccessConflict
                             }
@@ -771,7 +771,7 @@ impl<AccessResult> From<SingularRegistryAcquireAccessResult<AccessResult>> for R
                     ReceptionCheckAccessResult::Host(host_check_access_result) => {
                         match host_check_access_result {
                             HostCheckAccessResult::Accesses(accesses_check_access_result) => {
-                                assert!(accesses_check_access_result.err());
+                                assert!(!accesses_check_access_result.ok());
 
                                 Self::AccessConflict
                             },
@@ -876,7 +876,7 @@ impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementR
                     ReceptionCheckAccessResult::Host(host_check_access_result) => {
                         match host_check_access_result {
                             HostCheckAccessResult::Accesses(accesses_check_access_result) => {
-                                assert!(accesses_check_access_result.err());
+                                assert!(!accesses_check_access_result.ok());
 
                                 Self::AccessConflict
                             },
