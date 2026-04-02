@@ -223,7 +223,7 @@ impl<
 
         let check_reception = self.reception.check_access(&ReceptionCheckAccess { id, resource_id: &resource_id, access: &access, password });
 
-        if check_reception.ok() {
+        if !check_reception.err() {
             let registry_result = unsafe { self.automated_registry.acquire_access(ManualRegistryAccessInput { value_id: &resource_id, access: &access }) };
     
             if registry_result.ok() {

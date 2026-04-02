@@ -12,6 +12,13 @@ impl HostCheckAccessResult {
             _ => false
         }
     }
+
+    pub fn err(&self) -> bool {
+        match self {
+            Self::ReservationConflict => true,
+            Self::Accesses(accesses) => accesses.err()
+        }
+    }
 }
 
 pub struct HostRecordAccessResult {

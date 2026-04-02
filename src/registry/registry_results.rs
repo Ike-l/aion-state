@@ -1,3 +1,5 @@
+use std::result;
+
 use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistReleaseResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistReleaseResult, WhitelistUnallowResult};
 
 pub enum RegistryRegisterResult {
@@ -728,12 +730,84 @@ impl<T> From<SingularRegistryDrainReservationsResult<T>> for RegistryDrainReserv
 }
 
 pub enum RegistryAcquireAccessResult<AccessResult> {
-    Found(AccessResult)
+    Found(AccessResult),
+    NotFound,
+    AccessConflict,
+    ReservationConflict,
+    VerificationFailure,
+    WhitelistDenied,
+    BlacklistDenied
 }
 
 impl<AccessResult> From<SingularRegistryAcquireAccessResult<AccessResult>> for RegistryAcquireAccessResult<AccessResult> {
     fn from(value: SingularRegistryAcquireAccessResult<AccessResult>) -> Self {
-        todo!()
+        match value {
+            SingularRegistryAcquireAccessResult::AutomatedRegistry(manual_registry_access_result) => {
+                match manual_registry_access_result {
+                    crate::prelude::ManualRegistryAccessResult::Found(result) => {
+                        Self::Found(result)
+                    },
+                    crate::prelude::ManualRegistryAccessResult::NotFound => {
+                        Self::NotFound
+                    },
+                }
+            },
+            SingularRegistryAcquireAccessResult::Reception(reception_check_access_result) => {
+                match reception_check_access_result {
+                    ReceptionCheckAccessResult::Host(host_check_access_result) => {
+                        match host_check_access_result {
+                            HostCheckAccessResult::Accesses(accesses_check_access_result) => {
+                                assert!(accesses_check_access_result.err());
+
+                                Self::AccessConflict
+                            },
+                            HostCheckAccessResult::ReservationConflict => {
+                                Self::ReservationConflict
+                            },
+                        }
+                    },
+                    ReceptionCheckAccessResult::Denied(owner_check_access_result) => {
+                        match owner_check_access_result {
+                            OwnerCheckAccessResult::Controller(controller_check_access_result) => {
+                                match controller_check_access_result {
+                                    ControllerCheckAccessResult::Verification(resource_control_check_owner_result) => {
+                                        match resource_control_check_owner_result {
+                                            ResourceControlCheckOwnerResult::Verification(result) => {
+                                                assert_eq!(result, false);
+
+                                                Self::VerificationFailure
+                                            },
+                                        }
+                                    },
+                                    ControllerCheckAccessResult::AccessControl(access_control_check_access_result) => {
+                                        match access_control_check_access_result {
+                                            AccessControlCheckAccessResult::Whitelist(whitelist_check_access_result) => {
+                                                match whitelist_check_access_result {
+                                                    WhitelistCheckAccessResult::Allowed(result) => {
+                                                        assert_eq!(result, false);
+
+                                                        Self::WhitelistDenied
+                                                    },
+                                                }
+                                            },
+                                            AccessControlCheckAccessResult::Blacklist(blacklist_check_access_result) => {
+                                                match blacklist_check_access_result {
+                                                    BlacklistCheckAccessResult::Verification(result) => {
+                                                        assert_eq!(result, false);
+
+                                                        Self::BlacklistDenied
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+        }
     }
 }
 
