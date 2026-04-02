@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlReleaseAllResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistReleaseAllResult, BlacklistReleaseResult, ControllerBlacklistAllowResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, OwnerBlacklistAllowResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionBlacklistAllowResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
+use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistReleaseResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistReleaseResult, WhitelistUnallowResult};
 
 pub enum RegistryRegisterResult {
     Ok,
@@ -335,15 +335,15 @@ impl From<SingularRegistryWhitelistAllowResult> for RegistryWhitelistAllowResult
         match value {
             SingularRegistryWhitelistAllowResult::Reception(reception_whitelist_allow_result) => {
                 match reception_whitelist_allow_result {
-                    crate::prelude::ReceptionWhitelistAllowResult::Owner(owner_whitelist_allow_result) => {
+                    ReceptionWhitelistAllowResult::Owner(owner_whitelist_allow_result) => {
                         match owner_whitelist_allow_result {
-                            crate::prelude::OwnerWhitelistAllowResult::Controller(controller_whitelist_allow_result) => {
+                            OwnerWhitelistAllowResult::Controller(controller_whitelist_allow_result) => {
                                 match controller_whitelist_allow_result {
-                                    crate::prelude::ControllerWhitelistAllowResult::Whitelist(access_control_whitelist_allow_result) => {
+                                    ControllerWhitelistAllowResult::Whitelist(access_control_whitelist_allow_result) => {
                                         match access_control_whitelist_allow_result {
-                                            crate::prelude::AccessControlWhitelistAllowResult::Whitelist(whitelist_allow_result) => {
+                                            AccessControlWhitelistAllowResult::Whitelist(whitelist_allow_result) => {
                                                 match whitelist_allow_result {
-                                                    crate::prelude::WhitelistAllowResult::Allow(result) => {
+                                                    WhitelistAllowResult::Allow(result) => {
                                                         match result {
                                                             true => Self::Ok,
                                                             false => Self::Err,
@@ -353,12 +353,12 @@ impl From<SingularRegistryWhitelistAllowResult> for RegistryWhitelistAllowResult
                                             },
                                         }
                                     },
-                                    crate::prelude::ControllerWhitelistAllowResult::Denied => {
+                                    ControllerWhitelistAllowResult::Denied => {
                                         Self::OwnershipDenied
                                     },
                                 }
                             },
-                            crate::prelude::OwnerWhitelistAllowResult::Denied(authentication_result) => {
+                            OwnerWhitelistAllowResult::Denied(authentication_result) => {
                                 match authentication_result {
                                     AuthenticationResult::Verification(result) => {
                                         assert_eq!(result, false);
@@ -387,15 +387,15 @@ impl From<SingularRegistryBlacklistUnallowResult> for RegistryBlacklistUnallowRe
         match value {
             SingularRegistryBlacklistUnallowResult::Reception(reception_blacklist_unallow_result) => {
                 match reception_blacklist_unallow_result {
-                    crate::prelude::ReceptionBlacklistUnallowResult::Owner(owner_blacklist_unallow_result) => {
+                    ReceptionBlacklistUnallowResult::Owner(owner_blacklist_unallow_result) => {
                         match owner_blacklist_unallow_result {
-                            crate::prelude::OwnerBlacklistUnallowResult::Controller(controller_blacklist_unallow_result) => {
+                            OwnerBlacklistUnallowResult::Controller(controller_blacklist_unallow_result) => {
                                 match controller_blacklist_unallow_result {
-                                    crate::prelude::ControllerBlacklistUnallowResult::Blacklist(access_control_blacklist_unallow_result) => {
+                                    ControllerBlacklistUnallowResult::Blacklist(access_control_blacklist_unallow_result) => {
                                         match access_control_blacklist_unallow_result {
-                                            crate::prelude::AccessControlBlacklistUnallowResult::Blacklist(blacklist_unallow_result) => {
+                                            AccessControlBlacklistUnallowResult::Blacklist(blacklist_unallow_result) => {
                                                 match blacklist_unallow_result {
-                                                    crate::prelude::BlacklistUnallowResult::Unallow(result) => {
+                                                    BlacklistUnallowResult::Unallow(result) => {
                                                         match result {
                                                             true => Self::Ok,
                                                             false => Self::Err,
@@ -405,12 +405,12 @@ impl From<SingularRegistryBlacklistUnallowResult> for RegistryBlacklistUnallowRe
                                             },
                                         }
                                     },
-                                    crate::prelude::ControllerBlacklistUnallowResult::Denied => {
+                                    ControllerBlacklistUnallowResult::Denied => {
                                         Self::OwnershipDenied
                                     },
                                 }
                             },
-                            crate::prelude::OwnerBlacklistUnallowResult::Denied(authentication_result) => {
+                            OwnerBlacklistUnallowResult::Denied(authentication_result) => {
                                 match authentication_result {
                                     AuthenticationResult::Verification(result) => {
                                         assert_eq!(result, false);
@@ -439,15 +439,15 @@ impl From<SingularRegistryWhitelistUnallowResult> for RegistryWhitelistUnallowRe
         match value {
             SingularRegistryWhitelistUnallowResult::Reception(reception_whitelist_unallow_result) => {
                 match reception_whitelist_unallow_result {
-                    crate::prelude::ReceptionWhitelistUnallowResult::Owner(owner_whitelist_unallow_result) => {
+                    ReceptionWhitelistUnallowResult::Owner(owner_whitelist_unallow_result) => {
                         match owner_whitelist_unallow_result {
-                            crate::prelude::OwnerWhitelistUnallowResult::Controller(controller_whitelist_unallow_result) => {
+                            OwnerWhitelistUnallowResult::Controller(controller_whitelist_unallow_result) => {
                                 match controller_whitelist_unallow_result {
-                                    crate::prelude::ControllerWhitelistUnallowResult::Whitelist(access_control_whitelist_unallow_result) => {
+                                    ControllerWhitelistUnallowResult::Whitelist(access_control_whitelist_unallow_result) => {
                                         match access_control_whitelist_unallow_result {
-                                            crate::prelude::AccessControlWhitelistUnallowResult::Whitelist(whitelist_unallow_result) => {
+                                            AccessControlWhitelistUnallowResult::Whitelist(whitelist_unallow_result) => {
                                                 match whitelist_unallow_result {
-                                                    crate::prelude::WhitelistUnallowResult::Unallow(result) => {
+                                                    WhitelistUnallowResult::Unallow(result) => {
                                                         match result {
                                                             true => Self::Ok,
                                                             false => Self::Err,
@@ -457,12 +457,12 @@ impl From<SingularRegistryWhitelistUnallowResult> for RegistryWhitelistUnallowRe
                                             },
                                         }
                                     },
-                                    crate::prelude::ControllerWhitelistUnallowResult::Denied => {
+                                    ControllerWhitelistUnallowResult::Denied => {
                                         Self::OwnershipDenied
                                     },
                                 }
                             },
-                            crate::prelude::OwnerWhitelistUnallowResult::Denied(authentication_result) => {
+                            OwnerWhitelistUnallowResult::Denied(authentication_result) => {
                                 match authentication_result {
                                     AuthenticationResult::Verification(result) => {
                                         assert_eq!(result, false);
@@ -495,52 +495,52 @@ impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
         match value {
             SingularRegistryCheckAccessResult::Reception(reception_check_access_result) => {
                 match reception_check_access_result {
-                    crate::prelude::ReceptionCheckAccessResult::Host(host_check_access_result) => {
+                    ReceptionCheckAccessResult::Host(host_check_access_result) => {
                         match host_check_access_result {
-                            crate::prelude::HostCheckAccessResult::Accesses(accesses_check_access_result) => {
+                            HostCheckAccessResult::Accesses(accesses_check_access_result) => {
                                 match accesses_check_access_result {
-                                    crate::prelude::AccessesCheckAccessResult::Ok(result) => {
+                                    AccessesCheckAccessResult::Ok(result) => {
                                         assert_eq!(result, false);
 
                                         Self::Err
                                     },
-                                    crate::prelude::AccessesCheckAccessResult::NoCurrentAccess => {
+                                    AccessesCheckAccessResult::NoCurrentAccess => {
                                         Self::NoCurrentAccess
                                     },
                                 }
                             },
-                            crate::prelude::HostCheckAccessResult::ReservationConflict => {
+                            HostCheckAccessResult::ReservationConflict => {
                                 Self::ReservationConflict
                             },
                         }
                     },
-                    crate::prelude::ReceptionCheckAccessResult::Denied(owner_check_access_result) => {
+                    ReceptionCheckAccessResult::Denied(owner_check_access_result) => {
                         match owner_check_access_result {
-                            crate::prelude::OwnerCheckAccessResult::Controller(controller_check_access_result) => {
+                            OwnerCheckAccessResult::Controller(controller_check_access_result) => {
                                 match controller_check_access_result {
-                                    crate::prelude::ControllerCheckAccessResult::Verification(resource_control_check_owner_result) => {
+                                    ControllerCheckAccessResult::Verification(resource_control_check_owner_result) => {
                                         match resource_control_check_owner_result {
-                                            crate::prelude::ResourceControlCheckOwnerResult::Verification(result) => {
+                                            ResourceControlCheckOwnerResult::Verification(result) => {
                                                 assert_eq!(result, false);
 
                                                 Self::VerificationFailure
                                             },
                                         }
                                     },
-                                    crate::prelude::ControllerCheckAccessResult::AccessControl(access_control_check_access_result) => {
+                                    ControllerCheckAccessResult::AccessControl(access_control_check_access_result) => {
                                         match access_control_check_access_result {
-                                            crate::prelude::AccessControlCheckAccessResult::Whitelist(whitelist_check_access_result) => {
+                                            AccessControlCheckAccessResult::Whitelist(whitelist_check_access_result) => {
                                                 match whitelist_check_access_result {
-                                                    crate::prelude::WhitelistCheckAccessResult::Allowed(result) => {
+                                                    WhitelistCheckAccessResult::Allowed(result) => {
                                                         assert_eq!(result, false);
 
                                                         Self::WhitelistDenied
                                                     },
                                                 }
                                             },
-                                            crate::prelude::AccessControlCheckAccessResult::Blacklist(blacklist_check_access_result) => {
+                                            AccessControlCheckAccessResult::Blacklist(blacklist_check_access_result) => {
                                                 match blacklist_check_access_result {
-                                                    crate::prelude::BlacklistCheckAccessResult::Verification(result) => {
+                                                    BlacklistCheckAccessResult::Verification(result) => {
                                                         assert_eq!(result, false);
 
                                                         Self::BlacklistDenied
