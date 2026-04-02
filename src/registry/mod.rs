@@ -142,7 +142,7 @@ impl<
 
     pub fn check_access(
         &self,
-        input: &RegistryCheckAccess<'_, OS::Id, S::ValueId, AS::Access, BS::Password>
+        input: &RegistryCheckAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> RegistryCheckAccessResult {
         trace_function!("Registry Check Access");
 
@@ -203,7 +203,7 @@ impl<
 
     pub fn acquire_access(
         &self,
-        input: RegistryAcquireAccess<'_, OS::Id, S::ValueId, AS::Access, BS::Password>
+        input: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> RegistryAcquireAccessResult<<AS::Access as Accessor>::AccessResult<'_>> {
         trace_function!("Registry Acquire Access");
 
@@ -214,7 +214,7 @@ impl<
 
     pub unsafe fn safer_replace(
         &self,
-        input: RegistrySaferReplacement<'_, AS::Access, S::ValueId, <AS::Access as Accessor>::Value>
+        input: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <AS::Access as Accessor>::Value, BS::Password>
     ) -> RegistrySaferReplacementResult<<AS::Access as Accessor>::StoredValue>
         where
             <AS::Access as Accessor>::StoredValue: StableAddress
