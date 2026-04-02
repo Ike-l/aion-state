@@ -817,7 +817,7 @@ pub enum RegistrySaferReplacementResult<ReplacementResult> {
 
 impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementResult>> for RegistrySaferReplacementResult<ReplacementResult> {
     fn from(value: SingularRegistrySaferReplacementResult<ReplacementResult>) -> Self {
-        todo!()
+        
     }
 }
 
