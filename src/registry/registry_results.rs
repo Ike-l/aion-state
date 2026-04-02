@@ -606,12 +606,62 @@ impl From<SingularRegistryReleaseAccessResult> for RegistryReleaseAccessResult {
 }
 
 pub enum RegistryReservationResult {
-
+    Ok,
+    OkNew,
+    ReservationConflict,
+    AccessConflict,
+    VerificationFailure
 }
 
 impl From<SingularRegistryReservationResult> for RegistryReservationResult {
     fn from(value: SingularRegistryReservationResult) -> Self {
-        todo!()
+        match value {
+            SingularRegistryReservationResult::Reception(reception_reservation_result) => {
+                match reception_reservation_result {
+                    crate::prelude::ReceptionReservationResult::Host(host_reservation_result) => {
+                        match host_reservation_result {
+                            crate::prelude::HostReservationResult::Reservations(reservations_reserve_result) => {
+                                match reservations_reserve_result {
+                                    crate::prelude::ReservationsReserveResult::FoundReserver => {
+                                        Self::Ok
+                                    },
+                                    crate::prelude::ReservationsReserveResult::FirstReservation => {
+                                        Self::OkNew
+                                    },
+                                    crate::prelude::ReservationsReserveResult::Reservations(reservations_check_access_result) => {
+                                        match reservations_check_access_result {
+                                            crate::prelude::ReservationsCheckAccessResult::Ok(result) => {
+                                                assert_eq!(result, false);
+
+                                                Self::ReservationConflict
+                                            },
+                                        }
+                                    },
+                                }
+                            },
+                            crate::prelude::HostReservationResult::AccessConflict(accesses_check_access_result) => {
+                                assert!(accesses_check_access_result.err());
+                                
+                                Self::AccessConflict
+                            }
+                        }
+                    },
+                    crate::prelude::ReceptionReservationResult::Denied(owner_authentication_result) => {
+                        match owner_authentication_result {
+                            crate::prelude::OwnerAuthenticationResult::Authenticator(authentication_result) => {
+                                match authentication_result {
+                                    AuthenticationResult::Verification(result) => {
+                                        assert_eq!(result, false);
+
+                                        Self::VerificationFailure
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+        }
     }
 }
 

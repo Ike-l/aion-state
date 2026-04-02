@@ -92,9 +92,6 @@ impl<
         HostUnreserveResult::Reservations(self.reservations.unreserve(&ReservationsUnreserve { reserver_id, access_id, access }))
     }
 
-    /// Simply a `pass through` function
-    /// 
-    /// `Accesses` semantics do not apply to `reservations`
     pub fn reserve(
         &mut self,
         HostReservation {
@@ -103,7 +100,13 @@ impl<
     ) -> HostReservationResult {
         trace_function!("Host Reserving");
 
-        HostReservationResult::Reservations(self.reservations.reserve(ReservationsReservation { reserver_id, access_id, access }))
+        let accesses_result = self.accesses.check_access(&AccessesCheckAccess { access_id: &access_id, access: &access });
+
+        if !accesses_result.err() {
+            return HostReservationResult::Reservations(self.reservations.reserve(ReservationsReservation { reserver_id, access_id, access }))
+        }
+
+        HostReservationResult::AccessConflict(accesses_result)
     }
 
     pub fn drain_reservations(

@@ -14,7 +14,8 @@ impl ReservationsCheckAccessResult {
 
 pub enum ReservationsReserveResult {
     FoundReserver,
-    FirstReservation
+    FirstReservation,
+    Reservations(ReservationsCheckAccessResult)
 }
 
 pub enum ReservationsUnreserveResult {

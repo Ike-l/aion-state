@@ -7,6 +7,10 @@ impl AccessesCheckAccessResult {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Ok(true))
     }
+
+    pub fn err(&self) -> bool {
+        matches!(self, Self::Ok(false))
+    }
 }
 
 pub enum AccessesRecordAccessResult {

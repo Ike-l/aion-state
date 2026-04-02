@@ -78,6 +78,12 @@ impl<
     ) -> ReservationsReserveResult {
         trace_function!("Reservations Reserve");
 
+        let reservations_result = self.check_access(&ReservationsCheckAccess { reserver_id: Some(&reserver_id), access_id: &access_id, access: &access });
+
+        if !reservations_result.ok() {
+            return ReservationsReserveResult::Reservations(reservations_result)
+        }
+
         let input = AccessesRecordAccess { access, access_id };
         if let Some(access_map) = self.reservation_storage.get_mut(&reserver_id) {
             access_map.record_access(input);
