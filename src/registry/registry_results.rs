@@ -480,12 +480,88 @@ impl From<SingularRegistryWhitelistUnallowResult> for RegistryWhitelistUnallowRe
 }
 
 pub enum RegistryCheckAccessResult {
-
+    Err,
+    NoCurrentAccess,
+    ReservationConflict,
+    VerificationFailure,
+    WhitelistDenied,
+    BlacklistDenied,
+    ContainsResource,
+    MissingResource,
 }
 
 impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
     fn from(value: SingularRegistryCheckAccessResult) -> Self {
-        todo!()
+        match value {
+            SingularRegistryCheckAccessResult::Reception(reception_check_access_result) => {
+                match reception_check_access_result {
+                    crate::prelude::ReceptionCheckAccessResult::Host(host_check_access_result) => {
+                        match host_check_access_result {
+                            crate::prelude::HostCheckAccessResult::Accesses(accesses_check_access_result) => {
+                                match accesses_check_access_result {
+                                    crate::prelude::AccessesCheckAccessResult::Ok(result) => {
+                                        assert_eq!(result, false);
+
+                                        Self::Err
+                                    },
+                                    crate::prelude::AccessesCheckAccessResult::NoCurrentAccess => {
+                                        Self::NoCurrentAccess
+                                    },
+                                }
+                            },
+                            crate::prelude::HostCheckAccessResult::ReservationConflict => {
+                                Self::ReservationConflict
+                            },
+                        }
+                    },
+                    crate::prelude::ReceptionCheckAccessResult::Denied(owner_check_access_result) => {
+                        match owner_check_access_result {
+                            crate::prelude::OwnerCheckAccessResult::Controller(controller_check_access_result) => {
+                                match controller_check_access_result {
+                                    crate::prelude::ControllerCheckAccessResult::Verification(resource_control_check_owner_result) => {
+                                        match resource_control_check_owner_result {
+                                            crate::prelude::ResourceControlCheckOwnerResult::Verification(result) => {
+                                                assert_eq!(result, false);
+
+                                                Self::VerificationFailure
+                                            },
+                                        }
+                                    },
+                                    crate::prelude::ControllerCheckAccessResult::AccessControl(access_control_check_access_result) => {
+                                        match access_control_check_access_result {
+                                            crate::prelude::AccessControlCheckAccessResult::Whitelist(whitelist_check_access_result) => {
+                                                match whitelist_check_access_result {
+                                                    crate::prelude::WhitelistCheckAccessResult::Allowed(result) => {
+                                                        assert_eq!(result, false);
+
+                                                        Self::WhitelistDenied
+                                                    },
+                                                }
+                                            },
+                                            crate::prelude::AccessControlCheckAccessResult::Blacklist(blacklist_check_access_result) => {
+                                                match blacklist_check_access_result {
+                                                    crate::prelude::BlacklistCheckAccessResult::Verification(result) => {
+                                                        assert_eq!(result, false);
+
+                                                        Self::BlacklistDenied
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+            SingularRegistryCheckAccessResult::AutomatedRegistry(result) => {
+                match result {
+                    true => Self::ContainsResource,
+                    false => Self::MissingResource,
+                }
+            },
+        }
     }
 }
 
