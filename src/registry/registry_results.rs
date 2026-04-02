@@ -981,11 +981,19 @@ impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementR
 }
 
 pub enum RegistryContainsResourceResult {
-
+    Some,
+    None
 }
 
 impl From<SingularRegistryContainsResourceResult> for RegistryContainsResourceResult {
     fn from(value: SingularRegistryContainsResourceResult) -> Self {
-        todo!()
+        match value {
+            SingularRegistryContainsResourceResult::AutomatedRegistry(result) => {
+                match result {
+                    true => Self::Some,
+                    false => Self::None,
+                }
+            },
+        }
     }
 }
