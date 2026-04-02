@@ -143,12 +143,12 @@ impl<
     pub fn check_access(
         &self,
         RegistryCheckAccess {
-            id, resource_id, access, password
-        }: &RegistryCheckAccess<'_, OS::Id, S::ValueId, AS::Access, BS::Password>
+            id, id_password, resource_id, access, password
+        }: &RegistryCheckAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> SingularRegistryCheckAccessResult {
         trace_function!("Singular Registry Check Access");
 
-        let reception_result = self.reception.check_access(&ReceptionCheckAccess { id: *id, resource_id, access, password: *password });
+        let reception_result = self.reception.check_access(&ReceptionCheckAccess { id: *id, id_password: *id_password, resource_id, access, password: *password });
 
         if reception_result.ok() {
             return SingularRegistryCheckAccessResult::AutomatedRegistry(self.automated_registry.contains_key(*resource_id))
@@ -216,18 +216,18 @@ impl<
     pub fn acquire_access(
         &self,
         RegistryAcquireAccess {
-            id, resource_id, access, password
-        }: RegistryAcquireAccess<'_, OS::Id, S::ValueId, AS::Access, BS::Password>
+            id, id_password, resource_id, access, password
+        }: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> SingularRegistryAcquireAccessResult<<AS::Access as Accessor>::AccessResult<'_>> {
         trace_function!("Singular Registry Acquire Access");
 
-        let check_reception = self.reception.check_access(&ReceptionCheckAccess { id, resource_id: &resource_id, access: &access, password });
+        let check_reception = self.reception.check_access(&ReceptionCheckAccess { id, id_password, resource_id: &resource_id, access: &access, password });
 
         if !check_reception.err() {
             let registry_result = unsafe { self.automated_registry.acquire_access(ManualRegistryAccessInput { value_id: &resource_id, access: &access }) };
     
             if registry_result.ok() {
-                let reception_result = self.reception.record_access(ReceptionRecordAccess { id, resource_id, access, password });
+                let reception_result = self.reception.record_access(ReceptionRecordAccess { id, id_password, resource_id, access, password });
 
                 assert!(reception_result.ok())
             }
@@ -241,15 +241,21 @@ impl<
     pub unsafe fn safer_replace(
         &self,
         RegistrySaferReplacement {
-            access, resource_id, resource
-        }: RegistrySaferReplacement<'_, AS::Access, S::ValueId, <AS::Access as Accessor>::Value>
+            id, id_password, access, resource_id, resource, password
+        }: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <AS::Access as Accessor>::Value, BS::Password>
     ) -> SingularRegistrySaferReplacementResult<<AS::Access as Accessor>::StoredValue>
         where
             <AS::Access as Accessor>::StoredValue: StableAddress
     {
         trace_function!("Singular Registry Safer Replace");
 
-        SingularRegistrySaferReplacementResult::AutomatedRegistry(unsafe { self.automated_registry.safer_replace(ManualRegistryReplacementInput { access, value_id: resource_id, value: resource }) })
+        let reception_result = self.reception.check_access(&ReceptionCheckAccess { id, id_password, resource_id: &resource_id, access, password });
+
+        if !reception_result.err() {
+            return SingularRegistrySaferReplacementResult::AutomatedRegistry(unsafe { self.automated_registry.safer_replace(ManualRegistryReplacementInput { access, value_id: resource_id, value: resource }) })
+        }
+
+        SingularRegistrySaferReplacementResult::Reception(reception_result)
     }
 
     pub fn contains_resource(
