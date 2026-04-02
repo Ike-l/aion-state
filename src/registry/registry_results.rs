@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
+use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessResult, ManualRegistryReleaseResult, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
 
 pub enum RegistryRegisterResult {
     Ok,
@@ -590,14 +590,14 @@ impl From<SingularRegistryReleaseAccessResult> for RegistryReleaseAccessResult {
         match value {
             SingularRegistryReleaseAccessResult::Reception(reception_release_access_result) => {
                 match reception_release_access_result {
-                    crate::prelude::ReceptionReleaseAccessResult::Host(host_release_access_result) => {
+                    ReceptionReleaseAccessResult::Host(host_release_access_result) => {
                         match host_release_access_result {
-                            crate::prelude::HostReleaseAccessResult::Accesses(accesses_release_result) => {
+                            HostReleaseAccessResult::Accesses(accesses_release_result) => {
                                 match accesses_release_result {
-                                    crate::prelude::AccessesReleaseResult::Split => {
+                                    AccessesReleaseResult::Split => {
                                         Self::Ok
                                     },
-                                    crate::prelude::AccessesReleaseResult::NoCurrentAccess => {
+                                    AccessesReleaseResult::NoCurrentAccess => {
                                         Self::NoCurrentAccess
                                     },
                                 }
@@ -608,7 +608,7 @@ impl From<SingularRegistryReleaseAccessResult> for RegistryReleaseAccessResult {
             },
             SingularRegistryReleaseAccessResult::AutomatedRegistry(manual_registry_release_result) => {
                 match manual_registry_release_result {
-                    crate::prelude::ManualRegistryReleaseResult::Storage(result) => {
+                    ManualRegistryReleaseResult::Storage(result) => {
                         assert_eq!(result, false);
 
                         Self::Err
@@ -632,19 +632,19 @@ impl From<SingularRegistryReservationResult> for RegistryReservationResult {
         match value {
             SingularRegistryReservationResult::Reception(reception_reservation_result) => {
                 match reception_reservation_result {
-                    crate::prelude::ReceptionReservationResult::Host(host_reservation_result) => {
+                    ReceptionReservationResult::Host(host_reservation_result) => {
                         match host_reservation_result {
-                            crate::prelude::HostReservationResult::Reservations(reservations_reserve_result) => {
+                            HostReservationResult::Reservations(reservations_reserve_result) => {
                                 match reservations_reserve_result {
-                                    crate::prelude::ReservationsReserveResult::FoundReserver => {
+                                    ReservationsReserveResult::FoundReserver => {
                                         Self::Ok
                                     },
-                                    crate::prelude::ReservationsReserveResult::FirstReservation => {
+                                    ReservationsReserveResult::FirstReservation => {
                                         Self::OkNew
                                     },
-                                    crate::prelude::ReservationsReserveResult::Reservations(reservations_check_access_result) => {
+                                    ReservationsReserveResult::Reservations(reservations_check_access_result) => {
                                         match reservations_check_access_result {
-                                            crate::prelude::ReservationsCheckAccessResult::Ok(result) => {
+                                            ReservationsCheckAccessResult::Ok(result) => {
                                                 assert_eq!(result, false);
 
                                                 Self::ReservationConflict
@@ -653,16 +653,16 @@ impl From<SingularRegistryReservationResult> for RegistryReservationResult {
                                     },
                                 }
                             },
-                            crate::prelude::HostReservationResult::AccessConflict(accesses_check_access_result) => {
+                            HostReservationResult::AccessConflict(accesses_check_access_result) => {
                                 assert!(!accesses_check_access_result.ok());
                                 
                                 Self::AccessConflict
                             }
                         }
                     },
-                    crate::prelude::ReceptionReservationResult::Denied(owner_authentication_result) => {
+                    ReceptionReservationResult::Denied(owner_authentication_result) => {
                         match owner_authentication_result {
-                            crate::prelude::OwnerAuthenticationResult::Authenticator(authentication_result) => {
+                            OwnerAuthenticationResult::Authenticator(authentication_result) => {
                                 match authentication_result {
                                     AuthenticationResult::Verification(result) => {
                                         assert_eq!(result, false);
@@ -691,30 +691,30 @@ impl From<SingularRegistryUnreserveResult> for RegistryUnreserveResult {
         match value {
             SingularRegistryUnreserveResult::Reception(reception_unreserve_result) => {
                 match reception_unreserve_result {
-                    crate::prelude::ReceptionUnreserveResult::Host(host_unreserve_result) => {
+                    ReceptionUnreserveResult::Host(host_unreserve_result) => {
                         match host_unreserve_result {
-                            crate::prelude::HostUnreserveResult::Reservations(reservations_unreserve_result) => {
+                            HostUnreserveResult::Reservations(reservations_unreserve_result) => {
                                 match reservations_unreserve_result {
-                                    crate::prelude::ReservationsUnreserveResult::Accesses(accesses_release_result) => {
+                                    ReservationsUnreserveResult::Accesses(accesses_release_result) => {
                                         match accesses_release_result {
-                                            crate::prelude::AccessesReleaseResult::Split => {
+                                            AccessesReleaseResult::Split => {
                                                 Self::Ok
                                             },
-                                            crate::prelude::AccessesReleaseResult::NoCurrentAccess => {
+                                            AccessesReleaseResult::NoCurrentAccess => {
                                                 Self::NoReservation
                                             },
                                         }
                                     },
-                                    crate::prelude::ReservationsUnreserveResult::NoReserver => {
+                                    ReservationsUnreserveResult::NoReserver => {
                                         Self::NoReserver
                                     },
                                 }
                             },
                         }
                     },
-                    crate::prelude::ReceptionUnreserveResult::Denied(owner_authentication_result) => {
+                    ReceptionUnreserveResult::Denied(owner_authentication_result) => {
                         match owner_authentication_result {
-                            crate::prelude::OwnerAuthenticationResult::Authenticator(authentication_result) => {
+                            OwnerAuthenticationResult::Authenticator(authentication_result) => {
                                 match authentication_result {
                                     AuthenticationResult::Verification(result) => {
                                         assert_eq!(result, false);
@@ -742,27 +742,27 @@ impl<T> From<SingularRegistryDrainReservationsResult<T>> for RegistryDrainReserv
         match value {
             SingularRegistryDrainReservationsResult::Reception(reception_drain_reservations_result) => {
                 match reception_drain_reservations_result {
-                    crate::prelude::ReceptionDrainReservationsResult::Host(host_drain_reservations_result) => {
+                    ReceptionDrainReservationsResult::Host(host_drain_reservations_result) => {
                         match host_drain_reservations_result {
-                            crate::prelude::HostDrainReservationsResult::Reservations(reservations_drain_reservations_result) => {
+                            HostDrainReservationsResult::Reservations(reservations_drain_reservations_result) => {
                                 match reservations_drain_reservations_result {
-                                    crate::prelude::ReservationsDrainReservationsResult::Accesses(accesses_drain_result) => {
+                                    ReservationsDrainReservationsResult::Accesses(accesses_drain_result) => {
                                         match accesses_drain_result {
-                                            crate::prelude::AccessesDrainResult::Drain(result) => {
+                                            AccessesDrainResult::Drain(result) => {
                                                 Self::Drain(result)
                                             },
                                         }
                                     },
-                                    crate::prelude::ReservationsDrainReservationsResult::NoReserver => {
+                                    ReservationsDrainReservationsResult::NoReserver => {
                                         Self::NoReserver
                                     },
                                 }
                             },
                         }
                     },
-                    crate::prelude::ReceptionDrainReservationsResult::Denied(owner_authentication_result) => {
+                    ReceptionDrainReservationsResult::Denied(owner_authentication_result) => {
                         match owner_authentication_result {
-                            crate::prelude::OwnerAuthenticationResult::Authenticator(authentication_result) => {
+                            OwnerAuthenticationResult::Authenticator(authentication_result) => {
                                 match authentication_result {
                                     AuthenticationResult::Verification(result) => {
                                         assert_eq!(result, false);
@@ -796,10 +796,10 @@ impl<AccessResult> From<SingularRegistryAcquireAccessResult<AccessResult>> for R
         match value {
             SingularRegistryAcquireAccessResult::AutomatedRegistry(manual_registry_access_result) => {
                 match manual_registry_access_result {
-                    crate::prelude::ManualRegistryAccessResult::Found(result) => {
+                    ManualRegistryAccessResult::Found(result) => {
                         Self::Found(result)
                     },
-                    crate::prelude::ManualRegistryAccessResult::NotFound => {
+                    ManualRegistryAccessResult::NotFound => {
                         Self::NotFound
                     },
                 }
@@ -895,16 +895,16 @@ impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementR
         match value {
             SingularRegistrySaferReplacementResult::AutomatedRegistry(manual_registry_replacement_result) => {
                 match manual_registry_replacement_result {
-                    crate::prelude::ManualRegistryReplacementResult::Found(replacement_result) => {
+                    ManualRegistryReplacementResult::Found(replacement_result) => {
                         Self::Found(replacement_result)
                     },
-                    crate::prelude::ManualRegistryReplacementResult::NotFound => {
+                    ManualRegistryReplacementResult::NotFound => {
                         Self::NotFound
                     },
-                    crate::prelude::ManualRegistryReplacementResult::DeniedAccess => {
+                    ManualRegistryReplacementResult::DeniedAccess => {
                         Self::DeniedAccess
                     },
-                    crate::prelude::ManualRegistryReplacementResult::NoOp => {
+                    ManualRegistryReplacementResult::NoOp => {
                         Self::NoOp
                     },
                 }
