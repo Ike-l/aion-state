@@ -26,6 +26,8 @@ impl<
         &self,
         input: ReceptionRegister<OS::Id, OS::Password>
     ) -> ReceptionRegisterResult {
+        trace_function!("Coordinated Reception Register");
+        
         self.reception.write().register(input)
     }
     

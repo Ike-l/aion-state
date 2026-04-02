@@ -5,6 +5,12 @@ pub enum RegistryRegisterResult {
     Err
 }
 
+impl RegistryRegisterResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Ok)
+    }
+}
+
 impl From<SingularRegistryRegisterResult> for RegistryRegisterResult {
     fn from(value: SingularRegistryRegisterResult) -> Self {
         match value {
@@ -177,6 +183,12 @@ pub enum RegistryReleaseResourceResult {
     Err,
     OwnershipDenied,
     VerificationFailure
+}
+
+impl RegistryReleaseResourceResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Ok)
+    }
 }
 
 impl From<SingularRegistryReleaseResourceResult> for RegistryReleaseResourceResult {

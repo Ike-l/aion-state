@@ -1,3 +1,5 @@
+use tracing::{Level, event};
+
 use crate::default::prelude::{AccessResult, Resource, StoredResource};
 
 #[derive(Debug, PartialEq)]
@@ -30,6 +32,8 @@ impl crate::accessor::Accessor for Access {
     type AccessResult<'a> = AccessResult<'a, Resource>;
 
     fn accepts_incoming(&self, incoming_access: &Self) -> bool {
+        event!(Level::TRACE, "Access Accepts Incoming");
+
         match (self.borrow_type(), incoming_access.borrow_type()) {
             (BorrowType::Held, BorrowType::Held) => {
                 match (self, incoming_access) {
@@ -43,10 +47,14 @@ impl crate::accessor::Accessor for Access {
     }
 
     fn can_insert_resource(&self) -> bool {
+        event!(Level::TRACE, "Access Can Insert Resource");
+
         *self == Access::Replace
     }
 
     fn can_remove_resource(&self) -> bool {
+        event!(Level::TRACE, "Access Can Remove Resource");
+
         *self == Access::Replace
     }
 
@@ -54,6 +62,8 @@ impl crate::accessor::Accessor for Access {
         &self, 
         stored_value: &'a mut Self::StoredValue
     ) -> Self::AccessResult<'a> {
+        event!(Level::TRACE, "Access Acquire");
+
         match self {
             Access::Shared(_) => AccessResult::Shared(stored_value.get()),
             Access::Unique => AccessResult::Unique(stored_value.get_mut()),
@@ -65,6 +75,8 @@ impl crate::accessor::Accessor for Access {
         &mut self,
         incoming_access: Self
     ) {
+        event!(Level::TRACE, "Access Merge");
+
         if self.borrow_type() == BorrowType::Instant {
             *self = incoming_access;
             return
@@ -95,6 +107,8 @@ impl crate::accessor::Accessor for Access {
         &mut self,
         other: &Self
     ) {
+        event!(Level::TRACE, "Access Release");
+
         match (self, other) {
             (Access::Shared(n), Access::Shared(m)) => *n -= m,     
             _ => ()
@@ -105,6 +119,8 @@ impl crate::accessor::Accessor for Access {
         &self,
         value: Self::Value
     ) -> Self::StoredValue {
+        event!(Level::TRACE, "Access Insert");
+
         Self::StoredValue::new(value)
     }
 
@@ -112,6 +128,8 @@ impl crate::accessor::Accessor for Access {
         &self,
         stored_value: Self::StoredValue
     ) -> Self::StoredValue {
+        event!(Level::TRACE, "Access Remove");
+
         stored_value
     }
 }

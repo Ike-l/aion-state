@@ -1,5 +1,7 @@
 use std::{collections::HashMap, hash::Hash};
 
+use tracing::{Level, event};
+
 pub struct ControlStorage<Id, ResourceId> {
     inner: HashMap<ResourceId, Id>
 }
@@ -19,6 +21,8 @@ impl<Id: PartialEq, ResourceId: Eq + Hash> crate::prelude::ControlStorage for Co
         id: &Self::Id,
         resource_id: &Self::ResourceId
     ) -> bool {
+        event!(Level::TRACE, "ControlStorage check owner");
+
         self.inner.get(resource_id).is_some_and(|owner| owner == id)
     }
 
@@ -26,6 +30,8 @@ impl<Id: PartialEq, ResourceId: Eq + Hash> crate::prelude::ControlStorage for Co
         &mut self,
         resource_id: &Self::ResourceId
     ) -> bool {
+        event!(Level::TRACE, "ControlStorage release");
+
         self.inner.remove(resource_id).is_some()
     }
 
@@ -34,6 +40,8 @@ impl<Id: PartialEq, ResourceId: Eq + Hash> crate::prelude::ControlStorage for Co
         id: Self::Id,
         resource_id: Self::ResourceId
     ) -> bool {
+        event!(Level::TRACE, "ControlStorage own");
+
         self.inner.insert(resource_id, id);
 
         true
@@ -43,6 +51,8 @@ impl<Id: PartialEq, ResourceId: Eq + Hash> crate::prelude::ControlStorage for Co
         &self,
         resource_id: &Self::ResourceId
     ) -> bool {
+        event!(Level::TRACE, "ControlStorage is owned");
+
         self.inner.contains_key(resource_id)
     }
 
@@ -50,6 +60,8 @@ impl<Id: PartialEq, ResourceId: Eq + Hash> crate::prelude::ControlStorage for Co
         &mut self,
         id: &Self::Id
     ) -> impl Iterator<Item = Self::ResourceId> {
+        event!(Level::TRACE, "ControlStorage release id");
+
         self.inner.extract_if(move |_, owner| owner == id).map(|(resource_id, _)| resource_id)
     }
 }

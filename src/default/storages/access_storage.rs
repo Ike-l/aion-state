@@ -1,5 +1,7 @@
 use std::{collections::HashMap, hash::Hash};
 
+use tracing::{Level, event};
+
 pub struct AccessStorage<ResourceId, Access> {
     inner: HashMap<ResourceId, Access>
 }
@@ -18,6 +20,8 @@ impl<ResourceId: Eq + Hash, Access> crate::prelude::AccessStorage for AccessStor
         &mut self, 
         value_id: &Self::ValueId
     ) -> Option<&mut Self::Access> {
+        event!(Level::TRACE, "AccessStorage get_mut");
+
         self.inner.get_mut(value_id)
     }
 
@@ -25,6 +29,8 @@ impl<ResourceId: Eq + Hash, Access> crate::prelude::AccessStorage for AccessStor
         &self, 
         value_id: &Self::ValueId
     ) -> Option<&Self::Access> {
+        event!(Level::TRACE, "AccessStorage get");
+
         self.inner.get(value_id)
     }
 
@@ -33,6 +39,8 @@ impl<ResourceId: Eq + Hash, Access> crate::prelude::AccessStorage for AccessStor
         value_id: Self::ValueId,
         access: Self::Access
     ) -> Option<Self::Access> {
+        event!(Level::TRACE, "AccessStorage insert");
+
         self.inner.insert(value_id, access)
     }
 
@@ -40,6 +48,8 @@ impl<ResourceId: Eq + Hash, Access> crate::prelude::AccessStorage for AccessStor
         Self::ValueId, 
         Self::Access
     )> {
+        event!(Level::TRACE, "AccessStorage drain");
+
         self.inner.drain()
     }
 }

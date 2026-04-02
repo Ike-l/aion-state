@@ -1,6 +1,7 @@
 use std::{collections::HashMap, hash::Hash};
 
 use rand::{Rng, rngs::ThreadRng};
+use tracing::{Level, event};
 
 pub struct BlacklistStorage<ResourceId, Access, Password> {
     inner: HashMap<ResourceId, Vec<(Access, Password)>>,
@@ -38,6 +39,8 @@ impl<ResourceId, Access, Password:> crate::prelude::BlacklistStorage for Blackli
         access: &Self::Access,
         password: &Self::Password
     ) -> bool {
+        event!(Level::TRACE, "Blacklist check access");
+
         let Some(allowed_accesses) = self.inner.get(id) else { return false };
         allowed_accesses.iter().any(|(allowed_access, access_password)| allowed_access == access && access_password == password)
     }
@@ -47,6 +50,8 @@ impl<ResourceId, Access, Password:> crate::prelude::BlacklistStorage for Blackli
         id: Self::Id,
         access: Self::Access
     ) -> Option<Self::Password> {
+        event!(Level::TRACE, "Blacklist allow");
+
         let generated_password = self.generate_password();
 
         self.inner.entry(id).or_default().push((access, generated_password.clone()));
@@ -59,6 +64,8 @@ impl<ResourceId, Access, Password:> crate::prelude::BlacklistStorage for Blackli
         id: &Self::Id,
         access: &Self::Access
     ) -> bool {
+        event!(Level::TRACE, "Blacklist unallow");
+
         let Some(allowed_accesses) = self.inner.get_mut(id) else { return false };
 
         let Some(position) = allowed_accesses.iter().position(|(allowed_access, _)| allowed_access == access) else { return false };
@@ -72,6 +79,8 @@ impl<ResourceId, Access, Password:> crate::prelude::BlacklistStorage for Blackli
         &mut self,
         id: &Self::Id
     ) -> bool {
+        event!(Level::TRACE, "Blacklist release");
+
         self.inner.remove(id).is_some()
     }
 
@@ -79,6 +88,8 @@ impl<ResourceId, Access, Password:> crate::prelude::BlacklistStorage for Blackli
         &mut self,
         mut ids: impl Iterator<Item = &'a Self::Id>
     ) -> bool where <Self as crate::prelude::BlacklistStorage>::Id: 'a {
+        event!(Level::TRACE, "Blacklist release all");
+
         !ids.any(|resource_id| !self.release(resource_id))
     }
 }

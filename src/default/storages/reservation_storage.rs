@@ -1,5 +1,7 @@
 use std::{collections::HashMap, hash::Hash};
 
+use tracing::{Level, event};
+
 use crate::prelude::Accesses;
 
 pub struct ReservationStorage<ReserverId, AccessStorage> {
@@ -20,6 +22,8 @@ impl<ReserverId: Eq + Hash, AccessStorage> crate::prelude::ReservationStorage fo
         &mut self, 
         key: &Self::ReserverId
     ) -> Option<&mut crate::prelude::Accesses<Self::AccessStorage>> {
+        event!(Level::TRACE, "ReservationStorage get mut");
+
         self.inner.get_mut(key)
     }
 
@@ -28,6 +32,8 @@ impl<ReserverId: Eq + Hash, AccessStorage> crate::prelude::ReservationStorage fo
         key: Self::ReserverId,
         accesses: crate::prelude::Accesses<Self::AccessStorage>
     ) -> Option<crate::prelude::Accesses<Self::AccessStorage>> {
+        event!(Level::TRACE, "ReservationStorage insert");
+
         self.inner.insert(key, accesses)
     }
 
@@ -36,6 +42,8 @@ impl<ReserverId: Eq + Hash, AccessStorage> crate::prelude::ReservationStorage fo
         &'a crate::prelude::Accesses<Self::AccessStorage>
     )> 
         where Self: 'a {
+        event!(Level::TRACE, "ReservationStorage iter");
+
         self.inner.iter()
     }
 }

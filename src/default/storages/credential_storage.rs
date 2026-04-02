@@ -1,5 +1,7 @@
 use std::{collections::HashMap, hash::Hash};
 
+use tracing::{Level, event};
+
 pub struct CredentialStorage<Id, Password> {
     inner: HashMap<Id, Password>
 }
@@ -19,6 +21,8 @@ impl<Id: Eq + Hash, Password: PartialEq> crate::prelude::CredentialStorage for C
         id: &Self::Id, 
         password: &Self::Password
     ) -> bool {
+        event!(Level::TRACE, "CredentialStorage verify");
+
         self.inner.get(id).is_some_and(|registered_password| registered_password == password)
     }
 
@@ -27,6 +31,8 @@ impl<Id: Eq + Hash, Password: PartialEq> crate::prelude::CredentialStorage for C
         id: Self::Id,
         password: Self::Password
     ) -> bool {
+        event!(Level::TRACE, "CredentialStorage register");
+
         if self.inner.contains_key(&id) {
             return false
         }
@@ -39,6 +45,8 @@ impl<Id: Eq + Hash, Password: PartialEq> crate::prelude::CredentialStorage for C
         id: &Self::Id,
         new_password: Self::Password
     ) -> bool {
+        event!(Level::TRACE, "CredentialStorage update password");
+
         let Some(old_password) = self.inner.get_mut(id) else { return false };
 
         *old_password = new_password;
@@ -50,6 +58,8 @@ impl<Id: Eq + Hash, Password: PartialEq> crate::prelude::CredentialStorage for C
         &mut self,
         id: &Self::Id
     ) -> bool {
+        event!(Level::TRACE, "CredentialStorage unregister");
+
         self.inner.remove(id).is_some()
     }
 }

@@ -1,5 +1,7 @@
 use std::{collections::HashMap, hash::Hash};
 
+use tracing::{Level, event};
+
 pub struct WhitelistStorage<ResourceId, Access> {
     inner: HashMap<ResourceId, Vec<Access>>
 }
@@ -19,6 +21,8 @@ impl<ResourceId: Eq + Hash, Access: PartialEq> crate::prelude::WhitelistStorage 
         id: &Self::Id,
         access: &Self::Access 
     ) -> bool {
+        event!(Level::TRACE, "Whitelist check access");
+
         let Some(allowed_accesses) = self.inner.get(id) else { return false };
         allowed_accesses.iter().any(|allowed_access| allowed_access == access)
     }
@@ -28,6 +32,8 @@ impl<ResourceId: Eq + Hash, Access: PartialEq> crate::prelude::WhitelistStorage 
         id: Self::Id,
         access: Self::Access
     ) -> bool {
+        event!(Level::TRACE, "Whitelist allow");
+
         self.inner.entry(id).or_default().push(access);
 
         true
@@ -37,6 +43,8 @@ impl<ResourceId: Eq + Hash, Access: PartialEq> crate::prelude::WhitelistStorage 
         &mut self,
         id: &Self::Id
     ) -> bool {
+        event!(Level::TRACE, "Whitelist release");
+
         self.inner.remove(id).is_some()
     }
 
@@ -44,6 +52,8 @@ impl<ResourceId: Eq + Hash, Access: PartialEq> crate::prelude::WhitelistStorage 
         &mut self,
         mut ids: impl Iterator<Item = &'a Self::Id>
     ) -> bool where <Self as crate::prelude::WhitelistStorage>::Id: 'a {
+        event!(Level::TRACE, "Whitelist release all");
+
         !ids.any(|resource_id| !self.release(resource_id))
     }
 
@@ -52,6 +62,8 @@ impl<ResourceId: Eq + Hash, Access: PartialEq> crate::prelude::WhitelistStorage 
         id: &Self::Id,
         access: &Self::Access
     ) -> bool {
+        event!(Level::TRACE, "Whitelist unallow");
+
         let Some(allowed_accesses) = self.inner.get_mut(id) else { return false };
 
         let Some(position) = allowed_accesses.iter().position(|allowed_access| allowed_access == access) else { return false };

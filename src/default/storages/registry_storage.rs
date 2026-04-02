@@ -1,5 +1,7 @@
 use std::{collections::HashMap, hash::Hash};
 
+use tracing::{Level, event};
+
 pub struct RegistryStorage<ResourceId, StoredResource> {
     inner: HashMap<ResourceId, StoredResource>
 }
@@ -18,6 +20,8 @@ impl<ResourceId: Eq + Hash, StoredResource> crate::prelude::RegistryStorage for 
         &mut self, 
         value_id: &Self::ValueId
     ) -> Option<&mut Self::Value> {
+        event!(Level::TRACE, "RegistryStorage get mut");
+
         self.inner.get_mut(value_id)
     }
 
@@ -26,6 +30,8 @@ impl<ResourceId: Eq + Hash, StoredResource> crate::prelude::RegistryStorage for 
         value_id: Self::ValueId, 
         value: Self::Value
     ) -> Option<Self::Value> {
+        event!(Level::TRACE, "RegistryStorage insert");
+
         self.inner.insert(value_id, value)
     }
 
@@ -33,6 +39,8 @@ impl<ResourceId: Eq + Hash, StoredResource> crate::prelude::RegistryStorage for 
         &mut self, 
         value_id: &Self::ValueId
     ) -> Option<Self::Value> {
+        event!(Level::TRACE, "RegistryStorage remove");
+
         self.inner.remove(value_id)
     }
 
@@ -40,6 +48,8 @@ impl<ResourceId: Eq + Hash, StoredResource> crate::prelude::RegistryStorage for 
         &self, 
         value_id: &Self::ValueId
     ) -> bool {
+        event!(Level::TRACE, "RegistryStorage contains key");
+
         self.inner.contains_key(value_id)
     }
 }
