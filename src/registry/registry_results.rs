@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlReleaseAllResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistReleaseAllResult, BlacklistReleaseResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
+use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlReleaseAllResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistReleaseAllResult, BlacklistReleaseResult, ControllerBlacklistAllowResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, OwnerBlacklistAllowResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, ReceptionBlacklistAllowResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
 
 pub enum RegistryRegisterResult {
     Ok,
@@ -272,12 +272,54 @@ impl From<SingularRegistryReleaseResourceAllResult> for RegistryReleaseResourceA
 }
 
 pub enum RegistryBlacklistAllowResult<Password> {
-    Ok(Password)
+    Ok(Password),
+    Err,
+    OwnershipDenied,
+    VerificationFailure
 }
 
 impl<Password> From<SingularRegistryBlacklistAllowResult<Password>> for RegistryBlacklistAllowResult<Password> {
     fn from(value: SingularRegistryBlacklistAllowResult<Password>) -> Self {
-        todo!()
+        match value {
+            SingularRegistryBlacklistAllowResult::Reception(reception_blacklist_allow_result) => {
+                match reception_blacklist_allow_result {
+                    ReceptionBlacklistAllowResult::Owner(owner_blacklist_allow_result) => {
+                        match owner_blacklist_allow_result {
+                            OwnerBlacklistAllowResult::Controller(controller_blacklist_allow_result) => {
+                                match controller_blacklist_allow_result {
+                                    ControllerBlacklistAllowResult::Blacklist(access_control_blacklist_allow_result) => {
+                                        match access_control_blacklist_allow_result {
+                                            AccessControlBlacklistAllowResult::Blacklist(blacklist_allow_result) => {
+                                                match blacklist_allow_result {
+                                                    BlacklistAllowResult::Allow(result) => {
+                                                        match result {
+                                                            Some(password) => Self::Ok(password),
+                                                            None => Self::Err,
+                                                        }
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    },
+                                    ControllerBlacklistAllowResult::Denied => {
+                                        Self::OwnershipDenied
+                                    },
+                                }
+                            },
+                            OwnerBlacklistAllowResult::Denied(authentication_result) => {
+                                match authentication_result {
+                                    AuthenticationResult::Verification(result) => {
+                                        assert_eq!(result, false);
+
+                                        Self::VerificationFailure
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+        }
     }
 }
 
