@@ -376,12 +376,54 @@ impl From<SingularRegistryWhitelistAllowResult> for RegistryWhitelistAllowResult
 }
 
 pub enum RegistryBlacklistUnallowResult {
-
+    Ok,
+    Err,
+    OwnershipDenied,
+    VerificationFailure
 }
 
 impl From<SingularRegistryBlacklistUnallowResult> for RegistryBlacklistUnallowResult {
     fn from(value: SingularRegistryBlacklistUnallowResult) -> Self {
-        todo!()
+        match value {
+            SingularRegistryBlacklistUnallowResult::Reception(reception_blacklist_unallow_result) => {
+                match reception_blacklist_unallow_result {
+                    crate::prelude::ReceptionBlacklistUnallowResult::Owner(owner_blacklist_unallow_result) => {
+                        match owner_blacklist_unallow_result {
+                            crate::prelude::OwnerBlacklistUnallowResult::Controller(controller_blacklist_unallow_result) => {
+                                match controller_blacklist_unallow_result {
+                                    crate::prelude::ControllerBlacklistUnallowResult::Blacklist(access_control_blacklist_unallow_result) => {
+                                        match access_control_blacklist_unallow_result {
+                                            crate::prelude::AccessControlBlacklistUnallowResult::Blacklist(blacklist_unallow_result) => {
+                                                match blacklist_unallow_result {
+                                                    crate::prelude::BlacklistUnallowResult::Unallow(result) => {
+                                                        match result {
+                                                            true => Self::Ok,
+                                                            false => Self::Err,
+                                                        }
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    },
+                                    crate::prelude::ControllerBlacklistUnallowResult::Denied => {
+                                        Self::OwnershipDenied
+                                    },
+                                }
+                            },
+                            crate::prelude::OwnerBlacklistUnallowResult::Denied(authentication_result) => {
+                                match authentication_result {
+                                    AuthenticationResult::Verification(result) => {
+                                        assert_eq!(result, false);
+
+                                        Self::VerificationFailure
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+        }
     }
 }
 
