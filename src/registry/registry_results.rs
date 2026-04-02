@@ -732,12 +732,50 @@ impl From<SingularRegistryUnreserveResult> for RegistryUnreserveResult {
 }
 
 pub enum RegistryDrainReservationsResult<T> {
-    Drain(T)
+    Drain(T),
+    NoReserver,
+    VerificationFailure
 }
 
 impl<T> From<SingularRegistryDrainReservationsResult<T>> for RegistryDrainReservationsResult<T> {
     fn from(value: SingularRegistryDrainReservationsResult<T>) -> Self {
-        todo!()
+        match value {
+            SingularRegistryDrainReservationsResult::Reception(reception_drain_reservations_result) => {
+                match reception_drain_reservations_result {
+                    crate::prelude::ReceptionDrainReservationsResult::Host(host_drain_reservations_result) => {
+                        match host_drain_reservations_result {
+                            crate::prelude::HostDrainReservationsResult::Reservations(reservations_drain_reservations_result) => {
+                                match reservations_drain_reservations_result {
+                                    crate::prelude::ReservationsDrainReservationsResult::Accesses(accesses_drain_result) => {
+                                        match accesses_drain_result {
+                                            crate::prelude::AccessesDrainResult::Drain(result) => {
+                                                Self::Drain(result)
+                                            },
+                                        }
+                                    },
+                                    crate::prelude::ReservationsDrainReservationsResult::NoReserver => {
+                                        Self::NoReserver
+                                    },
+                                }
+                            },
+                        }
+                    },
+                    crate::prelude::ReceptionDrainReservationsResult::Denied(owner_authentication_result) => {
+                        match owner_authentication_result {
+                            crate::prelude::OwnerAuthenticationResult::Authenticator(authentication_result) => {
+                                match authentication_result {
+                                    AuthenticationResult::Verification(result) => {
+                                        assert_eq!(result, false);
+
+                                        Self::VerificationFailure
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+        }
     }
 }
 
