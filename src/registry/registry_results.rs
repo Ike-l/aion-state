@@ -566,12 +566,42 @@ impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
 }
 
 pub enum RegistryReleaseAccessResult {
-
+    Ok,
+    Err,
+    NoCurrentAccess
 }
 
 impl From<SingularRegistryReleaseAccessResult> for RegistryReleaseAccessResult {
     fn from(value: SingularRegistryReleaseAccessResult) -> Self {
-        todo!()
+        match value {
+            SingularRegistryReleaseAccessResult::Reception(reception_release_access_result) => {
+                match reception_release_access_result {
+                    crate::prelude::ReceptionReleaseAccessResult::Host(host_release_access_result) => {
+                        match host_release_access_result {
+                            crate::prelude::HostReleaseAccessResult::Accesses(accesses_release_result) => {
+                                match accesses_release_result {
+                                    crate::prelude::AccessesReleaseResult::Split => {
+                                        Self::Ok
+                                    },
+                                    crate::prelude::AccessesReleaseResult::NoCurrentAccess => {
+                                        Self::NoCurrentAccess
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+            SingularRegistryReleaseAccessResult::AutomatedRegistry(manual_registry_release_result) => {
+                match manual_registry_release_result {
+                    crate::prelude::ManualRegistryReleaseResult::Storage(result) => {
+                        assert_eq!(result, false);
+
+                        Self::Err
+                    },
+                }
+            },
+        }
     }
 }
 
