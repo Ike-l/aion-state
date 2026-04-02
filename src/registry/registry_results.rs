@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
+use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionUnregisterResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
 
 pub enum RegistryRegisterResult {
     Ok,
@@ -485,7 +485,7 @@ pub enum RegistryCheckAccessResult {
     ReservationConflict,
     VerificationFailure,
     NeedIdPassword,
-    // OwnershipDenied,
+    OwnershipDenied, // OwnershipDenied is invoked if Whitelist and Blacklist would deny and last resort using Ids doesnt work
     WhitelistDenied,
     BlacklistDenied,
     ContainsResource,
@@ -520,15 +520,15 @@ impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
                         match owner_check_access_result {
                             OwnerCheckAccessResult::Controller(controller_check_access_result) => {
                                 match controller_check_access_result {
-                                    // ControllerCheckAccessResult::Verification(resource_control_check_owner_result) => {
-                                    //     match resource_control_check_owner_result {
-                                    //         ResourceControlCheckOwnerResult::Verification(result) => {
-                                    //             assert_eq!(result, false);
+                                    ControllerCheckAccessResult::Verification(resource_control_check_owner_result) => {
+                                        match resource_control_check_owner_result {
+                                            ResourceControlCheckOwnerResult::Verification(result) => {
+                                                assert_eq!(result, false);
 
-                                    //             Self::OwnershipDenied
-                                    //         },
-                                    //     }
-                                    // },
+                                                Self::OwnershipDenied
+                                            },
+                                        }
+                                    },
                                     ControllerCheckAccessResult::AccessControl(access_control_check_access_result) => {
                                         match access_control_check_access_result {
                                             AccessControlCheckAccessResult::Whitelist(whitelist_check_access_result) => {
@@ -747,7 +747,7 @@ pub enum RegistryAcquireAccessResult<AccessResult> {
     AccessConflict,
     ReservationConflict,
     VerificationFailure,
-    // OwnershipDenied,
+    OwnershipDenied,
     NeedIdPassword,
     WhitelistDenied,
     BlacklistDenied
@@ -784,15 +784,15 @@ impl<AccessResult> From<SingularRegistryAcquireAccessResult<AccessResult>> for R
                         match owner_check_access_result {
                             OwnerCheckAccessResult::Controller(controller_check_access_result) => {
                                 match controller_check_access_result {
-                                    // ControllerCheckAccessResult::Verification(resource_control_check_owner_result) => {
-                                    //     match resource_control_check_owner_result {
-                                    //         ResourceControlCheckOwnerResult::Verification(result) => {
-                                    //             assert_eq!(result, false);
+                                    ControllerCheckAccessResult::Verification(resource_control_check_owner_result) => {
+                                        match resource_control_check_owner_result {
+                                            ResourceControlCheckOwnerResult::Verification(result) => {
+                                                assert_eq!(result, false);
 
-                                    //             Self::OwnershipDenied
-                                    //         },
-                                    //     }
-                                    // },
+                                                Self::OwnershipDenied
+                                            },
+                                        }
+                                    },
                                     ControllerCheckAccessResult::AccessControl(access_control_check_access_result) => {
                                         match access_control_check_access_result {
                                             AccessControlCheckAccessResult::Whitelist(whitelist_check_access_result) => {
@@ -846,6 +846,7 @@ pub enum RegistrySaferReplacementResult<ReplacementResult> {
     AccessConflict,
     ReservationConflict,
     VerificationFailure,
+    OwnershipDenied,
     NeedIdPassword,
     WhitelistDenied,
     BlacklistDenied,
@@ -888,6 +889,15 @@ impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementR
                         match owner_check_access_result {
                             OwnerCheckAccessResult::Controller(controller_check_access_result) => {
                                 match controller_check_access_result {
+                                    ControllerCheckAccessResult::Verification(resource_control_check_owner_result) => {
+                                        match resource_control_check_owner_result {
+                                            ResourceControlCheckOwnerResult::Verification(result) => {
+                                                assert_eq!(result, false);
+
+                                                Self::OwnershipDenied
+                                            },
+                                        }
+                                    }
                                     ControllerCheckAccessResult::AccessControl(access_control_check_access_result) => {
                                         match access_control_check_access_result {
                                             AccessControlCheckAccessResult::Whitelist(whitelist_check_access_result) => {

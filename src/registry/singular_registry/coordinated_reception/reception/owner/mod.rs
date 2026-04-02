@@ -181,7 +181,7 @@ impl<
             }
         }
 
-        OwnerCheckAccessResult::Controller(self.controller.check_access(&ControllerCheckAccess { /*id: *id,*/ resource_id, access, password: *password }))
+        OwnerCheckAccessResult::Controller(self.controller.check_access(&ControllerCheckAccess { id: *id, resource_id, access, password: *password }))
     }
 
     pub fn unallow_whitelist(

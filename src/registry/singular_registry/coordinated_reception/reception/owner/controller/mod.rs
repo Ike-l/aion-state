@@ -105,11 +105,16 @@ impl<
     ) -> ControllerCheckAccessResult {
         trace_function!("Controller Check Access");
 
-        if let Some(id) = id {
-            return ControllerCheckAccessResult::Verification(self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id }))
+        let access_control_result = self.access_control.check_access(&AccessControlCheckAccess { id: resource_id, access, password: *password });
+        if access_control_result.ok() {
+            return ControllerCheckAccessResult::AccessControl(access_control_result)
         }
-        
-        ControllerCheckAccessResult::AccessControl(self.access_control.check_access(&AccessControlCheckAccess { id: resource_id, access, password: *password }))
+
+        if let Some(id) = id {
+            ControllerCheckAccessResult::Verification(self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id }))
+        } else {
+            ControllerCheckAccessResult::AccessControl(access_control_result)
+        }
     }
 
     /// Release all resources associated with `id`
