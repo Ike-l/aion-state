@@ -666,12 +666,54 @@ impl From<SingularRegistryReservationResult> for RegistryReservationResult {
 }
 
 pub enum RegistryUnreserveResult {
-
+    Ok,
+    NoReservation,
+    NoReserver,
+    VerificationFailure
 }
 
 impl From<SingularRegistryUnreserveResult> for RegistryUnreserveResult {
     fn from(value: SingularRegistryUnreserveResult) -> Self {
-        todo!()
+        match value {
+            SingularRegistryUnreserveResult::Reception(reception_unreserve_result) => {
+                match reception_unreserve_result {
+                    crate::prelude::ReceptionUnreserveResult::Host(host_unreserve_result) => {
+                        match host_unreserve_result {
+                            crate::prelude::HostUnreserveResult::Reservations(reservations_unreserve_result) => {
+                                match reservations_unreserve_result {
+                                    crate::prelude::ReservationsUnreserveResult::Accesses(accesses_release_result) => {
+                                        match accesses_release_result {
+                                            crate::prelude::AccessesReleaseResult::Split => {
+                                                Self::Ok
+                                            },
+                                            crate::prelude::AccessesReleaseResult::NoCurrentAccess => {
+                                                Self::NoReservation
+                                            },
+                                        }
+                                    },
+                                    crate::prelude::ReservationsUnreserveResult::NoReserver => {
+                                        Self::NoReserver
+                                    },
+                                }
+                            },
+                        }
+                    },
+                    crate::prelude::ReceptionUnreserveResult::Denied(owner_authentication_result) => {
+                        match owner_authentication_result {
+                            crate::prelude::OwnerAuthenticationResult::Authenticator(authentication_result) => {
+                                match authentication_result {
+                                    AuthenticationResult::Verification(result) => {
+                                        assert_eq!(result, false);
+
+                                        Self::VerificationFailure
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            },
+        }
     }
 }
 
