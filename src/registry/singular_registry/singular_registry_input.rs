@@ -59,11 +59,12 @@ pub struct SingularRegistryReleaseAccess<'a, ResourceId, Access> {
     pub access: &'a Access
 }
 
-pub struct SingularRegistryReservation<'a, Id, Password, ResourceId, Access> {
+pub struct SingularRegistryReservation<'a, Id, IdPassword, ResourceId, Access, Password> {
     pub id: Id,
-    pub password: &'a Password,
+    pub id_password: &'a IdPassword,
     pub resource_id: ResourceId,
-    pub access: Access
+    pub access: Access,
+    pub password: Option<&'a Password>
 }
 
 pub struct SingularRegistryUnreserve<'a, Id, Password, ResourceId, Access> {

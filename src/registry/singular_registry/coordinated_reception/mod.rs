@@ -141,7 +141,7 @@ impl<
 
     pub fn reserve(
         &self,
-        input: ReceptionReservation<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
+        input: ReceptionReservation<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
     ) -> ReceptionReservationResult {
         trace_function!("Coordinated Reception Reserve");
 

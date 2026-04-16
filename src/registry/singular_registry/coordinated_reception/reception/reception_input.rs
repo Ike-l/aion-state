@@ -67,11 +67,12 @@ pub struct ReceptionRecordAccess<'a, Id, IdPassword, ResourceId, Access, Passwor
     pub password: Option<&'a Password>
 }
 
-pub struct ReceptionReservation<'a, Id, Password, ResourceId, Access> {
+pub struct ReceptionReservation<'a, Id, IdPassword, ResourceId, Access, Password> {
     pub id: Id,
-    pub password: &'a Password,
+    pub id_password: &'a IdPassword,
     pub resource_id: ResourceId,
-    pub access: Access
+    pub access: Access,
+    pub password: Option<&'a Password>,
 }
 
 pub struct ReceptionUnreserve<'a, Id, Password, ResourceId, Access> {

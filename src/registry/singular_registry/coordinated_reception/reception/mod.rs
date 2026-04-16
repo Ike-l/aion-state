@@ -222,12 +222,14 @@ impl<
     pub fn reserve(
         &mut self,
         ReceptionReservation {
-            id, password, resource_id, access
-        }: ReceptionReservation<'_, OS::Id, OS::Password, AS::ValueId, AS::Access>
+            id, id_password, resource_id, access, password
+        }: ReceptionReservation<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
     ) -> ReceptionReservationResult {
         trace_function!("Reception Reserve");
 
-        let authentication_result = self.owner.authenticate(&OwnerAuthenticate { id: &id, password  });
+        // let authentication_result = self.owner.authenticate(&OwnerAuthenticate { id: &id, password  });
+        let authentication_result = self.owner.check_access(&OwnerCheckAccess { id: Some(&id), id_password: Some(id_password), resource_id: &resource_id, access: &access, password });
+        
         if authentication_result.ok() {
             return ReceptionReservationResult::Host(self.host.reserve(HostReservation { reserver_id: id, access_id: resource_id, access }))
         }

@@ -182,12 +182,12 @@ impl<
     pub fn reserve(
         &self,
         RegistryReservation {
-            id, password, resource_id, access
-        }: RegistryReservation<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+            id, id_password, resource_id, access, password
+        }: RegistryReservation<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> SingularRegistryReservationResult {
         trace_function!("Singular Registry Reserve");
 
-        SingularRegistryReservationResult::Reception(self.reception.reserve(ReceptionReservation { id, password, resource_id, access }))
+        SingularRegistryReservationResult::Reception(self.reception.reserve(ReceptionReservation { id, id_password, resource_id, access, password }))
     }
 
     pub fn unreserve(

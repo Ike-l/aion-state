@@ -74,7 +74,7 @@ impl ReceptionRecordAccessResult {
 
 pub enum ReceptionReservationResult {
     Host(HostReservationResult),
-    Denied(OwnerAuthenticationResult),
+    Denied(OwnerCheckAccessResult),
 }
 
 pub enum ReceptionUnreserveResult {

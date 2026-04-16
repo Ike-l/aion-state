@@ -636,7 +636,11 @@ pub enum RegistryReservationResult {
     OkNew,
     ReservationConflict,
     AccessConflict,
-    VerificationFailure
+    VerificationFailure,
+    NeedIdPassword,
+    OwnershipDenied,
+    WhitelistDenied,
+    BlacklistDenied
 }
 
 impl From<SingularRegistryReservationResult> for RegistryReservationResult {
@@ -674,7 +678,42 @@ impl From<SingularRegistryReservationResult> for RegistryReservationResult {
                     },
                     ReceptionReservationResult::Denied(owner_authentication_result) => {
                         match owner_authentication_result {
-                            OwnerAuthenticationResult::Authenticator(authentication_result) => {
+                            OwnerCheckAccessResult::Controller(controller_check_access_result) => {
+                                match controller_check_access_result {
+                                    ControllerCheckAccessResult::Verification(resource_control_check_owner_result) => {
+                                        match resource_control_check_owner_result {
+                                            ResourceControlCheckOwnerResult::Verification(result) => {
+                                                assert_eq!(result, false);
+
+                                                Self::OwnershipDenied
+                                            },
+                                        }
+                                    },
+                                    ControllerCheckAccessResult::AccessControl(access_control_check_access_result) => {
+                                        match access_control_check_access_result {
+                                            AccessControlCheckAccessResult::Whitelist(whitelist_check_access_result) => {
+                                                match whitelist_check_access_result {
+                                                    WhitelistCheckAccessResult::Allowed(result) => {
+                                                        assert_eq!(result, false);
+
+                                                        Self::WhitelistDenied
+                                                    },
+                                                }
+                                            },
+                                            AccessControlCheckAccessResult::Blacklist(blacklist_check_access_result) => {
+                                                match blacklist_check_access_result {
+                                                    BlacklistCheckAccessResult::Verification(result) => {
+                                                        assert_eq!(result, false);
+
+                                                        Self::BlacklistDenied
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    },
+                                }
+                            },
+                            OwnerCheckAccessResult::Denied(authentication_result) => {
                                 match authentication_result {
                                     AuthenticationResult::Verification(result) => {
                                         assert_eq!(result, false);
@@ -683,6 +722,16 @@ impl From<SingularRegistryReservationResult> for RegistryReservationResult {
                                     },
                                 }
                             },
+                            OwnerCheckAccessResult::NeedIdPassword => Self::NeedIdPassword
+                            // OwnerAuthenticationResult::Authenticator(authentication_result) => {
+                            //     match authentication_result {
+                            //         AuthenticationResult::Verification(result) => {
+                            //             assert_eq!(result, false);
+
+                            //             Self::VerificationFailure
+                            //         },
+                            //     }
+                            // },
                         }
                     },
                 }

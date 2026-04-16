@@ -169,7 +169,7 @@ impl<
 
     pub fn reserve(
         &self,
-        input: RegistryReservation<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+        input: RegistryReservation<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> RegistryReservationResult {
         trace_function!("Registry Reserve");
 
