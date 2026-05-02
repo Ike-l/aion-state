@@ -1,3 +1,5 @@
 Make Default Implementation
 
 Write Tests
+
+Where have Option< CallerId > & Option < CallerId Password > Join into Option<( CallerId, Password )>
