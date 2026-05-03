@@ -3,3 +3,7 @@ Make Default Implementation
 Write Tests
 
 Where have Option< CallerId > & Option < CallerId Password > Join into Option<( CallerId, Password )>
+
+Abstract registry generics into a single trait with many associated types
+
+At each level, inputs should involve nested structs- currently they are flat
