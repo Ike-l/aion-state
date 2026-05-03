@@ -1,36 +1,23 @@
-use std::fmt::Debug;
-
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, RegistryStorage, ReservationStorage, SingularRegistry, RegistryAcquireAccess, RegistryAcquireAccessResult, RegistryAllow, RegistryBlacklistAllowResult, RegistryBlacklistUnallowResult, RegistryCheckAccess, RegistryCheckAccessResult, RegistryContainsResource, RegistryContainsResourceResult, RegistryDrainReservations, RegistryDrainReservationsResult, RegistryOwn, RegistryOwnResult, RegistryRegister, RegistryRegisterResult, RegistryReleaseAccess, RegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult, RegistryReleaseResourceResult, RegistryReservation, RegistryReservationResult, RegistrySaferReplacement, RegistrySaferReplacementResult, RegistryUnallow, RegistryUnregister, RegistryUnregisterResult, RegistryUnreserve, RegistryUnreserveResult, RegistryUpdatePassword, RegistryUpdatePasswordResult, RegistryWhitelistAllowResult, RegistryWhitelistUnallowResult, StableAddress, WhitelistStorage, sync::RwLock, trace_function};
+use crate::prelude::{Accessor, BlacklistStorage, CredentialStorage, RegistryAcquireAccess, RegistryAcquireAccessResult, RegistryAllow, RegistryBlacklistAllowResult, RegistryBlacklistUnallowResult, RegistryCheckAccess, RegistryCheckAccessResult, RegistryContainsResource, RegistryContainsResourceResult, RegistryDrainReservations, RegistryDrainReservationsResult, RegistryOwn, RegistryOwnResult, RegistryRegister, RegistryRegisterResult, RegistryReleaseAccess, RegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult, RegistryReleaseResourceResult, RegistryReservation, RegistryReservationResult, RegistrySaferReplacement, RegistrySaferReplacementResult, RegistryUnallow, RegistryUnregister, RegistryUnregisterResult, RegistryUnreserve, RegistryUnreserveResult, RegistryUpdatePassword, RegistryUpdatePasswordResult, RegistryWhitelistAllowResult, RegistryWhitelistUnallowResult, SingularRegistry, StableAddress, StorageTrait, sync::RwLock, trace_function};
 
 pub mod singular_registry;
 
 pub mod registry_results;
 
+pub mod storage_trait;
+
 /// Separate Sync bc the point is to not use RAII, 
 /// removing the sync and making the functions take `&mut self` would require some form of RAII in mt situations
 #[derive(Default)]
-pub struct Registry<S, RS, AS, OS, PS, LS, OSS> {
+pub struct Registry<ST: StorageTrait> {
     sync: RwLock<()>,
-    singular_registry: SingularRegistry<S, RS, AS, OS, PS, LS, OSS>,
+    singular_registry: SingularRegistry<ST::S, ST::RS, ST::AS, ST::OS, ST::WS, ST::BS, ST::CS>,
 }
 
-impl<
-    S: RegistryStorage,
-    RS: ReservationStorage<AccessStorage = AS>,
-    AS: AccessStorage<ValueId = S::ValueId> + Default,
-    OS: CredentialStorage<Id = RS::ReserverId>,
-    WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
-    BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
-    CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
-> Registry<S, RS, AS, OS, WS, BS, CS> 
-    where 
-        RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Accessor<StoredValue = S::Value>,
-        AS::ValueId: Debug
-{
+impl<ST: StorageTrait> Registry<ST> {
     pub fn register(
         &self, 
-        input: RegistryRegister<OS::Id, OS::Password>
+        input: RegistryRegister<ST::ReserverId, <ST::OS as CredentialStorage>::Password>
     ) -> RegistryRegisterResult {
         trace_function!("Registry Register");
 
@@ -41,7 +28,7 @@ impl<
 
     pub fn unregister(
         &self,
-        input: &RegistryUnregister<'_, OS::Id, OS::Password>
+        input: &RegistryUnregister<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password>
     ) -> RegistryUnregisterResult {
         trace_function!("Registry Unregister");
 
@@ -52,7 +39,7 @@ impl<
 
     pub fn update_password(
         &self,
-        input: RegistryUpdatePassword<'_, OS::Id, OS::Password>
+        input: RegistryUpdatePassword<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password>
     ) -> RegistryUpdatePasswordResult {
         trace_function!("Registry Update Password");
 
@@ -64,7 +51,7 @@ impl<
 
     pub fn own(
         &self,
-        input: RegistryOwn<'_, OS::Id, OS::Password, S::ValueId>
+        input: RegistryOwn<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::ValueId>
     ) -> RegistryOwnResult {
         trace_function!("Registry Own");
 
@@ -75,7 +62,7 @@ impl<
 
     pub fn release_resource(
         &self, 
-        input: &RegistryReleaseResource<'_, OS::Id, OS::Password, S::ValueId>
+        input: &RegistryReleaseResource<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::ValueId>
     ) -> RegistryReleaseResourceResult {
         trace_function!("Registry Release Resource");
 
@@ -86,7 +73,7 @@ impl<
 
     pub fn release_resource_all<'a>(
         &self,
-        input: RegistryReleaseResourceAll<'a, OS::Id, OS::Password, S::ValueId>
+        input: RegistryReleaseResourceAll<'a, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::ValueId>
     ) -> RegistryReleaseResourceAllResult {
         trace_function!("Registry Release Resource All");
 
@@ -98,8 +85,8 @@ impl<
 
     pub fn allow_blacklist(
         &self,
-        input: RegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> RegistryBlacklistAllowResult<BS::Password> {
+        input: RegistryAllow<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::ValueId, ST::Access>
+    ) -> RegistryBlacklistAllowResult<<ST::BS as BlacklistStorage>::Password> {
         trace_function!("Registry Allow Blacklist");
 
         let _sync = self.sync.write();
@@ -109,7 +96,7 @@ impl<
 
     pub fn allow_whitelist(
         &self,
-        input: RegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+        input: RegistryAllow<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::ValueId, ST::Access>
     ) -> RegistryWhitelistAllowResult {
         trace_function!("Registry Allow Whitelist");
 
@@ -120,7 +107,7 @@ impl<
 
     pub fn unallow_blacklist(
         &self,
-        input: &RegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+        input: &RegistryUnallow<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::ValueId, ST::Access>
     ) -> RegistryBlacklistUnallowResult {
         trace_function!("Registry Unallow Blacklist");
 
@@ -131,7 +118,7 @@ impl<
 
     pub fn unallow_whitelist(
         &self,
-        input: &RegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+        input: &RegistryUnallow<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::ValueId, ST::Access>
     ) -> RegistryWhitelistUnallowResult {
         trace_function!("Registry Unallow Whitelist");
 
@@ -142,7 +129,7 @@ impl<
 
     pub fn check_access(
         &self,
-        input: &RegistryCheckAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
+        input: &RegistryCheckAccess<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::ValueId, ST::Access, <ST::BS as BlacklistStorage>::Password>
     ) -> RegistryCheckAccessResult {
         trace_function!("Registry Check Access");
 
@@ -156,7 +143,7 @@ impl<
     /// Resource `resource_id` corresponding with `access` MUST actually be released
     pub unsafe fn release_access(
         &self,
-        input: RegistryReleaseAccess<'_, S::ValueId, AS::Access>
+        input: RegistryReleaseAccess<'_, ST::ValueId, ST::Access>
     ) -> RegistryReleaseAccessResult {
         trace_function!("Registry Release Access");
 
@@ -169,7 +156,7 @@ impl<
 
     pub fn reserve(
         &self,
-        input: RegistryReservation<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
+        input: RegistryReservation<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::ValueId, ST::Access, <ST::BS as BlacklistStorage>::Password>
     ) -> RegistryReservationResult {
         trace_function!("Registry Reserve");
 
@@ -180,7 +167,7 @@ impl<
 
     pub fn unreserve(
         &self,
-        input: &RegistryUnreserve<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
+        input: &RegistryUnreserve<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::ValueId, ST::Access>
     ) -> RegistryUnreserveResult {
         trace_function!("Registry Unreserve");
 
@@ -191,8 +178,8 @@ impl<
 
     pub fn drain_reservations(
         &self,
-        input: &RegistryDrainReservations<'_, OS::Id, OS::Password>
-    ) -> RegistryDrainReservationsResult<Vec<(S::ValueId, AS::Access)>> {
+        input: &RegistryDrainReservations<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password>
+    ) -> RegistryDrainReservationsResult<Vec<(ST::ValueId, ST::Access)>> {
         trace_function!("Registry Drain Reservations");
 
         let _sync = self.sync.write();
@@ -203,8 +190,8 @@ impl<
 
     pub fn acquire_access(
         &self,
-        input: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
-    ) -> RegistryAcquireAccessResult<<AS::Access as Accessor>::AccessResult<'_>> {
+        input: RegistryAcquireAccess<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::ValueId, ST::Access, <ST::BS as BlacklistStorage>::Password>
+    ) -> RegistryAcquireAccessResult<<ST::Access as Accessor>::AccessResult<'_>> {
         trace_function!("Registry Acquire Access");
 
         let _sync = self.sync.write();
@@ -214,10 +201,10 @@ impl<
 
     pub unsafe fn safer_replace(
         &self,
-        input: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <AS::Access as Accessor>::Value, BS::Password>
-    ) -> RegistrySaferReplacementResult<<AS::Access as Accessor>::StoredValue>
+        input: RegistrySaferReplacement<'_, ST::ReserverId, <ST::OS as CredentialStorage>::Password, ST::Access, ST::ValueId, <ST::Access as Accessor>::Value, <ST::BS as BlacklistStorage>::Password>
+    ) -> RegistrySaferReplacementResult<<ST::Access as Accessor>::StoredValue>
         where
-            <AS::Access as Accessor>::StoredValue: StableAddress
+            <ST::Access as Accessor>::StoredValue: StableAddress
     {
         trace_function!("Registry Safer Replace");
         
@@ -228,7 +215,7 @@ impl<
 
     pub fn contains_resource(
         &self,
-        input: &RegistryContainsResource<'_, S::ValueId>
+        input: &RegistryContainsResource<'_, ST::ValueId>
     ) -> RegistryContainsResourceResult {
         trace_function!("Registry Contains Resource");
 

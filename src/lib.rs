@@ -32,6 +32,9 @@ pub mod prelude {
     pub use super::{
         registry::{
             Registry,
+            storage_trait::{
+                StorageTrait
+            },
             registry_results::{
                 RegistryRegisterResult,
                 RegistryAcquireAccessResult,
