@@ -53,9 +53,7 @@ impl<
     ) -> HostRecordAccessResult {
         trace_function!("Host Recording Access");
 
-        let unreserve_result = if let Some(reserver_id) = reserver_id {
-            Some(self.unreserve(&HostUnreserve { reserver_id, access_id: &access_id, access: &access }))
-        } else { None };
+        let unreserve_result = reserver_id.map(|reserver_id| self.unreserve(&HostUnreserve { reserver_id, access_id: &access_id, access: &access }));
 
         let record_access_result = self.accesses.record_access(AccessesRecordAccess { access_id, access });
 

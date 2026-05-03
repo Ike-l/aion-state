@@ -151,7 +151,7 @@ impl<
         self.singular_registry.check_access(input).into()
     }
 
-    /// Safety:
+    /// # Safety
     /// 
     /// Resource `resource_id` corresponding with `access` MUST actually be released
     pub unsafe fn release_access(
@@ -212,7 +212,7 @@ impl<
         self.singular_registry.acquire_access(input).into()
     }
 
-    pub unsafe fn safer_replace(
+    pub fn safer_replace(
         &self,
         input: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <AS::Access as Accessor>::Value, BS::Password>
     ) -> RegistrySaferReplacementResult<<AS::Access as Accessor>::StoredValue>
@@ -223,7 +223,7 @@ impl<
         
         let _sync = self.sync.write();
 
-        unsafe { self.singular_registry.safer_replace(input) }.into()
+        self.singular_registry.safer_replace(input).into()
     }
 
     pub fn contains_resource(

@@ -157,7 +157,7 @@ impl<
         SingularRegistryCheckAccessResult::Reception(reception_result)
     }
 
-    /// Safety:
+    /// # Safety
     /// 
     /// Resource `resource_id` corresponding with `access` MUST actually be released
     pub unsafe fn release_access(
@@ -238,7 +238,7 @@ impl<
         SingularRegistryAcquireAccessResult::Reception(check_reception)
     }
 
-    pub unsafe fn safer_replace(
+    pub fn safer_replace(
         &self,
         RegistrySaferReplacement {
             user_details, access, resource_id, resource, password
