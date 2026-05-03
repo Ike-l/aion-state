@@ -9,9 +9,9 @@ pub mod registry_results;
 /// Separate Sync bc the point is to not use RAII, 
 /// removing the sync and making the functions take `&mut self` would require some form of RAII in mt situations
 #[derive(Default)]
-pub struct Registry<S, RS, AS, OS, PS, LS, OSS> {
+pub struct Registry<S, RS, AS, OS, WS, BS, CS> {
     sync: RwLock<()>,
-    singular_registry: SingularRegistry<S, RS, AS, OS, PS, LS, OSS>,
+    singular_registry: SingularRegistry<S, RS, AS, OS, WS, BS, CS>,
 }
 
 impl<
