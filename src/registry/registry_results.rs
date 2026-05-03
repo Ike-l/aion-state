@@ -496,7 +496,6 @@ pub enum RegistryCheckAccessResult {
     NoCurrentAccess,
     ReservationConflict,
     VerificationFailure,
-    NeedIdPassword,
     OwnershipDenied, // OwnershipDenied is invoked if Whitelist and Blacklist would deny and last resort using Ids doesnt work
     WhitelistDenied,
     BlacklistDenied,
@@ -574,9 +573,6 @@ impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
                                     },
                                 }
                             },
-                            OwnerCheckAccessResult::NeedIdPassword => {
-                                Self::NeedIdPassword
-                            },
                         }
                     },
                 }
@@ -637,7 +633,6 @@ pub enum RegistryReservationResult {
     ReservationConflict,
     AccessConflict,
     VerificationFailure,
-    NeedIdPassword,
     OwnershipDenied,
     WhitelistDenied,
     BlacklistDenied
@@ -722,7 +717,6 @@ impl From<SingularRegistryReservationResult> for RegistryReservationResult {
                                     },
                                 }
                             },
-                            OwnerCheckAccessResult::NeedIdPassword => Self::NeedIdPassword
                             // OwnerAuthenticationResult::Authenticator(authentication_result) => {
                             //     match authentication_result {
                             //         AuthenticationResult::Verification(result) => {
@@ -847,7 +841,6 @@ pub enum RegistryAcquireAccessResult<AccessResult> {
     ReservationConflict,
     VerificationFailure,
     OwnershipDenied,
-    NeedIdPassword,
     WhitelistDenied,
     BlacklistDenied
 }
@@ -925,9 +918,6 @@ impl<AccessResult> From<SingularRegistryAcquireAccessResult<AccessResult>> for R
                                     },
                                 }
                             },
-                            OwnerCheckAccessResult::NeedIdPassword => {
-                                Self::NeedIdPassword
-                            },
                         }
                     },
                 }
@@ -946,7 +936,6 @@ pub enum RegistrySaferReplacementResult<ReplacementResult> {
     ReservationConflict,
     VerificationFailure,
     OwnershipDenied,
-    NeedIdPassword,
     WhitelistDenied,
     BlacklistDenied,
 }
@@ -1029,9 +1018,6 @@ impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementR
                                         Self::VerificationFailure
                                     },
                                 }
-                            },
-                            OwnerCheckAccessResult::NeedIdPassword => {
-                                Self::NeedIdPassword
                             },
                         }
                     },

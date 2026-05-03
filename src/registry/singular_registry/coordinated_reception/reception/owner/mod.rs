@@ -164,24 +164,21 @@ impl<
     pub fn check_access(
         &self,
         OwnerCheckAccess {
-            id, id_password, resource_id, access, password
+            user_details, resource_id, access, password
         }: &OwnerCheckAccess<'_, AS::Id, AS::Password, WS::Id, WS::Access, BS::Password>
     ) -> OwnerCheckAccessResult {
         trace_function!("Owner Check Access");
 
-        if let Some(id) = id {
-            if let Some(password) = id_password {
-                let authentication_result = self.authenticator.authenticate(&Authentication { id, password: *password });
-    
-                if !authentication_result.ok() {
-                    return OwnerCheckAccessResult::Denied(authentication_result)
-                }
-            } else {
-                return OwnerCheckAccessResult::NeedIdPassword
+        if let Some((id, id_password)) = user_details {
+            let authentication_result = self.authenticator.authenticate(&Authentication { id, password: *id_password });
+
+            if !authentication_result.ok() {
+                return OwnerCheckAccessResult::Denied(authentication_result)
             }
         }
 
-        OwnerCheckAccessResult::Controller(self.controller.check_access(&ControllerCheckAccess { id: *id, resource_id, access, password: *password }))
+        let id = user_details.map(|(id, _)| id);
+        OwnerCheckAccessResult::Controller(self.controller.check_access(&ControllerCheckAccess { id, resource_id, access, password: *password }))
     }
 
     pub fn unallow_whitelist(

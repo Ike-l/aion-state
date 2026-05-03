@@ -171,14 +171,15 @@ impl<
     pub fn check_access(
         &self,
         ReceptionCheckAccess {
-            id, id_password, resource_id, access, password
+            user_details, resource_id, access, password
         }: &ReceptionCheckAccess<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
     ) -> ReceptionCheckAccessResult {
         trace_function!("Reception Check Access");
 
-        let check_owner = self.owner.check_access(&OwnerCheckAccess { id: *id, id_password: *id_password, resource_id, access, password: *password });
+        let check_owner = self.owner.check_access(&OwnerCheckAccess { user_details: *user_details, resource_id, access, password: *password });
         if check_owner.ok() {
-            return ReceptionCheckAccessResult::Host(self.host.check_access(&HostCheckAccess { reserver_id: *id, access_id: *resource_id, access }))
+            let reserver_id = user_details.map(|(id, _)| id);
+            return ReceptionCheckAccessResult::Host(self.host.check_access(&HostCheckAccess { reserver_id, access_id: *resource_id, access }))
         }
 
         ReceptionCheckAccessResult::Denied(check_owner)
@@ -206,14 +207,15 @@ impl<
     pub fn record_access(
         &mut self,
         ReceptionRecordAccess {
-            id, id_password, resource_id, access, password
+            user_details, resource_id, access, password
         }: ReceptionRecordAccess<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
     ) -> ReceptionRecordAccessResult {
         trace_function!("Reception Record Access");
 
-        let check_owner = self.owner.check_access(&OwnerCheckAccess { id, id_password, resource_id: &resource_id, access: &access, password });
+        let check_owner = self.owner.check_access(&OwnerCheckAccess { user_details, resource_id: &resource_id, access: &access, password });
         if check_owner.ok() {
-            return ReceptionRecordAccessResult::Host(self.host.record_access(HostRecordAccess { reserver_id: id, access_id: resource_id, access}))
+            let reserver_id = user_details.map(|(id, _)| id);
+            return ReceptionRecordAccessResult::Host(self.host.record_access(HostRecordAccess { reserver_id, access_id: resource_id, access}))
         }
 
         ReceptionRecordAccessResult::Denied(check_owner)
@@ -228,7 +230,7 @@ impl<
         trace_function!("Reception Reserve");
 
         // let authentication_result = self.owner.authenticate(&OwnerAuthenticate { id: &id, password  });
-        let authentication_result = self.owner.check_access(&OwnerCheckAccess { id: Some(&id), id_password: Some(id_password), resource_id: &resource_id, access: &access, password });
+        let authentication_result = self.owner.check_access(&OwnerCheckAccess { user_details: Some((&id, id_password)), resource_id: &resource_id, access: &access, password });
         
         if authentication_result.ok() {
             return ReceptionReservationResult::Host(self.host.reserve(HostReservation { reserver_id: id, access_id: resource_id, access }))
