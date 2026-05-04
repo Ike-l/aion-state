@@ -164,11 +164,11 @@ impl<
         &self,
         RegistryReleaseAccess {
             resource_id, access
-        }: RegistryReleaseAccess<'_, S::ValueId, AS::Access>
+        }: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
     ) -> SingularRegistryReleaseAccessResult {
         trace_function!("Singular Registry Release Access");
 
-        let registry_result = self.automated_registry.release(&ManualRegistryRelease { value_id: resource_id, access });
+        let registry_result = self.automated_registry.release(&ManualRegistryRelease { value_id: *resource_id, access: *access });
         
         if registry_result.ok() {
             return SingularRegistryReleaseAccessResult::Reception(self.reception.release_access(&ReceptionReleaseAccess { resource_id, access }))

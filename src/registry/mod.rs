@@ -14,6 +14,20 @@ pub struct Registry<S, RS, AS, OS, WS, BS, CS> {
     singular_registry: SingularRegistry<S, RS, AS, OS, WS, BS, CS>,
 }
 
+/// # Safety
+/// 
+/// S::Value is Send 
+/// 
+/// Registry uses the `sync` lock
+unsafe impl<S: RegistryStorage, RS, AS, OS, WS, BS, CS> Send for Registry<S, RS, AS, OS, WS, BS, CS> where S::Value: Send {}
+
+/// # Safety
+/// 
+/// S::Value is Sync 
+/// 
+/// Registry uses the `sync` lock
+unsafe impl<S: RegistryStorage, RS, AS, OS, WS, BS, CS> Sync for Registry<S, RS, AS, OS, WS, BS, CS> where S::Value: Sync {}
+
 impl<
     S: RegistryStorage,
     RS: ReservationStorage<AccessStorage = AS>,
@@ -156,7 +170,7 @@ impl<
     /// Resource `resource_id` corresponding with `access` MUST actually be released
     pub unsafe fn release_access(
         &self,
-        input: RegistryReleaseAccess<'_, S::ValueId, AS::Access>
+        input: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
     ) -> RegistryReleaseAccessResult {
         trace_function!("Registry Release Access");
 
