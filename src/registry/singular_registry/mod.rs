@@ -143,12 +143,12 @@ impl<
     pub fn check_access(
         &self,
         RegistryCheckAccess {
-            id, id_password, resource_id, access, password
+            user_details, resource_id, access, password
         }: &RegistryCheckAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> SingularRegistryCheckAccessResult {
         trace_function!("Singular Registry Check Access");
 
-        let reception_result = self.reception.check_access(&ReceptionCheckAccess { id: *id, id_password: *id_password, resource_id, access, password: *password });
+        let reception_result = self.reception.check_access(&ReceptionCheckAccess { user_details: *user_details, resource_id, access, password: *password });
 
         if reception_result.ok() {
             return SingularRegistryCheckAccessResult::AutomatedRegistry(self.automated_registry.contains_key(*resource_id))
@@ -157,18 +157,18 @@ impl<
         SingularRegistryCheckAccessResult::Reception(reception_result)
     }
 
-    /// Safety:
+    /// # Safety
     /// 
     /// Resource `resource_id` corresponding with `access` MUST actually be released
     pub unsafe fn release_access(
         &self,
         RegistryReleaseAccess {
             resource_id, access
-        }: RegistryReleaseAccess<'_, S::ValueId, AS::Access>
+        }: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
     ) -> SingularRegistryReleaseAccessResult {
         trace_function!("Singular Registry Release Access");
 
-        let registry_result = self.automated_registry.release(&ManualRegistryRelease { value_id: resource_id, access });
+        let registry_result = self.automated_registry.release(&ManualRegistryRelease { value_id: *resource_id, access: *access });
         
         if registry_result.ok() {
             return SingularRegistryReleaseAccessResult::Reception(self.reception.release_access(&ReceptionReleaseAccess { resource_id, access }))
@@ -216,18 +216,18 @@ impl<
     pub fn acquire_access(
         &self,
         RegistryAcquireAccess {
-            id, id_password, resource_id, access, password
+            user_details, resource_id, access, password
         }: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> SingularRegistryAcquireAccessResult<<AS::Access as Accessor>::AccessResult<'_>> {
         trace_function!("Singular Registry Acquire Access");
 
-        let check_reception = self.reception.check_access(&ReceptionCheckAccess { id, id_password, resource_id: &resource_id, access: &access, password });
+        let check_reception = self.reception.check_access(&ReceptionCheckAccess { user_details, resource_id: &resource_id, access: &access, password });
 
         if check_reception.ok() {
             let registry_result = unsafe { self.automated_registry.acquire_access(ManualRegistryAccessInput { value_id: &resource_id, access: &access }) };
     
             if registry_result.ok() {
-                let reception_result = self.reception.record_access(ReceptionRecordAccess { id, id_password, resource_id, access, password });
+                let reception_result = self.reception.record_access(ReceptionRecordAccess { user_details, resource_id, access, password });
 
                 assert!(reception_result.ok())
             }
@@ -238,10 +238,10 @@ impl<
         SingularRegistryAcquireAccessResult::Reception(check_reception)
     }
 
-    pub unsafe fn safer_replace(
+    pub fn safer_replace(
         &self,
         RegistrySaferReplacement {
-            id, id_password, access, resource_id, resource, password
+            user_details, access, resource_id, resource, password
         }: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <AS::Access as Accessor>::Value, BS::Password>
     ) -> SingularRegistrySaferReplacementResult<<AS::Access as Accessor>::StoredValue>
         where
@@ -249,7 +249,7 @@ impl<
     {
         trace_function!("Singular Registry Safer Replace");
 
-        let reception_result = self.reception.check_access(&ReceptionCheckAccess { id, id_password, resource_id: &resource_id, access, password });
+        let reception_result = self.reception.check_access(&ReceptionCheckAccess { user_details, resource_id: &resource_id, access, password });
 
         if reception_result.ok() {
             return SingularRegistrySaferReplacementResult::AutomatedRegistry(unsafe { self.automated_registry.safer_replace(ManualRegistryReplacementInput { access, value_id: resource_id, value: resource }) })

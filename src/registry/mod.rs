@@ -9,10 +9,24 @@ pub mod registry_results;
 /// Separate Sync bc the point is to not use RAII, 
 /// removing the sync and making the functions take `&mut self` would require some form of RAII in mt situations
 #[derive(Default)]
-pub struct Registry<S, RS, AS, OS, PS, LS, OSS> {
+pub struct Registry<S, RS, AS, OS, WS, BS, CS> {
     sync: RwLock<()>,
-    singular_registry: SingularRegistry<S, RS, AS, OS, PS, LS, OSS>,
+    singular_registry: SingularRegistry<S, RS, AS, OS, WS, BS, CS>,
 }
+
+/// # Safety
+/// 
+/// S::Value is Send 
+/// 
+/// Registry uses the `sync` lock
+unsafe impl<S: RegistryStorage, RS, AS, OS, WS, BS, CS> Send for Registry<S, RS, AS, OS, WS, BS, CS> where S::Value: Send {}
+
+/// # Safety
+/// 
+/// S::Value is Sync 
+/// 
+/// Registry uses the `sync` lock
+unsafe impl<S: RegistryStorage, RS, AS, OS, WS, BS, CS> Sync for Registry<S, RS, AS, OS, WS, BS, CS> where S::Value: Sync {}
 
 impl<
     S: RegistryStorage,
@@ -151,12 +165,12 @@ impl<
         self.singular_registry.check_access(input).into()
     }
 
-    /// Safety:
+    /// # Safety
     /// 
     /// Resource `resource_id` corresponding with `access` MUST actually be released
     pub unsafe fn release_access(
         &self,
-        input: RegistryReleaseAccess<'_, S::ValueId, AS::Access>
+        input: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
     ) -> RegistryReleaseAccessResult {
         trace_function!("Registry Release Access");
 
@@ -212,7 +226,7 @@ impl<
         self.singular_registry.acquire_access(input).into()
     }
 
-    pub unsafe fn safer_replace(
+    pub fn safer_replace(
         &self,
         input: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <AS::Access as Accessor>::Value, BS::Password>
     ) -> RegistrySaferReplacementResult<<AS::Access as Accessor>::StoredValue>
@@ -223,7 +237,7 @@ impl<
         
         let _sync = self.sync.write();
 
-        unsafe { self.singular_registry.safer_replace(input) }.into()
+        self.singular_registry.safer_replace(input).into()
     }
 
     pub fn contains_resource(

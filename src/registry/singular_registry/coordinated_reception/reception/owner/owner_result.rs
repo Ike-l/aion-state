@@ -38,7 +38,6 @@ pub enum OwnerBlacklistAllowResult<Password> {
 pub enum OwnerCheckAccessResult {
     Controller(ControllerCheckAccessResult),
     Denied(AuthenticationResult),
-    NeedIdPassword,
 }
 
 impl OwnerCheckAccessResult {

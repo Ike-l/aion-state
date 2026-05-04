@@ -90,9 +90,12 @@ impl<
     }
 
     // safer bc trade reallocation requirement for the don't reference the stable address stored vaslue itself
-    /// Safety:
+    /// # Safety
+    /// 
     /// Access cannot be used to 'acquire' a reference to StableAddress itself
+    /// 
     /// Insert won't invalidate concurrent access
+    /// 
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn safer_replace<Access: Accessor<StoredValue = S::Value>>(
         &mut self,

@@ -43,7 +43,7 @@ pub trait Accessor {
     );
 
     /// When inserting should the value be transformed to a stored value
-    fn insert<'a>(
+    fn insert(
         &self,
         value: Self::Value
     ) -> Self::StoredValue;
@@ -51,7 +51,7 @@ pub trait Accessor {
     /// When removing should the stored value be transformed into a value
     /// 
     /// Essentially the inverse function of `insert`
-    fn remove<'a>(
+    fn remove(
         &self,
         stored_value: Self::StoredValue
     ) -> Self::StoredValue;    

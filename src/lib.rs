@@ -1,3 +1,7 @@
+#![allow(clippy::type_complexity)]
+#![allow(clippy::match_like_matches_macro)]
+#![allow(clippy::mut_from_ref)]
+
 pub mod registry;
 pub mod accessor;
 

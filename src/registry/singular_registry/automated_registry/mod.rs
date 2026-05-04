@@ -13,17 +13,23 @@ pub struct AutomatedRegistry<S> {
 }
 
 impl<S: RegistryStorage> AutomatedRegistry<S> {
-    /// Safety: No Concurrent Unique References
+    /// # Safety 
+    /// 
+    /// No Concurrent Unique References
     unsafe fn get_inner(&self) -> &ManualRegistry<S> {
         unsafe { & *self.manual_registry.get() }
     }
 
-    /// Safety: No Concurrent References
+    /// # Safety 
+    /// 
+    /// No Concurrent References
     unsafe fn get_inner_mut(&self) -> &mut ManualRegistry<S> {
         unsafe { &mut *self.manual_registry.get() }
     }
 
-    /// Safety: No Concurrent Unique References
+    /// # Safety 
+    /// 
+    /// No Concurrent Unique References
     pub unsafe fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
         &self,
         input: ManualRegistryAccessInput<'_, S::ValueId, Access>
@@ -33,10 +39,14 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
         unsafe { self.get_inner_mut() }.acquire_access(input)
     }
 
-    /// Safety: 
+    /// # Safety 
+    /// 
     /// No Concurrent References
+    /// 
     /// Access cannot be used to 'acquire' a reference to StableAddress itself
+    /// 
     /// Insert won't invalidate concurrent access
+    /// 
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn safer_replace<Access: Accessor<StoredValue = S::Value>>(
         &self,
