@@ -9,7 +9,7 @@ pub mod accessor;
 pub mod default;
 
 pub mod prelude {
-    pub const FUNCTION_LEVEL: tracing::Level = tracing::Level::DEBUG;
+    pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::DEBUG;
 
     #[cfg(not(all(test, feature = "loom")))]
     pub(crate) mod sync {
