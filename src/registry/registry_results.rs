@@ -845,6 +845,21 @@ pub enum RegistryAcquireAccessResult<AccessResult> {
     BlacklistDenied
 }
 
+impl<T> From<&RegistryAcquireAccessResult<T>> for String {
+    fn from(value: &RegistryAcquireAccessResult<T>) -> Self {
+        match value {
+            RegistryAcquireAccessResult::Found(_) => format!("Found"),
+            RegistryAcquireAccessResult::NotFound => format!("NotFound"),
+            RegistryAcquireAccessResult::AccessConflict => format!("AccessConflict"),
+            RegistryAcquireAccessResult::ReservationConflict => format!("ReservationConflict"),
+            RegistryAcquireAccessResult::VerificationFailure => format!("VerificationFailure"),
+            RegistryAcquireAccessResult::OwnershipDenied => format!("OwnershipDenied"),
+            RegistryAcquireAccessResult::WhitelistDenied => format!("WhitelistDenied"),
+            RegistryAcquireAccessResult::BlacklistDenied => format!("BlacklistDenied"),
+        }
+    }
+}
+
 impl<AccessResult> From<SingularRegistryAcquireAccessResult<AccessResult>> for RegistryAcquireAccessResult<AccessResult> {
     fn from(value: SingularRegistryAcquireAccessResult<AccessResult>) -> Self {
         match value {
