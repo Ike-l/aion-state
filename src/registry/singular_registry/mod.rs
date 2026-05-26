@@ -288,6 +288,8 @@ impl<
         &self,
         input: &ReceptionGetAccess<'_, AS::ValueId>
     ) -> Option<AS::Access> {
+        trace_function!("Singular Registry Get Access");
+
         self.reception.get_access(input)
     }
 }

@@ -124,6 +124,8 @@ impl<
             access_id
         }: &HostGetAccess<'_, AS::ValueId>
     ) -> Option<&AS::Access> {
+        trace_function!("Host Get Access");
+
         self.accesses.get_access(&GetAccess { access_id })
     }
 }

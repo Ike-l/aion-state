@@ -101,6 +101,8 @@ impl<AS: AccessStorage> Accesses<AS>
             access_id
         }: &GetAccess<'_, AS::ValueId>
     ) -> Option<&AS::Access> {
+        trace_function!("Accesses Get Access");
+
         self.access_storage.get(*access_id)
     }
 }

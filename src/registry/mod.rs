@@ -270,6 +270,8 @@ impl<
         &self,
         input: &ReceptionGetAccess<'_, AS::ValueId>
     ) -> Option<AS::Access> {
+        trace_function!("Registry Get Access");
+
         let _sync = self.sync.read();
 
         self.singular_registry.get_access(input)

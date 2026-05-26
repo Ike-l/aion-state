@@ -184,6 +184,8 @@ impl<
         &self,
         input: &ReceptionGetAccess<'_, AS::ValueId>
     ) -> Option<AS::Access> {
+        trace_function!("Coordinated Reception Get Access");
+
         self.reception.read().get_access(input).cloned()
     }
 }

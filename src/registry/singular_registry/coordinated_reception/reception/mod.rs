@@ -277,6 +277,8 @@ impl<
             access_id
         }: &ReceptionGetAccess<'_, AS::ValueId>
     ) -> Option<&AS::Access> {
+        trace_function!("Coordinated Reception Get Access");
+
         self.host.get_access(&HostGetAccess { access_id })
     }
 }
