@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accesses, AccessesCheckAccess, AccessesRecordAccess, AccessesRelease, Accessor, HostCheckAccess, HostCheckAccessResult, HostDrainReservations, HostDrainReservationsResult, HostRecordAccess, HostRecordAccessResult, HostReleaseAccess, HostReleaseAccessResult, HostReservation, HostReservationResult, HostUnreserve, HostUnreserveResult, ReservationStorage, Reservations, ReservationsCheckAccess, ReservationsDrainReservations, ReservationsReservation, ReservationsUnreserve, trace_function};
+use crate::prelude::{AccessStorage, Accesses, AccessesCheckAccess, AccessesRecordAccess, AccessesRelease, Accessor, GetAccess, HostCheckAccess, HostCheckAccessResult, HostDrainReservations, HostDrainReservationsResult, HostGetAccess, HostRecordAccess, HostRecordAccessResult, HostReleaseAccess, HostReleaseAccessResult, HostReservation, HostReservationResult, HostUnreserve, HostUnreserveResult, ReservationStorage, Reservations, ReservationsCheckAccess, ReservationsDrainReservations, ReservationsReservation, ReservationsUnreserve, trace_function};
 
 pub mod reservations;
 pub mod accesses;
@@ -116,5 +116,14 @@ impl<
         trace_function!("Host Drain Reservations");
 
         HostDrainReservationsResult::Reservations(self.reservations.drain_reservations(&ReservationsDrainReservations { reserver_id }))
+    }
+
+    pub fn get_access(
+        &self,
+        HostGetAccess {
+            access_id
+        }: &HostGetAccess<'_, AS::ValueId>
+    ) -> Option<&AS::Access> {
+        self.accesses.get_access(&GetAccess { access_id })
     }
 }

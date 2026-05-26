@@ -30,3 +30,7 @@ pub struct HostUnreserve<'a, ReserverId, AccessId, Access> {
 pub struct HostDrainReservations<'a, ReserverId> {
     pub reserver_id: &'a ReserverId
 }
+
+pub struct HostGetAccess<'a, AccessId> {
+    pub access_id: &'a AccessId
+}

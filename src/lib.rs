@@ -143,6 +143,7 @@ pub mod prelude {
                                 HostReservation,
                                 HostUnreserve,
                                 HostDrainReservations,
+                                HostGetAccess,
                             },
                             host_result::{
                                 HostCheckAccessResult,
