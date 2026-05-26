@@ -84,3 +84,7 @@ pub struct ReceptionDrainReservations<'a, Id, Password> {
     pub id: &'a Id,
     pub password: &'a Password
 }
+
+pub struct ReceptionGetAccess<'a, AccessId> {
+    pub access_id: &'a AccessId
+}

@@ -114,7 +114,8 @@ pub mod prelude {
                             ReceptionRecordAccess,
                             ReceptionReservation,
                             ReceptionUnreserve,
-                            ReceptionDrainReservations
+                            ReceptionDrainReservations,
+                            ReceptionGetAccess
                         },
                         reception_result::{
                             ReceptionRegisterResult,
