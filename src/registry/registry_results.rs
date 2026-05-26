@@ -959,6 +959,25 @@ pub enum RegistrySaferReplacementResult<ReplacementResult> {
     BlacklistDenied,
 }
 
+impl<T> Display for RegistrySaferReplacementResult<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            RegistrySaferReplacementResult::Found(_) => "Found",
+            RegistrySaferReplacementResult::NotFound => "NotFound",
+            RegistrySaferReplacementResult::DeniedAccess => "DeniedAccess",
+            RegistrySaferReplacementResult::NoOp => "NoOp",
+            RegistrySaferReplacementResult::AccessConflict => "AccessConflict",
+            RegistrySaferReplacementResult::ReservationConflict => "ReservationConflict",
+            RegistrySaferReplacementResult::VerificationFailure => "VerificationFailure",
+            RegistrySaferReplacementResult::OwnershipDenied => "OwnershipDenied",
+            RegistrySaferReplacementResult::WhitelistDenied => "WhitelistDenied",
+            RegistrySaferReplacementResult::BlacklistDenied => "BlacklistDenied",
+        };
+
+        write!(f, "{}", s)
+    }
+}
+
 impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementResult>> for RegistrySaferReplacementResult<ReplacementResult> {
     fn from(value: SingularRegistrySaferReplacementResult<ReplacementResult>) -> Self {
         match value {
