@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryRelease, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionDrainReservations, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryStorage, ReservationStorage, RegistryAcquireAccess, SingularRegistryAcquireAccessResult, RegistryAllow, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, RegistryCheckAccess, SingularRegistryCheckAccessResult, RegistryContainsResource, SingularRegistryContainsResourceResult, RegistryDrainReservations, SingularRegistryDrainReservationsResult, RegistryOwn, SingularRegistryOwnResult, RegistryRegister, SingularRegistryRegisterResult, RegistryReleaseAccess, SingularRegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, RegistryReservation, SingularRegistryReservationResult, RegistrySaferReplacement, SingularRegistrySaferReplacementResult, RegistryUnallow, RegistryUnregister, SingularRegistryUnregisterResult, RegistryUnreserve, SingularRegistryUnreserveResult, RegistryUpdatePassword, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, StableAddress, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryRelease, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionDrainReservations, ReceptionGetAccess, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryContainsResource, RegistryDrainReservations, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReservation, RegistrySaferReplacement, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, StableAddress, WhitelistStorage, trace_function};
 
 pub mod automated_registry;
 pub mod coordinated_reception;
@@ -267,5 +267,27 @@ impl<
         trace_function!("Singular Registry Contains Resource");
 
         SingularRegistryContainsResourceResult::AutomatedRegistry(self.automated_registry.contains_key(resource_id))
+    }
+}
+
+impl<
+    S: RegistryStorage,
+    RS: ReservationStorage<AccessStorage = AS>,
+    AS: AccessStorage<ValueId = S::ValueId> + Default,
+    OS: CredentialStorage<Id = RS::ReserverId>,
+    WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
+    BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
+    CS: ControlStorage<ResourceId = BS::Id, Id = OS::Id>
+> SingularRegistry<S, RS, AS, OS, WS, BS, CS> 
+    where 
+        RS::ReserverId: Debug + PartialEq,
+        AS::Access: Debug + Clone + Accessor<StoredValue = S::Value>,
+        AS::ValueId: Debug
+{
+    pub fn get_access(
+        &self,
+        input: &ReceptionGetAccess<'_, AS::ValueId>
+    ) -> Option<AS::Access> {
+        self.reception.get_access(input)
     }
 }
