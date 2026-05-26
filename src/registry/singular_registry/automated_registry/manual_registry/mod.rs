@@ -85,7 +85,7 @@ impl<
 
         match old_resource {
             Some(found) => ManualRegistryReplacementResult::Found(access.remove(found)),
-            None => todo!(),
+            None => ManualRegistryReplacementResult::NotFound,
         }
     }
 
