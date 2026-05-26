@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use tracing::{field, span};
 
-use crate::prelude::{AccessStorage, AccessesCheckAccess, AccessesCheckAccessResult, AccessesDrainResult, AccessesRecordAccess, AccessesRecordAccessResult, AccessesRelease, AccessesReleaseResult, Accessor, FUNCTION_LEVEL, trace_function};
+use crate::prelude::{AccessStorage, AccessesCheckAccess, AccessesCheckAccessResult, AccessesDrainResult, AccessesRecordAccess, AccessesRecordAccessResult, AccessesRelease, AccessesReleaseResult, Accessor, FUNCTION_LEVEL, GetAccess, trace_function};
 
 pub mod accesses_input;
 pub mod accesses_result;
@@ -93,5 +93,14 @@ impl<AS: AccessStorage> Accesses<AS>
         trace_function!("Accesses Drain");
 
         AccessesDrainResult::Drain(self.access_storage.drain().collect())
+    }
+
+    pub fn get_access(
+        &self,
+        GetAccess {
+            access_id
+        }: &GetAccess<'_, AS::ValueId>
+    ) -> Option<&AS::Access> {
+        self.access_storage.get(*access_id)
     }
 }

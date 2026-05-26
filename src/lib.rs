@@ -184,7 +184,8 @@ pub mod prelude {
                                 accesses_input::{
                                     AccessesCheckAccess, 
                                     AccessesRecordAccess,
-                                    AccessesRelease
+                                    AccessesRelease,
+                                    GetAccess,
                                 }
                             }
                         },
