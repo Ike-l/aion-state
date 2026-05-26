@@ -15,6 +15,6 @@ tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 loom = "0.7.2"
 
 [features]
-default = ["dep:rand"]
+default = []
 loom = []
-default-implementation = []
+default-implementation = ["rand"]
