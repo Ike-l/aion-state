@@ -32,13 +32,13 @@ impl<
         ManualRegistryAccessInput {
             value_id, access
         }: ManualRegistryAccessInput<'_, S::ValueId, Access>
-    ) -> ManualRegistryAccessResult<Access::AccessResult<'_>> {
+    ) -> Result<Access::AccessResult<'_>, ManualRegistryAccessResult> {
         let span = span!(FUNCTION_LEVEL, "Manual Acquire Access");
         let _enter = span.enter();
 
         match self.storage.get_mut(value_id) {
-            Some(stored_value) => ManualRegistryAccessResult::Found(access.acquire(stored_value)),
-            None => ManualRegistryAccessResult::NotFound,
+            Some(stored_value) => Ok(access.acquire(stored_value)),
+            None => Err(ManualRegistryAccessResult::NotFound),
         }
     }
 

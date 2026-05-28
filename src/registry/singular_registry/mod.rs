@@ -218,24 +218,29 @@ impl<
         RegistryAcquireAccess {
             user_details, resource_id, access, password
         }: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
-    ) -> SingularRegistryAcquireAccessResult<<AS::Access as Accessor>::AccessResult<'_>> {
+    ) -> Result<<AS::Access as Accessor>::AccessResult<'_>, SingularRegistryAcquireAccessResult> {
         trace_function!("Singular Registry Acquire Access");
 
         let check_reception = self.reception.check_access(&ReceptionCheckAccess { user_details, resource_id: &resource_id, access: &access, password });
 
         if check_reception.ok() {
             let registry_result = unsafe { self.automated_registry.acquire_access(ManualRegistryAccessInput { value_id: &resource_id, access: &access }) };
-    
-            if registry_result.ok() {
-                let reception_result = self.reception.record_access(ReceptionRecordAccess { user_details, resource_id, access, password });
 
-                assert!(reception_result.ok())
+            match registry_result {
+                Ok(accesses_result) => {
+                    let reception_result = self.reception.record_access(ReceptionRecordAccess { user_details, resource_id, access, password });
+        
+                    assert!(reception_result.ok());
+        
+                    return Ok(accesses_result);
+                },
+                Err(err) => {
+                    return Err(SingularRegistryAcquireAccessResult::AutomatedRegistry(err))
+                },
             }
-    
-            return SingularRegistryAcquireAccessResult::AutomatedRegistry(registry_result)
         }
 
-        SingularRegistryAcquireAccessResult::Reception(check_reception)
+        Err(SingularRegistryAcquireAccessResult::Reception(check_reception))
     }
 
     pub fn safer_replace(

@@ -67,8 +67,8 @@ pub enum SingularRegistryDrainReservationsResult<T> {
     Reception(ReceptionDrainReservationsResult<T>)
 }
 
-pub enum SingularRegistryAcquireAccessResult<AccessResult> {
-    AutomatedRegistry(ManualRegistryAccessResult<AccessResult>),
+pub enum SingularRegistryAcquireAccessResult {
+    AutomatedRegistry(ManualRegistryAccessResult),
     Reception(ReceptionCheckAccessResult)
 }
 

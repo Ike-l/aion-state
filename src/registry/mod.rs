@@ -218,12 +218,12 @@ impl<
     pub fn acquire_access(
         &self,
         input: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
-    ) -> RegistryAcquireAccessResult<<AS::Access as Accessor>::AccessResult<'_>> {
+    ) -> Result<<AS::Access as Accessor>::AccessResult<'_>, RegistryAcquireAccessResult> {
         trace_function!("Registry Acquire Access");
 
         let _sync = self.sync.write();
 
-        self.singular_registry.acquire_access(input).into()
+        self.singular_registry.acquire_access(input).map_err(|err| err.into())
     }
 
     pub fn safer_replace(

@@ -33,7 +33,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     pub unsafe fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
         &self,
         input: ManualRegistryAccessInput<'_, S::ValueId, Access>
-    ) -> ManualRegistryAccessResult<Access::AccessResult<'_>> {
+    ) -> Result<Access::AccessResult<'_>, ManualRegistryAccessResult> {
         trace_function!("Automated Registry Acquire Access");
 
         unsafe { self.get_inner_mut() }.acquire_access(input)

@@ -836,8 +836,7 @@ impl<T> From<SingularRegistryDrainReservationsResult<T>> for RegistryDrainReserv
     }
 }
 
-pub enum RegistryAcquireAccessResult<AccessResult> {
-    Found(AccessResult),
+pub enum RegistryAcquireAccessResult {
     NotFound,
     AccessConflict,
     ReservationConflict,
@@ -847,10 +846,9 @@ pub enum RegistryAcquireAccessResult<AccessResult> {
     BlacklistDenied
 }
 
-impl<T> Display for RegistryAcquireAccessResult<T> {
+impl Display for RegistryAcquireAccessResult {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
-            RegistryAcquireAccessResult::Found(_) => "Found",
             RegistryAcquireAccessResult::NotFound => "NotFound",
             RegistryAcquireAccessResult::AccessConflict => "AccessConflict",
             RegistryAcquireAccessResult::ReservationConflict => "ReservationConflict",
@@ -864,14 +862,11 @@ impl<T> Display for RegistryAcquireAccessResult<T> {
     }
 }
 
-impl<AccessResult> From<SingularRegistryAcquireAccessResult<AccessResult>> for RegistryAcquireAccessResult<AccessResult> {
-    fn from(value: SingularRegistryAcquireAccessResult<AccessResult>) -> Self {
+impl From<SingularRegistryAcquireAccessResult> for RegistryAcquireAccessResult {
+    fn from(value: SingularRegistryAcquireAccessResult) -> Self {
         match value {
             SingularRegistryAcquireAccessResult::AutomatedRegistry(manual_registry_access_result) => {
                 match manual_registry_access_result {
-                    ManualRegistryAccessResult::Found(result) => {
-                        Self::Found(result)
-                    },
                     ManualRegistryAccessResult::NotFound => {
                         Self::NotFound
                     },

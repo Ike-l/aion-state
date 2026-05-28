@@ -1,12 +1,5 @@
-pub enum ManualRegistryAccessResult<AccessResult> {
-    Found(AccessResult),
+pub enum ManualRegistryAccessResult {
     NotFound,
-}
-
-impl<AccessResult> ManualRegistryAccessResult<AccessResult> {
-    pub fn ok(&self) -> bool {
-        matches!(self, Self::Found(_))
-    }
 }
 
 pub enum ManualRegistryReplacementResult<ReplacementResult> {
