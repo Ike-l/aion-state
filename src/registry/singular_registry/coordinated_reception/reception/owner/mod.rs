@@ -56,7 +56,7 @@ impl<
             }
         }
 
-        OwnerUnregisterResult::Denied(authentication_result)
+        OwnerUnregisterResult::Denied
     }
 
     // this is the layer which checks passwords- why i chose this to be the layer to `authenticate`
@@ -75,7 +75,7 @@ impl<
             return OwnerUpdatePasswordResult::Authenticator(self.authenticator.update_password(AuthenticateUpdatePassword { id, new_password }))
         }
 
-        OwnerUpdatePasswordResult::Denied(authentication_result)
+        OwnerUpdatePasswordResult::Denied
     }
 
     /// Take `controller` ownership over `resource_id`
@@ -93,7 +93,7 @@ impl<
             return OwnerOwnResult::Controller(self.controller.own(ControllerOwn { id, resource_id }))
         }
 
-        OwnerOwnResult::Denied(authentication_result)
+        OwnerOwnResult::Denied
     }
 
     /// relinquish `resource_id` from `controller`
@@ -111,7 +111,7 @@ impl<
             return OwnerReleaseResourceResult::Controller(self.controller.release_resource(&ControllerReleaseResource { id, resource_id }))
         }
 
-        OwnerReleaseResourceResult::Denied(authentication_result)
+        OwnerReleaseResourceResult::Denied
     }
 
     /// create an allowance over `whitelist` semantics
@@ -131,7 +131,7 @@ impl<
             return OwnerWhitelistAllowResult::Controller(self.controller.allow_whitelist(ControllerAllow { id, resource_id, access }))
         }
 
-        OwnerWhitelistAllowResult::Denied(authentication_result)
+        OwnerWhitelistAllowResult::Denied
     }
 
     /// create an allowance over `blacklist` semantics
@@ -151,7 +151,7 @@ impl<
             return OwnerBlacklistAllowResult::Controller(self.controller.allow_blacklist(ControllerAllow { id, resource_id, access }))
         }
 
-        OwnerBlacklistAllowResult::Denied(authentication_result)
+        OwnerBlacklistAllowResult::Denied
     }
 
     /// Check if `resource_id` can be accessed with `access`
@@ -173,7 +173,7 @@ impl<
             let authentication_result = self.authenticator.authenticate(&Authentication { id, password: *id_password });
 
             if !authentication_result.ok() {
-                return OwnerCheckAccessResult::Denied(authentication_result)
+                return OwnerCheckAccessResult::Denied
             }
         }
 
@@ -193,7 +193,7 @@ impl<
             return OwnerWhitelistUnallowResult::Controller(self.controller.unallow_whitelist(&ControllerUnallow { id, resource_id, access }))
         }
 
-        OwnerWhitelistUnallowResult::Denied(authentication_result)
+        OwnerWhitelistUnallowResult::Denied
     }
 
     pub fn unallow_blacklist(
@@ -208,7 +208,7 @@ impl<
             return OwnerBlacklistUnallowResult::Controller(self.controller.unallow_blacklist(&ControllerUnallow { id, resource_id, access }))
         }
 
-        OwnerBlacklistUnallowResult::Denied(authentication_result)
+        OwnerBlacklistUnallowResult::Denied
     }
 
     pub fn release_resource_all<'a>(
@@ -229,7 +229,7 @@ impl<
             return OwnerReleaseResourceAllResult::Controller(self.controller.release_resource_all(controller_inputs.iter().collect()))
         }
 
-        OwnerReleaseResourceAllResult::Denied(authentication_result)
+        OwnerReleaseResourceAllResult::Denied
     }
 
     pub fn authenticate(

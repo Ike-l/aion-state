@@ -2,7 +2,7 @@ use crate::{prelude::{AuthenticateRegistrationResult, AuthenticateUnregisterResu
 
 pub enum OwnerOwnResult {
     Controller(ControllerOwnResult),
-    Denied(AuthenticationResult),
+    Denied
 }
 
 pub enum OwnerRegisterResult {
@@ -11,33 +11,33 @@ pub enum OwnerRegisterResult {
 
 pub enum OwnerReleaseResourceResult {
     Controller(ControllerReleaseResourceResult),
-    Denied(AuthenticationResult)
+    Denied
 }
 
 pub enum OwnerUpdatePasswordResult {
     Authenticator(AuthenticateUpdatePasswordResult),
-    Denied(AuthenticationResult)
+    Denied
 }
 
 pub enum OwnerUnregisterResult {
     Controller(ControllerReleaseIdResult),
     Authenticator(AuthenticateUnregisterResult),
-    Denied(AuthenticationResult)
+    Denied
 }
 
 pub enum OwnerWhitelistAllowResult {
     Controller(ControllerWhitelistAllowResult),
-    Denied(AuthenticationResult)
+    Denied
 }
 
 pub enum OwnerBlacklistAllowResult<Password> {
     Controller(ControllerBlacklistAllowResult<Password>),
-    Denied(AuthenticationResult)
+    Denied
 }
 
 pub enum OwnerCheckAccessResult {
     Controller(ControllerCheckAccessResult),
-    Denied(AuthenticationResult),
+    Denied
 }
 
 impl OwnerCheckAccessResult {
@@ -51,17 +51,17 @@ impl OwnerCheckAccessResult {
 
 pub enum OwnerWhitelistUnallowResult {
     Controller(ControllerWhitelistUnallowResult),
-    Denied(AuthenticationResult)
+    Denied
 }
 
 pub enum OwnerBlacklistUnallowResult {
     Controller(ControllerBlacklistUnallowResult),
-    Denied(AuthenticationResult)
+    Denied
 }
 
 pub enum OwnerReleaseResourceAllResult{
     Controller(ControllerReleaseResourceAllResult),
-    Denied(AuthenticationResult)
+    Denied
 }
 
 pub enum OwnerAuthenticationResult {

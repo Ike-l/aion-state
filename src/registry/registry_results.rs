@@ -2,8 +2,11 @@ use std::fmt::Display;
 
 use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryReleaseResult, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessError, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryRegisterResult {
+    #[error("Credential Storage Ok")]
     Ok,
+    #[error("Credential Storage Denied")]
     Err
 }
 
@@ -38,10 +41,18 @@ impl From<SingularRegistryRegisterResult> for RegistryRegisterResult {
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryUnregisterResult {
+    #[error("Credential Storage Ok")]
     Ok,
+    #[error("Credential Storage Error")]
     Err,
-    Lists{whitelist_result: bool, blacklist_result: bool},
+    #[error("When Releasing From Whitelist & Blacklist | Whitelist: {whitelist_result}, Blacklist: {blacklist_result}")]
+    Lists {
+        whitelist_result: bool, 
+        blacklist_result: bool
+    },
+    #[error("")]
     VerificationFailure
 }
 
@@ -77,14 +88,9 @@ impl From<SingularRegistryUnregisterResult> for RegistryUnregisterResult {
                                     },
                                 }
                             },
-                            OwnerUnregisterResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-                                        Self::VerificationFailure
-                                    },
-                                }
-                            },
+                            OwnerUnregisterResult::Denied => {
+                                Self::VerificationFailure
+                            }
                         }
                     },
                 }
@@ -116,14 +122,8 @@ impl From<SingularRegistryUpdatePasswordResult> for RegistryUpdatePasswordResult
                                     },
                                 }
                             },
-                            OwnerUpdatePasswordResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerUpdatePasswordResult::Denied => {
+                                Self::VerificationFailure
                             },
                         }
                     },
@@ -163,14 +163,8 @@ impl From<SingularRegistryOwnResult> for RegistryOwnResult {
                                     },
                                 }
                             },
-                            OwnerOwnResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerOwnResult::Denied => {
+                                Self::VerificationFailure
                             },
                         }
                     },
@@ -217,14 +211,8 @@ impl From<SingularRegistryReleaseResourceResult> for RegistryReleaseResourceResu
                                     },
                                 }
                             },
-                            OwnerReleaseResourceResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerReleaseResourceResult::Denied => {
+                                Self::VerificationFailure
                             },
                         }
                     },
@@ -268,14 +256,8 @@ impl From<SingularRegistryReleaseResourceAllResult> for RegistryReleaseResourceA
                                     },
                                 }
                             },
-                            OwnerReleaseResourceAllResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerReleaseResourceAllResult::Denied => {
+                                Self::VerificationFailure
                             },
                         }
                     },
@@ -320,14 +302,8 @@ impl<Password> From<SingularRegistryBlacklistAllowResult<Password>> for Registry
                                     },
                                 }
                             },
-                            OwnerBlacklistAllowResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerBlacklistAllowResult::Denied => {
+                                Self::VerificationFailure
                             },
                         }
                     },
@@ -372,14 +348,8 @@ impl From<SingularRegistryWhitelistAllowResult> for RegistryWhitelistAllowResult
                                     },
                                 }
                             },
-                            OwnerWhitelistAllowResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerWhitelistAllowResult::Denied => {
+                                Self::VerificationFailure
                             },
                         }
                     },
@@ -424,14 +394,8 @@ impl From<SingularRegistryBlacklistUnallowResult> for RegistryBlacklistUnallowRe
                                     },
                                 }
                             },
-                            OwnerBlacklistUnallowResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerBlacklistUnallowResult::Denied => {
+                                Self::VerificationFailure
                             },
                         }
                     },
@@ -476,14 +440,8 @@ impl From<SingularRegistryWhitelistUnallowResult> for RegistryWhitelistUnallowRe
                                     },
                                 }
                             },
-                            OwnerWhitelistUnallowResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerWhitelistUnallowResult::Denied => {
+                                Self::VerificationFailure
                             },
                         }
                     },
@@ -566,14 +524,8 @@ impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
                                     },
                                 }
                             },
-                            OwnerCheckAccessResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerCheckAccessResult::Denied => {
+                                Self::VerificationFailure
                             },
                         }
                     },
@@ -710,24 +662,9 @@ impl From<SingularRegistryReservationResult> for RegistryReservationResult {
                                     },
                                 }
                             },
-                            OwnerCheckAccessResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerCheckAccessResult::Denied => {
+                                Self::VerificationFailure
                             },
-                            // OwnerAuthenticationResult::Authenticator(authentication_result) => {
-                            //     match authentication_result {
-                            //         AuthenticationResult::Verification(result) => {
-                            //             assert!(!result);
-
-                            //             Self::VerificationFailure
-                            //         },
-                            //     }
-                            // },
                         }
                     },
                 }
@@ -915,14 +852,8 @@ impl From<SingularRegistryAcquireAccessError> for RegistryAcquireAccessError {
                                     },
                                 }
                             },
-                            OwnerCheckAccessResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerCheckAccessResult::Denied => {
+                                Self::VerificationFailure
                             },
                         }
                     },
@@ -1035,14 +966,8 @@ impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementR
                                     },
                                 }
                             },
-                            OwnerCheckAccessResult::Denied(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
+                            OwnerCheckAccessResult::Denied => {
+                                Self::VerificationFailure
                             },
                         }
                     },
