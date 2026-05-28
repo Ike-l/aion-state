@@ -836,30 +836,22 @@ impl<T> From<SingularRegistryDrainReservationsResult<T>> for RegistryDrainReserv
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryAcquireAccessError {
+    #[error("Resource Not Found")]
     NotFound,
+    #[error("Access Conflict")]
     AccessConflict,
+    #[error("Reservation Conflict")]
     ReservationConflict,
+    #[error("Verification Failure")]
     VerificationFailure,
+    #[error("Ownership Denied")]
     OwnershipDenied,
+    #[error("Whitelist Denied")]
     WhitelistDenied,
+    #[error("Blacklist Denied")]
     BlacklistDenied
-}
-
-impl Display for RegistryAcquireAccessError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let s = match self {
-            RegistryAcquireAccessError::NotFound => "NotFound",
-            RegistryAcquireAccessError::AccessConflict => "AccessConflict",
-            RegistryAcquireAccessError::ReservationConflict => "ReservationConflict",
-            RegistryAcquireAccessError::VerificationFailure => "VerificationFailure",
-            RegistryAcquireAccessError::OwnershipDenied => "OwnershipDenied",
-            RegistryAcquireAccessError::WhitelistDenied => "WhitelistDenied",
-            RegistryAcquireAccessError::BlacklistDenied => "BlacklistDenied",
-        };
-
-        write!(f, "{}", s)
-    }
 }
 
 impl From<SingularRegistryAcquireAccessError> for RegistryAcquireAccessError {
