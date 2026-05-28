@@ -1,12 +1,10 @@
-use std::fmt::Display;
-
-use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryReleaseResult, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessError, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
+use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessError, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
 
 #[derive(Debug, thiserror::Error)]
 pub enum RegistryRegisterResult {
-    #[error("Credential Storage Ok")]
+    #[error("Credential Storage Register Ok")]
     Ok,
-    #[error("Credential Storage Denied")]
+    #[error("Credential Storage Register Failure")]
     Err
 }
 
@@ -43,16 +41,16 @@ impl From<SingularRegistryRegisterResult> for RegistryRegisterResult {
 
 #[derive(Debug, thiserror::Error)]
 pub enum RegistryUnregisterResult {
-    #[error("Credential Storage Ok")]
+    #[error("Credential Storage Unregister Ok")]
     Ok,
-    #[error("Credential Storage Error")]
+    #[error("Credential Storage Unregister Failure")]
     Err,
-    #[error("When Releasing From Whitelist & Blacklist | Whitelist: {whitelist_result}, Blacklist: {blacklist_result}")]
+    #[error("Releasing From Whitelist & Blacklist | Whitelist Ok? {whitelist_result}, Blacklist Ok? {blacklist_result}")]
     Lists {
         whitelist_result: bool, 
         blacklist_result: bool
     },
-    #[error("")]
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure
 }
 
@@ -99,9 +97,13 @@ impl From<SingularRegistryUnregisterResult> for RegistryUnregisterResult {
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryUpdatePasswordResult {
+    #[error("Credential Storage Update Password Ok")]
     Ok,
+    #[error("Credential Storage Update Password Failure")]
     Err,
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure
 }
 
@@ -131,11 +133,18 @@ impl From<SingularRegistryUpdatePasswordResult> for RegistryUpdatePasswordResult
             },
         }
     }
+
 }
+
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryOwnResult {
+    #[error("Control Storage Own Ok")]
     Ok,
+    #[error("Control Storage Own Failure")]
     Err,
+    #[error("Control Storage Ownership Conflict")]
     OwnershipConflict,
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure
 }
 
@@ -174,10 +183,15 @@ impl From<SingularRegistryOwnResult> for RegistryOwnResult {
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryReleaseResourceResult {
+    #[error("Control Storage Release Ok")]
     Ok,
+    #[error("Control Storage Release Failure")]
     Err,
+    #[error("Control Storage Ownership Denied")]
     OwnershipDenied,
+    #[error("Credential Storage Verification Failure ")]
     VerificationFailure
 }
 
@@ -222,9 +236,13 @@ impl From<SingularRegistryReleaseResourceResult> for RegistryReleaseResourceResu
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryReleaseResourceAllResult {
     /// RegistryReleaseResourceResult::VerificationFailure is unreachable!()
+    #[error("Controller Released with len: {}", .0.len())]
     All(Vec<RegistryReleaseResourceResult>),
+
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure
 }
 
@@ -267,10 +285,15 @@ impl From<SingularRegistryReleaseResourceAllResult> for RegistryReleaseResourceA
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryBlacklistAllowResult<Password> {
+    #[error("Blacklist Allow Ok with Password <hidden>")]
     Ok(Password),
+    #[error("Blacklist Allow Failure")]
     Err,
+    #[error("Control Storage Ownership Denied")]
     OwnershipDenied,
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure
 }
 
@@ -313,10 +336,15 @@ impl<Password> From<SingularRegistryBlacklistAllowResult<Password>> for Registry
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryWhitelistAllowResult {
+    #[error("Whitelist Allow Ok")]
     Ok,
+    #[error("Whitelist Allow Failure")]
     Err,
+    #[error("Control Storage Ownership Denied")]
     OwnershipDenied,
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure
 }
 
@@ -359,10 +387,15 @@ impl From<SingularRegistryWhitelistAllowResult> for RegistryWhitelistAllowResult
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryBlacklistUnallowResult {
+    #[error("Blacklist Unallow Ok")]
     Ok,
+    #[error("Blacklist Unallow Failure")]
     Err,
+    #[error("Control Storage Ownership Denied")]
     OwnershipDenied,
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure
 }
 
@@ -405,10 +438,15 @@ impl From<SingularRegistryBlacklistUnallowResult> for RegistryBlacklistUnallowRe
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryWhitelistUnallowResult {
+    #[error("Whitelist Unallow Ok")]
     Ok,
+    #[error("Whitelist Unallow Failure")]
     Err,
+    #[error("Control Storage Ownership Denied")]
     OwnershipDenied,
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure
 }
 
@@ -451,15 +489,23 @@ impl From<SingularRegistryWhitelistUnallowResult> for RegistryWhitelistUnallowRe
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryCheckAccessResult {
+    #[error("Current Access does not Accept Incoming Access")]
     Err,
-    NoCurrentAccess,
+    #[error("Reservations Check Access Conflict Found")]
     ReservationConflict,
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure,
-    OwnershipDenied, // OwnershipDenied is invoked if Whitelist and Blacklist would deny and last resort using Ids doesnt work
+    #[error("Control Storage Ownership Denied")] // OwnershipDenied is invoked if Whitelist and Blacklist would deny and last resort using Ids doesnt work
+    OwnershipDenied,
+    #[error("Whitelist Check Access Denied")]
     WhitelistDenied,
+    #[error("Blacklist Check Access Denied")]
     BlacklistDenied,
+    #[error("Registry Contains Resource")]
     ContainsResource,
+    #[error("Registry Does not Contain Resource")]
     MissingResource,
 }
 
@@ -477,9 +523,7 @@ impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
 
                                         Self::Err
                                     },
-                                    AccessesCheckAccessResult::NoCurrentAccess => {
-                                        Self::NoCurrentAccess
-                                    },
+                                    AccessesCheckAccessResult::NoCurrentAccess => unreachable!("If no current access then it is Ok"),
                                 }
                             },
                             HostCheckAccessResult::ReservationConflict => {
@@ -541,9 +585,13 @@ impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryReleaseAccessResult {
+    #[error("Split Access from a Current Access")]
     Ok,
+    #[error("Registry Storage Release Failure")]
     Err,
+    #[error("No Current Access to Release from")]
     NoCurrentAccess
 }
 
@@ -568,27 +616,30 @@ impl From<SingularRegistryReleaseAccessResult> for RegistryReleaseAccessResult {
                     },
                 }
             },
-            SingularRegistryReleaseAccessResult::AutomatedRegistry(manual_registry_release_result) => {
-                match manual_registry_release_result {
-                    ManualRegistryReleaseResult::Storage(result) => {
-                        assert!(!result);
-
-                        Self::Err
-                    },
-                }
+            SingularRegistryReleaseAccessResult::AutomatedRegistryReleaseFailure => {
+                Self::Err
             },
         }
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryReservationResult {
+    #[error("Reservation Made Ok is Composed with other Reservation(s)")]
     Ok,
+    #[error("Reservation Made Ok is New")]
     OkNew,
+    #[error("Reservation has Conflict")]
     ReservationConflict,
+    #[error("Current Access Does not Accept Incoming Access")]
     AccessConflict,
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure,
+    #[error("Control Storage Ownership Denied")]
     OwnershipDenied,
+    #[error("Whitelist Access Denied")]
     WhitelistDenied,
+    #[error("Blacklist Access Denied")]
     BlacklistDenied
 }
 
@@ -618,9 +669,7 @@ impl From<SingularRegistryReservationResult> for RegistryReservationResult {
                                     },
                                 }
                             },
-                            HostReservationResult::AccessConflict(accesses_check_access_result) => {
-                                assert!(!accesses_check_access_result.ok());
-                                
+                            HostReservationResult::AccessConflict => {
                                 Self::AccessConflict
                             }
                         }
@@ -673,10 +722,15 @@ impl From<SingularRegistryReservationResult> for RegistryReservationResult {
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryUnreserveResult {
+    #[error("Reservations Unreserve Ok")]
     Ok,
+    #[error("No Reservation Found")]
     NoReservation,
-    NoReserver,
+    #[error("No Reserver")]
+    NoReservationsMadeByReserver,
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure
 }
 
@@ -699,25 +753,15 @@ impl From<SingularRegistryUnreserveResult> for RegistryUnreserveResult {
                                             },
                                         }
                                     },
-                                    ReservationsUnreserveResult::NoReserver => {
-                                        Self::NoReserver
+                                    ReservationsUnreserveResult::NoReservationsMadeByReserver => {
+                                        Self::NoReservationsMadeByReserver
                                     },
                                 }
                             },
                         }
                     },
-                    ReceptionUnreserveResult::Denied(owner_authentication_result) => {
-                        match owner_authentication_result {
-                            OwnerAuthenticationResult::Authenticator(authentication_result) => {
-                                match authentication_result {
-                                    AuthenticationResult::Verification(result) => {
-                                        assert!(!result);
-
-                                        Self::VerificationFailure
-                                    },
-                                }
-                            },
-                        }
+                    ReceptionUnreserveResult::VerificationFailure => {
+                        Self::VerificationFailure
                     },
                 }
             },
@@ -725,14 +769,18 @@ impl From<SingularRegistryUnreserveResult> for RegistryUnreserveResult {
     }
 }
 
-pub enum RegistryDrainReservationsResult<T> {
-    Drain(T),
+#[derive(Debug, thiserror::Error)]
+pub enum RegistryDrainReservationsResult<Reservations> {
+    #[error("Drained Reservations")]
+    Drain(Reservations),
+    #[error("No Reservervations Found")]
     NoReserver,
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure
 }
 
-impl<T> From<SingularRegistryDrainReservationsResult<T>> for RegistryDrainReservationsResult<T> {
-    fn from(value: SingularRegistryDrainReservationsResult<T>) -> Self {
+impl<Reservations> From<SingularRegistryDrainReservationsResult<Reservations>> for RegistryDrainReservationsResult<Reservations> {
+    fn from(value: SingularRegistryDrainReservationsResult<Reservations>) -> Self {
         match value {
             SingularRegistryDrainReservationsResult::Reception(reception_drain_reservations_result) => {
                 match reception_drain_reservations_result {
@@ -777,17 +825,17 @@ impl<T> From<SingularRegistryDrainReservationsResult<T>> for RegistryDrainReserv
 pub enum RegistryAcquireAccessError {
     #[error("Resource Not Found")]
     NotFound,
-    #[error("Access Conflict")]
+    #[error("Current Access Does not Accept Incoming Access")]
     AccessConflict,
     #[error("Reservation Conflict")]
     ReservationConflict,
-    #[error("Verification Failure")]
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure,
-    #[error("Ownership Denied")]
+    #[error("Control Storage Ownership Denied")]
     OwnershipDenied,
-    #[error("Whitelist Denied")]
+    #[error("Whitelist Access Denied")]
     WhitelistDenied,
-    #[error("Blacklist Denied")]
+    #[error("Blacklist Access Denied")]
     BlacklistDenied
 }
 
@@ -863,37 +911,29 @@ impl From<SingularRegistryAcquireAccessError> for RegistryAcquireAccessError {
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistrySaferReplacementResult<ReplacementResult> {
+    #[error("Replaced Resource and Returned Old")]
     Found(ReplacementResult),
+    #[error("Inserted Resource")]
     NotFound,
+    #[error("Given Access Denied Removal Or Insert")]
     DeniedAccess,
+    #[error("Tried Inserting None")]
     NoOp,
 
+    #[error("Current Access Does not Accept Incoming Access")]
     AccessConflict,
+    #[error("Reservation Conflict")]
     ReservationConflict,
+    #[error("Credential Storage Verification Failure")]
     VerificationFailure,
+    #[error("Control Storage Ownership Denied")]
     OwnershipDenied,
+    #[error("Whitelist Access Denied")]
     WhitelistDenied,
+    #[error("Blacklist Access Denied")]
     BlacklistDenied,
-}
-
-impl<T> Display for RegistrySaferReplacementResult<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let s = match self {
-            RegistrySaferReplacementResult::Found(_) => "Found",
-            RegistrySaferReplacementResult::NotFound => "NotFound",
-            RegistrySaferReplacementResult::DeniedAccess => "DeniedAccess",
-            RegistrySaferReplacementResult::NoOp => "NoOp",
-            RegistrySaferReplacementResult::AccessConflict => "AccessConflict",
-            RegistrySaferReplacementResult::ReservationConflict => "ReservationConflict",
-            RegistrySaferReplacementResult::VerificationFailure => "VerificationFailure",
-            RegistrySaferReplacementResult::OwnershipDenied => "OwnershipDenied",
-            RegistrySaferReplacementResult::WhitelistDenied => "WhitelistDenied",
-            RegistrySaferReplacementResult::BlacklistDenied => "BlacklistDenied",
-        };
-
-        write!(f, "{}", s)
-    }
 }
 
 impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementResult>> for RegistrySaferReplacementResult<ReplacementResult> {
@@ -977,8 +1017,11 @@ impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementR
     }
 }
 
+#[derive(Debug, thiserror::Error)]
 pub enum RegistryContainsResourceResult {
+    #[error("Registry Contains Resource")]
     Some,
+    #[error("Registry Does not Contains Resource")]
     None
 }
 

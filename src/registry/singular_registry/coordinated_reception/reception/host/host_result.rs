@@ -40,7 +40,7 @@ impl HostUnreserveResult {
 
 pub enum HostReservationResult {
     Reservations(ReservationsReserveResult),
-    AccessConflict(AccessesCheckAccessResult)
+    AccessConflict
 }
 
 pub enum HostReleaseAccessResult {

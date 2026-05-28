@@ -20,7 +20,7 @@ pub enum ReservationsReserveResult {
 
 pub enum ReservationsUnreserveResult {
     Accesses(AccessesReleaseResult),
-    NoReserver
+    NoReservationsMadeByReserver
 }
 
 impl ReservationsUnreserveResult {

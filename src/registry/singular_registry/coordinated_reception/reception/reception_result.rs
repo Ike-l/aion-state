@@ -79,7 +79,7 @@ pub enum ReceptionReservationResult {
 
 pub enum ReceptionUnreserveResult {
     Host(HostUnreserveResult),
-    Denied(OwnerAuthenticationResult)
+    VerificationFailure
 }
 
 pub enum ReceptionDrainReservationsResult<T> {

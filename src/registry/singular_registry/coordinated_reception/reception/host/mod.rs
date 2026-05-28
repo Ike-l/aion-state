@@ -104,7 +104,7 @@ impl<
             return HostReservationResult::Reservations(self.reservations.reserve(ReservationsReservation { reserver_id, access_id, access }))
         }
 
-        HostReservationResult::AccessConflict(accesses_result)
+        HostReservationResult::AccessConflict
     }
 
     pub fn drain_reservations(

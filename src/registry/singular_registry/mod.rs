@@ -174,7 +174,7 @@ impl<
             return SingularRegistryReleaseAccessResult::Reception(self.reception.release_access(&ReceptionReleaseAccess { resource_id, access }))
         }
 
-        SingularRegistryReleaseAccessResult::AutomatedRegistry(registry_result)
+        SingularRegistryReleaseAccessResult::AutomatedRegistryReleaseFailure
     }
     // pub fn record_access() {} Done in Acquire Access
 

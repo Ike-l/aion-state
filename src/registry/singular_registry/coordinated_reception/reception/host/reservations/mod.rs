@@ -108,7 +108,7 @@ impl<
         if let Some(access_map) = self.reservation_storage.get_mut(reserver_id) {
             ReservationsUnreserveResult::Accesses(access_map.release(&AccessesRelease { access, access_id }))
         } else {
-            ReservationsUnreserveResult::NoReserver
+            ReservationsUnreserveResult::NoReservationsMadeByReserver
         }
     }
 

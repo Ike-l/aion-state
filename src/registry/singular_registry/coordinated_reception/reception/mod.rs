@@ -252,7 +252,7 @@ impl<
             return ReceptionUnreserveResult::Host(self.host.unreserve(&HostUnreserve { reserver_id: id, access_id: resource_id, access }))
         }
 
-        ReceptionUnreserveResult::Denied(authentication_result)
+        ReceptionUnreserveResult::VerificationFailure
     }
 
     pub fn drain_reservations(
