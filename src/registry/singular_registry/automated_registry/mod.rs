@@ -1,6 +1,6 @@
 use std::cell::UnsafeCell;
 
-use crate::prelude::{Accessor, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryRelease, ManualRegistryReleaseResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
+use crate::prelude::{Accessor, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessError, ManualRegistryRelease, ManualRegistryReleaseResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
 
 pub mod manual_registry;
 
@@ -33,7 +33,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     pub unsafe fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
         &self,
         input: ManualRegistryAccessInput<'_, S::ValueId, Access>
-    ) -> Result<Access::AccessResult<'_>, ManualRegistryAccessResult> {
+    ) -> Result<Access::AccessResult<'_>, ManualRegistryAccessError> {
         trace_function!("Automated Registry Acquire Access");
 
         unsafe { self.get_inner_mut() }.acquire_access(input)

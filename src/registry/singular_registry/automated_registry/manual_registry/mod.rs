@@ -1,6 +1,6 @@
 use tracing::span;
 
-use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessResult, ManualRegistryRelease, ManualRegistryReleaseResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
+use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessError, ManualRegistryRelease, ManualRegistryReleaseResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
@@ -32,13 +32,13 @@ impl<
         ManualRegistryAccessInput {
             value_id, access
         }: ManualRegistryAccessInput<'_, S::ValueId, Access>
-    ) -> Result<Access::AccessResult<'_>, ManualRegistryAccessResult> {
+    ) -> Result<Access::AccessResult<'_>, ManualRegistryAccessError> {
         let span = span!(FUNCTION_LEVEL, "Manual Acquire Access");
         let _enter = span.enter();
 
         match self.storage.get_mut(value_id) {
             Some(stored_value) => Ok(access.acquire(stored_value)),
-            None => Err(ManualRegistryAccessResult::NotFound),
+            None => Err(ManualRegistryAccessError::NotFound),
         }
     }
 

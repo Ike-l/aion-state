@@ -38,7 +38,7 @@ pub mod prelude {
             Registry,
             registry_results::{
                 RegistryRegisterResult,
-                RegistryAcquireAccessResult,
+                RegistryAcquireAccessError,
                 RegistryBlacklistAllowResult,
                 RegistryBlacklistUnallowResult,
                 RegistryCheckAccessResult,
@@ -92,7 +92,7 @@ pub mod prelude {
                     SingularRegistryReservationResult,
                     SingularRegistryUnreserveResult,
                     SingularRegistryDrainReservationsResult,
-                    SingularRegistryAcquireAccessResult,
+                    SingularRegistryAcquireAccessError,
                     SingularRegistrySaferReplacementResult,
                     SingularRegistryContainsResourceResult,
                 },
@@ -352,7 +352,7 @@ pub mod prelude {
                             ManualRegistryRelease
                         },
                         manual_registry_result::{
-                            ManualRegistryAccessResult, 
+                            ManualRegistryAccessError, 
                             ManualRegistryReplacementResult,
                             ManualRegistryReleaseResult
                         },

@@ -1,4 +1,4 @@
-pub enum ManualRegistryAccessResult {
+pub enum ManualRegistryAccessError {
     NotFound,
 }
 

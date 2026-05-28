@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryRelease, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionDrainReservations, ReceptionGetAccess, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryContainsResource, RegistryDrainReservations, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReservation, RegistrySaferReplacement, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, StableAddress, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryRelease, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionDrainReservations, ReceptionGetAccess, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryContainsResource, RegistryDrainReservations, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReservation, RegistrySaferReplacement, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, SingularRegistryAcquireAccessError, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, StableAddress, WhitelistStorage, trace_function};
 
 pub mod automated_registry;
 pub mod coordinated_reception;
@@ -218,7 +218,7 @@ impl<
         RegistryAcquireAccess {
             user_details, resource_id, access, password
         }: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
-    ) -> Result<<AS::Access as Accessor>::AccessResult<'_>, SingularRegistryAcquireAccessResult> {
+    ) -> Result<<AS::Access as Accessor>::AccessResult<'_>, SingularRegistryAcquireAccessError> {
         trace_function!("Singular Registry Acquire Access");
 
         let check_reception = self.reception.check_access(&ReceptionCheckAccess { user_details, resource_id: &resource_id, access: &access, password });
@@ -235,12 +235,12 @@ impl<
                     return Ok(accesses_result);
                 },
                 Err(err) => {
-                    return Err(SingularRegistryAcquireAccessResult::AutomatedRegistry(err))
+                    return Err(SingularRegistryAcquireAccessError::AutomatedRegistry(err))
                 },
             }
         }
 
-        Err(SingularRegistryAcquireAccessResult::Reception(check_reception))
+        Err(SingularRegistryAcquireAccessError::Reception(check_reception))
     }
 
     pub fn safer_replace(

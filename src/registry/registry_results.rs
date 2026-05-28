@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessResult, ManualRegistryReleaseResult, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessResult, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
+use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryReleaseResult, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessError, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
 
 pub enum RegistryRegisterResult {
     Ok,
@@ -836,7 +836,7 @@ impl<T> From<SingularRegistryDrainReservationsResult<T>> for RegistryDrainReserv
     }
 }
 
-pub enum RegistryAcquireAccessResult {
+pub enum RegistryAcquireAccessError {
     NotFound,
     AccessConflict,
     ReservationConflict,
@@ -846,33 +846,33 @@ pub enum RegistryAcquireAccessResult {
     BlacklistDenied
 }
 
-impl Display for RegistryAcquireAccessResult {
+impl Display for RegistryAcquireAccessError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
-            RegistryAcquireAccessResult::NotFound => "NotFound",
-            RegistryAcquireAccessResult::AccessConflict => "AccessConflict",
-            RegistryAcquireAccessResult::ReservationConflict => "ReservationConflict",
-            RegistryAcquireAccessResult::VerificationFailure => "VerificationFailure",
-            RegistryAcquireAccessResult::OwnershipDenied => "OwnershipDenied",
-            RegistryAcquireAccessResult::WhitelistDenied => "WhitelistDenied",
-            RegistryAcquireAccessResult::BlacklistDenied => "BlacklistDenied",
+            RegistryAcquireAccessError::NotFound => "NotFound",
+            RegistryAcquireAccessError::AccessConflict => "AccessConflict",
+            RegistryAcquireAccessError::ReservationConflict => "ReservationConflict",
+            RegistryAcquireAccessError::VerificationFailure => "VerificationFailure",
+            RegistryAcquireAccessError::OwnershipDenied => "OwnershipDenied",
+            RegistryAcquireAccessError::WhitelistDenied => "WhitelistDenied",
+            RegistryAcquireAccessError::BlacklistDenied => "BlacklistDenied",
         };
 
         write!(f, "{}", s)
     }
 }
 
-impl From<SingularRegistryAcquireAccessResult> for RegistryAcquireAccessResult {
-    fn from(value: SingularRegistryAcquireAccessResult) -> Self {
+impl From<SingularRegistryAcquireAccessError> for RegistryAcquireAccessError {
+    fn from(value: SingularRegistryAcquireAccessError) -> Self {
         match value {
-            SingularRegistryAcquireAccessResult::AutomatedRegistry(manual_registry_access_result) => {
+            SingularRegistryAcquireAccessError::AutomatedRegistry(manual_registry_access_result) => {
                 match manual_registry_access_result {
-                    ManualRegistryAccessResult::NotFound => {
+                    ManualRegistryAccessError::NotFound => {
                         Self::NotFound
                     },
                 }
             },
-            SingularRegistryAcquireAccessResult::Reception(reception_check_access_result) => {
+            SingularRegistryAcquireAccessError::Reception(reception_check_access_result) => {
                 match reception_check_access_result {
                     ReceptionCheckAccessResult::Host(host_check_access_result) => {
                         match host_check_access_result {
