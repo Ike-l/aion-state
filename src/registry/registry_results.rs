@@ -104,6 +104,12 @@ pub enum RegistryUpdatePasswordResult {
     VerificationFailure
 }
 
+impl RegistryUpdatePasswordResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Ok)
+    }
+}
+
 impl From<SingularRegistryUpdatePasswordResult> for RegistryUpdatePasswordResult {
     fn from(value: SingularRegistryUpdatePasswordResult) -> Self {
         match value {
@@ -143,6 +149,12 @@ pub enum RegistryOwnResult {
     OwnershipConflict,
     #[error("Credential Storage Verification Failure")]
     VerificationFailure
+}
+
+impl RegistryOwnResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Ok)
+    }
 }
 
 impl From<SingularRegistryOwnResult> for RegistryOwnResult {
