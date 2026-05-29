@@ -11,4 +11,8 @@ impl Resource {
     pub fn get(&self) -> &str {
         &self.inner
     }
+
+    pub fn get_mut(&mut self) -> &mut String {
+        &mut self.inner
+    }
 }

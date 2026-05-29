@@ -956,6 +956,12 @@ pub enum RegistryContainsResourceResult {
     None
 }
 
+impl RegistryContainsResourceResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Some)
+    }
+}
+
 impl From<SingularRegistryContainsResourceResult> for RegistryContainsResourceResult {
     fn from(value: SingularRegistryContainsResourceResult) -> Self {
         match value {

@@ -41,7 +41,7 @@ impl crate::accessor::Accessor for Access {
                     _ => false
                 }
             },
-            (BorrowType::Held, BorrowType::Instant) => *incoming_access != Access::Replace,
+            (BorrowType::Held, BorrowType::Instant) => !(*incoming_access == Access::Replace || *self == Access::Unique),
             (BorrowType::Instant, _) => true,
         }
     }
@@ -65,6 +65,7 @@ impl crate::accessor::Accessor for Access {
         event!(Level::TRACE, "Access Acquire");
 
         match self {
+            Access::Shared(0) => unreachable!(),
             Access::Shared(_) => AccessResult::Shared(stored_value.get()),
             Access::Unique => AccessResult::Unique(stored_value.get_mut()),
             Access::Replace => unreachable!(),
