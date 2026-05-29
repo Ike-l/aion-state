@@ -2,8 +2,7 @@ use aion_state::{default::prelude::{Password, ReserverId}, prelude::{RegistryReg
 
 use crate::create_registry;
 
-#[test]
-pub fn can_update_password() {
+fn can_update_password() {
     let registry = create_registry();
 
     let id = ReserverId::new("foo");
@@ -27,4 +26,10 @@ pub fn can_update_password() {
     });
 
     assert!(result.ok());
+}
+
+#[cfg(not(feature = "loom"))]
+#[test]
+fn can_update_password_normal() {
+    can_update_password();
 }

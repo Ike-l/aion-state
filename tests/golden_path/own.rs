@@ -4,8 +4,7 @@ use std::assert_matches;
 
 use crate::create_registry;
 
-#[test]
-pub fn can_own() {
+fn can_own() {
     let registry = create_registry();
 
     let id = ReserverId::new("foo");
@@ -24,10 +23,14 @@ pub fn can_own() {
     assert!(result.ok())
 }
 
-#[test]
-fn owning_blocks_by_default() {
-    use tracing::event;
 
+#[cfg(not(feature = "loom"))]
+#[test]
+fn can_own_normal() {
+    can_own();
+}
+
+fn owning_blocks_by_default() {
     let registry = create_registry();
 
     let id = ReserverId::new("foo");
@@ -69,4 +72,10 @@ fn owning_blocks_by_default() {
             assert_matches!(err, RegistryAcquireAccessError::ListsDenied);
         }
     }
+}
+
+#[cfg(not(feature = "loom"))]
+#[test]
+fn owning_blocks_by_default_normal() {
+    owning_blocks_by_default();
 }

@@ -2,8 +2,7 @@ use aion_state::{default::prelude::{Password, ReserverId}, prelude::{RegistryReg
 
 use crate::create_registry;
 
-#[test]
-pub fn can_unregister() {
+fn can_unregister() {
     let registry = create_registry();
 
     let id = ReserverId::new("foo");
@@ -19,4 +18,10 @@ pub fn can_unregister() {
     });
 
     assert!(result.ok())
+}
+
+#[cfg(not(feature = "loom"))]
+#[test]
+fn can_unregister_normal() {
+    can_unregister();
 }

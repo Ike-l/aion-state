@@ -11,14 +11,14 @@ pub mod default;
 pub mod prelude {
     pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::DEBUG;
 
-    #[cfg(not(all(test, feature = "loom")))]
+    #[cfg(not(feature = "loom"))]
     pub(crate) mod sync {
         // pub use parking_lot::Mutex;
         pub use parking_lot::RwLock;
         pub use std::sync::Arc;
     }
 
-    #[cfg(all(test, feature = "loom"))]
+    #[cfg(feature = "loom")]
     pub(crate) use loom::sync;
 
     // #[cfg(feature = "tokio")]

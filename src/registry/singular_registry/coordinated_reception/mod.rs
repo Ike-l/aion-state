@@ -28,7 +28,15 @@ impl<
     ) -> ReceptionRegisterResult {
         trace_function!("Coordinated Reception Register");
         
-        self.reception.write().register(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().register(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().register(input)
+        }
     }
     
     pub fn unregister(
@@ -37,7 +45,15 @@ impl<
     ) -> ReceptionUnregisterResult {
         trace_function!("Coordinated Reception Unregister");
 
-        self.reception.write().unregister(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().unregister(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().unregister(input)
+        }
     }
     
     pub fn update_password(
@@ -46,7 +62,15 @@ impl<
     ) -> ReceptionUpdatePasswordResult {
         trace_function!("Coordinated Reception Update Password");
         
-        self.reception.write().update_password(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().update_password(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().update_password(input)
+        }
     }
 
     pub fn own(
@@ -55,7 +79,15 @@ impl<
     ) -> ReceptionOwnResult {
         trace_function!("Coordinated Reception Own");
 
-        self.reception.write().own(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().own(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().own(input)
+        }
     }
 
     pub fn release_resource(
@@ -64,7 +96,15 @@ impl<
     ) -> ReceptionReleaseResourceResult {
         trace_function!("Coordinated Reception Release Resource");
 
-        self.reception.write().release_resource(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().release_resource(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().release_resource(input)
+        }
     }
 
     pub fn release_resource_all<'a>(
@@ -73,7 +113,15 @@ impl<
     ) -> ReceptionReleaseResourceAllResult {
         trace_function!("Coordinated Reception Release Resource All");
 
-        self.reception.write().release_resource_all(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().release_resource_all(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().release_resource_all(input)
+        }
     }
 
     pub fn allow_whitelist(
@@ -82,7 +130,15 @@ impl<
     ) -> ReceptionWhitelistAllowResult {
         trace_function!("Coordinated Reception Allow Whitelist");
 
-        self.reception.write().allow_whitelist(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().allow_whitelist(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().allow_whitelist(input)
+        }
     }
 
     pub fn allow_blacklist(
@@ -91,7 +147,15 @@ impl<
     ) -> ReceptionBlacklistAllowResult<BS::Password> {
         trace_function!("Coordinated Reception Allow Blacklist");
 
-        self.reception.write().allow_blacklist(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().allow_blacklist(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().allow_blacklist(input)
+        }
     }
 
     pub fn unallow_whitelist(
@@ -100,7 +164,15 @@ impl<
     ) -> ReceptionWhitelistUnallowResult {
         trace_function!("Coordinated Reception Unallow Whitelist");
 
-        self.reception.write().unallow_whitelist(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().unallow_whitelist(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().unallow_whitelist(input)
+        }
     }
 
     pub fn unallow_blacklist(
@@ -109,7 +181,15 @@ impl<
     ) -> ReceptionBlacklistUnallowResult {
         trace_function!("Coordinated Reception Unallow Blacklist");
 
-        self.reception.write().unallow_blacklist(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().unallow_blacklist(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().unallow_blacklist(input)
+        }
     }
 
     pub fn check_access(
@@ -118,7 +198,15 @@ impl<
     ) -> ReceptionCheckAccessResult {
         trace_function!("Coordinated Reception Check Access");
 
-        self.reception.read().check_access(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().check_access(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().check_access(input)
+        }
     }
 
     pub fn release_access(
@@ -127,7 +215,15 @@ impl<
     ) -> ReceptionReleaseAccessResult {
         trace_function!("Coordinated Reception Release Access");
 
-        self.reception.write().release_access(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().release_access(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().release_access(input)
+        }
     }
 
     pub fn record_access(
@@ -136,7 +232,15 @@ impl<
     ) -> ReceptionRecordAccessResult {
         trace_function!("Coordinated Reception Record Access");
 
-        self.reception.write().record_access(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().record_access(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().record_access(input)
+        }
     }
 
     pub fn reserve(
@@ -145,7 +249,15 @@ impl<
     ) -> ReceptionReservationResult {
         trace_function!("Coordinated Reception Reserve");
 
-        self.reception.write().reserve(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().reserve(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().reserve(input)
+        }
     }
     
     pub fn unreserve(
@@ -154,7 +266,15 @@ impl<
     ) -> ReceptionUnreserveResult {
         trace_function!("Coordinated Reception Unreserve");
 
-        self.reception.write().unreserve(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().unreserve(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().unreserve(input)
+        }
     }
 
     pub fn drain_reservations(
@@ -163,7 +283,15 @@ impl<
     ) -> ReceptionDrainReservationsResult<Vec<(AS::ValueId, AS::Access)>> {
         trace_function!("Coordinated Reception Drain Reservations");
 
-        self.reception.write().drain_reservations(input)
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().drain_reservations(input)
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().drain_reservations(input)
+        }
     }
 }
 
@@ -186,6 +314,14 @@ impl<
     ) -> Option<AS::Access> {
         trace_function!("Coordinated Reception Get Access");
 
-        self.reception.read().get_access(input).cloned()
+        #[cfg(feature = "loom")]
+        {
+            self.reception.write().unwrap().get_access(input).cloned()
+        }
+        
+        #[cfg(not(feature = "loom"))]
+        {
+            self.reception.write().get_access(input).cloned()
+        }
     }
 }

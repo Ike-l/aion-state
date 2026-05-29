@@ -2,8 +2,7 @@ use aion_state::{default::prelude::{Password, ReserverId, ResourceId}, prelude::
 
 use crate::create_registry;
 
-#[test]
-pub fn can_own() {
+fn can_own() {
     let registry = create_registry();
 
     let id = ReserverId::new("foo");
@@ -29,4 +28,10 @@ pub fn can_own() {
     });
 
     assert!(result.ok())
+}
+
+#[cfg(not(feature = "loom"))]
+#[test]
+fn can_own_normal() {
+    can_own();
 }
