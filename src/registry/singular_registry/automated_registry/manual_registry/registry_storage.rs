@@ -32,5 +32,7 @@ pub trait RegistryStorage {
         _value_id: &Self::ValueId,
         _access: &Access
     ) -> bool { true }
+
+    fn len(&self) -> usize;
 }
 

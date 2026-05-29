@@ -250,6 +250,14 @@ impl<
 
         self.singular_registry.contains_resource(input).into()
     }
+
+    pub fn len(&self) -> usize {
+        trace_function!("Registry Len");
+
+        let _sync = self.sync.read();
+
+        self.singular_registry.len()
+    }
 }
 
 impl<

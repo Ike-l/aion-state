@@ -52,4 +52,8 @@ impl<ResourceId: Eq + Hash, StoredResource> crate::prelude::RegistryStorage for 
 
         self.inner.contains_key(value_id)
     }
+
+    fn len(&self) -> usize {
+        self.inner.len()
+    }
 }

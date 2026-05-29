@@ -76,4 +76,10 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
 
         unsafe { self.get_inner() }.contains_key(key)
     }
+
+    pub fn len(&self) -> usize {
+        trace_function!("Automated Registry Len");
+
+        unsafe { self.get_inner() }.len()
+    }
 }

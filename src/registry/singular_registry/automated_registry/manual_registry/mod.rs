@@ -117,4 +117,10 @@ impl<
     ) -> bool {
         self.storage.contains_key(key)
     }
+
+    pub fn len(&self) -> usize {
+        trace_function!("Manual Registry Len");
+
+        self.storage.len()
+    }
 }

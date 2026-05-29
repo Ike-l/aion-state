@@ -273,6 +273,12 @@ impl<
 
         SingularRegistryContainsResourceResult::AutomatedRegistry(self.automated_registry.contains_key(resource_id))
     }
+
+    pub fn len(&self) -> usize {
+        trace_function!("Singular Registry Len");
+
+        self.automated_registry.len()
+    }
 }
 
 impl<
