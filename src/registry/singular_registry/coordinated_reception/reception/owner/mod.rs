@@ -52,11 +52,11 @@ impl<
             if authenticator_unregister.ok() {
                 return OwnerUnregisterResult::Controller(self.controller.release_id(&ControllerReleaseId { id }))
             } else {
-                return OwnerUnregisterResult::Authenticator(authenticator_unregister)
+                return OwnerUnregisterResult::AuthenticatorUnregisterFailure
             }
         }
 
-        OwnerUnregisterResult::Denied
+        OwnerUnregisterResult::VerificationFailure
     }
 
     // this is the layer which checks passwords- why i chose this to be the layer to `authenticate`

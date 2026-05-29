@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUnregisterResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessError, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
+use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistCheckAccessResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessError, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistCheckAccessResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
 
 #[derive(Debug, thiserror::Error)]
 pub enum RegistryRegisterResult {
@@ -41,17 +41,21 @@ impl From<SingularRegistryRegisterResult> for RegistryRegisterResult {
 
 #[derive(Debug, thiserror::Error)]
 pub enum RegistryUnregisterResult {
-    #[error("Credential Storage Unregister Ok")]
-    Ok,
     #[error("Credential Storage Unregister Failure")]
-    Err,
-    #[error("Releasing From Whitelist & Blacklist | Whitelist Ok? {whitelist_result}, Blacklist Ok? {blacklist_result}")]
+    AuthenticatorUnregisterFailure,
+    #[error("When Releasing User Id: Whitelist Release All: {whitelist_result}, Blacklist Release All: {blacklist_result}")]
     Lists {
         whitelist_result: bool, 
         blacklist_result: bool
     },
     #[error("Credential Storage Verification Failure")]
     VerificationFailure
+}
+
+impl RegistryUnregisterResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Lists{ .. })
+    }
 }
 
 impl From<SingularRegistryUnregisterResult> for RegistryUnregisterResult {
@@ -76,17 +80,10 @@ impl From<SingularRegistryUnregisterResult> for RegistryUnregisterResult {
                                     },
                                 }
                             },
-                            OwnerUnregisterResult::Authenticator(authenticate_unregister_result) => {
-                                match authenticate_unregister_result {
-                                    AuthenticateUnregisterResult::Unregister(result) => {
-                                        match result {
-                                            true => Self::Ok,
-                                            false => Self::Err,
-                                        }
-                                    },
-                                }
+                            OwnerUnregisterResult::AuthenticatorUnregisterFailure => {
+                                Self::AuthenticatorUnregisterFailure
                             },
-                            OwnerUnregisterResult::Denied => {
+                            OwnerUnregisterResult::VerificationFailure => {
                                 Self::VerificationFailure
                             }
                         }

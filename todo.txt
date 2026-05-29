@@ -1,5 +1,0 @@
-Make Default Implementation
-
-Write Tests
-
-At each level, inputs should involve nested structs- currently they are flat -- 20/05/26: ?
