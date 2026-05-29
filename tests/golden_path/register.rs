@@ -2,7 +2,7 @@ use aion_state::{default::prelude::{Password, ReserverId}, prelude::RegistryRegi
 
 use crate::create_registry;
 
-fn can_register_normal() {
+fn can_register() {
     let registry = create_registry();
 
     let id = ReserverId::new("foo");
@@ -15,6 +15,6 @@ fn can_register_normal() {
 
 #[cfg(not(feature = "loom"))]
 #[test]
-fn can_register() {
-    can_register_normal()
+fn can_register_normal() {
+    can_register()
 }
