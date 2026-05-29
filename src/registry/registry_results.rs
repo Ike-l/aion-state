@@ -306,6 +306,12 @@ pub enum RegistryBlacklistAllowResult<Password> {
     VerificationFailure
 }
 
+impl<Password> RegistryBlacklistAllowResult<Password> {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Ok(_))
+    }
+}
+
 impl<Password> From<SingularRegistryBlacklistAllowResult<Password>> for RegistryBlacklistAllowResult<Password> {
     fn from(value: SingularRegistryBlacklistAllowResult<Password>) -> Self {
         match value {
