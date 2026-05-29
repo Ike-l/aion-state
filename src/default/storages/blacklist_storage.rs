@@ -41,7 +41,7 @@ impl<ResourceId, Access, Password:> crate::prelude::BlacklistStorage for Blackli
     ) -> bool {
         event!(Level::TRACE, "Blacklist check access");
 
-        let Some(allowed_accesses) = self.inner.get(id) else { return true };
+        let Some(allowed_accesses) = self.inner.get(id) else { return false };
         allowed_accesses.iter().any(|(allowed_access, access_password)| allowed_access == access && access_password == password)
     }
 

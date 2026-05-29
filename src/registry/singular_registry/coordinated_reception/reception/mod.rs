@@ -177,6 +177,7 @@ impl<
         trace_function!("Reception Check Access");
 
         let check_owner = self.owner.check_access(&OwnerCheckAccess { user_details: *user_details, resource_id, access, password: *password });
+
         if check_owner.ok() {
             let reserver_id = user_details.map(|(id, _)| id);
             return ReceptionCheckAccessResult::Host(self.host.check_access(&HostCheckAccess { reserver_id, access_id: *resource_id, access }))

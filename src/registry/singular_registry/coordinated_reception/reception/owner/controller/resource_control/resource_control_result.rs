@@ -38,3 +38,7 @@ impl<Id, ResourceId> ResourceControlCheckOwnersResult<'_, Id, ResourceId> {
         matches!(self, Self::Invalid(None))
     }
 }
+
+pub enum ResourceControlIsOwnedResult {
+    IsOwned(bool)
+}

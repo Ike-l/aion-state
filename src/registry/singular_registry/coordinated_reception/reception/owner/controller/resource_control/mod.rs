@@ -1,4 +1,4 @@
-use crate::prelude::{ControlStorage, ResourceControlCheckOwner, ResourceControlCheckOwnerResult, ResourceControlCheckOwnersResult, ResourceControlOwn, ResourceControlOwnResult, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlReleaseResult, trace_function};
+use crate::prelude::{ControlStorage, ResourceControlCheckOwner, ResourceControlCheckOwnerResult, ResourceControlCheckOwnersResult, ResourceControlIsOwnedResult, ResourceControlOwn, ResourceControlOwnResult, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceControlReleaseResult, ResourceIsOwned, trace_function};
 
 pub mod control_storage;
 
@@ -27,6 +27,17 @@ impl<
         }
 
         ResourceControlOwnResult::Own(self.control_storage.own(id, resource_id))
+    }
+
+    pub fn is_owned(
+        &self,
+        ResourceIsOwned {
+            resource_id
+        }: &ResourceIsOwned<CS::ResourceId>
+    ) -> ResourceControlIsOwnedResult {
+        trace_function!("Resource Control Is Owned");
+        
+        ResourceControlIsOwnedResult::IsOwned(self.control_storage.is_owned(&resource_id))
     }
 
     /// Passes through to `control_storage`

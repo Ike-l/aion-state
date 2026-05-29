@@ -325,14 +325,16 @@ pub mod prelude {
                                         ResourceControlCheckOwner,
                                         ResourceControlRelease,
                                         ResourceControlOwn,
-                                        ResourceControlReleaseId
+                                        ResourceControlReleaseId,
+                                        ResourceIsOwned,
                                     },
                                     resource_control_result::{
                                         ResourceControlCheckOwnerResult,
                                         ResourceControlReleaseResult,
                                         ResourceControlOwnResult,
                                         ResourceControlReleaseIdResult,
-                                        ResourceControlCheckOwnersResult
+                                        ResourceControlCheckOwnersResult,
+                                        ResourceControlIsOwnedResult,
                                     }
                                 }
                             }

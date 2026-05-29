@@ -1,6 +1,6 @@
 use tracing::{Level, event};
 
-use crate::default::prelude::{AccessResult, Resource, StoredResource};
+use crate::default::prelude::{AccessResult, Resource, StoredResource, StoredResourceTrait};
 
 #[derive(Debug, PartialEq)]
 enum BorrowType {

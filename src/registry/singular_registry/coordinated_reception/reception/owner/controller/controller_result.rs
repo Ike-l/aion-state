@@ -20,14 +20,15 @@ pub enum ControllerWhitelistAllowResult {
 }
 
 pub enum ControllerCheckAccessResult {
-    Verification(ResourceControlCheckOwnerResult),
-    AccessControl(AccessControlCheckAccessResult)
+    AccessControl(AccessControlCheckAccessResult),
+    IsOwner,
+    NotOwned
 }
 
 impl ControllerCheckAccessResult {
     pub fn ok(&self) -> bool {
         match self {
-            ControllerCheckAccessResult::Verification(resource_control_verification_result) => resource_control_verification_result.ok(),
+            Self::IsOwner | Self::NotOwned => true,
             ControllerCheckAccessResult::AccessControl(access_control_access_result) => access_control_access_result.ok(),
         }
     }

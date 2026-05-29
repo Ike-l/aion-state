@@ -67,9 +67,16 @@ impl<
     ) -> AccessControlCheckAccessResult {
         trace_function!("AccessControl Check Access");
 
+        let whitelist_result = self.whitelist.check_access(&WhitelistCheckAccess { id, access });
         match password {
-            Some(password) => AccessControlCheckAccessResult::Blacklist(self.blacklist.check_access(&BlacklistCheckAccess { id, access, password })),
-            None => AccessControlCheckAccessResult::Whitelist(self.whitelist.check_access(&WhitelistCheckAccess { id, access })),
+            Some(password) => AccessControlCheckAccessResult::Lists { 
+                whitelist: whitelist_result,
+                blacklist: Some(self.blacklist.check_access(&BlacklistCheckAccess { id, access, password }))
+            },
+            None => AccessControlCheckAccessResult::Lists {
+                whitelist: whitelist_result,
+                blacklist: None
+            }
         }
     }
 

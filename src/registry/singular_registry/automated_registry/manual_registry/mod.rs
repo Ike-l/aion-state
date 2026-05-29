@@ -89,7 +89,7 @@ impl<
         }
     }
 
-    // safer bc trade reallocation requirement for the don't reference the stable address stored vaslue itself
+    // safer bc trade reallocation requirement for the don't reference the stable address stored value itself
     /// # Safety
     /// 
     /// Access cannot be used to 'acquire' a reference to StableAddress itself

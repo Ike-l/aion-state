@@ -1,19 +1,29 @@
 use crate::default::prelude::Resource;
 
-pub struct StoredResource {
-    inner: Resource
+pub type StoredResource = Box<Resource>;
+
+pub trait StoredResourceTrait {
+    type Resource;
+
+    fn new(resource: Self::Resource) -> Self;
+
+    fn get(&self) -> &Self::Resource;
+
+    fn get_mut(&mut self) -> &mut Self::Resource;
 }
 
-impl StoredResource {
-    pub fn new(resource: Resource) -> Self {
-        Self { inner: resource }
+impl StoredResourceTrait for StoredResource {
+    type Resource = Resource;
+
+    fn new(resource: Self::Resource) -> Self {
+        Box::new(resource)
     }
 
-    pub fn get(&self) -> &Resource {
-        &self.inner
+    fn get(&self) -> &Self::Resource {
+        self
     }
 
-    pub fn get_mut(&mut self) -> &mut Resource {
-        &mut self.inner
+    fn get_mut(&mut self) -> &mut Self::Resource {
+        self
     }
 }

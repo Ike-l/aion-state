@@ -1,4 +1,4 @@
-use aion_state::{default::prelude::{Access, Password, ReserverId, ResourceId}, prelude::{RegistryAcquireAccess, RegistryAcquireAccessError, RegistryOwn, RegistryRegister}};
+use aion_state::{default::prelude::{Access, Password, ReserverId, Resource, ResourceId}, prelude::{RegistryAcquireAccess, RegistryAcquireAccessError, RegistryOwn, RegistryRegister, RegistrySaferReplacement}};
 
 use std::assert_matches;
 
@@ -26,6 +26,8 @@ pub fn can_own() {
 
 #[test]
 fn owning_blocks_by_default() {
+    use tracing::event;
+
     let registry = create_registry();
 
     let id = ReserverId::new("foo");
@@ -37,9 +39,19 @@ fn owning_blocks_by_default() {
 
     let resource_id = ResourceId::new_type::<i32>();
     let result = registry.own(RegistryOwn {
-        id,
+        id: id.clone(),
         password: &password,
         resource_id: resource_id.clone()
+    });
+
+    assert!(result.ok());
+
+    let result = registry.safer_replace(RegistrySaferReplacement {
+        user_details: Some((&id, &password)),
+        access: &Access::Replace,
+        resource_id: resource_id.clone(),
+        resource: Some(Resource::new("resource".to_string())),
+        password: None,
     });
 
     assert!(result.ok());
@@ -54,7 +66,7 @@ fn owning_blocks_by_default() {
     match result {
         Ok(_) => panic!("Expected Err"),
         Err(err) => {
-            assert_matches!(err, RegistryAcquireAccessError::WhitelistDenied);
+            assert_matches!(err, RegistryAcquireAccessError::ListsDenied);
         }
     }
 }

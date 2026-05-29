@@ -1,6 +1,6 @@
 use tracing::event;
 
-use crate::prelude::{AccessControl, AccessControlAllow, AccessControlCheckAccess, AccessControlRelease, AccessControlUnallow, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccess, ControllerCheckAccessResult, ControllerCheckOwner, ControllerCheckOwnerResult, ControllerOwn, ControllerOwnResult, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResource, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerUnallow, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, FUNCTION_LEVEL, ResourceControl, ResourceControlCheckOwner, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, WhitelistStorage, trace_function};
+use crate::prelude::{AccessControl, AccessControlAllow, AccessControlCheckAccess, AccessControlRelease, AccessControlUnallow, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccess, ControllerCheckAccessResult, ControllerCheckOwner, ControllerCheckOwnerResult, ControllerOwn, ControllerOwnResult, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResource, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerUnallow, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, FUNCTION_LEVEL, ResourceControl, ResourceControlCheckOwner, ResourceControlIsOwnedResult, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceIsOwned, WhitelistStorage, trace_function};
 
 pub mod access_control;
 pub mod resource_control;
@@ -105,15 +105,21 @@ impl<
     ) -> ControllerCheckAccessResult {
         trace_function!("Controller Check Access");
 
-        let access_control_result = self.access_control.check_access(&AccessControlCheckAccess { id: resource_id, access, password: *password });
-        if access_control_result.ok() {
-            return ControllerCheckAccessResult::AccessControl(access_control_result)
-        }
+        let is_owned_result = self.resource_control.is_owned(&ResourceIsOwned { resource_id });
+        if matches!(is_owned_result, ResourceControlIsOwnedResult::IsOwned(true)) {
+            if let Some(id) = id {
+                let resource_control_result = self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id });
+        
+                if resource_control_result.ok() {
+                    return ControllerCheckAccessResult::IsOwner;
+                }
+            }
 
-        if let Some(id) = id {
-            ControllerCheckAccessResult::Verification(self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id }))
-        } else {
+            let access_control_result = self.access_control.check_access(&AccessControlCheckAccess { id: resource_id, access, password: *password });
+            
             ControllerCheckAccessResult::AccessControl(access_control_result)
+        } else {
+            ControllerCheckAccessResult::NotOwned
         }
     }
 

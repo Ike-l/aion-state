@@ -22,7 +22,8 @@ pub mod prelude {
                     ResourceId
                 },
                 stored_resource::{
-                    StoredResource
+                    StoredResource,
+                    StoredResourceTrait
                 }
             },
             users::{

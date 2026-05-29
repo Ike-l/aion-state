@@ -23,7 +23,7 @@ impl<ResourceId: Eq + Hash, Access: PartialEq> crate::prelude::WhitelistStorage 
     ) -> bool {
         event!(Level::TRACE, "Whitelist check access");
 
-        let Some(allowed_accesses) = self.inner.get(id) else { return true };
+        let Some(allowed_accesses) = self.inner.get(id) else { return false };
         allowed_accesses.iter().any(|allowed_access| allowed_access == access)
     }
 
