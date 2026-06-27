@@ -3,6 +3,9 @@
 #![allow(clippy::mut_from_ref)]
 
 pub mod synchronised_registry;
+
+pub mod deaccessing_registry;
+
 pub mod accessor;
 
 #[cfg(any(feature = "default-implementation", test))]
@@ -34,7 +37,11 @@ pub mod prelude {
     pub(crate) use trace_function;
 
     pub use super::{
+        deaccessing_registry::{
+            DeaccessingRegistry
+        },
         synchronised_registry::{
+            SynchronisedRegistry,
             SynchronisedRegistry as Registry,
             registry_results::{
                 RegistryRegisterResult,
