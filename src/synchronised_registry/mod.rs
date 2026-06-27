@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, ReleasingResult, Releaser, ReceptionGetAccess, RegistryAcquireAccess, RegistryAcquireAccessError, RegistryAllow, RegistryBlacklistAllowResult, RegistryBlacklistUnallowResult, RegistryCheckAccess, RegistryCheckAccessResult, RegistryContainsResource, RegistryContainsResourceResult, RegistryDeaccessingAcquireAccess, RegistryDeaccessingReleaseAccess, RegistryDrainReservations, RegistryDrainReservationsResult, RegistryOwn, RegistryOwnResult, RegistryRegister, RegistryRegisterResult, RegistryReleaseAccess, RegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult, RegistryReleaseResourceResult, RegistryReservation, RegistryReservationResult, RegistrySaferReplacement, RegistrySaferReplacementResult, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnregisterResult, RegistryUnreserve, RegistryUnreserveResult, RegistryUpdatePassword, RegistryUpdatePasswordResult, RegistryWhitelistAllowResult, RegistryWhitelistUnallowResult, ReservationStorage, SingularRegistry, StableAddress, WhitelistStorage, sync::{Arc, RwLock}, trace_function};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, ReleasingResult, Releaser, ReceptionGetAccess, RegistryAcquireAccess, RegistryAcquireAccessError, RegistryAllow, RegistryBlacklistAllowResult, RegistryBlacklistUnallowResult, RegistryCheckAccess, RegistryCheckAccessResult, RegistryContainsResource, RegistryContainsResourceResult, RegistryReleasingAcquireAccess, RegistryReleasingReleaseAccess, RegistryDrainReservations, RegistryDrainReservationsResult, RegistryOwn, RegistryOwnResult, RegistryRegister, RegistryRegisterResult, RegistryReleaseAccess, RegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult, RegistryReleaseResourceResult, RegistryReservation, RegistryReservationResult, RegistrySaferReplacement, RegistrySaferReplacementResult, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnregisterResult, RegistryUnreserve, RegistryUnreserveResult, RegistryUpdatePassword, RegistryUpdatePasswordResult, RegistryWhitelistAllowResult, RegistryWhitelistUnallowResult, ReservationStorage, SingularRegistry, StableAddress, WhitelistStorage, sync::{Arc, RwLock}, trace_function};
 
 pub mod singular_registry;
 pub mod registry_results;
@@ -45,9 +45,9 @@ impl<
 {
     type AccessResult<'a> = <AS::Access as Accessor>::AccessResult<'a> where S: 'a, RS: 'a, AS: 'a, OS: 'a, WS: 'a, BS: 'a, CS: 'a;
     type AccessError = RegistryAcquireAccessError;
-    type AccessInput = RegistryDeaccessingAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
+    type AccessInput = RegistryReleasingAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
 
-    type ReleaseInput = RegistryDeaccessingReleaseAccess<S::ValueId, AS::Access>;
+    type ReleaseInput = RegistryReleasingReleaseAccess<S::ValueId, AS::Access>;
 
     fn acquire_access(self: &Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<Self::AccessResult<'_>, Self>, Self::AccessError> {
         let result = self.as_ref().acquire_access(RegistryAcquireAccess {
@@ -57,7 +57,7 @@ impl<
             password: input.password.as_ref()
         })?;
 
-        Ok(ReleasingResult::new(result, Arc::clone(self), RegistryDeaccessingReleaseAccess {
+        Ok(ReleasingResult::new(result, Arc::clone(self), RegistryReleasingReleaseAccess {
             resource_id: input.resource_id,
             access: input.access
         }))
