@@ -3,9 +3,6 @@
 #![allow(clippy::mut_from_ref)]
 
 pub mod synchronised_registry;
-
-pub mod deaccessing_registry;
-
 pub mod accessor;
 
 #[cfg(any(feature = "default-implementation", test))]
@@ -37,18 +34,15 @@ pub mod prelude {
     pub(crate) use trace_function;
 
     pub use super::{
-        deaccessing_registry::{
-            DeaccessingRegistry,
-            deaccessing_result::{
-                DeaccessingResult,
-                raw_deaccessing_result::{
-                    RawDeaccessingResult
-                }
-            }
-        },
         synchronised_registry::{
             SynchronisedRegistry,
             SynchronisedRegistry as Registry,
+            deaccessor::{
+                Deaccessor,
+                deaccessing_result::{
+                    DeaccessingResult,
+                }
+            },
             registry_results::{
                 RegistryRegisterResult,
                 RegistryAcquireAccessError,
@@ -82,10 +76,12 @@ pub mod prelude {
                     SingularRegistryUnallow as RegistryUnallow,
                     SingularRegistryCheckAccess as RegistryCheckAccess,
                     SingularRegistryReleaseAccess as RegistryReleaseAccess,
+                    SingularRegistryDeaccessingReleaseAccess as RegistryDeaccessingReleaseAccess,
                     SingularRegistryReservation as RegistryReservation,
                     SingularRegistryUnreserve as RegistryUnreserve,
                     SingularRegistryDrainReservations as RegistryDrainReservations,
                     SingularRegistryAcquireAccess as RegistryAcquireAccess,
+                    SingularRegistryDeaccessingAcquireAccess as RegistryDeaccessingAcquireAccess,
                     SingularRegistrySaferReplacement as RegistrySaferReplacement,
                     SingularRegistryContainsResource as RegistryContainsResource,
                 },
