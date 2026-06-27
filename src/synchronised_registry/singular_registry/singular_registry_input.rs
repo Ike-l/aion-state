@@ -58,6 +58,11 @@ pub struct SingularRegistryReleaseAccess<'a, ResourceId, Access> {
     pub access: &'a Access
 }
 
+pub struct SingularRegistryDeaccessingReleaseAccess<ResourceId, Access> {
+    pub resource_id: ResourceId,
+    pub access: Access
+}
+
 pub struct SingularRegistryReservation<'a, Id, IdPassword, ResourceId, Access, Password> {
     pub id: Id,
     pub id_password: &'a IdPassword,
@@ -83,6 +88,13 @@ pub struct SingularRegistryAcquireAccess<'a, Id, IdPassword, ResourceId, Access,
     pub resource_id: ResourceId,
     pub access: Access,
     pub password: Option<&'a Password>
+}
+
+pub struct SingularRegistryDeaccessingAcquireAccess<Id, IdPassword, ResourceId, Access, Password> {
+    pub user_details: Option<(Id, IdPassword)>,
+    pub resource_id: ResourceId,
+    pub access: Access,
+    pub password: Option<Password>
 }
 
 pub struct SingularRegistrySaferReplacement<'a, Id, IdPassword, Access, ResourceId, Resource, Password> {
