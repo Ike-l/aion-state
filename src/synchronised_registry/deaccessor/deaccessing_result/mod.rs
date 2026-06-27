@@ -21,10 +21,20 @@ impl<AccessResult, D: Deaccessor> DeaccessingResult<AccessResult, D> {
         }
     }
 
-    pub fn take(mut self) -> AccessResult {
+    pub fn update<NewAccessResult>(
+        mut self, 
+        f: impl FnOnce(AccessResult) -> DeaccessingResult<NewAccessResult, D>
+    ) -> DeaccessingResult<NewAccessResult, D> {
         self.used = true;
+        f(self.raw.take().unwrap())
+    }
 
-        self.raw.take().unwrap()
+    pub fn as_ref(&self) -> Option<&AccessResult> {
+        self.raw.as_ref()
+    }
+
+    pub fn as_mut(&mut self) -> Option<&mut AccessResult> {
+        self.raw.as_mut()
     }
 }
 
@@ -35,4 +45,3 @@ impl<AccessResult, D: Deaccessor + ?Sized> Drop for DeaccessingResult<AccessResu
         }
     }
 }
-
