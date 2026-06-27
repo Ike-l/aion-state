@@ -1,6 +1,8 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, RegistryAcquireAccess, RegistryAcquireAccessError, RegistryAllow, RegistryBlacklistAllowResult, RegistryBlacklistUnallowResult, RegistryCheckAccess, RegistryCheckAccessResult, RegistryContainsResource, RegistryContainsResourceResult, RegistryDrainReservations, RegistryDrainReservationsResult, RegistryOwn, RegistryOwnResult, RegistryRegister, RegistryRegisterResult, RegistryReleaseAccess, RegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult, RegistryReleaseResourceResult, RegistryReservation, RegistryReservationResult, RegistrySaferReplacement, RegistrySaferReplacementResult, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnregisterResult, RegistryUnreserve, RegistryUnreserveResult, RegistryUpdatePassword, RegistryUpdatePasswordResult, RegistryWhitelistAllowResult, RegistryWhitelistUnallowResult, ReservationStorage, StableAddress, SynchronisedRegistry, WhitelistStorage, trace_function};
+use crate::prelude::{sync::Arc, AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, RegistryAcquireAccess, RegistryAcquireAccessError, RegistryAllow, RegistryBlacklistAllowResult, RegistryBlacklistUnallowResult, RegistryCheckAccess, RegistryCheckAccessResult, RegistryContainsResource, RegistryContainsResourceResult, RegistryDrainReservations, RegistryDrainReservationsResult, RegistryOwn, RegistryOwnResult, RegistryRegister, RegistryRegisterResult, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult, RegistryReleaseResourceResult, RegistryReservation, RegistryReservationResult, RegistrySaferReplacement, RegistrySaferReplacementResult, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnregisterResult, RegistryUnreserve, RegistryUnreserveResult, RegistryUpdatePassword, RegistryUpdatePasswordResult, RegistryWhitelistAllowResult, RegistryWhitelistUnallowResult, ReservationStorage, StableAddress, SynchronisedRegistry, WhitelistStorage, trace_function};
+
+pub mod deaccessing_result;
 
 #[derive(Default)]
 pub struct DeaccessingRegistry<S, RS, AS, OS, WS, BS, CS> {
@@ -136,17 +138,17 @@ impl<
         self.synchronised_registry.check_access(input)
     }
 
-    /// # Safety
-    /// 
-    /// Resource `resource_id` corresponding with `access` MUST actually be released
-    pub unsafe fn release_access(
-        &self,
-        input: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
-    ) -> RegistryReleaseAccessResult {
-        trace_function!("Deaccessing Registry Release Access");
+    // /// # Safety
+    // /// 
+    // /// Resource `resource_id` corresponding with `access` MUST actually be released
+    // pub unsafe fn release_access(
+    //     &self,
+    //     input: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
+    // ) -> RegistryReleaseAccessResult {
+    //     trace_function!("Deaccessing Registry Release Access");
 
-        unsafe { self.synchronised_registry.release_access(input) }
-    }
+    //     unsafe { self.synchronised_registry.release_access(input) }
+    // }
 
     pub fn reserve(
         &self,
@@ -177,7 +179,7 @@ impl<
 
 
     pub fn acquire_access(
-        &self,
+        self: &Arc<Self>,
         input: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> Result<<AS::Access as Accessor>::AccessResult<'_>, RegistryAcquireAccessError> {
         trace_function!("Deaccessing Registry Acquire Access");

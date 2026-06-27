@@ -38,7 +38,13 @@ pub mod prelude {
 
     pub use super::{
         deaccessing_registry::{
-            DeaccessingRegistry
+            DeaccessingRegistry,
+            deaccessing_result::{
+                DeaccessingResult,
+                raw_deaccessing_result::{
+                    RawDeaccessingResult
+                }
+            }
         },
         synchronised_registry::{
             SynchronisedRegistry,
