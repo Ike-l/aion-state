@@ -36,10 +36,10 @@ pub mod prelude {
     pub use super::{
         synchronised_registry::{
             SynchronisedRegistry as Registry,
-            deaccessor::{
-                Deaccessor,
-                deaccessing_result::{
-                    DeaccessingResult,
+            releaser::{
+                Releaser,
+                releasing_result::{
+                    ReleasingResult,
                 }
             },
             registry_results::{
