@@ -35,7 +35,6 @@ pub mod prelude {
 
     pub use super::{
         synchronised_registry::{
-            SynchronisedRegistry,
             SynchronisedRegistry as Registry,
             deaccessor::{
                 Deaccessor,
