@@ -140,7 +140,7 @@ impl<
         SingularRegistryWhitelistUnallowResult::Reception(self.reception.unallow_whitelist(&ReceptionUnallow { id, password, resource_id, access }))
     }
 
-    pub fn check_access(
+    pub unsafe fn check_access(
         &self,
         RegistryCheckAccess {
             user_details, resource_id, access, password
@@ -151,7 +151,7 @@ impl<
         let reception_result = self.reception.check_access(&ReceptionCheckAccess { user_details: *user_details, resource_id, access, password: *password });
 
         if reception_result.ok() {
-            return SingularRegistryCheckAccessResult::AutomatedRegistry(self.automated_registry.contains_key(*resource_id))
+            return SingularRegistryCheckAccessResult::AutomatedRegistry(unsafe { self.automated_registry.contains_key(*resource_id) })
         }
 
         SingularRegistryCheckAccessResult::Reception(reception_result)
@@ -168,7 +168,7 @@ impl<
     ) -> SingularRegistryReleaseAccessResult {
         trace_function!("Singular Registry Release Access");
 
-        let registry_result = self.automated_registry.release(&ManualRegistryRelease { value_id: *resource_id, access: *access });
+        let registry_result = unsafe { self.automated_registry.release(&ManualRegistryRelease { value_id: *resource_id, access: *access }) };
         
         if registry_result.ok() {
             return SingularRegistryReleaseAccessResult::Reception(self.reception.release_access(&ReceptionReleaseAccess { resource_id, access }))
@@ -213,7 +213,7 @@ impl<
     }
 
 
-    pub fn acquire_access(
+    pub unsafe fn acquire_access(
         &self,
         RegistryAcquireAccess {
             user_details, resource_id, access, password
@@ -243,7 +243,7 @@ impl<
         Err(SingularRegistryAcquireAccessError::Reception(check_reception))
     }
 
-    pub fn safer_replace(
+    pub unsafe fn safer_replace(
         &self,
         RegistrySaferReplacement {
             user_details, access, resource_id, resource, password
@@ -263,7 +263,7 @@ impl<
         SingularRegistrySaferReplacementResult::Reception(reception_result)
     }
 
-    pub fn contains_resource(
+    pub unsafe fn contains_resource(
         &self,
         RegistryContainsResource {
             resource_id
@@ -271,13 +271,13 @@ impl<
     ) -> SingularRegistryContainsResourceResult {
         trace_function!("Singular Registry Contains Resource");
 
-        SingularRegistryContainsResourceResult::AutomatedRegistry(self.automated_registry.contains_key(resource_id))
+        SingularRegistryContainsResourceResult::AutomatedRegistry(unsafe { self.automated_registry.contains_key(resource_id) })
     }
 
-    pub fn len(&self) -> usize {
+    pub unsafe fn len(&self) -> usize {
         trace_function!("Singular Registry Len");
 
-        self.automated_registry.len()
+        unsafe { self.automated_registry.len() }
     }
 }
 
@@ -302,5 +302,26 @@ impl<
         trace_function!("Singular Registry Get Access");
 
         self.reception.get_access(input)
+    }
+}
+
+impl<
+    S: RegistryStorage,
+    RS: ReservationStorage<AccessStorage = AS>,
+    AS: AccessStorage<ValueId = S::ValueId> + Default,
+    OS: CredentialStorage<Id = RS::ReserverId>,
+    WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
+    BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
+    CS: ControlStorage<ResourceId = BS::Id, Id = OS::Id>
+> SingularRegistry<S, RS, AS, OS, WS, BS, CS> 
+    where 
+        RS::ReserverId: Debug + PartialEq,
+        AS::Access: Debug + Accessor<StoredValue = S::Value>,
+        AS::ValueId: Debug + Clone
+{
+    pub unsafe fn keys(&self) -> impl Iterator<Item = <S as RegistryStorage>::ValueId> {
+        trace_function!("Singular Registry keys");
+
+        unsafe { self.automated_registry.keys() }
     }
 }

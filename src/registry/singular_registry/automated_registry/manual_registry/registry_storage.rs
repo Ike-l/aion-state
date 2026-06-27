@@ -34,5 +34,7 @@ pub trait RegistryStorage {
     ) -> bool { true }
 
     fn len(&self) -> usize;
+
+    fn keys(&self) -> impl Iterator<Item = &Self::ValueId>;
 }
 

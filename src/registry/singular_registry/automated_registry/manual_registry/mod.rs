@@ -124,3 +124,15 @@ impl<
         self.storage.len()
     }
 }
+
+impl<
+    S: RegistryStorage,
+> ManualRegistry<S> 
+    where S::ValueId: Clone
+{
+    pub fn keys(&self) -> impl Iterator<Item = S::ValueId> {
+        trace_function!("Manual Registry keys");
+
+        self.storage.keys().cloned()
+    }
+}

@@ -16,6 +16,6 @@ lazy_static = "1.5.0"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 
 [features]
-# default = []
-default = ["default-implementation"]
+# default = ["default-implementation"]
+default = []
 default-implementation = ["rand"]

@@ -59,7 +59,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
         unsafe { self.get_inner_mut().safer_replace(manual_registry_replacement_input) }
     }
 
-    pub fn release<Access: Accessor<StoredValue = S::Value>>(
+    pub unsafe fn release<Access: Accessor<StoredValue = S::Value>>(
         &self,
         input: &ManualRegistryRelease<'_, S::ValueId, Access> 
     ) -> ManualRegistryReleaseResult {
@@ -68,7 +68,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
         unsafe { self.get_inner_mut().release(input) }
     }
 
-    pub fn contains_key(
+    pub unsafe fn contains_key(
         &self,
         key: &S::ValueId
     ) -> bool {
@@ -77,9 +77,21 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
         unsafe { self.get_inner() }.contains_key(key)
     }
 
-    pub fn len(&self) -> usize {
+    pub unsafe fn len(&self) -> usize {
         trace_function!("Automated Registry Len");
 
         unsafe { self.get_inner() }.len()
+    }
+}
+
+impl<
+    S: RegistryStorage,
+> AutomatedRegistry<S> 
+    where S::ValueId: Clone
+{
+    pub unsafe fn keys(&self) -> impl Iterator<Item = S::ValueId> {
+        trace_function!("Automated Registry keys");
+
+        unsafe { self.get_inner() }.keys()
     }
 }

@@ -162,7 +162,7 @@ impl<
 
         let _sync = self.sync.read();
 
-        self.singular_registry.check_access(input).into()
+        unsafe { self.singular_registry.check_access(input).into() }
     }
 
     /// # Safety
@@ -223,7 +223,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.acquire_access(input).map_err(|err| err.into())
+        unsafe { self.singular_registry.acquire_access(input).map_err(|err| err.into()) }
     }
 
     pub fn safer_replace(
@@ -237,7 +237,7 @@ impl<
         
         let _sync = self.sync.write();
 
-        self.singular_registry.safer_replace(input).into()
+        unsafe { self.singular_registry.safer_replace(input).into() }
     }
 
     pub fn contains_resource(
@@ -248,7 +248,7 @@ impl<
 
         let _sync = self.sync.read();
 
-        self.singular_registry.contains_resource(input).into()
+        unsafe { self.singular_registry.contains_resource(input).into() }
     }
 
     pub fn len(&self) -> usize {
@@ -256,7 +256,7 @@ impl<
 
         let _sync = self.sync.read();
 
-        self.singular_registry.len()
+        unsafe { self.singular_registry.len() }
     }
 }
 
@@ -283,5 +283,28 @@ impl<
         let _sync = self.sync.read();
 
         self.singular_registry.get_access(input)
+    }
+}
+
+impl<
+    S: RegistryStorage,
+    RS: ReservationStorage<AccessStorage = AS>,
+    AS: AccessStorage<ValueId = S::ValueId> + Default,
+    OS: CredentialStorage<Id = RS::ReserverId>,
+    WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
+    BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
+    CS: ControlStorage<ResourceId = BS::Id, Id = OS::Id>
+> Registry<S, RS, AS, OS, WS, BS, CS> 
+    where 
+        RS::ReserverId: Debug + PartialEq,
+        AS::Access: Debug + Accessor<StoredValue = S::Value>,
+        AS::ValueId: Debug + Clone
+{
+    pub fn keys(&self) -> impl Iterator<Item = <S as RegistryStorage>::ValueId> {
+        trace_function!("Registry keys");
+
+        let _sync = self.sync.read();
+        
+        unsafe { self.singular_registry.keys() }
     }
 }
