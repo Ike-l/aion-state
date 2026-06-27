@@ -58,7 +58,7 @@ pub struct SingularRegistryReleaseAccess<'a, ResourceId, Access> {
     pub access: &'a Access
 }
 
-pub struct SingularRegistryDeaccessingReleaseAccess<ResourceId, Access> {
+pub struct SingularRegistryReleasingReleaseAccess<ResourceId, Access> {
     pub resource_id: ResourceId,
     pub access: Access
 }
@@ -90,7 +90,7 @@ pub struct SingularRegistryAcquireAccess<'a, Id, IdPassword, ResourceId, Access,
     pub password: Option<&'a Password>
 }
 
-pub struct SingularRegistryDeaccessingAcquireAccess<Id, IdPassword, ResourceId, Access, Password> {
+pub struct SingularRegistryReleasingAcquireAccess<Id, IdPassword, ResourceId, Access, Password> {
     pub user_details: Option<(Id, IdPassword)>,
     pub resource_id: ResourceId,
     pub access: Access,
