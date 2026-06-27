@@ -1,6 +1,6 @@
 #![cfg(feature = "default-implementation")]
 
-use aion_state::prelude::Registry;
+use aion_state::prelude::SynchronisedRegistry;
 
 use aion_state::default::prelude::*;
 

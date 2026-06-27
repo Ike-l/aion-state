@@ -2,7 +2,7 @@
 #![allow(clippy::match_like_matches_macro)]
 #![allow(clippy::mut_from_ref)]
 
-pub mod registry;
+pub mod synchronised_registry;
 pub mod accessor;
 
 #[cfg(any(feature = "default-implementation", test))]
@@ -34,8 +34,8 @@ pub mod prelude {
     pub(crate) use trace_function;
 
     pub use super::{
-        registry::{
-            Registry,
+        synchronised_registry::{
+            SynchronisedRegistry as Registry,
             registry_results::{
                 RegistryRegisterResult,
                 RegistryAcquireAccessError,

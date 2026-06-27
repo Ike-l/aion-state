@@ -9,7 +9,7 @@ pub mod registry_results;
 /// Separate Sync bc the point is to not use RAII, 
 /// removing the sync and making the functions take `&mut self` would require some form of RAII in mt situations
 #[derive(Default)]
-pub struct Registry<S, RS, AS, OS, WS, BS, CS> {
+pub struct SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> {
     sync: RwLock<()>,
     singular_registry: SingularRegistry<S, RS, AS, OS, WS, BS, CS>,
 }
@@ -19,14 +19,14 @@ pub struct Registry<S, RS, AS, OS, WS, BS, CS> {
 /// S::Value is Send 
 /// 
 /// Registry uses the `sync` lock
-unsafe impl<S: RegistryStorage, RS, AS, OS, WS, BS, CS> Send for Registry<S, RS, AS, OS, WS, BS, CS> where S::Value: Send {}
+unsafe impl<S: RegistryStorage, RS, AS, OS, WS, BS, CS> Send for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> where S::Value: Send {}
 
 /// # Safety
 /// 
 /// S::Value is Sync 
 /// 
 /// Registry uses the `sync` lock
-unsafe impl<S: RegistryStorage, RS, AS, OS, WS, BS, CS> Sync for Registry<S, RS, AS, OS, WS, BS, CS> where S::Value: Sync {}
+unsafe impl<S: RegistryStorage, RS, AS, OS, WS, BS, CS> Sync for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> where S::Value: Sync {}
 
 impl<
     S: RegistryStorage,
@@ -36,7 +36,7 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
-> Registry<S, RS, AS, OS, WS, BS, CS> 
+> SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Debug + Accessor<StoredValue = S::Value>,
@@ -268,7 +268,7 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
-> Registry<S, RS, AS, OS, WS, BS, CS> 
+> SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Debug + Clone + Accessor<StoredValue = S::Value>,
@@ -294,7 +294,7 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<ResourceId = BS::Id, Id = OS::Id>
-> Registry<S, RS, AS, OS, WS, BS, CS> 
+> SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Debug + Accessor<StoredValue = S::Value>,
