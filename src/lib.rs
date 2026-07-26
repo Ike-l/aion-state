@@ -353,18 +353,13 @@ pub mod prelude {
                     AutomatedRegistry,
                     manual_registry::{
                         ManualRegistry,
-                        stable_address::{
-                            StableAddress
-                        },
                         manual_registry_input::{
                             ManualRegistryAccessInput, 
                             ManualRegistryReplacementInput,
-                            ManualRegistryRelease
                         },
                         manual_registry_result::{
                             ManualRegistryAccessError, 
                             ManualRegistryReplacementResult,
-                            ManualRegistryReleaseResult
                         },
                         registry_storage::{
                             RegistryStorage
@@ -374,7 +369,9 @@ pub mod prelude {
             }
         },
         accessor::{
-            Accessor
+            Accessor,
+            AccessorResult,
+            StoredValueTrait
         }
     };
 }

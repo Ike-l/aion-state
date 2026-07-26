@@ -1,6 +1,6 @@
 use tracing::{Level, event};
 
-use crate::default::prelude::{AccessResult, Resource, StoredResource, StoredResourceTrait};
+use crate::prelude::{AccessorResult, StoredValueTrait};
 
 #[derive(Debug, PartialEq)]
 enum BorrowType {
@@ -26,11 +26,6 @@ impl Access {
 }
 
 impl crate::accessor::Accessor for Access {
-    type StoredValue = StoredResource;
-    type Value = Resource;
-
-    type AccessResult<'a> = AccessResult<'a, Resource>;
-
     fn accepts_incoming(&self, incoming_access: &Self) -> bool {
         event!(Level::TRACE, "Access Accepts Incoming");
 
@@ -56,20 +51,6 @@ impl crate::accessor::Accessor for Access {
         event!(Level::TRACE, "Access Can Remove Resource");
 
         *self == Access::Replace
-    }
-
-    fn acquire<'a>(
-        &self, 
-        stored_value: &'a mut Self::StoredValue
-    ) -> Self::AccessResult<'a> {
-        event!(Level::TRACE, "Access Acquire");
-
-        match self {
-            Access::Shared(0) => unreachable!(),
-            Access::Shared(_) => AccessResult::Shared(stored_value.get()),
-            Access::Unique => AccessResult::Unique(stored_value.get_mut()),
-            Access::Replace => unreachable!(),
-        }
     }
 
     fn merge(
@@ -115,22 +96,18 @@ impl crate::accessor::Accessor for Access {
             _ => ()
         }  
     }
+    
+    fn acquire<'a, V: StoredValueTrait, R: AccessorResult<'a, V::Value>>(
+        &self, 
+        stored_value: &'a mut V
+    ) -> R {
+        event!(Level::TRACE, "Access Acquire");
 
-    fn insert<'a>(
-        &self,
-        value: Self::Value
-    ) -> Self::StoredValue {
-        event!(Level::TRACE, "Access Insert");
-
-        Self::StoredValue::new(value)
-    }
-
-    fn remove<'a>(
-        &self,
-        stored_value: Self::StoredValue
-    ) -> Self::StoredValue {
-        event!(Level::TRACE, "Access Remove");
-
-        stored_value
+        match self {
+            Access::Shared(0) => unreachable!(),
+            Access::Shared(_) => R::new_shared(stored_value.as_shared()),
+            Access::Unique => R::new_unique(stored_value.as_unique()),
+            Access::Replace => unreachable!(),
+        }
     }
 }

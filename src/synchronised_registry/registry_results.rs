@@ -580,8 +580,6 @@ impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
 pub enum RegistryReleaseAccessResult {
     #[error("Split Access from a Current Access")]
     Ok,
-    #[error("Registry Storage Release Failure")]
-    Err,
     #[error("No Current Access to Release from")]
     NoCurrentAccess
 }
@@ -606,9 +604,6 @@ impl From<SingularRegistryReleaseAccessResult> for RegistryReleaseAccessResult {
                         }
                     },
                 }
-            },
-            SingularRegistryReleaseAccessResult::AutomatedRegistryReleaseFailure => {
-                Self::Err
             },
         }
     }

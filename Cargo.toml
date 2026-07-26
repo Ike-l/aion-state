@@ -10,12 +10,16 @@ thiserror = "2.0.18"
 
 rand = { version = "0.10.1", optional = true }
 loom = { version = "0.7.2", optional = true }
+stable_deref_trait = "1.2.1"
 
 [dev-dependencies]
+strum = "0.28.0"
+strum_macros = "0.28.0"
+rand_chacha = "0.10.0"
 lazy_static = "1.5.0"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 
 [features]
-# default = ["default-implementation"]
-default = []
+default = ["default-implementation"]
+# default = []
 default-implementation = ["rand"]

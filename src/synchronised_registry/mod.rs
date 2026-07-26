@@ -1,6 +1,8 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, ReleasingResult, Releaser, ReceptionGetAccess, RegistryAcquireAccess, RegistryAcquireAccessError, RegistryAllow, RegistryBlacklistAllowResult, RegistryBlacklistUnallowResult, RegistryCheckAccess, RegistryCheckAccessResult, RegistryContainsResource, RegistryContainsResourceResult, RegistryReleasingAcquireAccess, RegistryReleasingReleaseAccess, RegistryDrainReservations, RegistryDrainReservationsResult, RegistryOwn, RegistryOwnResult, RegistryRegister, RegistryRegisterResult, RegistryReleaseAccess, RegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult, RegistryReleaseResourceResult, RegistryReservation, RegistryReservationResult, RegistrySaferReplacement, RegistrySaferReplacementResult, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnregisterResult, RegistryUnreserve, RegistryUnreserveResult, RegistryUpdatePassword, RegistryUpdatePasswordResult, RegistryWhitelistAllowResult, RegistryWhitelistUnallowResult, ReservationStorage, SingularRegistry, StableAddress, WhitelistStorage, sync::{Arc, RwLock}, trace_function};
+use stable_deref_trait::StableDeref;
+
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, RegistryAcquireAccess, RegistryAcquireAccessError, RegistryAllow, RegistryBlacklistAllowResult, RegistryBlacklistUnallowResult, RegistryCheckAccess, RegistryCheckAccessResult, RegistryContainsResource, RegistryContainsResourceResult, RegistryDrainReservations, RegistryDrainReservationsResult, RegistryOwn, RegistryOwnResult, RegistryRegister, RegistryRegisterResult, RegistryReleaseAccess, RegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult, RegistryReleaseResourceResult, RegistryReleasingAcquireAccess, RegistryReleasingReleaseAccess, RegistryReservation, RegistryReservationResult, RegistrySaferReplacement, RegistrySaferReplacementResult, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnregisterResult, RegistryUnreserve, RegistryUnreserveResult, RegistryUpdatePassword, RegistryUpdatePasswordResult, RegistryWhitelistAllowResult, RegistryWhitelistUnallowResult, Releaser, ReleasingResult, ReservationStorage, SingularRegistry, StoredValueTrait, WhitelistStorage, sync::{Arc, RwLock}, trace_function};
 
 pub mod singular_registry;
 pub mod registry_results;
@@ -37,19 +39,19 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
-> Releaser for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+> Releaser<<S::Value as StoredValueTrait>::Value> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Accessor<StoredValue = S::Value> + Clone,
+        AS::Access: Debug + Accessor + Clone,
         AS::ValueId: Debug + Clone,
+        S::Value: StoredValueTrait
 {
-    type AccessResult<'a> = <AS::Access as Accessor>::AccessResult<'a> where S: 'a, RS: 'a, AS: 'a, OS: 'a, WS: 'a, BS: 'a, CS: 'a;
     type AccessError = RegistryAcquireAccessError;
     type AccessInput = RegistryReleasingAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
 
     type ReleaseInput = RegistryReleasingReleaseAccess<S::ValueId, AS::Access>;
 
-    fn acquire_access(self: &Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<Self::AccessResult<'_>, Self>, Self::AccessError> {
+    fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<<S::Value as StoredValueTrait>::Value, AccessResult, Self>, Self::AccessError> {
         let result = self.as_ref().acquire_access(RegistryAcquireAccess {
             user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
             resource_id: input.resource_id.clone(),
@@ -82,7 +84,7 @@ impl<
 > SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Accessor<StoredValue = S::Value>,
+        AS::Access: Debug + Accessor,
         AS::ValueId: Debug
 {
     pub fn register(
@@ -258,10 +260,12 @@ impl<
     }
 
 
-    pub fn acquire_access(
-        &self,
+    pub fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+        &'a self,
         input: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
-    ) -> Result<<AS::Access as Accessor>::AccessResult<'_>, RegistryAcquireAccessError> {
+    ) -> Result<AccessResult, RegistryAcquireAccessError> 
+        where <S as RegistryStorage>::Value: StoredValueTrait 
+    {
         trace_function!("Synchronised Registry Acquire Access");
 
         let _sync = self.sync.write();
@@ -271,10 +275,9 @@ impl<
 
     pub fn safer_replace(
         &self,
-        input: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <AS::Access as Accessor>::Value, BS::Password>
-    ) -> RegistrySaferReplacementResult<<AS::Access as Accessor>::StoredValue>
-        where
-            <AS::Access as Accessor>::StoredValue: StableAddress
+        input: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoredValueTrait>::Value, BS::Password>
+    ) -> RegistrySaferReplacementResult<<S::Value as StoredValueTrait>::Value>
+        where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
     {
         trace_function!("Synchronised Registry Safer Replace");
         
@@ -314,7 +317,7 @@ impl<
 > SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Clone + Accessor<StoredValue = S::Value>,
+        AS::Access: Debug + Clone + Accessor,
         AS::ValueId: Debug
 {
     pub fn get_access(
@@ -340,7 +343,7 @@ impl<
 > SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Accessor<StoredValue = S::Value>,
+        AS::Access: Debug + Accessor,
         AS::ValueId: Debug + Clone
 {
     pub fn keys(&self) -> impl Iterator<Item = <S as RegistryStorage>::ValueId> {

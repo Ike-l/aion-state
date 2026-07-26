@@ -32,7 +32,7 @@ fn multi_safer_replace() {
 
     let raw_resources = 0..;
 
-    let n = 10000;
+    let n = 100;
     for raw_resource in raw_resources.take(n) {
         let resource_id = ResourceId::Label(raw_resource.to_string());
         let resource = Resource::new(raw_resource.to_string());

@@ -52,7 +52,6 @@ pub enum SingularRegistryCheckAccessResult {
 
 pub enum SingularRegistryReleaseAccessResult {
     Reception(ReceptionReleaseAccessResult),
-    AutomatedRegistryReleaseFailure
 }
 
 pub enum SingularRegistryReservationResult {

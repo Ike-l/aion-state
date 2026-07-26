@@ -1,29 +1,23 @@
-use crate::default::prelude::Resource;
+use crate::{default::prelude::Resource, prelude::StoredValueTrait};
 
 pub type StoredResource = Box<Resource>;
 
-pub trait StoredResourceTrait {
-    type Resource;
+impl StoredValueTrait for StoredResource {
+    type Value = Resource;
 
-    fn new(resource: Self::Resource) -> Self;
-
-    fn get(&self) -> &Self::Resource;
-
-    fn get_mut(&mut self) -> &mut Self::Resource;
-}
-
-impl StoredResourceTrait for StoredResource {
-    type Resource = Resource;
-
-    fn new(resource: Self::Resource) -> Self {
-        Box::new(resource)
+    fn new(value: Self::Value) -> Self {
+        Box::new(value)
     }
 
-    fn get(&self) -> &Self::Resource {
+    fn as_shared(&self) -> &Self::Value {
         self
     }
 
-    fn get_mut(&mut self) -> &mut Self::Resource {
+    fn as_unique(&mut self) -> &mut Self::Value {
         self
+    }
+
+    fn into_inner(self) -> Self::Value {
+        *self
     }
 }

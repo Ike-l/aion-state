@@ -8,8 +8,3 @@ pub struct ManualRegistryReplacementInput<'a, Access, ValueId, Value> {
     pub value_id: ValueId,
     pub value: Option<Value>
 }
-
-pub struct ManualRegistryRelease<'a, ValueId, Access> {
-    pub value_id: &'a ValueId,
-    pub access: &'a Access
-}

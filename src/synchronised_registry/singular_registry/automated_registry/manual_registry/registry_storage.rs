@@ -1,5 +1,3 @@
-use crate::prelude::Accessor;
-
 pub trait RegistryStorage {
     type ValueId;
 
@@ -26,12 +24,6 @@ pub trait RegistryStorage {
         &self, 
         value_id: &Self::ValueId
     ) -> bool;
-
-    fn release<Access: Accessor<StoredValue = Self::Value>>(
-        &mut self,
-        _value_id: &Self::ValueId,
-        _access: &Access
-    ) -> bool { true }
 
     fn len(&self) -> usize;
 

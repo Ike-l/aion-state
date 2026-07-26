@@ -16,6 +16,10 @@ impl<ResourceId: Eq + Hash, StoredResource> crate::prelude::RegistryStorage for 
     type ValueId = ResourceId;
     type Value = StoredResource;
 
+    fn keys(&self) -> impl Iterator<Item = &Self::ValueId> {
+        self.inner.keys()
+    }
+
     fn get_mut(
         &mut self, 
         value_id: &Self::ValueId

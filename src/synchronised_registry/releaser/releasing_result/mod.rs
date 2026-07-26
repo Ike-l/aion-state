@@ -1,13 +1,13 @@
 use crate::prelude::{Releaser, sync::Arc};
 
-pub struct ReleasingResult<AccessResult, R: Releaser + ?Sized> {
+pub struct ReleasingResult<S, AccessResult, R: Releaser<S> + ?Sized> {
     raw: Option<AccessResult>,
     used: bool,
     releaser: Option<Arc<R>>,
     release_input: Option<R::ReleaseInput>
 }
 
-impl<AccessResult, R: Releaser> ReleasingResult<AccessResult, R> {
+impl<S, AccessResult, R: Releaser<S>> ReleasingResult<S, AccessResult, R> {
     pub fn new(
         access_result: AccessResult, 
         releaser: Arc<R>,
@@ -24,7 +24,7 @@ impl<AccessResult, R: Releaser> ReleasingResult<AccessResult, R> {
     pub fn update<NewAccessResult>(
         mut self, 
         f: impl FnOnce(AccessResult) -> NewAccessResult
-    ) -> ReleasingResult<NewAccessResult, R> {
+    ) -> ReleasingResult<S, NewAccessResult, R> {
         self.used = true;
         ReleasingResult::new(f(self.raw.take().unwrap()), self.releaser.take().unwrap(), self.release_input.take().unwrap())
     }
@@ -38,7 +38,7 @@ impl<AccessResult, R: Releaser> ReleasingResult<AccessResult, R> {
     }
 }
 
-impl<AccessResult, R: Releaser + ?Sized> Drop for ReleasingResult<AccessResult, R> {
+impl<S, AccessResult, R: Releaser<S> + ?Sized> Drop for ReleasingResult<S, AccessResult, R> {
     fn drop(&mut self) {
         if !self.used {
             self.releaser.take().unwrap().release_access(&self.release_input.take().unwrap());

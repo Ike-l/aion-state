@@ -1,4 +1,4 @@
-use aion_state::{default::prelude::{Access, Password, ReserverId, Resource, ResourceId}, prelude::{RegistryAcquireAccess, RegistryAcquireAccessError, RegistryOwn, RegistryRegister, RegistrySaferReplacement}};
+use aion_state::{default::prelude::{Access, AccessResult, Password, ReserverId, Resource, ResourceId}, prelude::{RegistryAcquireAccess, RegistryAcquireAccessError, RegistryOwn, RegistryRegister, RegistrySaferReplacement}};
 
 use std::assert_matches;
 
@@ -59,7 +59,7 @@ fn owning_blocks_by_default() {
 
     assert!(result.ok());
 
-    let result = registry.acquire_access(RegistryAcquireAccess {
+    let result = registry.acquire_access::<AccessResult<Resource>>(RegistryAcquireAccess {
         user_details: None,
         access: Access::Shared(1),
         resource_id,

@@ -1,6 +1,8 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryRelease, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionDrainReservations, ReceptionGetAccess, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryContainsResource, RegistryDrainReservations, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReservation, RegistrySaferReplacement, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, SingularRegistryAcquireAccessError, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, StableAddress, WhitelistStorage, trace_function};
+use stable_deref_trait::StableDeref;
+
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionDrainReservations, ReceptionGetAccess, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryContainsResource, RegistryDrainReservations, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReservation, RegistrySaferReplacement, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, SingularRegistryAcquireAccessError, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, StoredValueTrait, WhitelistStorage, trace_function};
 
 pub mod automated_registry;
 pub mod coordinated_reception;
@@ -24,7 +26,7 @@ impl<
 > SingularRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Accessor<StoredValue = S::Value>,
+        AS::Access: Debug + Accessor,
         AS::ValueId: Debug
 {
     pub fn register(
@@ -168,16 +170,8 @@ impl<
     ) -> SingularRegistryReleaseAccessResult {
         trace_function!("Singular Registry Release Access");
 
-        let registry_result = unsafe { self.automated_registry.release(&ManualRegistryRelease { value_id: *resource_id, access: *access }) };
-        
-        if registry_result.ok() {
-            return SingularRegistryReleaseAccessResult::Reception(self.reception.release_access(&ReceptionReleaseAccess { resource_id, access }))
-        }
-
-        SingularRegistryReleaseAccessResult::AutomatedRegistryReleaseFailure
+        SingularRegistryReleaseAccessResult::Reception(self.reception.release_access(&ReceptionReleaseAccess { resource_id, access }))
     }
-    // pub fn record_access() {} Done in Acquire Access
-
 
     pub fn reserve(
         &self,
@@ -213,12 +207,14 @@ impl<
     }
 
 
-    pub unsafe fn acquire_access(
-        &self,
+    pub unsafe fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+        &'a self,
         RegistryAcquireAccess {
             user_details, resource_id, access, password
         }: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
-    ) -> Result<<AS::Access as Accessor>::AccessResult<'_>, SingularRegistryAcquireAccessError> {
+    ) -> Result<AccessResult, SingularRegistryAcquireAccessError> 
+        where <S as RegistryStorage>::Value: StoredValueTrait 
+    {
         trace_function!("Singular Registry Acquire Access");
 
         let check_reception = self.reception.check_access(&ReceptionCheckAccess { user_details, resource_id: &resource_id, access: &access, password });
@@ -247,10 +243,9 @@ impl<
         &self,
         RegistrySaferReplacement {
             user_details, access, resource_id, resource, password
-        }: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <AS::Access as Accessor>::Value, BS::Password>
-    ) -> SingularRegistrySaferReplacementResult<<AS::Access as Accessor>::StoredValue>
-        where
-            <AS::Access as Accessor>::StoredValue: StableAddress
+        }: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoredValueTrait>::Value, BS::Password>
+    ) -> SingularRegistrySaferReplacementResult<<S::Value as StoredValueTrait>::Value>
+        where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
     {
         trace_function!("Singular Registry Safer Replace");
 
@@ -292,7 +287,7 @@ impl<
 > SingularRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Clone + Accessor<StoredValue = S::Value>,
+        AS::Access: Debug + Clone + Accessor,
         AS::ValueId: Debug
 {
     pub fn get_access(
@@ -316,7 +311,7 @@ impl<
 > SingularRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Accessor<StoredValue = S::Value>,
+        AS::Access: Debug + Accessor,
         AS::ValueId: Debug + Clone
 {
     pub unsafe fn keys(&self) -> impl Iterator<Item = <S as RegistryStorage>::ValueId> {

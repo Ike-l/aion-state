@@ -1,6 +1,8 @@
 use std::cell::UnsafeCell;
 
-use crate::prelude::{Accessor, ManualRegistry, ManualRegistryAccessInput, ManualRegistryAccessError, ManualRegistryRelease, ManualRegistryReleaseResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
+use stable_deref_trait::StableDeref;
+
+use crate::prelude::{Accessor, AccessorResult, ManualRegistry, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoredValueTrait, trace_function};
 
 pub mod manual_registry;
 
@@ -30,10 +32,12 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// # Safety 
     /// 
     /// No Concurrent Unique References
-    pub unsafe fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
-        &self,
+    pub unsafe fn acquire_access<'a, Access: Accessor, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+        &'a self,
         input: ManualRegistryAccessInput<'_, S::ValueId, Access>
-    ) -> Result<Access::AccessResult<'_>, ManualRegistryAccessError> {
+    ) -> Result<AccessResult, ManualRegistryAccessError> 
+        where <S as RegistryStorage>::Value: StoredValueTrait 
+    {
         trace_function!("Automated Registry Acquire Access");
 
         unsafe { self.get_inner_mut() }.acquire_access(input)
@@ -48,24 +52,15 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// Insert won't invalidate concurrent access
     /// 
     /// ^ i.e do not replace a borrowed item
-    pub unsafe fn safer_replace<Access: Accessor<StoredValue = S::Value>>(
+    pub unsafe fn safer_replace<Access: Accessor>(
         &self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, Access::Value>
-    ) -> ManualRegistryReplacementResult<Access::StoredValue> 
-        where Access::StoredValue: StableAddress
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoredValueTrait>::Value>
+    ) -> ManualRegistryReplacementResult<<S::Value as StoredValueTrait>::Value> 
+        where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
     {
         trace_function!("Automated Safer Replacement");
 
         unsafe { self.get_inner_mut().safer_replace(manual_registry_replacement_input) }
-    }
-
-    pub unsafe fn release<Access: Accessor<StoredValue = S::Value>>(
-        &self,
-        input: &ManualRegistryRelease<'_, S::ValueId, Access> 
-    ) -> ManualRegistryReleaseResult {
-        trace_function!("Automated Registry Release");
-
-        unsafe { self.get_inner_mut().release(input) }
     }
 
     pub unsafe fn contains_key(

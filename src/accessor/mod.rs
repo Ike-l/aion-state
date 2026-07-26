@@ -1,12 +1,5 @@
 
 pub trait Accessor {
-    // input -> stored -> output
-    // Value -> StoredValue -> AccessResult
-
-    type StoredValue;
-    type Value;
-    type AccessResult<'a>;
-
     /// If a resource is currently being acessed by self; Can self also be used to access?
     fn accepts_incoming(&self, incoming_access: &Self) -> bool;
 
@@ -21,10 +14,10 @@ pub trait Accessor {
     fn can_remove_resource(&self) -> bool;
 
     /// When acquiring a resource the stored value is passed through `acquire` and the result is returned by the function
-    fn acquire<'a>(
+    fn acquire<'a, V: StoredValueTrait, R: AccessorResult<'a, V::Value>>(
         &self, 
-        stored_value: &'a mut Self::StoredValue
-    ) -> Self::AccessResult<'a>;
+        stored_value: &'a mut V
+    ) -> R;
 
     /// If `can_access(self, other)` then `merge(self, other)`
     /// 
@@ -41,18 +34,19 @@ pub trait Accessor {
         &mut self,
         other: &Self
     );
+}
 
-    /// When inserting should the value be transformed to a stored value
-    fn insert(
-        &self,
-        value: Self::Value
-    ) -> Self::StoredValue;
+pub trait StoredValueTrait {
+    type Value;
 
-    /// When removing should the stored value be transformed into a value
-    /// 
-    /// Essentially the inverse function of `insert`
-    fn remove(
-        &self,
-        stored_value: Self::StoredValue
-    ) -> Self::StoredValue;    
+    fn new(value: Self::Value) -> Self;
+    fn as_shared(&self) -> &Self::Value;
+    fn as_unique(&mut self) -> &mut Self::Value;
+    fn into_inner(self) -> Self::Value;
+}
+
+pub trait AccessorResult<'a, T> {
+    fn new_shared(value: &'a T) -> Self;
+    fn new_unique(value: &'a mut T) -> Self;
+    fn new_owned(value: T) -> Self;
 }

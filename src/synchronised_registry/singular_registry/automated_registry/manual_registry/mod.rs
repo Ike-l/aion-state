@@ -1,11 +1,11 @@
+use stable_deref_trait::StableDeref;
 use tracing::span;
 
-use crate::prelude::{Accessor, FUNCTION_LEVEL, ManualRegistryAccessInput, ManualRegistryAccessError, ManualRegistryRelease, ManualRegistryReleaseResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StableAddress, trace_function};
+use crate::prelude::{Accessor, AccessorResult, FUNCTION_LEVEL, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoredValueTrait, trace_function};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
 pub mod manual_registry_result;
-pub mod stable_address;
 
 /// Wraps storage using `Accessor`
 #[derive(Default)]
@@ -15,29 +15,21 @@ pub struct ManualRegistry<S> {
 
 impl<
     S: RegistryStorage,
-> ManualRegistry<S> {
-    pub fn release<Access: Accessor<StoredValue = S::Value>>(
-        &mut self,
-        ManualRegistryRelease {
-            value_id, access
-        }: &ManualRegistryRelease<'_, S::ValueId, Access>
-    ) -> ManualRegistryReleaseResult {
-        trace_function!("Manual Registry Release");
-
-        ManualRegistryReleaseResult::Storage(self.storage.release(value_id, *access))
-    }
-
-    pub fn acquire_access<Access: Accessor<StoredValue = S::Value>>(
-        &mut self, 
+> ManualRegistry<S> 
+{
+    pub fn acquire_access<'a, Access: Accessor, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+        &'a mut self, 
         ManualRegistryAccessInput {
             value_id, access
         }: ManualRegistryAccessInput<'_, S::ValueId, Access>
-    ) -> Result<Access::AccessResult<'_>, ManualRegistryAccessError> {
+    ) -> Result<AccessResult, ManualRegistryAccessError> 
+        where <S as RegistryStorage>::Value: StoredValueTrait
+    {
         let span = span!(FUNCTION_LEVEL, "Manual Acquire Access");
         let _enter = span.enter();
 
         match self.storage.get_mut(value_id) {
-            Some(stored_value) => Ok(access.acquire(stored_value)),
+            Some(stored_value) => Ok(access.acquire::<S::Value, AccessResult>(stored_value)),
             None => Err(ManualRegistryAccessError::NotFound),
         }
     }
@@ -47,12 +39,14 @@ impl<
     /// Insert won't invalidate concurrent access
     /// ^ i.e do not "replace" a borrowed item
     /// ^ i.e do not insert if it could reallocate container and invalidate concurrent accesses
-    unsafe fn replace<Access: Accessor<StoredValue = S::Value>>(
+    unsafe fn replace<Access: Accessor>(
         &mut self,
         ManualRegistryReplacementInput {
             access, value_id, value
-        }: ManualRegistryReplacementInput<'_, Access, S::ValueId, Access::Value>
-    ) -> ManualRegistryReplacementResult<Access::StoredValue> {
+        }: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoredValueTrait>::Value>
+    ) -> ManualRegistryReplacementResult<<S::Value as StoredValueTrait>::Value>
+        where <S as RegistryStorage>::Value: StoredValueTrait
+    {
         let span = span!(FUNCTION_LEVEL, "Manual Unsafe Replacement");
         let _enter = span.enter();
 
@@ -78,13 +72,12 @@ impl<
 
             // insert without replacement and allowed insert
             (Some(new_value), false, true, _) => {
-                let new_stored_value = access.insert(new_value);
-                self.storage.insert(value_id, new_stored_value)
+                self.storage.insert(value_id, S::Value::new(new_value))
             },            
         };
 
         match old_resource {
-            Some(found) => ManualRegistryReplacementResult::Found(access.remove(found)),
+            Some(found) => ManualRegistryReplacementResult::Found(found.into_inner()),
             None => ManualRegistryReplacementResult::NotFound,
         }
     }
@@ -97,11 +90,11 @@ impl<
     /// Insert won't invalidate concurrent access
     /// 
     /// ^ i.e do not replace a borrowed item
-    pub unsafe fn safer_replace<Access: Accessor<StoredValue = S::Value>>(
+    pub unsafe fn safer_replace<Access: Accessor>(
         &mut self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, Access::Value>
-    ) -> ManualRegistryReplacementResult<Access::StoredValue> 
-        where Access::StoredValue: StableAddress
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoredValueTrait>::Value>
+    ) -> ManualRegistryReplacementResult<<S::Value as StoredValueTrait>::Value> 
+        where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
     {
         let span = span!(FUNCTION_LEVEL, "Manual Safe Replacement");
         let _enter = span.enter();
