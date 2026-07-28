@@ -1,7 +1,7 @@
 use stable_deref_trait::StableDeref;
-use tracing::span;
+use tracing::{Level, event};
 
-use crate::prelude::{Accessor, AccessorResult, FUNCTION_LEVEL, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoredValueTrait, trace_function};
+use crate::prelude::{Accessor, AccessorResult, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoredValueTrait, trace_function};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
@@ -25,11 +25,12 @@ impl<
     ) -> Result<AccessResult, ManualRegistryAccessError> 
         where <S as RegistryStorage>::Value: StoredValueTrait
     {
-        let span = span!(FUNCTION_LEVEL, "Manual Acquire Access");
-        let _enter = span.enter();
+        trace_function!("Manual Acquire Access");
 
         match self.storage.get_mut(value_id) {
-            Some(stored_value) => Ok(access.acquire::<S::Value, AccessResult>(stored_value)),
+            Some(stored_value) => {
+                Ok(access.acquire::<S::Value, AccessResult>(stored_value))
+            },
             None => Err(ManualRegistryAccessError::NotFound),
         }
     }
@@ -47,8 +48,7 @@ impl<
     ) -> ManualRegistryReplacementResult<<S::Value as StoredValueTrait>::Value>
         where <S as RegistryStorage>::Value: StoredValueTrait
     {
-        let span = span!(FUNCTION_LEVEL, "Manual Unsafe Replacement");
-        let _enter = span.enter();
+        trace_function!("Manual Unsafe Replacement");
 
         let old_resource = match (
             value,
@@ -56,10 +56,15 @@ impl<
             access.can_insert_resource(),
             access.can_remove_resource(),
         ) {
-            // if contains resource (so remove) but denied removal
-            (_, true, _, false) |
+            (_, true, _, false) => {
+                event!(Level::WARN, "Access Cannot Remove Stored Value");
+                return ManualRegistryReplacementResult::DeniedAccess
+            },
             // if input contains resource (so insert) but denied insert
-            (Some(_), _, false, _) => return ManualRegistryReplacementResult::DeniedAccess,
+            (Some(_), _, false, _) => {
+                event!(Level::WARN, "Access Cannot Insert Given Value");
+                return ManualRegistryReplacementResult::DeniedAccess
+            },
 
             // if does not contain resource and not input 
             (None, false, _, _) => return ManualRegistryReplacementResult::NoOp,
@@ -68,10 +73,14 @@ impl<
             (None, true, _, true) => self.storage.remove(&value_id),
             
             // replacement and allowed insert & remove
-            (Some(new_value), true, true, true) |
+            (Some(new_value), true, true, true) => {
+                event!(Level::DEBUG, "Access Can Replace");
+                self.storage.insert(value_id, S::Value::new(new_value))
+            },
 
             // insert without replacement and allowed insert
             (Some(new_value), false, true, _) => {
+                event!(Level::DEBUG, "Access Can Insert");
                 self.storage.insert(value_id, S::Value::new(new_value))
             },            
         };
@@ -96,8 +105,7 @@ impl<
     ) -> ManualRegistryReplacementResult<<S::Value as StoredValueTrait>::Value> 
         where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
     {
-        let span = span!(FUNCTION_LEVEL, "Manual Safe Replacement");
-        let _enter = span.enter();
+        trace_function!("Manual Safe Replacement");
 
         // Safety:
         // if a container of StableAddress reallocates, pointers are still valid
@@ -108,6 +116,8 @@ impl<
         &self,
         key: &S::ValueId
     ) -> bool {
+        trace_function!("Manual Contains Key");
+
         self.storage.contains_key(key)
     }
 

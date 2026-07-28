@@ -19,8 +19,7 @@ impl<
 > CoordinatedReception<RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Accessor,
-        AS::ValueId: Debug
+        AS::Access: Accessor,
 {
     pub fn register(
         &self,
@@ -177,8 +176,7 @@ impl<
 > CoordinatedReception<RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Clone + Accessor,
-        AS::ValueId: Debug
+        AS::Access: Clone + Accessor,
 {
     pub fn get_access(
         &self,

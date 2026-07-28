@@ -1,5 +1,3 @@
-use std::fmt::Debug;
-
 use tracing::{field, span};
 
 use crate::prelude::{AccessStorage, AccessesCheckAccess, AccessesCheckAccessResult, AccessesDrainResult, AccessesRecordAccess, AccessesRecordAccessResult, AccessesRelease, AccessesReleaseResult, Accessor, FUNCTION_LEVEL, GetAccess, trace_function};
@@ -16,8 +14,7 @@ pub struct Accesses<AS> {
 
 impl<AS: AccessStorage> Accesses<AS> 
     where 
-        AS::Access: Accessor + Debug,
-        AS::ValueId: Debug
+        AS::Access: Accessor,
 {
     /// Permits access if there are no current accesses
     /// 
@@ -32,8 +29,6 @@ impl<AS: AccessStorage> Accesses<AS>
         let _enter = span.enter();
 
         if let Some(current_access) = self.access_storage.get(access_id) {
-            span.record("current_access", format!("{current_access:?}"));
-
             AccessesCheckAccessResult::Ok(current_access.accepts_incoming(access))
         } else {
             AccessesCheckAccessResult::NoCurrentAccess
@@ -55,8 +50,6 @@ impl<AS: AccessStorage> Accesses<AS>
         let _enter = span.enter();
 
         if let Some(current_access) = self.access_storage.get_mut(&access_id) {
-            span.record("current_access", format!("{current_access:?}"));
-
             current_access.merge(access);
             AccessesRecordAccessResult::Merged
         } else {
@@ -74,12 +67,10 @@ impl<AS: AccessStorage> Accesses<AS>
             access_id, access
         }: &AccessesRelease<AS::ValueId, AS::Access>
     ) -> AccessesReleaseResult {
-        let span = span!(FUNCTION_LEVEL, "Accesses Release Access", current_access = field::Empty);
+        let span = span!(FUNCTION_LEVEL, "Accesses Release Access");
         let _enter = span.enter();
 
         if let Some(current_access) = self.access_storage.get_mut(access_id) {
-            span.record("current_access", format!("{current_access:?}"));
-
             current_access.release(access);
             AccessesReleaseResult::Split
         } else {

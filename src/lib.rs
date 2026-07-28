@@ -9,7 +9,17 @@ pub mod accessor;
 pub mod releaser;
 
 pub mod prelude {
-    pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::DEBUG;
+    // Events:
+    // TRACE: Stepping through functions
+    // DEBUG: New Information
+    // INFO: Human Readable "Events"
+
+    // Spans: 
+    // TRACE: 
+    // DEBUG:
+    // INFO:
+
+    pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::TRACE;
 
     pub(crate) mod sync {
         #[allow(unused_imports)]

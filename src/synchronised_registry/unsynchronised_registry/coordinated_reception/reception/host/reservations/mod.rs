@@ -22,8 +22,7 @@ impl<
 > Reservations<RS> 
     where 
         RS::ReserverId: Debug + PartialEq,
-        AS::Access: Debug + Accessor,
-        AS::ValueId: Debug
+        AS::Access: Accessor,
 {
     /// A `Conflict` occurs if all:
     /// 
