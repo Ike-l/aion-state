@@ -9,16 +9,6 @@ pub mod accessor;
 pub mod releaser;
 
 pub mod prelude {
-    // Events:
-    // TRACE: Stepping through functions
-    // DEBUG: New Information
-    // INFO: Human Readable "Events"
-
-    // Spans: 
-    // TRACE: 
-    // DEBUG:
-    // INFO:
-
     pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::TRACE;
 
     pub(crate) mod sync {
@@ -28,6 +18,15 @@ pub mod prelude {
         #[allow(clippy::disallowed_types)]
         pub use std::sync::Arc;
     }
+
+    // Features
+    
+    // Tokio
+    // await synchronised registry
+    // await coordinated reception
+
+    // Notify 
+    // notify on release
 
     macro_rules! trace_function {
         ($log:literal) => {
