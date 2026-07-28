@@ -14,7 +14,7 @@ pub mod releaser;
 #[derive(Default)]
 pub struct SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> {
     sync: RwLock<()>,
-    singular_registry: UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS>,
+    unsynchronised_registry: UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS>,
 }
 
 /// # Safety
@@ -99,7 +99,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.register(input).into()
+        self.unsynchronised_registry.register(input).into()
     }
 
     pub fn unregister(
@@ -110,7 +110,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.unregister(input).into()
+        self.unsynchronised_registry.unregister(input).into()
     }
 
     pub fn update_password(
@@ -121,7 +121,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.update_password(input).into()
+        self.unsynchronised_registry.update_password(input).into()
     }
 
 
@@ -133,7 +133,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.own(input).into()
+        self.unsynchronised_registry.own(input).into()
     }
 
     pub fn release_resource(
@@ -144,7 +144,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.release_resource(input).into()
+        self.unsynchronised_registry.release_resource(input).into()
     } 
 
     pub fn release_resource_all<'a>(
@@ -155,7 +155,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.release_resource_all(input).into()
+        self.unsynchronised_registry.release_resource_all(input).into()
     }
 
 
@@ -167,7 +167,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.allow_blacklist(input).into()
+        self.unsynchronised_registry.allow_blacklist(input).into()
     }
 
     pub fn allow_whitelist(
@@ -178,7 +178,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.allow_whitelist(input).into()
+        self.unsynchronised_registry.allow_whitelist(input).into()
     }
 
     pub fn unallow_blacklist(
@@ -189,7 +189,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.unallow_blacklist(input).into()
+        self.unsynchronised_registry.unallow_blacklist(input).into()
     }
 
     pub fn unallow_whitelist(
@@ -200,7 +200,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.unallow_whitelist(input).into()
+        self.unsynchronised_registry.unallow_whitelist(input).into()
     }
 
     pub fn check_access(
@@ -211,7 +211,7 @@ impl<
 
         let _sync = self.sync.read();
 
-        unsafe { self.singular_registry.check_access(input).into() }
+        unsafe { self.unsynchronised_registry.check_access(input).into() }
     }
 
     /// # Safety
@@ -225,7 +225,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        unsafe { self.singular_registry.release_access(input) }.into()
+        unsafe { self.unsynchronised_registry.release_access(input) }.into()
     }
     // pub fn record_access() {} Done in Acquire Access
 
@@ -238,7 +238,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.reserve(input).into()
+        self.unsynchronised_registry.reserve(input).into()
     }
 
     pub fn unreserve(
@@ -249,7 +249,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.unreserve(input).into()
+        self.unsynchronised_registry.unreserve(input).into()
     }
 
     pub fn drain_reservations(
@@ -260,7 +260,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        self.singular_registry.drain_reservations(input).into()
+        self.unsynchronised_registry.drain_reservations(input).into()
     }
 
 
@@ -274,7 +274,7 @@ impl<
 
         let _sync = self.sync.write();
 
-        unsafe { self.singular_registry.acquire_access(input).map_err(|err| err.into()) }
+        unsafe { self.unsynchronised_registry.acquire_access(input).map_err(|err| err.into()) }
     }
 
     pub fn safer_replace(
@@ -287,7 +287,7 @@ impl<
         
         let _sync = self.sync.write();
 
-        unsafe { self.singular_registry.safer_replace(input).into() }
+        unsafe { self.unsynchronised_registry.safer_replace(input).into() }
     }
 
     pub fn contains_resource(
@@ -298,7 +298,7 @@ impl<
 
         let _sync = self.sync.read();
 
-        unsafe { self.singular_registry.contains_resource(input).into() }
+        unsafe { self.unsynchronised_registry.contains_resource(input).into() }
     }
 
     pub fn len(&self) -> usize {
@@ -306,7 +306,7 @@ impl<
 
         let _sync = self.sync.read();
 
-        unsafe { self.singular_registry.len() }
+        unsafe { self.unsynchronised_registry.len() }
     }
 }
 
@@ -332,7 +332,7 @@ impl<
 
         let _sync = self.sync.read();
 
-        self.singular_registry.get_access(input)
+        self.unsynchronised_registry.get_access(input)
     }
 }
 
@@ -355,6 +355,6 @@ impl<
 
         let _sync = self.sync.read();
         
-        unsafe { self.singular_registry.keys() }
+        unsafe { self.unsynchronised_registry.keys() }
     }
 }
