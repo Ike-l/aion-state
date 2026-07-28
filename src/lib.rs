@@ -7,9 +7,6 @@
 pub mod synchronised_registry;
 pub mod accessor;
 
-#[cfg(any(feature = "default-implementation", test))]
-pub mod default;
-
 pub mod prelude {
     pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::DEBUG;
 
