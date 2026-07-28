@@ -1,6 +1,8 @@
 #![allow(clippy::type_complexity)]
 #![allow(clippy::match_like_matches_macro)]
 #![allow(clippy::mut_from_ref)]
+#![allow(clippy::single_match)]
+#![allow(clippy::len_without_is_empty)]
 
 pub mod synchronised_registry;
 pub mod accessor;

@@ -63,6 +63,9 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
         unsafe { self.get_inner_mut().safer_replace(manual_registry_replacement_input) }
     }
 
+    /// # Safety
+    /// 
+    /// No Concurrent Unique References (No writes that could modify the keys)
     pub unsafe fn contains_key(
         &self,
         key: &S::ValueId
@@ -72,6 +75,9 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
         unsafe { self.get_inner() }.contains_key(key)
     }
 
+    /// # Safety
+    /// 
+    /// No Concurrent Unique References (No writes that could modify the len)
     pub unsafe fn len(&self) -> usize {
         trace_function!("Automated Registry Len");
 
@@ -84,6 +90,9 @@ impl<
 > AutomatedRegistry<S> 
     where S::ValueId: Clone
 {
+    /// # Safety
+    /// 
+    /// No Concurrent Unique References (No writes that could modify the keys)
     pub unsafe fn keys(&self) -> Vec<S::ValueId> {
         trace_function!("Automated Registry keys");
 

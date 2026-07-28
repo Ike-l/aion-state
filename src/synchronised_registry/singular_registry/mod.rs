@@ -142,6 +142,9 @@ impl<
         SingularRegistryWhitelistUnallowResult::Reception(self.reception.unallow_whitelist(&ReceptionUnallow { id, password, resource_id, access }))
     }
 
+    /// # Safety
+    /// 
+    /// No Concurrent Unique References (No writes that could modify the keys)
     pub unsafe fn check_access(
         &self,
         RegistryCheckAccess {
@@ -207,6 +210,9 @@ impl<
     }
 
 
+    /// # Safety
+    /// 
+    /// No Concurrent Unique References
     pub unsafe fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
         &'a self,
         RegistryAcquireAccess {
@@ -239,6 +245,15 @@ impl<
         Err(SingularRegistryAcquireAccessError::Reception(check_reception))
     }
 
+    /// # Safety 
+    /// 
+    /// No Concurrent References
+    /// 
+    /// Access cannot be used to 'acquire' a reference to StableAddress itself
+    /// 
+    /// Insert won't invalidate concurrent access
+    /// 
+    /// ^ i.e do not replace a borrowed item
     pub unsafe fn safer_replace(
         &self,
         RegistrySaferReplacement {
@@ -258,6 +273,9 @@ impl<
         SingularRegistrySaferReplacementResult::Reception(reception_result)
     }
 
+    /// # Safety
+    /// 
+    /// No Concurrent Unique References (No writes that could modify the keys)
     pub unsafe fn contains_resource(
         &self,
         RegistryContainsResource {
@@ -269,6 +287,9 @@ impl<
         SingularRegistryContainsResourceResult::AutomatedRegistry(unsafe { self.automated_registry.contains_key(resource_id) })
     }
 
+    /// # Safety
+    /// 
+    /// No Concurrent Unique References (No writes that could modify the len)
     pub unsafe fn len(&self) -> usize {
         trace_function!("Singular Registry Len");
 
@@ -314,6 +335,9 @@ impl<
         AS::Access: Debug + Accessor,
         AS::ValueId: Debug + Clone
 {
+    /// # Safety
+    /// 
+    /// No Concurrent Unique References (No writes that could modify the keys)
     pub unsafe fn keys(&self) -> Vec<<S as RegistryStorage>::ValueId> {
         trace_function!("Singular Registry keys");
 

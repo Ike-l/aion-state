@@ -37,7 +37,7 @@ impl<
     ) -> ResourceControlIsOwnedResult {
         trace_function!("Resource Control Is Owned");
         
-        ResourceControlIsOwnedResult::IsOwned(self.control_storage.is_owned(&resource_id))
+        ResourceControlIsOwnedResult::IsOwned(self.control_storage.is_owned(resource_id))
     }
 
     /// Passes through to `control_storage`
