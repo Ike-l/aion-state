@@ -11,8 +11,10 @@ pub mod prelude {
     pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::DEBUG;
 
     pub(crate) mod sync {
+        #[allow(unused_imports)]
         pub use parking_lot::Mutex;
         pub use parking_lot::RwLock;
+        #[allow(clippy::disallowed_types)]
         pub use std::sync::Arc;
     }
 
