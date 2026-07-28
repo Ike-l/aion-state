@@ -27,9 +27,17 @@ pub mod prelude {
 
     pub(crate) use trace_function;
 
+    pub use super::synchronised_registry::SynchronisedRegistry;
+    pub use super::synchronised_registry::singular_registry::Registry as UnsynchronisedRegistry;
+    
+    #[cfg(not(feature = "sync"))]
+    pub use super::synchronised_registry::singular_registry::Registry;
+    
+    #[cfg(feature = "sync")]
+    pub use super::synchronised_registry::SynchronisedRegistry as Registry;
+
     pub use super::{
         synchronised_registry::{
-            SynchronisedRegistry,
             releaser::{
                 Releaser,
                 releasing_result::{
@@ -57,7 +65,6 @@ pub mod prelude {
                 RegistryWhitelistUnallowResult,
             },
             singular_registry::{
-                Registry,
                 singular_registry_input::{
                     SingularRegistryRegister as RegistryRegister,
                     SingularRegistryUnregister as RegistryUnregister,
