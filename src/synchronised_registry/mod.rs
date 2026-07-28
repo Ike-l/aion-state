@@ -7,8 +7,6 @@ use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, 
 pub mod unsynchronised_registry;
 pub mod synchronised_registry_results;
 
-pub mod releaser;
-
 /// Separate Sync bc the point is to not use RAII, 
 /// removing the sync and making the functions take `&mut self` would require some form of RAII in mt situations
 #[derive(Default)]

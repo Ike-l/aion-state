@@ -6,6 +6,7 @@
 
 pub mod synchronised_registry;
 pub mod accessor;
+pub mod releaser;
 
 pub mod prelude {
     pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::DEBUG;
@@ -80,12 +81,6 @@ pub mod prelude {
     pub use super::{
         synchronised_registry::{
             SynchronisedRegistry,
-            releaser::{
-                Releaser,
-                releasing_result::{
-                    ReleasingResult,
-                }
-            },
             synchronised_registry_results::{
                 SynchronisedRegistryRegisterResult,
                 SynchronisedRegistryAcquireAccessError,
@@ -416,6 +411,12 @@ pub mod prelude {
             Accessor,
             AccessorResult,
             StoredValueTrait
-        }
+        },
+        releaser::{
+            Releaser,
+            releasing_result::{
+                ReleasingResult,
+            }
+        },
     };
 }
