@@ -44,7 +44,7 @@ pub mod prelude {
                     ReleasingResult,
                 }
             },
-            registry_results::{
+            synchronised_registry_results::{
                 RegistryRegisterResult,
                 RegistryAcquireAccessError,
                 RegistryBlacklistAllowResult,
