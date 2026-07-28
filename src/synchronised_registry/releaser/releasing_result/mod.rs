@@ -2,7 +2,7 @@ use crate::prelude::Releaser;
 
 pub struct ReleasingResult<S, AccessResult, R: Releaser<S> + ?Sized> {
     raw: Option<AccessResult>,
-    used: bool,
+    consumed: bool,
     // because the import is from prelude
     #[allow(clippy::disallowed_types)]
     releaser: Option<crate::prelude::sync::Arc<R>>,
@@ -19,7 +19,7 @@ impl<S, AccessResult, R: Releaser<S>> ReleasingResult<S, AccessResult, R> {
     ) -> Self {
         Self { 
             raw: Some(access_result),
-            used: false,
+            consumed: false,
             releaser: Some(releaser),
             release_input: Some(release_input)
         }
@@ -29,7 +29,7 @@ impl<S, AccessResult, R: Releaser<S>> ReleasingResult<S, AccessResult, R> {
         mut self, 
         f: impl FnOnce(AccessResult) -> NewAccessResult
     ) -> ReleasingResult<S, NewAccessResult, R> {
-        self.used = true;
+        self.consumed = true;
         ReleasingResult::new(f(self.raw.take().unwrap()), self.releaser.take().unwrap(), self.release_input.take().unwrap())
     }
 
@@ -44,7 +44,7 @@ impl<S, AccessResult, R: Releaser<S>> ReleasingResult<S, AccessResult, R> {
 
 impl<S, AccessResult, R: Releaser<S> + ?Sized> Drop for ReleasingResult<S, AccessResult, R> {
     fn drop(&mut self) {
-        if !self.used {
+        if !self.consumed {
             self.releaser.take().unwrap().release_access(&self.release_input.take().unwrap());
         }
     }
