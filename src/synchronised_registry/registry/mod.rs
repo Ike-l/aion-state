@@ -6,7 +6,7 @@ use crate::prelude::{AccessStorage, Accessor, AccessorResult, AutomatedRegistry,
 
 pub mod automated_registry;
 pub mod coordinated_reception;
-pub mod singular_registry_result;
+pub mod unsynchronised_registry_result;
 pub mod registry_input;
 
 #[derive(Default)]

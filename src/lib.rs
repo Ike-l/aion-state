@@ -85,7 +85,7 @@ pub mod prelude {
                     RegistrySaferReplacement,
                     RegistryContainsResource,
                 },
-                singular_registry_result::{
+                unsynchronised_registry_result::{
                     UnsynchronisedRegistryRegisterResult,
                     UnsynchronisedRegistryUnregisterResult,
                     UnsynchronisedRegistryUpdatePasswordResult,
