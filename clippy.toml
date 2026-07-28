@@ -1,0 +1,5 @@
+disallowed-types = [
+    { path = "std::sync::RwLock", reason = "Use crate::prelude::sync::RwLock instead." },
+    { path = "std::sync::Mutex", reason = "Use crate::prelude::sync::Mutex instead." },
+    { path = "std::sync::Arc", reason = "Use crate::prelude::sync::Arc instead." },
+]
