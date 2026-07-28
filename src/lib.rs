@@ -27,17 +27,59 @@ pub mod prelude {
 
     pub(crate) use trace_function;
 
-    pub use super::synchronised_registry::SynchronisedRegistry;
-    pub use super::synchronised_registry::unsynchronised_registry::UnsynchronisedRegistry as UnsynchronisedRegistry;
-    
     #[cfg(not(feature = "sync"))]
-    pub use super::synchronised_registry::unsynchronised_registry::UnsynchronisedRegistry as Registry;
+    pub use super::synchronised_registry::unsynchronised_registry::{
+        UnsynchronisedRegistry as Registry,
+        unsynchronised_registry_result::{
+            UnsynchronisedRegistryRegisterResult as RegistryRegisterResult,
+            UnsynchronisedRegistryUnregisterResult as RegistryUnregisterResult,
+            UnsynchronisedRegistryUpdatePasswordResult as RegistryUpdatePasswordResult,
+            UnsynchronisedRegistryOwnResult as RegistryOwnResult,
+            UnsynchronisedRegistryReleaseResourceResult as RegistryReleaseResourceResult,
+            UnsynchronisedRegistryReleaseResourceAllResult as RegistryReleaseResourceAllResult,
+            UnsynchronisedRegistryBlacklistAllowResult as RegistryBlacklistAllowResult,
+            UnsynchronisedRegistryWhitelistAllowResult as RegistryWhitelistAllowResult,
+            UnsynchronisedRegistryBlacklistUnallowResult as RegistryBlacklistUnallowResult,
+            UnsynchronisedRegistryWhitelistUnallowResult as RegistryWhitelistUnallowResult,
+            UnsynchronisedRegistryCheckAccessResult as RegistryCheckAccessResult,
+            UnsynchronisedRegistryReleaseAccessResult as RegistryReleaseAccessResult,
+            UnsynchronisedRegistryReservationResult as RegistryReservationResult,
+            UnsynchronisedRegistryUnreserveResult as RegistryUnreserveResult,
+            UnsynchronisedRegistryDrainReservationsResult as RegistryDrainReservationsResult,
+            UnsynchronisedRegistryAcquireAccessError as RegistryAcquireAccessError,
+            UnsynchronisedRegistrySaferReplacementResult as RegistrySaferReplacementResult,
+            UnsynchronisedRegistryContainsResourceResult as RegistryContainsResourceResult,
+        },
+    };
     
     #[cfg(feature = "sync")]
-    pub use super::synchronised_registry::SynchronisedRegistry as Registry;
+    pub use super::synchronised_registry::{
+        SynchronisedRegistry as Registry,
+        synchronised_registry_results::{
+            SynchronisedRegistryRegisterResult as RegistryRegisterResult,
+            SynchronisedRegistryAcquireAccessError as RegistryAcquireAccessError,
+            SynchronisedRegistryBlacklistAllowResult as RegistryBlacklistAllowResult,
+            SynchronisedRegistryBlacklistUnallowResult as RegistryBlacklistUnallowResult,
+            SynchronisedRegistryCheckAccessResult as RegistryCheckAccessResult,
+            SynchronisedRegistryContainsResourceResult as RegistryContainsResourceResult,
+            SynchronisedRegistryDrainReservationsResult as RegistryDrainReservationsResult,
+            SynchronisedRegistryOwnResult as RegistryOwnResult,
+            SynchronisedRegistryReleaseAccessResult as RegistryReleaseAccessResult,
+            SynchronisedRegistryReleaseResourceAllResult as RegistryReleaseResourceAllResult,
+            SynchronisedRegistryReleaseResourceResult as RegistryReleaseResourceResult,
+            SynchronisedRegistryReservationResult as RegistryReservationResult,
+            SynchronisedRegistrySaferReplacementResult as RegistrySaferReplacementResult,
+            SynchronisedRegistryUnregisterResult as RegistryUnregisterResult,
+            SynchronisedRegistryUnreserveResult as RegistryUnreserveResult,
+            SynchronisedRegistryUpdatePasswordResult as RegistryUpdatePasswordResult,
+            SynchronisedRegistryWhitelistAllowResult as RegistryWhitelistAllowResult,
+            SynchronisedRegistryWhitelistUnallowResult as RegistryWhitelistUnallowResult,
+        },
+    };
 
     pub use super::{
         synchronised_registry::{
+            SynchronisedRegistry,
             releaser::{
                 Releaser,
                 releasing_result::{
@@ -65,6 +107,7 @@ pub mod prelude {
                 SynchronisedRegistryWhitelistUnallowResult,
             },
             unsynchronised_registry::{
+                UnsynchronisedRegistry,
                 registry_input::{
                     RegistryRegister,
                     RegistryUnregister,
