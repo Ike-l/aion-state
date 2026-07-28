@@ -65,7 +65,7 @@ pub mod prelude {
                 RegistryWhitelistUnallowResult,
             },
             registry::{
-                singular_registry_input::{
+                registry_input::{
                     RegistryRegister,
                     RegistryUnregister,
                     RegistryUpdatePassword,

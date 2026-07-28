@@ -7,7 +7,7 @@ use crate::prelude::{AccessStorage, Accessor, AccessorResult, AutomatedRegistry,
 pub mod automated_registry;
 pub mod coordinated_reception;
 pub mod singular_registry_result;
-pub mod singular_registry_input;
+pub mod registry_input;
 
 #[derive(Default)]
 pub struct UnsynchronisedRegistry<S, RS, AS, OS, WL, BL, CS> {
