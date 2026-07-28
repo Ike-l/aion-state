@@ -32,7 +32,6 @@ fn can_acquire_access() {
 
 }
 
-#[cfg(not(feature = "loom"))]
 #[test]
 fn can_acquire_access_normal() {
     can_acquire_access();

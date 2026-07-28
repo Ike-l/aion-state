@@ -36,7 +36,6 @@ fn can_allow_blacklist() {
     assert!(result.ok());
 }
 
-#[cfg(not(feature = "loom"))]
 #[test]
 fn can_allow_blacklist_normal() {
     can_allow_blacklist();

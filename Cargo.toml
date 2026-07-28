@@ -8,11 +8,10 @@ parking_lot = "0.12.5"
 tracing = "0.1.44"
 thiserror = "2.0.18"
 
-rand = { version = "0.10.1", optional = true }
-loom = { version = "0.7.2", optional = true }
 stable_deref_trait = "1.2.1"
 
 [dev-dependencies]
+rand = { version = "0.10.1", optional = true }
 strum = "0.28.0"
 strum_macros = "0.28.0"
 rand_chacha = "0.10.0"

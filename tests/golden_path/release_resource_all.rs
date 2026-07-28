@@ -47,7 +47,6 @@ fn can_release_resource_all() {
     // assert!(result.ok())
 }
 
-#[cfg(not(feature = "loom"))]
 #[test]
 fn can_release_resource_all_normal() {
     can_release_resource_all();

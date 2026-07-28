@@ -20,7 +20,6 @@ fn can_unregister() {
     assert!(result.ok())
 }
 
-#[cfg(not(feature = "loom"))]
 #[test]
 fn can_unregister_normal() {
     can_unregister();

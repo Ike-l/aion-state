@@ -24,7 +24,6 @@ fn can_own() {
 }
 
 
-#[cfg(not(feature = "loom"))]
 #[test]
 fn can_own_normal() {
     can_own();
@@ -74,7 +73,6 @@ fn owning_blocks_by_default() {
     }
 }
 
-#[cfg(not(feature = "loom"))]
 #[test]
 fn owning_blocks_by_default_normal() {
     owning_blocks_by_default();

@@ -28,7 +28,6 @@ fn can_update_password() {
     assert!(result.ok());
 }
 
-#[cfg(not(feature = "loom"))]
 #[test]
 fn can_update_password_normal() {
     can_update_password();

@@ -21,7 +21,6 @@ fn can_safer_replace() {
 }
 
 
-#[cfg(not(feature = "loom"))]
 #[test]
 fn can_safer_replace_normal() {
     can_safer_replace();
@@ -62,7 +61,6 @@ fn multi_safer_replace() {
     assert_eq!(registry.len(), n)
 }
 
-#[cfg(not(feature = "loom"))]
 #[test]
 fn multi_safer_replace_normal() {
     multi_safer_replace();

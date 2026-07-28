@@ -5,7 +5,6 @@ use aion_state::prelude::Registry;
 use aion_state::default::prelude::*;
 
 mod golden_path;
-mod brute;
 
 use tracing_subscriber::fmt;
 use std::sync::Once;

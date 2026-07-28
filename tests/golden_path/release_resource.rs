@@ -30,7 +30,6 @@ fn can_release_resource() {
     assert!(result.ok())
 }
 
-#[cfg(not(feature = "loom"))]
 #[test]
 fn can_release_resource_normal() {
     can_release_resource();

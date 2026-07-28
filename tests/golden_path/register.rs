@@ -13,7 +13,6 @@ fn can_register() {
     assert!(result.ok());
 }
 
-#[cfg(not(feature = "loom"))]
 #[test]
 fn can_register_normal() {
     can_register()
