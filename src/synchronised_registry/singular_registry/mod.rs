@@ -314,7 +314,7 @@ impl<
         AS::Access: Debug + Accessor,
         AS::ValueId: Debug + Clone
 {
-    pub unsafe fn keys(&self) -> impl Iterator<Item = <S as RegistryStorage>::ValueId> {
+    pub unsafe fn keys(&self) -> Vec<<S as RegistryStorage>::ValueId> {
         trace_function!("Singular Registry keys");
 
         unsafe { self.automated_registry.keys() }

@@ -84,7 +84,7 @@ impl<
 > AutomatedRegistry<S> 
     where S::ValueId: Clone
 {
-    pub unsafe fn keys(&self) -> impl Iterator<Item = S::ValueId> {
+    pub unsafe fn keys(&self) -> Vec<S::ValueId> {
         trace_function!("Automated Registry keys");
 
         unsafe { self.get_inner() }.keys()

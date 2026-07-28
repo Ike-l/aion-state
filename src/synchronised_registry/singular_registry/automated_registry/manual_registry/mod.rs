@@ -123,9 +123,9 @@ impl<
 > ManualRegistry<S> 
     where S::ValueId: Clone
 {
-    pub fn keys(&self) -> impl Iterator<Item = S::ValueId> {
+    pub fn keys(&self) -> Vec<S::ValueId> {
         trace_function!("Manual Registry keys");
 
-        self.storage.keys().cloned()
+        self.storage.keys().cloned().collect()
     }
 }

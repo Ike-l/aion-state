@@ -346,7 +346,7 @@ impl<
         AS::Access: Debug + Accessor,
         AS::ValueId: Debug + Clone
 {
-    pub fn keys(&self) -> impl Iterator<Item = <S as RegistryStorage>::ValueId> {
+    pub fn keys(&self) -> Vec<<S as RegistryStorage>::ValueId> {
         trace_function!("Synchronised Registry keys");
 
         let _sync = self.sync.read();
