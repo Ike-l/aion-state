@@ -1,46 +1,46 @@
 use crate::prelude::{ManualRegistryAccessError, ManualRegistryReplacementResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult};
 
-pub enum SingularRegistryRegisterResult {
+pub enum UnsynchronisedRegistryRegisterResult {
     Reception(ReceptionRegisterResult)
 }
 
-pub enum SingularRegistryUnregisterResult {
+pub enum UnsynchronisedRegistryUnregisterResult {
     Reception(ReceptionUnregisterResult)
 }
 
-pub enum SingularRegistryUpdatePasswordResult {
+pub enum UnsynchronisedRegistryUpdatePasswordResult {
     Reception(ReceptionUpdatePasswordResult)
 }
 
-pub enum SingularRegistryOwnResult {
+pub enum UnsynchronisedRegistryOwnResult {
     Reception(ReceptionOwnResult)
 }
 
-pub enum SingularRegistryReleaseResourceResult {
+pub enum UnsynchronisedRegistryReleaseResourceResult {
     Reception(ReceptionReleaseResourceResult)
 }
 
-pub enum SingularRegistryReleaseResourceAllResult {
+pub enum UnsynchronisedRegistryReleaseResourceAllResult {
     Reception(ReceptionReleaseResourceAllResult)
 }
 
-pub enum SingularRegistryBlacklistAllowResult<Password> {
+pub enum UnsynchronisedRegistryBlacklistAllowResult<Password> {
     Reception(ReceptionBlacklistAllowResult<Password>)
 }
 
-pub enum SingularRegistryWhitelistAllowResult {
+pub enum UnsynchronisedRegistryWhitelistAllowResult {
     Reception(ReceptionWhitelistAllowResult)
 }
 
-pub enum SingularRegistryBlacklistUnallowResult {
+pub enum UnsynchronisedRegistryBlacklistUnallowResult {
     Reception(ReceptionBlacklistUnallowResult)
 }
 
-pub enum SingularRegistryWhitelistUnallowResult {
+pub enum UnsynchronisedRegistryWhitelistUnallowResult {
     Reception(ReceptionWhitelistUnallowResult)
 }
 
-pub enum SingularRegistryCheckAccessResult {
+pub enum UnsynchronisedRegistryCheckAccessResult {
     Reception(ReceptionCheckAccessResult),
     /// bool 
     /// 
@@ -50,32 +50,32 @@ pub enum SingularRegistryCheckAccessResult {
     AutomatedRegistry(bool)
 }
 
-pub enum SingularRegistryReleaseAccessResult {
+pub enum UnsynchronisedRegistryReleaseAccessResult {
     Reception(ReceptionReleaseAccessResult),
 }
 
-pub enum SingularRegistryReservationResult {
+pub enum UnsynchronisedRegistryReservationResult {
     Reception(ReceptionReservationResult)
 }
 
-pub enum SingularRegistryUnreserveResult {
+pub enum UnsynchronisedRegistryUnreserveResult {
     Reception(ReceptionUnreserveResult)
 }
 
-pub enum SingularRegistryDrainReservationsResult<T> {
+pub enum UnsynchronisedRegistryDrainReservationsResult<T> {
     Reception(ReceptionDrainReservationsResult<T>)
 }
 
-pub enum SingularRegistryAcquireAccessError {
+pub enum UnsynchronisedRegistryAcquireAccessError {
     AutomatedRegistry(ManualRegistryAccessError),
     Reception(ReceptionCheckAccessResult)
 }
 
-pub enum SingularRegistrySaferReplacementResult<ReplacementResult> {
+pub enum UnsynchronisedRegistrySaferReplacementResult<ReplacementResult> {
     AutomatedRegistry(ManualRegistryReplacementResult<ReplacementResult>),
     Reception(ReceptionCheckAccessResult)
 }
 
-pub enum SingularRegistryContainsResourceResult {
+pub enum UnsynchronisedRegistryContainsResourceResult {
     AutomatedRegistry(bool)
 }

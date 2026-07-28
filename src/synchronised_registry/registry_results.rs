@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlOwnResult, ResourceControlReleaseResult, SingularRegistryAcquireAccessError, SingularRegistryBlacklistAllowResult, SingularRegistryBlacklistUnallowResult, SingularRegistryCheckAccessResult, SingularRegistryContainsResourceResult, SingularRegistryDrainReservationsResult, SingularRegistryOwnResult, SingularRegistryRegisterResult, SingularRegistryReleaseAccessResult, SingularRegistryReleaseResourceAllResult, SingularRegistryReleaseResourceResult, SingularRegistryReservationResult, SingularRegistrySaferReplacementResult, SingularRegistryUnregisterResult, SingularRegistryUnreserveResult, SingularRegistryUpdatePasswordResult, SingularRegistryWhitelistAllowResult, SingularRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
+use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlOwnResult, ResourceControlReleaseResult, UnsynchronisedRegistryAcquireAccessError, UnsynchronisedRegistryBlacklistAllowResult, UnsynchronisedRegistryBlacklistUnallowResult, UnsynchronisedRegistryCheckAccessResult, UnsynchronisedRegistryContainsResourceResult, UnsynchronisedRegistryDrainReservationsResult, UnsynchronisedRegistryOwnResult, UnsynchronisedRegistryRegisterResult, UnsynchronisedRegistryReleaseAccessResult, UnsynchronisedRegistryReleaseResourceAllResult, UnsynchronisedRegistryReleaseResourceResult, UnsynchronisedRegistryReservationResult, UnsynchronisedRegistrySaferReplacementResult, UnsynchronisedRegistryUnregisterResult, UnsynchronisedRegistryUnreserveResult, UnsynchronisedRegistryUpdatePasswordResult, UnsynchronisedRegistryWhitelistAllowResult, UnsynchronisedRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
 
 #[derive(Debug, thiserror::Error)]
 pub enum RegistryRegisterResult {
@@ -14,10 +14,10 @@ impl RegistryRegisterResult {
     }
 }
 
-impl From<SingularRegistryRegisterResult> for RegistryRegisterResult {
-    fn from(value: SingularRegistryRegisterResult) -> Self {
+impl From<UnsynchronisedRegistryRegisterResult> for RegistryRegisterResult {
+    fn from(value: UnsynchronisedRegistryRegisterResult) -> Self {
         match value {
-            SingularRegistryRegisterResult::Reception(reception_register_result) => {
+            UnsynchronisedRegistryRegisterResult::Reception(reception_register_result) => {
                 match reception_register_result {
                     ReceptionRegisterResult::Owner(owner_register_result) => {
                         match owner_register_result {
@@ -58,10 +58,10 @@ impl RegistryUnregisterResult {
     }
 }
 
-impl From<SingularRegistryUnregisterResult> for RegistryUnregisterResult {
-    fn from(value: SingularRegistryUnregisterResult) -> Self {
+impl From<UnsynchronisedRegistryUnregisterResult> for RegistryUnregisterResult {
+    fn from(value: UnsynchronisedRegistryUnregisterResult) -> Self {
         match value {
-            SingularRegistryUnregisterResult::Reception(reception_unregister_result) => {
+            UnsynchronisedRegistryUnregisterResult::Reception(reception_unregister_result) => {
                 match reception_unregister_result {
                     ReceptionUnregisterResult::Owner(owner_unregister_result) => {
                         match owner_unregister_result {
@@ -110,10 +110,10 @@ impl RegistryUpdatePasswordResult {
     }
 }
 
-impl From<SingularRegistryUpdatePasswordResult> for RegistryUpdatePasswordResult {
-    fn from(value: SingularRegistryUpdatePasswordResult) -> Self {
+impl From<UnsynchronisedRegistryUpdatePasswordResult> for RegistryUpdatePasswordResult {
+    fn from(value: UnsynchronisedRegistryUpdatePasswordResult) -> Self {
         match value {
-            SingularRegistryUpdatePasswordResult::Reception(reception_update_password_result) => {
+            UnsynchronisedRegistryUpdatePasswordResult::Reception(reception_update_password_result) => {
                 match reception_update_password_result {
                     ReceptionUpdatePasswordResult::Owner(owner_update_password_result) => {
                         match owner_update_password_result {
@@ -157,10 +157,10 @@ impl RegistryOwnResult {
     }
 }
 
-impl From<SingularRegistryOwnResult> for RegistryOwnResult {
-    fn from(value: SingularRegistryOwnResult) -> Self {
+impl From<UnsynchronisedRegistryOwnResult> for RegistryOwnResult {
+    fn from(value: UnsynchronisedRegistryOwnResult) -> Self {
         match value {
-            SingularRegistryOwnResult::Reception(reception_own_result) => {
+            UnsynchronisedRegistryOwnResult::Reception(reception_own_result) => {
                 match reception_own_result {
                     ReceptionOwnResult::Owner(owner_own_result) => {
                         match owner_own_result {
@@ -210,10 +210,10 @@ impl RegistryReleaseResourceResult {
     }
 }
 
-impl From<SingularRegistryReleaseResourceResult> for RegistryReleaseResourceResult {
-    fn from(value: SingularRegistryReleaseResourceResult) -> Self {
+impl From<UnsynchronisedRegistryReleaseResourceResult> for RegistryReleaseResourceResult {
+    fn from(value: UnsynchronisedRegistryReleaseResourceResult) -> Self {
         match value {
-            SingularRegistryReleaseResourceResult::Reception(reception_release_resource_result) => {
+            UnsynchronisedRegistryReleaseResourceResult::Reception(reception_release_resource_result) => {
                 match reception_release_resource_result {
                     ReceptionReleaseResourceResult::Owner(owner_release_resource_result) => {
                         match owner_release_resource_result {
@@ -255,10 +255,10 @@ pub enum RegistryReleaseResourceAllResult {
     VerificationFailure
 }
 
-impl From<SingularRegistryReleaseResourceAllResult> for RegistryReleaseResourceAllResult {
-    fn from(value: SingularRegistryReleaseResourceAllResult) -> Self {
+impl From<UnsynchronisedRegistryReleaseResourceAllResult> for RegistryReleaseResourceAllResult {
+    fn from(value: UnsynchronisedRegistryReleaseResourceAllResult) -> Self {
         match value {
-            SingularRegistryReleaseResourceAllResult::Reception(reception_release_resource_all_result) => {
+            UnsynchronisedRegistryReleaseResourceAllResult::Reception(reception_release_resource_all_result) => {
                 match reception_release_resource_all_result {
                     ReceptionReleaseResourceAllResult::Owner(owner_release_resource_all_result) => {
                         match owner_release_resource_all_result {
@@ -312,10 +312,10 @@ impl<Password> RegistryBlacklistAllowResult<Password> {
     }
 }
 
-impl<Password> From<SingularRegistryBlacklistAllowResult<Password>> for RegistryBlacklistAllowResult<Password> {
-    fn from(value: SingularRegistryBlacklistAllowResult<Password>) -> Self {
+impl<Password> From<UnsynchronisedRegistryBlacklistAllowResult<Password>> for RegistryBlacklistAllowResult<Password> {
+    fn from(value: UnsynchronisedRegistryBlacklistAllowResult<Password>) -> Self {
         match value {
-            SingularRegistryBlacklistAllowResult::Reception(reception_blacklist_allow_result) => {
+            UnsynchronisedRegistryBlacklistAllowResult::Reception(reception_blacklist_allow_result) => {
                 match reception_blacklist_allow_result {
                     ReceptionBlacklistAllowResult::Owner(owner_blacklist_allow_result) => {
                         match owner_blacklist_allow_result {
@@ -363,10 +363,10 @@ pub enum RegistryWhitelistAllowResult {
     VerificationFailure
 }
 
-impl From<SingularRegistryWhitelistAllowResult> for RegistryWhitelistAllowResult {
-    fn from(value: SingularRegistryWhitelistAllowResult) -> Self {
+impl From<UnsynchronisedRegistryWhitelistAllowResult> for RegistryWhitelistAllowResult {
+    fn from(value: UnsynchronisedRegistryWhitelistAllowResult) -> Self {
         match value {
-            SingularRegistryWhitelistAllowResult::Reception(reception_whitelist_allow_result) => {
+            UnsynchronisedRegistryWhitelistAllowResult::Reception(reception_whitelist_allow_result) => {
                 match reception_whitelist_allow_result {
                     ReceptionWhitelistAllowResult::Owner(owner_whitelist_allow_result) => {
                         match owner_whitelist_allow_result {
@@ -414,10 +414,10 @@ pub enum RegistryBlacklistUnallowResult {
     VerificationFailure
 }
 
-impl From<SingularRegistryBlacklistUnallowResult> for RegistryBlacklistUnallowResult {
-    fn from(value: SingularRegistryBlacklistUnallowResult) -> Self {
+impl From<UnsynchronisedRegistryBlacklistUnallowResult> for RegistryBlacklistUnallowResult {
+    fn from(value: UnsynchronisedRegistryBlacklistUnallowResult) -> Self {
         match value {
-            SingularRegistryBlacklistUnallowResult::Reception(reception_blacklist_unallow_result) => {
+            UnsynchronisedRegistryBlacklistUnallowResult::Reception(reception_blacklist_unallow_result) => {
                 match reception_blacklist_unallow_result {
                     ReceptionBlacklistUnallowResult::Owner(owner_blacklist_unallow_result) => {
                         match owner_blacklist_unallow_result {
@@ -465,10 +465,10 @@ pub enum RegistryWhitelistUnallowResult {
     VerificationFailure
 }
 
-impl From<SingularRegistryWhitelistUnallowResult> for RegistryWhitelistUnallowResult {
-    fn from(value: SingularRegistryWhitelistUnallowResult) -> Self {
+impl From<UnsynchronisedRegistryWhitelistUnallowResult> for RegistryWhitelistUnallowResult {
+    fn from(value: UnsynchronisedRegistryWhitelistUnallowResult) -> Self {
         match value {
-            SingularRegistryWhitelistUnallowResult::Reception(reception_whitelist_unallow_result) => {
+            UnsynchronisedRegistryWhitelistUnallowResult::Reception(reception_whitelist_unallow_result) => {
                 match reception_whitelist_unallow_result {
                     ReceptionWhitelistUnallowResult::Owner(owner_whitelist_unallow_result) => {
                         match owner_whitelist_unallow_result {
@@ -520,10 +520,10 @@ pub enum RegistryCheckAccessResult {
     MissingResource,
 }
 
-impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
-    fn from(value: SingularRegistryCheckAccessResult) -> Self {
+impl From<UnsynchronisedRegistryCheckAccessResult> for RegistryCheckAccessResult {
+    fn from(value: UnsynchronisedRegistryCheckAccessResult) -> Self {
         match value {
-            SingularRegistryCheckAccessResult::Reception(reception_check_access_result) => {
+            UnsynchronisedRegistryCheckAccessResult::Reception(reception_check_access_result) => {
                 match reception_check_access_result {
                     ReceptionCheckAccessResult::Host(host_check_access_result) => {
                         match host_check_access_result {
@@ -566,7 +566,7 @@ impl From<SingularRegistryCheckAccessResult> for RegistryCheckAccessResult {
                     },
                 }
             },
-            SingularRegistryCheckAccessResult::AutomatedRegistry(result) => {
+            UnsynchronisedRegistryCheckAccessResult::AutomatedRegistry(result) => {
                 match result {
                     true => Self::ContainsResource,
                     false => Self::MissingResource,
@@ -584,10 +584,10 @@ pub enum RegistryReleaseAccessResult {
     NoCurrentAccess
 }
 
-impl From<SingularRegistryReleaseAccessResult> for RegistryReleaseAccessResult {
-    fn from(value: SingularRegistryReleaseAccessResult) -> Self {
+impl From<UnsynchronisedRegistryReleaseAccessResult> for RegistryReleaseAccessResult {
+    fn from(value: UnsynchronisedRegistryReleaseAccessResult) -> Self {
         match value {
-            SingularRegistryReleaseAccessResult::Reception(reception_release_access_result) => {
+            UnsynchronisedRegistryReleaseAccessResult::Reception(reception_release_access_result) => {
                 match reception_release_access_result {
                     ReceptionReleaseAccessResult::Host(host_release_access_result) => {
                         match host_release_access_result {
@@ -627,10 +627,10 @@ pub enum RegistryReservationResult {
     ListsDenied
 }
 
-impl From<SingularRegistryReservationResult> for RegistryReservationResult {
-    fn from(value: SingularRegistryReservationResult) -> Self {
+impl From<UnsynchronisedRegistryReservationResult> for RegistryReservationResult {
+    fn from(value: UnsynchronisedRegistryReservationResult) -> Self {
         match value {
-            SingularRegistryReservationResult::Reception(reception_reservation_result) => {
+            UnsynchronisedRegistryReservationResult::Reception(reception_reservation_result) => {
                 match reception_reservation_result {
                     ReceptionReservationResult::Host(host_reservation_result) => {
                         match host_reservation_result {
@@ -698,10 +698,10 @@ pub enum RegistryUnreserveResult {
     VerificationFailure
 }
 
-impl From<SingularRegistryUnreserveResult> for RegistryUnreserveResult {
-    fn from(value: SingularRegistryUnreserveResult) -> Self {
+impl From<UnsynchronisedRegistryUnreserveResult> for RegistryUnreserveResult {
+    fn from(value: UnsynchronisedRegistryUnreserveResult) -> Self {
         match value {
-            SingularRegistryUnreserveResult::Reception(reception_unreserve_result) => {
+            UnsynchronisedRegistryUnreserveResult::Reception(reception_unreserve_result) => {
                 match reception_unreserve_result {
                     ReceptionUnreserveResult::Host(host_unreserve_result) => {
                         match host_unreserve_result {
@@ -743,10 +743,10 @@ pub enum RegistryDrainReservationsResult<Reservations> {
     VerificationFailure
 }
 
-impl<Reservations> From<SingularRegistryDrainReservationsResult<Reservations>> for RegistryDrainReservationsResult<Reservations> {
-    fn from(value: SingularRegistryDrainReservationsResult<Reservations>) -> Self {
+impl<Reservations> From<UnsynchronisedRegistryDrainReservationsResult<Reservations>> for RegistryDrainReservationsResult<Reservations> {
+    fn from(value: UnsynchronisedRegistryDrainReservationsResult<Reservations>) -> Self {
         match value {
-            SingularRegistryDrainReservationsResult::Reception(reception_drain_reservations_result) => {
+            UnsynchronisedRegistryDrainReservationsResult::Reception(reception_drain_reservations_result) => {
                 match reception_drain_reservations_result {
                     ReceptionDrainReservationsResult::Host(host_drain_reservations_result) => {
                         match host_drain_reservations_result {
@@ -801,17 +801,17 @@ pub enum RegistryAcquireAccessError {
     ListsDenied
 }
 
-impl From<SingularRegistryAcquireAccessError> for RegistryAcquireAccessError {
-    fn from(value: SingularRegistryAcquireAccessError) -> Self {
+impl From<UnsynchronisedRegistryAcquireAccessError> for RegistryAcquireAccessError {
+    fn from(value: UnsynchronisedRegistryAcquireAccessError) -> Self {
         match value {
-            SingularRegistryAcquireAccessError::AutomatedRegistry(manual_registry_access_result) => {
+            UnsynchronisedRegistryAcquireAccessError::AutomatedRegistry(manual_registry_access_result) => {
                 match manual_registry_access_result {
                     ManualRegistryAccessError::NotFound => {
                         Self::NotFound
                     },
                 }
             },
-            SingularRegistryAcquireAccessError::Reception(reception_check_access_result) => {
+            UnsynchronisedRegistryAcquireAccessError::Reception(reception_check_access_result) => {
                 match reception_check_access_result {
                     ReceptionCheckAccessResult::Host(host_check_access_result) => {
                         match host_check_access_result {
@@ -882,10 +882,10 @@ impl<T> RegistrySaferReplacementResult<T> {
     }
 }
 
-impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementResult>> for RegistrySaferReplacementResult<ReplacementResult> {
-    fn from(value: SingularRegistrySaferReplacementResult<ReplacementResult>) -> Self {
+impl<ReplacementResult> From<UnsynchronisedRegistrySaferReplacementResult<ReplacementResult>> for RegistrySaferReplacementResult<ReplacementResult> {
+    fn from(value: UnsynchronisedRegistrySaferReplacementResult<ReplacementResult>) -> Self {
         match value {
-            SingularRegistrySaferReplacementResult::AutomatedRegistry(manual_registry_replacement_result) => {
+            UnsynchronisedRegistrySaferReplacementResult::AutomatedRegistry(manual_registry_replacement_result) => {
                 match manual_registry_replacement_result {
                     ManualRegistryReplacementResult::Found(replacement_result) => {
                         Self::Found(replacement_result)
@@ -901,7 +901,7 @@ impl<ReplacementResult> From<SingularRegistrySaferReplacementResult<ReplacementR
                     },
                 }
             },
-            SingularRegistrySaferReplacementResult::Reception(reception_check_access_result) => {
+            UnsynchronisedRegistrySaferReplacementResult::Reception(reception_check_access_result) => {
                 match reception_check_access_result {
                     ReceptionCheckAccessResult::Host(host_check_access_result) => {
                         match host_check_access_result {
@@ -957,10 +957,10 @@ impl RegistryContainsResourceResult {
     }
 }
 
-impl From<SingularRegistryContainsResourceResult> for RegistryContainsResourceResult {
-    fn from(value: SingularRegistryContainsResourceResult) -> Self {
+impl From<UnsynchronisedRegistryContainsResourceResult> for RegistryContainsResourceResult {
+    fn from(value: UnsynchronisedRegistryContainsResourceResult) -> Self {
         match value {
-            SingularRegistryContainsResourceResult::AutomatedRegistry(result) => {
+            UnsynchronisedRegistryContainsResourceResult::AutomatedRegistry(result) => {
                 match result {
                     true => Self::Some,
                     false => Self::None,
