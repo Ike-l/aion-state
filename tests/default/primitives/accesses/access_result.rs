@@ -1,4 +1,4 @@
-use crate::prelude::AccessorResult;
+use aion_state::prelude::AccessorResult;
 
 #[derive(Debug)]
 pub enum AccessResult<'a, T> {

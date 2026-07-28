@@ -1,6 +1,6 @@
 use tracing::{Level, event};
 
-use crate::prelude::{AccessorResult, StoredValueTrait};
+use aion_state::prelude::{AccessorResult, StoredValueTrait, Accessor};
 
 #[derive(Debug, PartialEq)]
 enum BorrowType {
@@ -25,7 +25,7 @@ impl Access {
     }
 }
 
-impl crate::accessor::Accessor for Access {
+impl Accessor for Access {
     fn accepts_incoming(&self, incoming_access: &Self) -> bool {
         event!(Level::TRACE, "Access Accepts Incoming");
 

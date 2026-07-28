@@ -12,7 +12,7 @@ impl<Id, Password> Default for CredentialStorage<Id, Password> {
     }
 }
 
-impl<Id: Eq + Hash, Password: PartialEq> crate::prelude::CredentialStorage for CredentialStorage<Id, Password> {
+impl<Id: Eq + Hash, Password: PartialEq> aion_state::prelude::CredentialStorage for CredentialStorage<Id, Password> {
     type Id = Id;
     type Password = Password;
 

@@ -1,4 +1,5 @@
-use crate::{default::prelude::Resource, prelude::StoredValueTrait};
+use crate::default::prelude::Resource;
+use aion_state::prelude::StoredValueTrait;
 
 pub type StoredResource = Box<Resource>;
 

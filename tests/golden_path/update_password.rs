@@ -1,5 +1,6 @@
-use aion_state::{default::prelude::{Password, ReserverId}, prelude::{RegistryRegister, RegistryUnregister, RegistryUpdatePassword}};
+use aion_state::prelude::{RegistryRegister, RegistryUnregister, RegistryUpdatePassword};
 
+use crate::default::prelude::*;
 use crate::create_registry;
 
 fn can_update_password() {

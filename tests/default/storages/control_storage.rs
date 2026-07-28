@@ -12,7 +12,7 @@ impl<Id, ResourceId> Default for ControlStorage<Id, ResourceId> {
     }
 }
 
-impl<Id: PartialEq, ResourceId: Eq + Hash> crate::prelude::ControlStorage for ControlStorage<Id, ResourceId> {
+impl<Id: PartialEq, ResourceId: Eq + Hash> aion_state::prelude::ControlStorage for ControlStorage<Id, ResourceId> {
     type Id = Id;
     type ResourceId = ResourceId;
 

@@ -1,7 +1,8 @@
-use aion_state::{default::prelude::{Access, AccessResult, Resource, ResourceId}, prelude::{RegistryAcquireAccess, RegistryContainsResource, RegistrySaferReplacement, RegistrySaferReplacementResult}};
+use aion_state::prelude::{RegistryAcquireAccess, RegistryContainsResource, RegistrySaferReplacement, RegistrySaferReplacementResult};
 
 use std::assert_matches;
 
+use crate::default::prelude::*;
 use crate::create_registry;
 
 fn can_safer_replace() {

@@ -1,7 +1,8 @@
-use aion_state::{default::prelude::{Access, AccessResult, Password, ReserverId, Resource, ResourceId}, prelude::{RegistryAcquireAccess, RegistryAcquireAccessError, RegistryOwn, RegistryRegister, RegistrySaferReplacement}};
+use aion_state::prelude::{RegistryAcquireAccess, RegistryAcquireAccessError, RegistryOwn, RegistryRegister, RegistrySaferReplacement};
 
 use std::assert_matches;
 
+use crate::default::prelude::*;
 use crate::create_registry;
 
 fn can_own() {

@@ -12,7 +12,7 @@ impl<ResourceId, StoragedResource> Default for RegistryStorage<ResourceId, Stora
     }
 }
 
-impl<ResourceId: Eq + Hash, StoredResource> crate::prelude::RegistryStorage for RegistryStorage<ResourceId, StoredResource> {
+impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage for RegistryStorage<ResourceId, StoredResource> {
     type ValueId = ResourceId;
     type Value = StoredResource;
 

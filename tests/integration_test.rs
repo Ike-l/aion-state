@@ -1,10 +1,9 @@
-#![cfg(feature = "default-implementation")]
-
 use aion_state::prelude::Registry;
 
-use aion_state::default::prelude::*;
-
+pub mod default;
 mod golden_path;
+
+use default::prelude::*;
 
 use tracing_subscriber::fmt;
 use std::sync::Once;

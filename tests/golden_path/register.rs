@@ -1,5 +1,6 @@
-use aion_state::{default::prelude::{Password, ReserverId}, prelude::RegistryRegister};
+use aion_state::prelude::RegistryRegister;
 
+use crate::default::prelude::*;
 use crate::create_registry;
 
 fn can_register() {

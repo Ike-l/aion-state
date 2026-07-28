@@ -1,5 +1,6 @@
-use aion_state::{default::prelude::{Password, ReserverId}, prelude::{RegistryRegister, RegistryUnregister}};
+use aion_state::prelude::{RegistryRegister, RegistryUnregister};
 
+use crate::default::prelude::*;
 use crate::create_registry;
 
 fn can_unregister() {

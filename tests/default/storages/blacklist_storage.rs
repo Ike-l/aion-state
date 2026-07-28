@@ -22,7 +22,7 @@ impl<ResourceId, Access, Password> BlacklistStorage<ResourceId, Access, Password
     }
 }
 
-impl<ResourceId, Access, Password:> crate::prelude::BlacklistStorage for BlacklistStorage<ResourceId, Access, Password> 
+impl<ResourceId, Access, Password:> aion_state::prelude::BlacklistStorage for BlacklistStorage<ResourceId, Access, Password> 
     where
         ResourceId: Eq + Hash,
         Access: PartialEq,
@@ -87,7 +87,7 @@ impl<ResourceId, Access, Password:> crate::prelude::BlacklistStorage for Blackli
     fn release_all<'a>(
         &mut self,
         mut ids: impl Iterator<Item = &'a Self::Id>
-    ) -> bool where <Self as crate::prelude::BlacklistStorage>::Id: 'a {
+    ) -> bool where <Self as aion_state::prelude::BlacklistStorage>::Id: 'a {
         event!(Level::TRACE, "Blacklist release all");
 
         !ids.any(|resource_id| !self.release(resource_id))

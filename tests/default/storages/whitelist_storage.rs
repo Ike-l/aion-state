@@ -12,7 +12,7 @@ impl<ResourceId, Access> Default for WhitelistStorage<ResourceId, Access> {
     }
 }
 
-impl<ResourceId: Eq + Hash, Access: PartialEq> crate::prelude::WhitelistStorage for WhitelistStorage<ResourceId, Access> {
+impl<ResourceId: Eq + Hash, Access: PartialEq> aion_state::prelude::WhitelistStorage for WhitelistStorage<ResourceId, Access> {
     type Id = ResourceId;
     type Access = Access;
 
@@ -51,7 +51,7 @@ impl<ResourceId: Eq + Hash, Access: PartialEq> crate::prelude::WhitelistStorage 
     fn release_all<'a>(
         &mut self,
         mut ids: impl Iterator<Item = &'a Self::Id>
-    ) -> bool where <Self as crate::prelude::WhitelistStorage>::Id: 'a {
+    ) -> bool where <Self as aion_state::prelude::WhitelistStorage>::Id: 'a {
         event!(Level::TRACE, "Whitelist release all");
 
         !ids.any(|resource_id| !self.release(resource_id))

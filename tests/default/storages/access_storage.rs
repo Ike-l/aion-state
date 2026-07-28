@@ -12,7 +12,7 @@ impl<ResourceId, Access> Default for AccessStorage<ResourceId, Access> {
     }
 }
 
-impl<ResourceId: Eq + Hash, Access> crate::prelude::AccessStorage for AccessStorage<ResourceId, Access> {
+impl<ResourceId: Eq + Hash, Access> aion_state::prelude::AccessStorage for AccessStorage<ResourceId, Access> {
     type ValueId = ResourceId;
     type Access = Access;
 
