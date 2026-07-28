@@ -1,4 +1,4 @@
-use aion_state::prelude::{RegistryAcquireAccess, RegistryAcquireAccessError, RegistryOwn, RegistryRegister, RegistrySaferReplacement};
+use aion_state::prelude::{RegistryAcquireAccess, SynchronisedRegistryAcquireAccessError, RegistryOwn, RegistryRegister, RegistrySaferReplacement};
 
 use std::assert_matches;
 
@@ -69,7 +69,7 @@ fn owning_blocks_by_default() {
     match result {
         Ok(_) => panic!("Expected Err"),
         Err(err) => {
-            assert_matches!(err, RegistryAcquireAccessError::ListsDenied);
+            assert_matches!(err, SynchronisedRegistryAcquireAccessError::ListsDenied);
         }
     }
 }

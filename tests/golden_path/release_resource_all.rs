@@ -1,4 +1,4 @@
-use aion_state::prelude::{RegistryOwn, RegistryRegister, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult};
+use aion_state::prelude::{RegistryOwn, RegistryRegister, RegistryReleaseResourceAll, SynchronisedRegistryReleaseResourceAllResult};
 
 use crate::default::prelude::*;
 use crate::create_registry;
@@ -38,12 +38,12 @@ fn can_release_resource_all() {
     });
 
     match result {
-        RegistryReleaseResourceAllResult::All(registry_release_resource_results) => {
+        SynchronisedRegistryReleaseResourceAllResult::All(registry_release_resource_results) => {
             for result in registry_release_resource_results {
                 assert!(result.ok());
             }
         },
-        RegistryReleaseResourceAllResult::VerificationFailure => panic!("Expected Success"),
+        SynchronisedRegistryReleaseResourceAllResult::VerificationFailure => panic!("Expected Success"),
     }
     // assert!(result.ok())
 }

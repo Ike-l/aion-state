@@ -1,4 +1,4 @@
-use aion_state::prelude::{RegistryAcquireAccess, RegistryContainsResource, RegistrySaferReplacement, RegistrySaferReplacementResult};
+use aion_state::prelude::{RegistryAcquireAccess, RegistryContainsResource, RegistrySaferReplacement, SynchronisedRegistrySaferReplacementResult};
 
 use std::assert_matches;
 
@@ -44,7 +44,7 @@ fn multi_safer_replace() {
             password: None,
         });
     
-        assert_matches!(result, RegistrySaferReplacementResult::NotFound);
+        assert_matches!(result, SynchronisedRegistrySaferReplacementResult::NotFound);
 
         let result = registry.acquire_access(RegistryAcquireAccess {
             user_details: None,

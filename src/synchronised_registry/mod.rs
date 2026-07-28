@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use stable_deref_trait::StableDeref;
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, UnsynchronisedRegistry, RegistryAcquireAccess, RegistryAcquireAccessError, RegistryAllow, RegistryBlacklistAllowResult, RegistryBlacklistUnallowResult, RegistryCheckAccess, RegistryCheckAccessResult, RegistryContainsResource, RegistryContainsResourceResult, RegistryDrainReservations, RegistryDrainReservationsResult, RegistryOwn, RegistryOwnResult, RegistryRegister, RegistryRegisterResult, RegistryReleaseAccess, RegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult, RegistryReleaseResourceResult, RegistryReleasingAcquireAccess, RegistryReleasingReleaseAccess, RegistryReservation, RegistryReservationResult, RegistrySaferReplacement, RegistrySaferReplacementResult, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnregisterResult, RegistryUnreserve, RegistryUnreserveResult, RegistryUpdatePassword, RegistryUpdatePasswordResult, RegistryWhitelistAllowResult, RegistryWhitelistUnallowResult, Releaser, ReleasingResult, ReservationStorage, StoredValueTrait, WhitelistStorage, sync::RwLock, trace_function};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, UnsynchronisedRegistry, RegistryAcquireAccess, SynchronisedRegistryAcquireAccessError, RegistryAllow, SynchronisedRegistryBlacklistAllowResult, SynchronisedRegistryBlacklistUnallowResult, RegistryCheckAccess, SynchronisedRegistryCheckAccessResult, RegistryContainsResource, SynchronisedRegistryContainsResourceResult, RegistryDrainReservations, SynchronisedRegistryDrainReservationsResult, RegistryOwn, SynchronisedRegistryOwnResult, RegistryRegister, SynchronisedRegistryRegisterResult, RegistryReleaseAccess, SynchronisedRegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, SynchronisedRegistryReleaseResourceAllResult, SynchronisedRegistryReleaseResourceResult, RegistryReleasingAcquireAccess, RegistryReleasingReleaseAccess, RegistryReservation, SynchronisedRegistryReservationResult, RegistrySaferReplacement, SynchronisedRegistrySaferReplacementResult, RegistryStorage, RegistryUnallow, RegistryUnregister, SynchronisedRegistryUnregisterResult, RegistryUnreserve, SynchronisedRegistryUnreserveResult, RegistryUpdatePassword, SynchronisedRegistryUpdatePasswordResult, SynchronisedRegistryWhitelistAllowResult, SynchronisedRegistryWhitelistUnallowResult, Releaser, ReleasingResult, ReservationStorage, StoredValueTrait, WhitelistStorage, sync::RwLock, trace_function};
 
 pub mod unsynchronised_registry;
 pub mod synchronised_registry_results;
@@ -46,7 +46,7 @@ impl<
         AS::ValueId: Debug + Clone,
         S::Value: StoredValueTrait
 {
-    type AccessError = RegistryAcquireAccessError;
+    type AccessError = SynchronisedRegistryAcquireAccessError;
     type AccessInput = RegistryReleasingAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
 
     type ReleaseInput = RegistryReleasingReleaseAccess<S::ValueId, AS::Access>;
@@ -94,7 +94,7 @@ impl<
     pub fn register(
         &self, 
         input: RegistryRegister<OS::Id, OS::Password>
-    ) -> RegistryRegisterResult {
+    ) -> SynchronisedRegistryRegisterResult {
         trace_function!("Synchronised Registry Register");
 
         let _sync = self.sync.write();
@@ -105,7 +105,7 @@ impl<
     pub fn unregister(
         &self,
         input: &RegistryUnregister<'_, OS::Id, OS::Password>
-    ) -> RegistryUnregisterResult {
+    ) -> SynchronisedRegistryUnregisterResult {
         trace_function!("Synchronised Registry Unregister");
 
         let _sync = self.sync.write();
@@ -116,7 +116,7 @@ impl<
     pub fn update_password(
         &self,
         input: RegistryUpdatePassword<'_, OS::Id, OS::Password>
-    ) -> RegistryUpdatePasswordResult {
+    ) -> SynchronisedRegistryUpdatePasswordResult {
         trace_function!("Synchronised Registry Update Password");
 
         let _sync = self.sync.write();
@@ -128,7 +128,7 @@ impl<
     pub fn own(
         &self,
         input: RegistryOwn<'_, OS::Id, OS::Password, S::ValueId>
-    ) -> RegistryOwnResult {
+    ) -> SynchronisedRegistryOwnResult {
         trace_function!("Synchronised Registry Own");
 
         let _sync = self.sync.write();
@@ -139,7 +139,7 @@ impl<
     pub fn release_resource(
         &self, 
         input: &RegistryReleaseResource<'_, OS::Id, OS::Password, S::ValueId>
-    ) -> RegistryReleaseResourceResult {
+    ) -> SynchronisedRegistryReleaseResourceResult {
         trace_function!("Synchronised Registry Release Resource");
 
         let _sync = self.sync.write();
@@ -150,7 +150,7 @@ impl<
     pub fn release_resource_all<'a>(
         &self,
         input: RegistryReleaseResourceAll<'a, OS::Id, OS::Password, S::ValueId>
-    ) -> RegistryReleaseResourceAllResult {
+    ) -> SynchronisedRegistryReleaseResourceAllResult {
         trace_function!("Synchronised Registry Release Resource All");
 
         let _sync = self.sync.write();
@@ -162,7 +162,7 @@ impl<
     pub fn allow_blacklist(
         &self,
         input: RegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> RegistryBlacklistAllowResult<BS::Password> {
+    ) -> SynchronisedRegistryBlacklistAllowResult<BS::Password> {
         trace_function!("Synchronised Registry Allow Blacklist");
 
         let _sync = self.sync.write();
@@ -173,7 +173,7 @@ impl<
     pub fn allow_whitelist(
         &self,
         input: RegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> RegistryWhitelistAllowResult {
+    ) -> SynchronisedRegistryWhitelistAllowResult {
         trace_function!("Synchronised Registry Allow Whitelist");
 
         let _sync = self.sync.write();
@@ -184,7 +184,7 @@ impl<
     pub fn unallow_blacklist(
         &self,
         input: &RegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> RegistryBlacklistUnallowResult {
+    ) -> SynchronisedRegistryBlacklistUnallowResult {
         trace_function!("Synchronised Registry Unallow Blacklist");
 
         let _sync = self.sync.write();
@@ -195,7 +195,7 @@ impl<
     pub fn unallow_whitelist(
         &self,
         input: &RegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> RegistryWhitelistUnallowResult {
+    ) -> SynchronisedRegistryWhitelistUnallowResult {
         trace_function!("Synchronised Registry Unallow Whitelist");
 
         let _sync = self.sync.write();
@@ -206,7 +206,7 @@ impl<
     pub fn check_access(
         &self,
         input: &RegistryCheckAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
-    ) -> RegistryCheckAccessResult {
+    ) -> SynchronisedRegistryCheckAccessResult {
         trace_function!("Synchronised Registry Check Access");
 
         let _sync = self.sync.read();
@@ -220,7 +220,7 @@ impl<
     pub unsafe fn release_access(
         &self,
         input: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
-    ) -> RegistryReleaseAccessResult {
+    ) -> SynchronisedRegistryReleaseAccessResult {
         trace_function!("Synchronised Registry Release Access");
 
         let _sync = self.sync.write();
@@ -233,7 +233,7 @@ impl<
     pub fn reserve(
         &self,
         input: RegistryReservation<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
-    ) -> RegistryReservationResult {
+    ) -> SynchronisedRegistryReservationResult {
         trace_function!("Synchronised Registry Reserve");
 
         let _sync = self.sync.write();
@@ -244,7 +244,7 @@ impl<
     pub fn unreserve(
         &self,
         input: &RegistryUnreserve<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
-    ) -> RegistryUnreserveResult {
+    ) -> SynchronisedRegistryUnreserveResult {
         trace_function!("Synchronised Registry Unreserve");
 
         let _sync = self.sync.write();
@@ -255,7 +255,7 @@ impl<
     pub fn drain_reservations(
         &self,
         input: &RegistryDrainReservations<'_, OS::Id, OS::Password>
-    ) -> RegistryDrainReservationsResult<Vec<(S::ValueId, AS::Access)>> {
+    ) -> SynchronisedRegistryDrainReservationsResult<Vec<(S::ValueId, AS::Access)>> {
         trace_function!("Synchronised Registry Drain Reservations");
 
         let _sync = self.sync.write();
@@ -267,7 +267,7 @@ impl<
     pub fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
         &'a self,
         input: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
-    ) -> Result<AccessResult, RegistryAcquireAccessError> 
+    ) -> Result<AccessResult, SynchronisedRegistryAcquireAccessError> 
         where <S as RegistryStorage>::Value: StoredValueTrait 
     {
         trace_function!("Synchronised Registry Acquire Access");
@@ -280,7 +280,7 @@ impl<
     pub fn safer_replace(
         &self,
         input: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoredValueTrait>::Value, BS::Password>
-    ) -> RegistrySaferReplacementResult<<S::Value as StoredValueTrait>::Value>
+    ) -> SynchronisedRegistrySaferReplacementResult<<S::Value as StoredValueTrait>::Value>
         where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
     {
         trace_function!("Synchronised Registry Safer Replace");
@@ -293,7 +293,7 @@ impl<
     pub fn contains_resource(
         &self,
         input: &RegistryContainsResource<'_, S::ValueId>
-    ) -> RegistryContainsResourceResult {
+    ) -> SynchronisedRegistryContainsResourceResult {
         trace_function!("Synchronised Registry Contains Resource");
 
         let _sync = self.sync.read();

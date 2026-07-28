@@ -1,20 +1,20 @@
 use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlOwnResult, ResourceControlReleaseResult, UnsynchronisedRegistryAcquireAccessError, UnsynchronisedRegistryBlacklistAllowResult, UnsynchronisedRegistryBlacklistUnallowResult, UnsynchronisedRegistryCheckAccessResult, UnsynchronisedRegistryContainsResourceResult, UnsynchronisedRegistryDrainReservationsResult, UnsynchronisedRegistryOwnResult, UnsynchronisedRegistryRegisterResult, UnsynchronisedRegistryReleaseAccessResult, UnsynchronisedRegistryReleaseResourceAllResult, UnsynchronisedRegistryReleaseResourceResult, UnsynchronisedRegistryReservationResult, UnsynchronisedRegistrySaferReplacementResult, UnsynchronisedRegistryUnregisterResult, UnsynchronisedRegistryUnreserveResult, UnsynchronisedRegistryUpdatePasswordResult, UnsynchronisedRegistryWhitelistAllowResult, UnsynchronisedRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryRegisterResult {
+pub enum SynchronisedRegistryRegisterResult {
     #[error("Credential Storage Register Ok")]
     Ok,
     #[error("Credential Storage Register Failure")]
     Err
 }
 
-impl RegistryRegisterResult {
+impl SynchronisedRegistryRegisterResult {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Ok)
     }
 }
 
-impl From<UnsynchronisedRegistryRegisterResult> for RegistryRegisterResult {
+impl From<UnsynchronisedRegistryRegisterResult> for SynchronisedRegistryRegisterResult {
     fn from(value: UnsynchronisedRegistryRegisterResult) -> Self {
         match value {
             UnsynchronisedRegistryRegisterResult::Reception(reception_register_result) => {
@@ -40,7 +40,7 @@ impl From<UnsynchronisedRegistryRegisterResult> for RegistryRegisterResult {
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryUnregisterResult {
+pub enum SynchronisedRegistryUnregisterResult {
     #[error("Credential Storage Unregister Failure")]
     AuthenticatorUnregisterFailure,
     #[error("When Releasing User Id: Whitelist Release All: {whitelist_result}, Blacklist Release All: {blacklist_result}")]
@@ -52,13 +52,13 @@ pub enum RegistryUnregisterResult {
     VerificationFailure
 }
 
-impl RegistryUnregisterResult {
+impl SynchronisedRegistryUnregisterResult {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Lists{ .. })
     }
 }
 
-impl From<UnsynchronisedRegistryUnregisterResult> for RegistryUnregisterResult {
+impl From<UnsynchronisedRegistryUnregisterResult> for SynchronisedRegistryUnregisterResult {
     fn from(value: UnsynchronisedRegistryUnregisterResult) -> Self {
         match value {
             UnsynchronisedRegistryUnregisterResult::Reception(reception_unregister_result) => {
@@ -95,7 +95,7 @@ impl From<UnsynchronisedRegistryUnregisterResult> for RegistryUnregisterResult {
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryUpdatePasswordResult {
+pub enum SynchronisedRegistryUpdatePasswordResult {
     #[error("Credential Storage Update Password Ok")]
     Ok,
     #[error("Credential Storage Update Password Failure")]
@@ -104,13 +104,13 @@ pub enum RegistryUpdatePasswordResult {
     VerificationFailure
 }
 
-impl RegistryUpdatePasswordResult {
+impl SynchronisedRegistryUpdatePasswordResult {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Ok)
     }
 }
 
-impl From<UnsynchronisedRegistryUpdatePasswordResult> for RegistryUpdatePasswordResult {
+impl From<UnsynchronisedRegistryUpdatePasswordResult> for SynchronisedRegistryUpdatePasswordResult {
     fn from(value: UnsynchronisedRegistryUpdatePasswordResult) -> Self {
         match value {
             UnsynchronisedRegistryUpdatePasswordResult::Reception(reception_update_password_result) => {
@@ -140,7 +140,7 @@ impl From<UnsynchronisedRegistryUpdatePasswordResult> for RegistryUpdatePassword
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryOwnResult {
+pub enum SynchronisedRegistryOwnResult {
     #[error("Control Storage Own Ok")]
     Ok,
     #[error("Control Storage Own Failure")]
@@ -151,13 +151,13 @@ pub enum RegistryOwnResult {
     VerificationFailure
 }
 
-impl RegistryOwnResult {
+impl SynchronisedRegistryOwnResult {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Ok)
     }
 }
 
-impl From<UnsynchronisedRegistryOwnResult> for RegistryOwnResult {
+impl From<UnsynchronisedRegistryOwnResult> for SynchronisedRegistryOwnResult {
     fn from(value: UnsynchronisedRegistryOwnResult) -> Self {
         match value {
             UnsynchronisedRegistryOwnResult::Reception(reception_own_result) => {
@@ -193,7 +193,7 @@ impl From<UnsynchronisedRegistryOwnResult> for RegistryOwnResult {
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryReleaseResourceResult {
+pub enum SynchronisedRegistryReleaseResourceResult {
     #[error("Control Storage Release Ok")]
     Ok,
     #[error("Control Storage Release Failure")]
@@ -204,13 +204,13 @@ pub enum RegistryReleaseResourceResult {
     VerificationFailure
 }
 
-impl RegistryReleaseResourceResult {
+impl SynchronisedRegistryReleaseResourceResult {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Ok)
     }
 }
 
-impl From<UnsynchronisedRegistryReleaseResourceResult> for RegistryReleaseResourceResult {
+impl From<UnsynchronisedRegistryReleaseResourceResult> for SynchronisedRegistryReleaseResourceResult {
     fn from(value: UnsynchronisedRegistryReleaseResourceResult) -> Self {
         match value {
             UnsynchronisedRegistryReleaseResourceResult::Reception(reception_release_resource_result) => {
@@ -246,16 +246,16 @@ impl From<UnsynchronisedRegistryReleaseResourceResult> for RegistryReleaseResour
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryReleaseResourceAllResult {
+pub enum SynchronisedRegistryReleaseResourceAllResult {
     /// RegistryReleaseResourceResult::VerificationFailure is unreachable!()
     #[error("Controller Released with len: {}", .0.len())]
-    All(Vec<RegistryReleaseResourceResult>),
+    All(Vec<SynchronisedRegistryReleaseResourceResult>),
 
     #[error("Credential Storage Verification Failure")]
     VerificationFailure
 }
 
-impl From<UnsynchronisedRegistryReleaseResourceAllResult> for RegistryReleaseResourceAllResult {
+impl From<UnsynchronisedRegistryReleaseResourceAllResult> for SynchronisedRegistryReleaseResourceAllResult {
     fn from(value: UnsynchronisedRegistryReleaseResourceAllResult) -> Self {
         match value {
             UnsynchronisedRegistryReleaseResourceAllResult::Reception(reception_release_resource_all_result) => {
@@ -271,13 +271,13 @@ impl From<UnsynchronisedRegistryReleaseResourceAllResult> for RegistryReleaseRes
                                                     match resource_control_release_result {
                                                         ResourceControlReleaseResult::Released(result) => {
                                                             match result {
-                                                                true => RegistryReleaseResourceResult::Ok,
-                                                                false => RegistryReleaseResourceResult::Err,
+                                                                true => SynchronisedRegistryReleaseResourceResult::Ok,
+                                                                false => SynchronisedRegistryReleaseResourceResult::Err,
                                                             }
                                                         },
                                                     }
                                                 },
-                                                ControllerReleaseResourceResult::Denied => RegistryReleaseResourceResult::OwnershipDenied,
+                                                ControllerReleaseResourceResult::Denied => SynchronisedRegistryReleaseResourceResult::OwnershipDenied,
                                             }
                                         }).collect())
                                     },
@@ -295,7 +295,7 @@ impl From<UnsynchronisedRegistryReleaseResourceAllResult> for RegistryReleaseRes
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryBlacklistAllowResult<Password> {
+pub enum SynchronisedRegistryBlacklistAllowResult<Password> {
     #[error("Blacklist Allow Ok with Password <hidden>")]
     Ok(Password),
     #[error("Blacklist Allow Failure")]
@@ -306,13 +306,13 @@ pub enum RegistryBlacklistAllowResult<Password> {
     VerificationFailure
 }
 
-impl<Password> RegistryBlacklistAllowResult<Password> {
+impl<Password> SynchronisedRegistryBlacklistAllowResult<Password> {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Ok(_))
     }
 }
 
-impl<Password> From<UnsynchronisedRegistryBlacklistAllowResult<Password>> for RegistryBlacklistAllowResult<Password> {
+impl<Password> From<UnsynchronisedRegistryBlacklistAllowResult<Password>> for SynchronisedRegistryBlacklistAllowResult<Password> {
     fn from(value: UnsynchronisedRegistryBlacklistAllowResult<Password>) -> Self {
         match value {
             UnsynchronisedRegistryBlacklistAllowResult::Reception(reception_blacklist_allow_result) => {
@@ -352,7 +352,7 @@ impl<Password> From<UnsynchronisedRegistryBlacklistAllowResult<Password>> for Re
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryWhitelistAllowResult {
+pub enum SynchronisedRegistryWhitelistAllowResult {
     #[error("Whitelist Allow Ok")]
     Ok,
     #[error("Whitelist Allow Failure")]
@@ -363,7 +363,7 @@ pub enum RegistryWhitelistAllowResult {
     VerificationFailure
 }
 
-impl From<UnsynchronisedRegistryWhitelistAllowResult> for RegistryWhitelistAllowResult {
+impl From<UnsynchronisedRegistryWhitelistAllowResult> for SynchronisedRegistryWhitelistAllowResult {
     fn from(value: UnsynchronisedRegistryWhitelistAllowResult) -> Self {
         match value {
             UnsynchronisedRegistryWhitelistAllowResult::Reception(reception_whitelist_allow_result) => {
@@ -403,7 +403,7 @@ impl From<UnsynchronisedRegistryWhitelistAllowResult> for RegistryWhitelistAllow
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryBlacklistUnallowResult {
+pub enum SynchronisedRegistryBlacklistUnallowResult {
     #[error("Blacklist Unallow Ok")]
     Ok,
     #[error("Blacklist Unallow Failure")]
@@ -414,7 +414,7 @@ pub enum RegistryBlacklistUnallowResult {
     VerificationFailure
 }
 
-impl From<UnsynchronisedRegistryBlacklistUnallowResult> for RegistryBlacklistUnallowResult {
+impl From<UnsynchronisedRegistryBlacklistUnallowResult> for SynchronisedRegistryBlacklistUnallowResult {
     fn from(value: UnsynchronisedRegistryBlacklistUnallowResult) -> Self {
         match value {
             UnsynchronisedRegistryBlacklistUnallowResult::Reception(reception_blacklist_unallow_result) => {
@@ -454,7 +454,7 @@ impl From<UnsynchronisedRegistryBlacklistUnallowResult> for RegistryBlacklistUna
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryWhitelistUnallowResult {
+pub enum SynchronisedRegistryWhitelistUnallowResult {
     #[error("Whitelist Unallow Ok")]
     Ok,
     #[error("Whitelist Unallow Failure")]
@@ -465,7 +465,7 @@ pub enum RegistryWhitelistUnallowResult {
     VerificationFailure
 }
 
-impl From<UnsynchronisedRegistryWhitelistUnallowResult> for RegistryWhitelistUnallowResult {
+impl From<UnsynchronisedRegistryWhitelistUnallowResult> for SynchronisedRegistryWhitelistUnallowResult {
     fn from(value: UnsynchronisedRegistryWhitelistUnallowResult) -> Self {
         match value {
             UnsynchronisedRegistryWhitelistUnallowResult::Reception(reception_whitelist_unallow_result) => {
@@ -505,7 +505,7 @@ impl From<UnsynchronisedRegistryWhitelistUnallowResult> for RegistryWhitelistUna
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryCheckAccessResult {
+pub enum SynchronisedRegistryCheckAccessResult {
     #[error("Current Access does not Accept Incoming Access")]
     Err,
     #[error("Reservations Check Access Conflict Found")]
@@ -520,7 +520,7 @@ pub enum RegistryCheckAccessResult {
     MissingResource,
 }
 
-impl From<UnsynchronisedRegistryCheckAccessResult> for RegistryCheckAccessResult {
+impl From<UnsynchronisedRegistryCheckAccessResult> for SynchronisedRegistryCheckAccessResult {
     fn from(value: UnsynchronisedRegistryCheckAccessResult) -> Self {
         match value {
             UnsynchronisedRegistryCheckAccessResult::Reception(reception_check_access_result) => {
@@ -577,14 +577,14 @@ impl From<UnsynchronisedRegistryCheckAccessResult> for RegistryCheckAccessResult
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryReleaseAccessResult {
+pub enum SynchronisedRegistryReleaseAccessResult {
     #[error("Split Access from a Current Access")]
     Ok,
     #[error("No Current Access to Release from")]
     NoCurrentAccess
 }
 
-impl From<UnsynchronisedRegistryReleaseAccessResult> for RegistryReleaseAccessResult {
+impl From<UnsynchronisedRegistryReleaseAccessResult> for SynchronisedRegistryReleaseAccessResult {
     fn from(value: UnsynchronisedRegistryReleaseAccessResult) -> Self {
         match value {
             UnsynchronisedRegistryReleaseAccessResult::Reception(reception_release_access_result) => {
@@ -610,7 +610,7 @@ impl From<UnsynchronisedRegistryReleaseAccessResult> for RegistryReleaseAccessRe
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryReservationResult {
+pub enum SynchronisedRegistryReservationResult {
     #[error("Reservation Made Ok is Composed with other Reservation(s)")]
     Ok,
     #[error("Reservation Made Ok is New")]
@@ -627,7 +627,7 @@ pub enum RegistryReservationResult {
     ListsDenied
 }
 
-impl From<UnsynchronisedRegistryReservationResult> for RegistryReservationResult {
+impl From<UnsynchronisedRegistryReservationResult> for SynchronisedRegistryReservationResult {
     fn from(value: UnsynchronisedRegistryReservationResult) -> Self {
         match value {
             UnsynchronisedRegistryReservationResult::Reception(reception_reservation_result) => {
@@ -687,7 +687,7 @@ impl From<UnsynchronisedRegistryReservationResult> for RegistryReservationResult
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryUnreserveResult {
+pub enum SynchronisedRegistryUnreserveResult {
     #[error("Reservations Unreserve Ok")]
     Ok,
     #[error("No Reservation Found")]
@@ -698,7 +698,7 @@ pub enum RegistryUnreserveResult {
     VerificationFailure
 }
 
-impl From<UnsynchronisedRegistryUnreserveResult> for RegistryUnreserveResult {
+impl From<UnsynchronisedRegistryUnreserveResult> for SynchronisedRegistryUnreserveResult {
     fn from(value: UnsynchronisedRegistryUnreserveResult) -> Self {
         match value {
             UnsynchronisedRegistryUnreserveResult::Reception(reception_unreserve_result) => {
@@ -734,7 +734,7 @@ impl From<UnsynchronisedRegistryUnreserveResult> for RegistryUnreserveResult {
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryDrainReservationsResult<Reservations> {
+pub enum SynchronisedRegistryDrainReservationsResult<Reservations> {
     #[error("Drained Reservations")]
     Drain(Reservations),
     #[error("No Reservervations Found")]
@@ -743,7 +743,7 @@ pub enum RegistryDrainReservationsResult<Reservations> {
     VerificationFailure
 }
 
-impl<Reservations> From<UnsynchronisedRegistryDrainReservationsResult<Reservations>> for RegistryDrainReservationsResult<Reservations> {
+impl<Reservations> From<UnsynchronisedRegistryDrainReservationsResult<Reservations>> for SynchronisedRegistryDrainReservationsResult<Reservations> {
     fn from(value: UnsynchronisedRegistryDrainReservationsResult<Reservations>) -> Self {
         match value {
             UnsynchronisedRegistryDrainReservationsResult::Reception(reception_drain_reservations_result) => {
@@ -786,7 +786,7 @@ impl<Reservations> From<UnsynchronisedRegistryDrainReservationsResult<Reservatio
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryAcquireAccessError {
+pub enum SynchronisedRegistryAcquireAccessError {
     #[error("Resource Not Found")]
     NotFound,
     #[error("Current Access Does not Accept Incoming Access")]
@@ -801,7 +801,7 @@ pub enum RegistryAcquireAccessError {
     ListsDenied
 }
 
-impl From<UnsynchronisedRegistryAcquireAccessError> for RegistryAcquireAccessError {
+impl From<UnsynchronisedRegistryAcquireAccessError> for SynchronisedRegistryAcquireAccessError {
     fn from(value: UnsynchronisedRegistryAcquireAccessError) -> Self {
         match value {
             UnsynchronisedRegistryAcquireAccessError::AutomatedRegistry(manual_registry_access_result) => {
@@ -854,7 +854,7 @@ impl From<UnsynchronisedRegistryAcquireAccessError> for RegistryAcquireAccessErr
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistrySaferReplacementResult<ReplacementResult> {
+pub enum SynchronisedRegistrySaferReplacementResult<ReplacementResult> {
     #[error("Replaced Resource and Returned Old")]
     Found(ReplacementResult),
     #[error("Inserted Resource")]
@@ -876,13 +876,13 @@ pub enum RegistrySaferReplacementResult<ReplacementResult> {
     ListsDenied
 }
 
-impl<T> RegistrySaferReplacementResult<T> {
+impl<T> SynchronisedRegistrySaferReplacementResult<T> {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Found(_)) || matches!(self, Self::NotFound)
     }
 }
 
-impl<ReplacementResult> From<UnsynchronisedRegistrySaferReplacementResult<ReplacementResult>> for RegistrySaferReplacementResult<ReplacementResult> {
+impl<ReplacementResult> From<UnsynchronisedRegistrySaferReplacementResult<ReplacementResult>> for SynchronisedRegistrySaferReplacementResult<ReplacementResult> {
     fn from(value: UnsynchronisedRegistrySaferReplacementResult<ReplacementResult>) -> Self {
         match value {
             UnsynchronisedRegistrySaferReplacementResult::AutomatedRegistry(manual_registry_replacement_result) => {
@@ -944,20 +944,20 @@ impl<ReplacementResult> From<UnsynchronisedRegistrySaferReplacementResult<Replac
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegistryContainsResourceResult {
+pub enum SynchronisedRegistryContainsResourceResult {
     #[error("Registry Contains Resource")]
     Some,
     #[error("Registry Does not Contains Resource")]
     None
 }
 
-impl RegistryContainsResourceResult {
+impl SynchronisedRegistryContainsResourceResult {
     pub fn ok(&self) -> bool {
         matches!(self, Self::Some)
     }
 }
 
-impl From<UnsynchronisedRegistryContainsResourceResult> for RegistryContainsResourceResult {
+impl From<UnsynchronisedRegistryContainsResourceResult> for SynchronisedRegistryContainsResourceResult {
     fn from(value: UnsynchronisedRegistryContainsResourceResult) -> Self {
         match value {
             UnsynchronisedRegistryContainsResourceResult::AutomatedRegistry(result) => {
