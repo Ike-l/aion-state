@@ -4,7 +4,7 @@ use stable_deref_trait::StableDeref;
 
 use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, UnsynchronisedRegistry, RegistryAcquireAccess, RegistryAcquireAccessError, RegistryAllow, RegistryBlacklistAllowResult, RegistryBlacklistUnallowResult, RegistryCheckAccess, RegistryCheckAccessResult, RegistryContainsResource, RegistryContainsResourceResult, RegistryDrainReservations, RegistryDrainReservationsResult, RegistryOwn, RegistryOwnResult, RegistryRegister, RegistryRegisterResult, RegistryReleaseAccess, RegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReleaseResourceAllResult, RegistryReleaseResourceResult, RegistryReleasingAcquireAccess, RegistryReleasingReleaseAccess, RegistryReservation, RegistryReservationResult, RegistrySaferReplacement, RegistrySaferReplacementResult, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnregisterResult, RegistryUnreserve, RegistryUnreserveResult, RegistryUpdatePassword, RegistryUpdatePasswordResult, RegistryWhitelistAllowResult, RegistryWhitelistUnallowResult, Releaser, ReleasingResult, ReservationStorage, StoredValueTrait, WhitelistStorage, sync::RwLock, trace_function};
 
-pub mod singular_registry;
+pub mod registry;
 pub mod registry_results;
 
 pub mod releaser;

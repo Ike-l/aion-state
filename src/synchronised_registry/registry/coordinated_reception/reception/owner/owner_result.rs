@@ -1,4 +1,4 @@
-use crate::{prelude::{AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, ControllerBlacklistAllowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceResult, ControllerBlacklistUnallowResult, ControllerWhitelistUnallowResult, ControllerWhitelistAllowResult}, synchronised_registry::singular_registry::coordinated_reception::reception::owner::controller::controller_result::ControllerReleaseResourceAllResult};
+use crate::{prelude::{AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, ControllerBlacklistAllowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceResult, ControllerBlacklistUnallowResult, ControllerWhitelistUnallowResult, ControllerWhitelistAllowResult}, synchronised_registry::registry::coordinated_reception::reception::owner::controller::controller_result::ControllerReleaseResourceAllResult};
 
 pub enum OwnerOwnResult {
     Controller(ControllerOwnResult),
