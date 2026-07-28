@@ -29,7 +29,7 @@ pub mod prelude {
 
     pub use super::{
         synchronised_registry::{
-            SynchronisedRegistry as Registry,
+            SynchronisedRegistry,
             releaser::{
                 Releaser,
                 releasing_result::{
@@ -57,7 +57,7 @@ pub mod prelude {
                 RegistryWhitelistUnallowResult,
             },
             singular_registry::{
-                SingularRegistry,
+                Registry,
                 singular_registry_input::{
                     SingularRegistryRegister as RegistryRegister,
                     SingularRegistryUnregister as RegistryUnregister,

@@ -10,7 +10,7 @@ pub mod singular_registry_result;
 pub mod singular_registry_input;
 
 #[derive(Default)]
-pub struct SingularRegistry<S, RS, AS, OS, WL, BL, CS> {
+pub struct Registry<S, RS, AS, OS, WL, BL, CS> {
     automated_registry: AutomatedRegistry<S>,
     reception: CoordinatedReception<RS, AS, OS, WL, BL, CS>,
 }
@@ -23,7 +23,7 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<ResourceId = BS::Id, Id = OS::Id>
-> SingularRegistry<S, RS, AS, OS, WS, BS, CS> 
+> Registry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Debug + Accessor,
@@ -305,7 +305,7 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<ResourceId = BS::Id, Id = OS::Id>
-> SingularRegistry<S, RS, AS, OS, WS, BS, CS> 
+> Registry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Debug + Clone + Accessor,
@@ -329,7 +329,7 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<ResourceId = BS::Id, Id = OS::Id>
-> SingularRegistry<S, RS, AS, OS, WS, BS, CS> 
+> Registry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Debug + Accessor,
