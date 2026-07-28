@@ -28,10 +28,10 @@ pub mod prelude {
     pub(crate) use trace_function;
 
     pub use super::synchronised_registry::SynchronisedRegistry;
-    pub use super::synchronised_registry::registry::Registry as UnsynchronisedRegistry;
+    pub use super::synchronised_registry::registry::UnsynchronisedRegistry as UnsynchronisedRegistry;
     
     #[cfg(not(feature = "sync"))]
-    pub use super::synchronised_registry::registry::Registry;
+    pub use super::synchronised_registry::registry::UnsynchronisedRegistry as Registry;
     
     #[cfg(feature = "sync")]
     pub use super::synchronised_registry::SynchronisedRegistry as Registry;
