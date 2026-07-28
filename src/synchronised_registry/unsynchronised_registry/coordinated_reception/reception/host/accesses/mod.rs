@@ -25,8 +25,7 @@ impl<AS: AccessStorage> Accesses<AS>
             access_id, access
         }: &AccessesCheckAccess<'_, AS::ValueId, AS::Access>
     ) -> AccessesCheckAccessResult {
-        let span = span!(FUNCTION_LEVEL, "Accesses Permits Access", current_access = field::Empty);
-        let _enter = span.enter();
+        trace_function!("Accesses Permits Access");
 
         if let Some(current_access) = self.access_storage.get(access_id) {
             AccessesCheckAccessResult::Ok(current_access.accepts_incoming(access))
@@ -46,8 +45,7 @@ impl<AS: AccessStorage> Accesses<AS>
             access_id, access
         }: AccessesRecordAccess<AS::ValueId, AS::Access>
     ) -> AccessesRecordAccessResult {
-        let span = span!(FUNCTION_LEVEL, "Accesses Record Access", current_access = field::Empty);
-        let _enter = span.enter();
+        trace_function!("Accesses Record Access");
 
         if let Some(current_access) = self.access_storage.get_mut(&access_id) {
             current_access.merge(access);
@@ -67,8 +65,7 @@ impl<AS: AccessStorage> Accesses<AS>
             access_id, access
         }: &AccessesRelease<AS::ValueId, AS::Access>
     ) -> AccessesReleaseResult {
-        let span = span!(FUNCTION_LEVEL, "Accesses Release Access");
-        let _enter = span.enter();
+        trace_function!("Accesses Release Access");
 
         if let Some(current_access) = self.access_storage.get_mut(access_id) {
             current_access.release(access);
