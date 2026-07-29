@@ -2,54 +2,7 @@ use std::fmt::Debug;
 
 use stable_deref_trait::StableDeref;
 
-#[cfg(feature = "notifier")]
-use crate::prelude::NotifyQueue;
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, UnsynchronisedRegistry, RegistryAcquireAccess, SynchronisedRegistryAcquireAccessError, RegistryAllow, SynchronisedRegistryBlacklistAllowResult, SynchronisedRegistryBlacklistUnallowResult, RegistryCheckAccess, SynchronisedRegistryCheckAccessResult, RegistryContainsResource, SynchronisedRegistryContainsResourceResult, RegistryDrainReservations, SynchronisedRegistryDrainReservationsResult, RegistryOwn, SynchronisedRegistryOwnResult, RegistryRegister, SynchronisedRegistryRegisterResult, RegistryReleaseAccess, SynchronisedRegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, SynchronisedRegistryReleaseResourceAllResult, SynchronisedRegistryReleaseResourceResult, RegistryReservation, SynchronisedRegistryReservationResult, RegistrySaferReplacement, SynchronisedRegistrySaferReplacementResult, RegistryStorage, RegistryUnallow, RegistryUnregister, SynchronisedRegistryUnregisterResult, RegistryUnreserve, SynchronisedRegistryUnreserveResult, RegistryUpdatePassword, SynchronisedRegistryUpdatePasswordResult, SynchronisedRegistryWhitelistAllowResult, SynchronisedRegistryWhitelistUnallowResult, ReservationStorage, StoredValueTrait, WhitelistStorage, sync::RwLock, trace_function};
-
-pub mod unsynchronised_registry;
-pub mod synchronised_registry_results;
-#[cfg(feature = "releaser")]
-pub mod impl_releaser;
-#[cfg(feature = "notifier")]
-pub mod impl_notifier;
-#[cfg(feature = "notifier")]
-pub mod notify_queue;
-#[cfg(feature = "async")]
-pub mod impl_async;
-#[cfg(all(feature = "async", feature = "releaser"))]
-pub mod impl_async_releaser;
-#[cfg(all(feature = "async", feature = "notifier"))]
-pub mod impl_async_notifier;
-#[cfg(all(feature = "notifier", feature = "releaser"))]
-pub mod impl_notifier_releaser;
-#[cfg(all(feature = "async", feature = "notifier", feature = "releaser"))]
-pub mod impl_async_notifier_releaser;
-
-/// Separate Sync bc the point is to not use RAII, 
-/// removing the sync and making the functions take `&mut self` would require some form of RAII in mt situations
-#[derive(Default)]
-pub struct SynchronisedRegistry<S: RegistryStorage, RS, AS, OS, WS, BS, CS> {
-    #[cfg(feature = "async")]
-    a_sync: tokio::sync::RwLock<()>,
-    #[cfg(all(feature = "notifier"))]
-    notify_queue: crate::prelude::sync::Mutex<NotifyQueue<S::ValueId>>,
-    sync: RwLock<()>,
-    unsynchronised_registry: UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS>,
-}
-
-/// # Safety
-/// 
-/// S::Value is Send 
-/// 
-/// Registry uses the `sync` lock
-unsafe impl<S: RegistryStorage, RS, AS, OS, WS, BS, CS> Send for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> where S::Value: Send {}
-
-/// # Safety
-/// 
-/// S::Value is Sync 
-/// 
-/// Registry uses the `sync` lock
-unsafe impl<S: RegistryStorage, RS, AS, OS, WS, BS, CS> Sync for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> where S::Value: Sync {}
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, SynchronisedRegistry, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryContainsResource, RegistryDrainReservations, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReservation, RegistrySaferReplacement, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, StoredValueTrait, SynchronisedRegistryAcquireAccessError, SynchronisedRegistryBlacklistAllowResult, SynchronisedRegistryBlacklistUnallowResult, SynchronisedRegistryCheckAccessResult, SynchronisedRegistryContainsResourceResult, SynchronisedRegistryDrainReservationsResult, SynchronisedRegistryOwnResult, SynchronisedRegistryRegisterResult, SynchronisedRegistryReleaseAccessResult, SynchronisedRegistryReleaseResourceAllResult, SynchronisedRegistryReleaseResourceResult, SynchronisedRegistryReservationResult, SynchronisedRegistrySaferReplacementResult, SynchronisedRegistryUnregisterResult, SynchronisedRegistryUnreserveResult, SynchronisedRegistryUpdatePasswordResult, SynchronisedRegistryWhitelistAllowResult, SynchronisedRegistryWhitelistUnallowResult, WhitelistStorage, trace_function};
 
 impl<
     S: RegistryStorage,
@@ -64,125 +17,125 @@ impl<
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor,
 {
-    pub fn register(
+    pub async fn register_async(
         &self, 
         input: RegistryRegister<OS::Id, OS::Password>
     ) -> SynchronisedRegistryRegisterResult {
         trace_function!("Synchronised Registry Register");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.register(input).into()
     }
 
-    pub fn unregister(
+    pub async fn unregister_async(
         &self,
         input: &RegistryUnregister<'_, OS::Id, OS::Password>
     ) -> SynchronisedRegistryUnregisterResult {
         trace_function!("Synchronised Registry Unregister");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.unregister(input).into()
     }
 
-    pub fn update_password(
+    pub async fn update_password_async(
         &self,
         input: RegistryUpdatePassword<'_, OS::Id, OS::Password>
     ) -> SynchronisedRegistryUpdatePasswordResult {
         trace_function!("Synchronised Registry Update Password");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.update_password(input).into()
     }
 
 
-    pub fn own(
+    pub async fn own_async(
         &self,
         input: RegistryOwn<'_, OS::Id, OS::Password, S::ValueId>
     ) -> SynchronisedRegistryOwnResult {
         trace_function!("Synchronised Registry Own");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.own(input).into()
     }
 
-    pub fn release_resource(
+    pub async fn release_resource_async(
         &self, 
         input: &RegistryReleaseResource<'_, OS::Id, OS::Password, S::ValueId>
     ) -> SynchronisedRegistryReleaseResourceResult {
         trace_function!("Synchronised Registry Release Resource");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.release_resource(input).into()
     } 
 
-    pub fn release_resource_all<'a>(
+    pub async fn release_resource_all_async<'a>(
         &self,
         input: RegistryReleaseResourceAll<'a, OS::Id, OS::Password, S::ValueId>
     ) -> SynchronisedRegistryReleaseResourceAllResult {
         trace_function!("Synchronised Registry Release Resource All");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.release_resource_all(input).into()
     }
 
 
-    pub fn allow_blacklist(
+    pub async fn allow_blacklist_async(
         &self,
         input: RegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
     ) -> SynchronisedRegistryBlacklistAllowResult<BS::Password> {
         trace_function!("Synchronised Registry Allow Blacklist");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.allow_blacklist(input).into()
     }
 
-    pub fn allow_whitelist(
+    pub async fn allow_whitelist_async(
         &self,
         input: RegistryAllow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
     ) -> SynchronisedRegistryWhitelistAllowResult {
         trace_function!("Synchronised Registry Allow Whitelist");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.allow_whitelist(input).into()
     }
 
-    pub fn unallow_blacklist(
+    pub async fn unallow_blacklist_async(
         &self,
         input: &RegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
     ) -> SynchronisedRegistryBlacklistUnallowResult {
         trace_function!("Synchronised Registry Unallow Blacklist");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.unallow_blacklist(input).into()
     }
 
-    pub fn unallow_whitelist(
+    pub async fn unallow_whitelist_async(
         &self,
         input: &RegistryUnallow<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
     ) -> SynchronisedRegistryWhitelistUnallowResult {
         trace_function!("Synchronised Registry Unallow Whitelist");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.unallow_whitelist(input).into()
     }
 
-    pub fn check_access(
+    pub async fn check_access_async(
         &self,
         input: &RegistryCheckAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> SynchronisedRegistryCheckAccessResult {
         trace_function!("Synchronised Registry Check Access");
 
-        let _sync = self.sync.read();
+        let _sync = self.a_sync.read().await;
 
         unsafe { self.unsynchronised_registry.check_access(input).into() }
     }
@@ -190,95 +143,92 @@ impl<
     /// # Safety
     /// 
     /// Resource `resource_id` corresponding with `access` MUST actually be released
-    pub unsafe fn release_access(
+    pub async unsafe fn release_access_async(
         &self,
         input: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
     ) -> SynchronisedRegistryReleaseAccessResult {
         trace_function!("Synchronised Registry Release Access");
 
-        let _sync = self.sync.write();
-
-        #[cfg(feature = "notifier")]
-        self.notify_queue.lock().wake(input.resource_id);
+        let _sync = self.a_sync.write().await;
 
         unsafe { self.unsynchronised_registry.release_access(input) }.into()
     }
 
-    pub fn reserve(
+    pub async fn reserve_async(
         &self,
         input: RegistryReservation<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> SynchronisedRegistryReservationResult {
         trace_function!("Synchronised Registry Reserve");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.reserve(input).into()
     }
 
-    pub fn unreserve(
+    pub async fn unreserve_async(
         &self,
         input: &RegistryUnreserve<'_, OS::Id, OS::Password, S::ValueId, AS::Access>
     ) -> SynchronisedRegistryUnreserveResult {
         trace_function!("Synchronised Registry Unreserve");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.unreserve(input).into()
     }
 
-    pub fn drain_reservations(
+    pub async fn drain_reservations_async(
         &self,
         input: &RegistryDrainReservations<'_, OS::Id, OS::Password>
     ) -> SynchronisedRegistryDrainReservationsResult<Vec<(S::ValueId, AS::Access)>> {
         trace_function!("Synchronised Registry Drain Reservations");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         self.unsynchronised_registry.drain_reservations(input).into()
     }
 
 
-    pub fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+    pub async fn acquire_access_async<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
         &'a self,
         input: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> Result<AccessResult, SynchronisedRegistryAcquireAccessError> 
         where <S as RegistryStorage>::Value: StoredValueTrait 
     {
-        trace_function!("Synchronised Registry Acquire Access");
+        trace_function!("Synchronised a_Registry Acquire Access");
 
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         unsafe { self.unsynchronised_registry.acquire_access(input).map_err(|err| err.into()) }
     }
 
-    pub fn safer_replace(
+    pub async fn safer_replace_async(
         &self,
         input: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoredValueTrait>::Value, BS::Password>
     ) -> SynchronisedRegistrySaferReplacementResult<<S::Value as StoredValueTrait>::Value>
         where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
     {
-        trace_function!("Synchronised Registry Safer Replace");
+        trace_function!("Synchronised a_Registry Safer Replace");
         
-        let _sync = self.sync.write();
+        let _sync = self.a_sync.write().await;
 
         unsafe { self.unsynchronised_registry.safer_replace(input).into() }
     }
 
-    pub fn contains_resource(
+    pub async fn contains_resource_async(
         &self,
         input: &RegistryContainsResource<'_, S::ValueId>
     ) -> SynchronisedRegistryContainsResourceResult {
         trace_function!("Synchronised Registry Contains Resource");
 
-        let _sync = self.sync.read();
+        let _sync = self.a_sync.read().await;
 
         unsafe { self.unsynchronised_registry.contains_resource(input).into() }
     }
 
-    pub fn len(&self) -> usize {
+    pub async fn len_async(&self) -> usize {
         trace_function!("Synchronised Registry Len");
 
-        let _sync = self.sync.read();
+        let _sync = self.a_sync.read().await;
 
         unsafe { self.unsynchronised_registry.len() }
     }
@@ -297,13 +247,13 @@ impl<
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Clone + Accessor,
 {
-    pub fn get_access(
+    pub async fn get_access_async(
         &self,
         input: &ReceptionGetAccess<'_, AS::ValueId>
     ) -> Option<AS::Access> {
         trace_function!("Synchronised Registry Get Access");
 
-        let _sync = self.sync.read();
+        let _sync = self.a_sync.read().await;
 
         self.unsynchronised_registry.get_access(input)
     }
@@ -323,10 +273,10 @@ impl<
         AS::Access: Accessor,
         AS::ValueId: Clone
 {
-    pub fn keys(&self) -> Vec<<S as RegistryStorage>::ValueId> {
+    pub async fn keys_async(&self) -> Vec<<S as RegistryStorage>::ValueId> {
         trace_function!("Synchronised Registry keys");
 
-        let _sync = self.sync.read();
+        let _sync = self.a_sync.read().await;
         
         unsafe { self.unsynchronised_registry.keys() }
     }

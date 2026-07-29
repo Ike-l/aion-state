@@ -19,6 +19,19 @@ impl<
     type AccessInput = RegistryNotifiedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
 
     fn acquire_notified_access(&self, _input: Self::AccessInput) {
+        /*
+
+            Try acquire_access
+                if releaser then try Releaser? // can be a different impl
+            if fail then
+                check if the error passes the error checker
+            if does:
+                create a future where poll tries again
+            if does not:
+                return result
+        
+        */
+
         // self.acquire_access(RegistryAcquireAccess {
         //     user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
         //     resource_id: input.resource_id,

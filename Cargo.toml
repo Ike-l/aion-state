@@ -9,6 +9,7 @@ tracing = "0.1.44"
 thiserror = "2.0.18"
 
 stable_deref_trait = "1.2.1"
+tokio = { version = "1.53.1", features = ["sync"], optional = true }
 
 [dev-dependencies]
 rand = "0.10.2"
@@ -16,7 +17,8 @@ lazy_static = "1.5.0"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 
 [features]
-default = ["sync", "releaser", "notifier"]
+default = ["sync", "releaser", "notifier", "async"]
 sync = []
 releaser = []
 notifier = []
+async = ["tokio"]
