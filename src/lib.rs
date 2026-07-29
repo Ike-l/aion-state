@@ -8,6 +8,8 @@ pub mod synchronised_registry;
 pub mod accessor;
 #[cfg(feature = "releaser")]
 pub mod releaser;
+#[cfg(feature = "notifier")]
+pub mod notifier;
 
 pub mod prelude {
     pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::TRACE;
@@ -16,7 +18,7 @@ pub mod prelude {
         #[allow(unused_imports)]
         pub use parking_lot::Mutex;
         pub use parking_lot::RwLock;
-        #[allow(clippy::disallowed_types)]
+        #[allow(clippy::disallowed_types, unused_imports)]
         pub use std::sync::Arc;
     }
 
@@ -89,10 +91,26 @@ pub mod prelude {
     };
 
     #[cfg(feature = "releaser")]
-    pub use super::releaser::{
-        Releaser,
-        releasing_result::{
-            ReleasingResult,
+    pub use super::{
+        releaser::{
+            Releaser,
+            releasing_result::{
+                ReleasingResult,
+            }
+        },
+        synchronised_registry::unsynchronised_registry::registry_input::{
+            RegistryReleasingAcquireAccess,
+            RegistryReleasingReleaseAccess
+        }
+    };
+
+    #[cfg(feature = "notifier")]
+    pub use super::{
+        notifier::{
+            Notifier
+        },
+        synchronised_registry::unsynchronised_registry::registry_input::{
+            RegistryNotifiedAcquireAccess
         }
     };
 
@@ -132,12 +150,10 @@ pub mod prelude {
                     RegistryUnallow,
                     RegistryCheckAccess,
                     RegistryReleaseAccess,
-                    RegistryReleasingReleaseAccess,
                     RegistryReservation,
                     RegistryUnreserve,
                     RegistryDrainReservations,
                     RegistryAcquireAccess,
-                    RegistryReleasingAcquireAccess,
                     RegistrySaferReplacement,
                     RegistryContainsResource,
                 },

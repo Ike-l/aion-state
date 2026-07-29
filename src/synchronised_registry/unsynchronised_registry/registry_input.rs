@@ -58,6 +58,7 @@ pub struct RegistryReleaseAccess<'a, ResourceId, Access> {
     pub access: &'a Access
 }
 
+#[cfg(feature = "releaser")]
 pub struct RegistryReleasingReleaseAccess<ResourceId, Access> {
     pub resource_id: ResourceId,
     pub access: Access
@@ -90,7 +91,16 @@ pub struct RegistryAcquireAccess<'a, Id, IdPassword, ResourceId, Access, Passwor
     pub password: Option<&'a Password>
 }
 
+#[cfg(feature = "releaser")]
 pub struct RegistryReleasingAcquireAccess<Id, IdPassword, ResourceId, Access, Password> {
+    pub user_details: Option<(Id, IdPassword)>,
+    pub resource_id: ResourceId,
+    pub access: Access,
+    pub password: Option<Password>
+}
+
+#[cfg(feature = "notifier")]
+pub struct RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password> {
     pub user_details: Option<(Id, IdPassword)>,
     pub resource_id: ResourceId,
     pub access: Access,
