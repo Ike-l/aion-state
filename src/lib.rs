@@ -6,6 +6,7 @@
 
 pub mod synchronised_registry;
 pub mod accessor;
+#[cfg(feature = "releaser")]
 pub mod releaser;
 
 pub mod prelude {
@@ -85,6 +86,14 @@ pub mod prelude {
             SynchronisedRegistryWhitelistAllowResult as RegistryWhitelistAllowResult,
             SynchronisedRegistryWhitelistUnallowResult as RegistryWhitelistUnallowResult,
         },
+    };
+
+    #[cfg(feature = "releaser")]
+    pub use super::releaser::{
+        Releaser,
+        releasing_result::{
+            ReleasingResult,
+        }
     };
 
     pub use super::{
@@ -420,12 +429,6 @@ pub mod prelude {
             Accessor,
             AccessorResult,
             StoredValueTrait
-        },
-        releaser::{
-            Releaser,
-            releasing_result::{
-                ReleasingResult,
-            }
         },
     };
 }
