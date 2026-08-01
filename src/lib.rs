@@ -110,11 +110,13 @@ pub mod prelude {
             Notifier
         },
         synchronised_registry::{
-            unsynchronised_registry::registry_input::{
-                RegistryNotifiedAcquireAccess
-            },
-            notify_queue::{
-                NotifyQueue
+            unsynchronised_registry::{
+                registry_input::{
+                    RegistryNotifiedAcquireAccess,
+                },
+                notify_queue::{
+                    NotifyQueue
+                }
             }
         }
     };

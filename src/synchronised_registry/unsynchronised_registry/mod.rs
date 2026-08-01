@@ -10,9 +10,15 @@ pub mod unsynchronised_registry_result;
 pub mod registry_input;
 #[cfg(feature = "releaser")]
 pub mod impl_releaser;
+#[cfg(feature = "notifier")]
+pub mod notify_queue;
+#[cfg(feature = "notifier")]
+use std::hash::Hash;
 
 #[derive(Default)]
-pub struct UnsynchronisedRegistry<S, RS, AS, OS, WL, BL, CS> {
+pub struct UnsynchronisedRegistry<S: RegistryStorage, RS, AS, OS, WL, BL, CS> {
+    #[cfg(feature = "notifier")]
+    notify_queue: crate::prelude::sync::Mutex<crate::prelude::NotifyQueue<S::ValueId>>,
     automated_registry: AutomatedRegistry<S>,
     reception: CoordinatedReception<RS, AS, OS, WL, BL, CS>,
 }
@@ -166,15 +172,41 @@ impl<
     /// # Safety
     /// 
     /// Resource `resource_id` corresponding with `access` MUST actually be released
+    #[cfg(feature = "notifier")]
     pub unsafe fn release_access(
         &self,
         RegistryReleaseAccess {
             resource_id, access
         }: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
-    ) -> UnsynchronisedRegistryReleaseAccessResult {
+    ) -> UnsynchronisedRegistryReleaseAccessResult 
+        where 
+            S::ValueId: Eq + Hash
+    {
         trace_function!("Unsynchronised Registry Release Access");
 
-        UnsynchronisedRegistryReleaseAccessResult::Reception(self.reception.release_access(&ReceptionReleaseAccess { resource_id, access }))
+        self.notify_queue.lock().wake(resource_id);
+
+        UnsynchronisedRegistryReleaseAccessResult::Reception(
+            self.reception.release_access(&ReceptionReleaseAccess { resource_id, access })
+        )
+    }
+
+    /// # Safety
+    /// 
+    /// Resource `resource_id` corresponding with `access` MUST actually be released
+    #[cfg(not(feature = "notifier"))]
+    pub unsafe fn release_access(
+        &self,
+        RegistryReleaseAccess {
+            resource_id, access
+        }: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
+    ) -> UnsynchronisedRegistryReleaseAccessResult 
+    {
+        trace_function!("Unsynchronised Registry Release Access");
+
+        UnsynchronisedRegistryReleaseAccessResult::Reception(
+            self.reception.release_access(&ReceptionReleaseAccess { resource_id, access })
+        )
     }
 
     pub fn reserve(

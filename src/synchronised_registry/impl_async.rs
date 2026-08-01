@@ -1,4 +1,6 @@
 use std::fmt::Debug;
+#[cfg(feature = "notifier")]
+use std::hash::Hash;
 
 use stable_deref_trait::StableDeref;
 
@@ -154,6 +156,26 @@ impl<
     /// # Safety
     /// 
     /// Resource `resource_id` corresponding with `access` MUST actually be released
+    #[cfg(feature = "notifier")]
+    pub async unsafe fn release_access_async(
+        &self,
+        input: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
+    ) -> SynchronisedRegistryReleaseAccessResult 
+        where 
+            S::ValueId: Eq + Hash
+    {
+        trace_function!("Synchronised Registry Release Access");
+
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
+
+        unsafe { self.unsynchronised_registry.release_access(input) }.into()
+    }
+
+    /// # Safety
+    /// 
+    /// Resource `resource_id` corresponding with `access` MUST actually be released
+    #[cfg(not(feature = "notifier"))]
     pub async unsafe fn release_access_async(
         &self,
         input: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>

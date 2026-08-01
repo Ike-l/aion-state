@@ -1,9 +1,9 @@
 use std::fmt::Debug;
+#[cfg(feature = "notifier")]
+use std::hash::Hash;
 
 use stable_deref_trait::StableDeref;
 
-#[cfg(feature = "notifier")]
-use crate::prelude::NotifyQueue;
 use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, UnsynchronisedRegistry, RegistryAcquireAccess, SynchronisedRegistryAcquireAccessError, RegistryAllow, SynchronisedRegistryBlacklistAllowResult, SynchronisedRegistryBlacklistUnallowResult, RegistryCheckAccess, SynchronisedRegistryCheckAccessResult, RegistryContainsResource, SynchronisedRegistryContainsResourceResult, RegistryDrainReservations, SynchronisedRegistryDrainReservationsResult, RegistryOwn, SynchronisedRegistryOwnResult, RegistryRegister, SynchronisedRegistryRegisterResult, RegistryReleaseAccess, SynchronisedRegistryReleaseAccessResult, RegistryReleaseResource, RegistryReleaseResourceAll, SynchronisedRegistryReleaseResourceAllResult, SynchronisedRegistryReleaseResourceResult, RegistryReservation, SynchronisedRegistryReservationResult, RegistrySaferReplacement, SynchronisedRegistrySaferReplacementResult, RegistryStorage, RegistryUnallow, RegistryUnregister, SynchronisedRegistryUnregisterResult, RegistryUnreserve, SynchronisedRegistryUnreserveResult, RegistryUpdatePassword, SynchronisedRegistryUpdatePasswordResult, SynchronisedRegistryWhitelistAllowResult, SynchronisedRegistryWhitelistUnallowResult, ReservationStorage, StoredValueTrait, WhitelistStorage, sync::RwLock, trace_function};
 
 pub mod unsynchronised_registry;
@@ -12,8 +12,6 @@ pub mod synchronised_registry_results;
 pub mod impl_releaser;
 #[cfg(feature = "notifier")]
 pub mod impl_notifier;
-#[cfg(feature = "notifier")]
-pub mod notify_queue;
 #[cfg(feature = "async")]
 pub mod impl_async;
 #[cfg(all(feature = "async", feature = "releaser"))]
@@ -27,14 +25,26 @@ pub mod impl_async_notifier_releaser;
 
 /// Separate Sync bc the point is to not use RAII, 
 /// removing the sync and making the functions take `&mut self` would require some form of RAII in mt situations
-#[derive(Default)]
 pub struct SynchronisedRegistry<S: RegistryStorage, RS, AS, OS, WS, BS, CS> {
     #[cfg(feature = "async")]
     a_sync: tokio::sync::RwLock<()>,
-    #[cfg(all(feature = "notifier"))]
-    notify_queue: crate::prelude::sync::Mutex<NotifyQueue<S::ValueId>>,
     sync: RwLock<()>,
     unsynchronised_registry: UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS>,
+}
+
+impl<S, RS, AS, OS, WS, BS, CS> Default for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS>
+where
+    S: RegistryStorage,
+    UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS>: Default,
+{
+    fn default() -> Self {
+        Self {
+            #[cfg(feature = "async")]
+            a_sync: Default::default(),
+            sync: Default::default(),
+            unsynchronised_registry: Default::default(),
+        }
+    }
 }
 
 /// # Safety
@@ -190,6 +200,25 @@ impl<
     /// # Safety
     /// 
     /// Resource `resource_id` corresponding with `access` MUST actually be released
+    #[cfg(feature = "notifier")]
+    pub unsafe fn release_access(
+        &self,
+        input: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
+    ) -> SynchronisedRegistryReleaseAccessResult 
+        where 
+            S::ValueId: Eq + Hash
+    {
+        trace_function!("Synchronised Registry Release Access");
+        
+        let _sync = self.sync.write();
+        
+        unsafe { self.unsynchronised_registry.release_access(input) }.into()
+    }
+    
+    /// # Safety
+    /// 
+    /// Resource `resource_id` corresponding with `access` MUST actually be released
+    #[cfg(not(feature = "notifier"))]
     pub unsafe fn release_access(
         &self,
         input: &RegistryReleaseAccess<'_, S::ValueId, AS::Access>
@@ -197,9 +226,6 @@ impl<
         trace_function!("Synchronised Registry Release Access");
 
         let _sync = self.sync.write();
-
-        #[cfg(feature = "notifier")]
-        self.notify_queue.lock().wake(input.resource_id);
 
         unsafe { self.unsynchronised_registry.release_access(input) }.into()
     }
