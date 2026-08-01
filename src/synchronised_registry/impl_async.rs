@@ -23,7 +23,8 @@ impl<
     ) -> SynchronisedRegistryRegisterResult {
         trace_function!("Synchronised Registry Register");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.register(input).into()
     }
@@ -34,7 +35,8 @@ impl<
     ) -> SynchronisedRegistryUnregisterResult {
         trace_function!("Synchronised Registry Unregister");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.unregister(input).into()
     }
@@ -45,7 +47,8 @@ impl<
     ) -> SynchronisedRegistryUpdatePasswordResult {
         trace_function!("Synchronised Registry Update Password");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.update_password(input).into()
     }
@@ -57,7 +60,8 @@ impl<
     ) -> SynchronisedRegistryOwnResult {
         trace_function!("Synchronised Registry Own");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.own(input).into()
     }
@@ -68,7 +72,8 @@ impl<
     ) -> SynchronisedRegistryReleaseResourceResult {
         trace_function!("Synchronised Registry Release Resource");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.release_resource(input).into()
     } 
@@ -79,7 +84,8 @@ impl<
     ) -> SynchronisedRegistryReleaseResourceAllResult {
         trace_function!("Synchronised Registry Release Resource All");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.release_resource_all(input).into()
     }
@@ -91,7 +97,8 @@ impl<
     ) -> SynchronisedRegistryBlacklistAllowResult<BS::Password> {
         trace_function!("Synchronised Registry Allow Blacklist");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.allow_blacklist(input).into()
     }
@@ -102,7 +109,8 @@ impl<
     ) -> SynchronisedRegistryWhitelistAllowResult {
         trace_function!("Synchronised Registry Allow Whitelist");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.allow_whitelist(input).into()
     }
@@ -113,7 +121,8 @@ impl<
     ) -> SynchronisedRegistryBlacklistUnallowResult {
         trace_function!("Synchronised Registry Unallow Blacklist");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.unallow_blacklist(input).into()
     }
@@ -124,7 +133,8 @@ impl<
     ) -> SynchronisedRegistryWhitelistUnallowResult {
         trace_function!("Synchronised Registry Unallow Whitelist");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.unallow_whitelist(input).into()
     }
@@ -136,6 +146,7 @@ impl<
         trace_function!("Synchronised Registry Check Access");
 
         let _sync = self.a_sync.read().await;
+        let _a_sync = self.sync.read();
 
         unsafe { self.unsynchronised_registry.check_access(input).into() }
     }
@@ -149,7 +160,8 @@ impl<
     ) -> SynchronisedRegistryReleaseAccessResult {
         trace_function!("Synchronised Registry Release Access");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         unsafe { self.unsynchronised_registry.release_access(input) }.into()
     }
@@ -160,7 +172,8 @@ impl<
     ) -> SynchronisedRegistryReservationResult {
         trace_function!("Synchronised Registry Reserve");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.reserve(input).into()
     }
@@ -171,7 +184,8 @@ impl<
     ) -> SynchronisedRegistryUnreserveResult {
         trace_function!("Synchronised Registry Unreserve");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.unreserve(input).into()
     }
@@ -182,7 +196,8 @@ impl<
     ) -> SynchronisedRegistryDrainReservationsResult<Vec<(S::ValueId, AS::Access)>> {
         trace_function!("Synchronised Registry Drain Reservations");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         self.unsynchronised_registry.drain_reservations(input).into()
     }
@@ -196,7 +211,8 @@ impl<
     {
         trace_function!("Synchronised a_Registry Acquire Access");
 
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         unsafe { self.unsynchronised_registry.acquire_access(input).map_err(|err| err.into()) }
     }
@@ -209,7 +225,8 @@ impl<
     {
         trace_function!("Synchronised a_Registry Safer Replace");
         
-        let _sync = self.a_sync.write().await;
+        let _a_sync = self.a_sync.write().await;
+        let _sync = self.sync.write();
 
         unsafe { self.unsynchronised_registry.safer_replace(input).into() }
     }
@@ -220,7 +237,8 @@ impl<
     ) -> SynchronisedRegistryContainsResourceResult {
         trace_function!("Synchronised Registry Contains Resource");
 
-        let _sync = self.a_sync.read().await;
+        let _a_sync = self.a_sync.read().await;
+        let _sync = self.sync.read();
 
         unsafe { self.unsynchronised_registry.contains_resource(input).into() }
     }
@@ -228,7 +246,8 @@ impl<
     pub async fn len_async(&self) -> usize {
         trace_function!("Synchronised Registry Len");
 
-        let _sync = self.a_sync.read().await;
+        let _a_sync = self.a_sync.read().await;
+        let _sync = self.sync.read();
 
         unsafe { self.unsynchronised_registry.len() }
     }
@@ -253,7 +272,8 @@ impl<
     ) -> Option<AS::Access> {
         trace_function!("Synchronised Registry Get Access");
 
-        let _sync = self.a_sync.read().await;
+        let _a_sync = self.a_sync.read().await;
+        let _sync = self.sync.read();
 
         self.unsynchronised_registry.get_access(input)
     }
@@ -276,7 +296,8 @@ impl<
     pub async fn keys_async(&self) -> Vec<<S as RegistryStorage>::ValueId> {
         trace_function!("Synchronised Registry keys");
 
-        let _sync = self.a_sync.read().await;
+        let _a_sync = self.a_sync.read().await;
+        let _sync = self.sync.read();
         
         unsafe { self.unsynchronised_registry.keys() }
     }
