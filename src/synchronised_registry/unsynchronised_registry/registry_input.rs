@@ -100,6 +100,7 @@ pub struct RegistryReleasingAcquireAccess<Id, IdPassword, ResourceId, Access, Pa
 }
 
 #[cfg(feature = "notifier")]
+#[derive(Clone)]
 pub struct RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password> {
     pub user_details: Option<(Id, IdPassword)>,
     pub resource_id: ResourceId,

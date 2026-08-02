@@ -1,8 +1,10 @@
 use std::{collections::HashMap, hash::Hash};
 
+use crate::prelude::Waiter;
+
 #[derive(Default)]
 pub struct NotifyQueue<ValueId> {
-    queue: HashMap<ValueId, Vec<crate::prelude::sync::Mutex<(Option<std::task::Waker>, bool)>>>
+    queue: HashMap<ValueId, Vec<crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>>>>
 }
 
 impl<ValueId: Eq + Hash> NotifyQueue<ValueId> {
@@ -10,10 +12,8 @@ impl<ValueId: Eq + Hash> NotifyQueue<ValueId> {
         if let Some(waiters) = self.queue.get(value_id) {
             for waiter in waiters {
                 let mut waiter = waiter.lock();
-                waiter.1 = true;
-                if let Some(waker) = waiter.0.take() {
-                    waker.wake();
-                }
+                waiter.set_ready_to_retry();
+                waiter.wake();
             }
         }
     }

@@ -11,8 +11,6 @@ pub mod registry_input;
 #[cfg(feature = "releaser")]
 pub mod impl_releaser;
 #[cfg(feature = "notifier")]
-pub mod notify_queue;
-#[cfg(feature = "notifier")]
 use std::hash::Hash;
 
 #[derive(Default)]

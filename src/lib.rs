@@ -107,16 +107,25 @@ pub mod prelude {
     #[cfg(feature = "notifier")]
     pub use super::{
         notifier::{
-            Notifier
+            Notifier,
+            access_filter::{
+                AccessFilter
+            },
+            future_acquire_access::{
+                FutureAcquireAccess
+            },
+            notify_queue::{
+                NotifyQueue,
+            },
+            waiter::{
+                Waiter
+            }
         },
         synchronised_registry::{
             unsynchronised_registry::{
                 registry_input::{
                     RegistryNotifiedAcquireAccess,
                 },
-                notify_queue::{
-                    NotifyQueue
-                }
             }
         }
     };
