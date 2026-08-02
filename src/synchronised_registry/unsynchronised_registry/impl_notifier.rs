@@ -1,16 +1,6 @@
-//             Try acquire_access
-//                 if releaser then try Releaser? // can be a different impl
-//             if fail then
-//                 check if the error passes the error checker
-//             if does:
-//                 create a future where poll tries again
-//             if does not:
-//                 return result
-        
-
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryNotifiedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryNotifiedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, UnsynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
 
 impl<
     'a,
@@ -22,7 +12,7 @@ impl<
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>,
     AccessResult,
-> Notifier for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+> Notifier for UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor, 
@@ -34,10 +24,10 @@ impl<
     type Output = AccessResult;
 
     fn register_waiter(&self, input: Self::AccessInput) -> crate::prelude::sync::Arc<crate::prelude::sync::Mutex<crate::prelude::Waiter>> {
-        self.unsynchronised_registry.register_waiter(input)
+        self.notify_queue.register(input.)
     }
 
     fn acquire_access(&self, input: Self::AccessInput) -> Result<Self::Output, Self::Error> {
-        
+        todo!()        
     }
 }

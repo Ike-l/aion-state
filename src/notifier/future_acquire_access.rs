@@ -26,7 +26,7 @@ impl<Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password> FutureAcqui
         input: RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
         filter: Filter,
     ) -> Self {
-        let waiter = notifyee.register(input.clone());
+        let waiter = notifyee.register_waiter(input.clone());
         Self { notifyee, input, filter, waiter }
     }
 }

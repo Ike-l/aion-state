@@ -17,4 +17,10 @@ impl<ValueId: Eq + Hash> NotifyQueue<ValueId> {
             }
         }
     }
+
+    pub fn register(&mut self, value_id: ValueId) -> crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>> {
+        let waiter = crate::prelude::sync::Arc::new(crate::prelude::sync::Mutex::new(Waiter::new()));
+        self.queue.entry(value_id).or_default().push(crate::prelude::sync::Arc::clone(&waiter));
+        waiter
+    }
 }

@@ -12,6 +12,8 @@ pub mod registry_input;
 pub mod impl_releaser;
 #[cfg(feature = "notifier")]
 use std::hash::Hash;
+#[cfg(feature = "notifier")]
+pub mod impl_notifier;
 
 #[derive(Default)]
 pub struct UnsynchronisedRegistry<S: RegistryStorage, RS, AS, OS, WL, BL, CS> {

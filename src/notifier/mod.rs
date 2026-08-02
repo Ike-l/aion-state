@@ -10,6 +10,6 @@ pub trait Notifier {
     type Error;
     type Output;
 
-    fn register(&self, input: Self::AccessInput) -> crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>>;
+    fn register_waiter(&self, input: Self::AccessInput) -> crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>>;
     fn acquire_access(&self, input: Self::AccessInput) -> Result<Self::Output, Self::Error>;
 }

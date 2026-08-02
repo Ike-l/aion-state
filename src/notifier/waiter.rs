@@ -7,6 +7,13 @@ pub struct Waiter {
 }
 
 impl Waiter {
+    pub fn new() -> Self {
+        Self {
+            waker: None,
+            ready: false
+        }
+    }
+
     pub fn set_ready_to_retry(&mut self) {
         self.ready = true
     }
