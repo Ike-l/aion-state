@@ -8,7 +8,7 @@
 //                 return result
         
 
-use std::fmt::Debug;
+use std::{fmt::Debug, hash::Hash};
 
 use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryNotifiedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
 
@@ -26,6 +26,7 @@ impl<
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor, 
+        S::ValueId: Hash + Eq,
         <S as RegistryStorage>::Value: StoredValueTrait,
         AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>
 {

@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, hash::Hash};
 
 use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryNotifiedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, UnsynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
 
@@ -16,6 +16,7 @@ impl<
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor, 
+        S::ValueId: Hash + Eq,
         <S as RegistryStorage>::Value: StoredValueTrait,
         AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>
 {
@@ -24,7 +25,7 @@ impl<
     type Output = AccessResult;
 
     fn register_waiter(&self, input: Self::AccessInput) -> crate::prelude::sync::Arc<crate::prelude::sync::Mutex<crate::prelude::Waiter>> {
-        self.notify_queue.register(input.)
+        self.notify_queue.lock().register(input.resource_id)
     }
 
     fn acquire_access(&self, input: Self::AccessInput) -> Result<Self::Output, Self::Error> {
