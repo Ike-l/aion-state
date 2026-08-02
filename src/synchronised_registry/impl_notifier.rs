@@ -10,7 +10,7 @@
 
 use std::{fmt::Debug, hash::Hash};
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryNotifiedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryAcquireAccess, RegistryNotifiedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
 
 impl<
     'a,
@@ -39,6 +39,11 @@ impl<
     }
 
     fn acquire_access(&self, input: Self::AccessInput) -> Result<Self::Output, Self::Error> {
-        
+        self.acquire_access(RegistryAcquireAccess {
+            user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
+            resource_id: input.resource_id,
+            access: input.access,
+            password: input.password.as_ref(),
+        })
     }
 }
