@@ -12,6 +12,8 @@ pub mod releaser;
 pub mod notifier;
 #[cfg(all(feature = "async", feature = "releaser"))]
 pub mod async_releaser;
+#[cfg(all(feature = "async", feature = "notifier"))]
+pub mod async_notifier;
 
 pub mod prelude {
     pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::TRACE;
@@ -125,6 +127,9 @@ pub mod prelude {
 
     #[cfg(all(feature = "async", feature = "releaser"))]
     pub use super::async_releaser::AsyncReleaser;
+    
+    #[cfg(all(feature = "async", feature = "notifier"))]
+    pub use super::async_notifier::AsyncNotifier;
 
     pub use super::{
         synchronised_registry::{

@@ -2,9 +2,14 @@ use std::{collections::HashMap, hash::Hash};
 
 use crate::prelude::{Waiter, sync::{Arc, Mutex}};
 
-#[derive(Default)]
 pub struct NotifyQueue<ValueId> {
     queue: HashMap<ValueId, Vec<Arc<Mutex<Waiter>>>>
+}
+
+impl<ValueId> Default for NotifyQueue<ValueId> {
+    fn default() -> Self {
+        Self { queue: HashMap::default() }       
+    }
 }
 
 impl<ValueId: Eq + Hash> NotifyQueue<ValueId> {

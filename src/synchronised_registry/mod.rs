@@ -28,6 +28,8 @@ pub mod impl_async_notifier_releaser;
 pub struct SynchronisedRegistry<S: RegistryStorage, RS, AS, OS, WS, BS, CS> {
     #[cfg(feature = "async")]
     a_sync: tokio::sync::RwLock<()>,
+    #[cfg(feature = "notifier")]
+    notify_queue: crate::prelude::sync::Mutex<crate::prelude::NotifyQueue<S::ValueId>>,
     sync: RwLock<()>,
     unsynchronised_registry: UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS>,
 }
@@ -41,6 +43,8 @@ where
         Self {
             #[cfg(feature = "async")]
             a_sync: Default::default(),
+            #[cfg(feature = "notifier")]
+            notify_queue: crate::prelude::sync::Mutex::new(crate::prelude::NotifyQueue::default()),
             sync: Default::default(),
             unsynchronised_registry: Default::default(),
         }
@@ -211,6 +215,7 @@ impl<
         trace_function!("Synchronised Registry Release Access");
         
         let _sync = self.sync.write();
+        self.notify_queue.lock().wake(input.resource_id);
         
         unsafe { self.unsynchronised_registry.release_access(input) }.into()
     }
@@ -262,7 +267,6 @@ impl<
 
         self.unsynchronised_registry.drain_reservations(input).into()
     }
-
 
     pub fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
         &'a self,

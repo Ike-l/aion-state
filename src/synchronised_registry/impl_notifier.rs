@@ -21,11 +21,11 @@ impl<
     type Error = SynchronisedRegistryAcquireAccessError;
 
     fn register_waiter(&self, input: Self::AccessInput) -> Arc<Mutex<crate::prelude::Waiter>> {
-        self.unsynchronised_registry.register_waiter(input)
+        self.notify_queue.lock().register(input.resource_id)
     }
 
     fn unregister_waiter(&self, input: &Self::AccessInput, waiter: &Arc<Mutex<Waiter>>) {
-        self.unsynchronised_registry.unregister_waiter(input, waiter);
+        self.notify_queue.lock().unregister(&input.resource_id, waiter);
     }
 
     fn acquire_access<'a, AccessResult: AccessorResult<'a, <<S as RegistryStorage>::Value as StoredValueTrait>::Value>>(&'a self, input: Self::AccessInput) -> Result<AccessResult, Self::Error> {
