@@ -3,15 +3,11 @@ use crate::prelude::{Releaser, sync::Arc};
 pub struct ReleasingResult<S, AccessResult, R: Releaser<S> + ?Sized> {
     raw: Option<AccessResult>,
     consumed: bool,
-    // because the import is from prelude
-    #[allow(clippy::disallowed_types)]
     releaser: Option<Arc<R>>,
     release_input: Option<R::ReleaseInput>
 }
 
 impl<S, AccessResult, R: Releaser<S>> ReleasingResult<S, AccessResult, R> {
-    // because the import is from prelude
-    #[allow(clippy::disallowed_types)]
     pub fn new(
         access_result: AccessResult, 
         releaser: Arc<R>,
