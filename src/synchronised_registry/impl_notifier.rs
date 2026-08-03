@@ -29,11 +29,11 @@ impl<
     }
 
     fn acquire_access<'a, AccessResult: AccessorResult<'a, <<S as RegistryStorage>::Value as StoredValueTrait>::Value>>(&'a self, input: Self::AccessInput) -> Result<AccessResult, Self::Error> {
-        Ok(self.acquire_access(RegistryAcquireAccess {
+        self.acquire_access(RegistryAcquireAccess {
             user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
             resource_id: input.resource_id,
             access: input.access,
             password: input.password.as_ref(),
-        })?)   
+        })   
     }
 }
