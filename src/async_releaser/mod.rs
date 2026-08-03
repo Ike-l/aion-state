@@ -5,5 +5,5 @@ pub trait AsyncReleaser<Value>: Releaser<Value> {
         self: &'a Arc<Self>, 
         input: Self::AccessInput
     ) -> 
-        impl Future<Output = Result<ReleasingResult<Value, AccessResult, Self>, Self::AccessError>> + 'a;
+        impl Future<Output = Result<ReleasingResult<Value, AccessResult, Self>, Self::Error>> + 'a;
 }

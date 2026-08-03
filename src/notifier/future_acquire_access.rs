@@ -1,16 +1,16 @@
 use std::{marker::PhantomData, sync::atomic::{AtomicBool, Ordering}, task::Poll};
 
-use crate::prelude::{AccessFilter, AccessorResult, Notifier, RegistryNotifiedAcquireAccess, Waiter, sync::{Arc, Mutex}};
+use crate::prelude::{AccessFilter, AccessorResult, Notifier, RegistryOwnedAcquireAccess, Waiter, sync::{Arc, Mutex}};
 
 pub struct FutureAcquireAccess<'a,
     Value,
-    Notifyee: Notifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>, 
+    Notifyee: Notifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>, 
     Filter: AccessFilter<Error = Notifyee::Error>,
     Id, IdPassword, ResourceId, Access, Password,
     AccessResult
 > {
     notifyee: &'a Notifyee,
-    input: RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
+    input: RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
     filter: Filter,
     waiter: Arc<Mutex<Waiter>>,
     finished: AtomicBool,
@@ -20,13 +20,13 @@ pub struct FutureAcquireAccess<'a,
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> FutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: Notifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: Notifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
-        RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone
+        RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone
 {
     pub fn new(
         notifyee: &'a Notifyee,
-        input: RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
+        input: RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
         filter: Filter,
     ) -> Self {
         let waiter = notifyee.register_waiter(input.clone());
@@ -36,9 +36,9 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Future for FutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: Notifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: Notifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
-        RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
+        RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
         AccessResult: AccessorResult<'a, Value>
 {
     type Output = Result<AccessResult, Notifyee::Error>;
@@ -78,7 +78,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Drop for FutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: Notifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: Notifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
 {
     fn drop(&mut self) {

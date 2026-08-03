@@ -1,16 +1,16 @@
 use std::{marker::PhantomData, pin::Pin, sync::atomic::{AtomicBool, Ordering}, task::Poll};
 
-use crate::prelude::{AccessFilter, AccessorResult, AsyncNotifier, RegistryNotifiedAcquireAccess, Waiter, sync::{Arc, Mutex}};
+use crate::prelude::{AccessFilter, AccessorResult, AsyncNotifier, RegistryOwnedAcquireAccess, Waiter, sync::{Arc, Mutex}};
 
 pub struct AsyncFutureAcquireAccess<'a,
     Value,
-    Notifyee: AsyncNotifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>, 
+    Notifyee: AsyncNotifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>, 
     Filter: AccessFilter<Error = Notifyee::Error>,
     Id, IdPassword, ResourceId, Access, Password,
     AccessResult
 > {
     notifyee: &'a Notifyee,
-    input: RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
+    input: RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
     filter: Filter,
     waiter: Arc<Mutex<Waiter>>,
     finished: AtomicBool,
@@ -21,13 +21,13 @@ pub struct AsyncFutureAcquireAccess<'a,
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> AsyncFutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: AsyncNotifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
-        RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone
+        RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone
 {
     pub fn new(
         notifyee: &'a Notifyee,
-        input: RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
+        input: RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
         filter: Filter,
     ) -> Self {
         let waiter = notifyee.register_waiter(input.clone());
@@ -46,17 +46,17 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Unpin for AsyncFutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: AsyncNotifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
-        RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
+        RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
         AccessResult: AccessorResult<'a, Value>
 {}
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Future for AsyncFutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: AsyncNotifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
-        RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
+        RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
         AccessResult: AccessorResult<'a, Value>
 {
     type Output = Result<AccessResult, Notifyee::Error>;
@@ -109,7 +109,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Drop for AsyncFutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: AsyncNotifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
 {
     fn drop(&mut self) {

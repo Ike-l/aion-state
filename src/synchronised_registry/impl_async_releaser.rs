@@ -25,7 +25,7 @@ impl<
         self: &'a Arc<Self>, 
         input: Self::AccessInput
     ) -> 
-        impl Future<Output = Result<ReleasingResult<<S::Value as StoredValueTrait>::Value, AccessResult, Self>, Self::AccessError>> + 'a
+        impl Future<Output = Result<ReleasingResult<<S::Value as StoredValueTrait>::Value, AccessResult, Self>, Self::Error>> + 'a
     {
         async move {
             let result = self
@@ -69,7 +69,7 @@ impl<
         self: &'a Arc<Self>, 
         input: Self::AccessInput
     ) -> 
-        impl Future<Output = Result<ReleasingResult<<S::Value as StoredValueTrait>::Value, AccessResult, Self>, Self::AccessError>> + 'a
+        impl Future<Output = Result<ReleasingResult<<S::Value as StoredValueTrait>::Value, AccessResult, Self>, Self::Error>> + 'a
     {
         async move {
             let result = self

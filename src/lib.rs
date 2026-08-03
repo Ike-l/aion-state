@@ -93,10 +93,7 @@ pub mod prelude {
                 ReleasingResult,
             }
         },
-        synchronised_registry::unsynchronised_registry::registry_input::{
-            RegistryReleasingAcquireAccess,
-            RegistryReleasingReleaseAccess
-        }
+        synchronised_registry::unsynchronised_registry::registry_input::RegistryReleasingReleaseAccess
     };
 
     #[cfg(feature = "notifier")]
@@ -116,13 +113,6 @@ pub mod prelude {
                 Waiter
             }
         },
-        synchronised_registry::{
-            unsynchronised_registry::{
-                registry_input::{
-                    RegistryNotifiedAcquireAccess,
-                },
-            }
-        }
     };
 
     #[cfg(all(feature = "async", feature = "releaser"))]
@@ -135,6 +125,8 @@ pub mod prelude {
             AsyncFutureAcquireAccess
         }
     };
+    #[cfg(any(feature = "notifier", feature = "releaser"))]
+    pub use super::synchronised_registry::unsynchronised_registry::registry_input::RegistryOwnedAcquireAccess;
 
     pub use super::{
         synchronised_registry::{

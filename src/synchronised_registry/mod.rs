@@ -19,7 +19,7 @@ pub mod impl_async_releaser;
 #[cfg(all(feature = "async", feature = "notifier"))]
 pub mod impl_async_notifier;
 #[cfg(all(feature = "notifier", feature = "releaser"))]
-pub mod impl_notifier_releaser;
+pub mod impl_notified_releaser;
 #[cfg(all(feature = "async", feature = "notifier", feature = "releaser"))]
 pub mod impl_async_notifier_releaser;
 

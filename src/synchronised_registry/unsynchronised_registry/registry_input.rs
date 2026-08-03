@@ -91,22 +91,15 @@ pub struct RegistryAcquireAccess<'a, Id, IdPassword, ResourceId, Access, Passwor
     pub password: Option<&'a Password>
 }
 
-#[cfg(feature = "releaser")]
-pub struct RegistryReleasingAcquireAccess<Id, IdPassword, ResourceId, Access, Password> {
+#[cfg(any(feature = "releaser", feature = "notifier"))]
+#[derive(Clone)]
+pub struct RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password> {
     pub user_details: Option<(Id, IdPassword)>,
     pub resource_id: ResourceId,
     pub access: Access,
     pub password: Option<Password>
 }
 
-#[cfg(feature = "notifier")]
-#[derive(Clone)]
-pub struct RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password> {
-    pub user_details: Option<(Id, IdPassword)>,
-    pub resource_id: ResourceId,
-    pub access: Access,
-    pub password: Option<Password>
-}
 
 pub struct RegistrySaferReplacement<'a, Id, IdPassword, Access, ResourceId, Resource, Password> {
     pub user_details: Option<(&'a Id, &'a IdPassword)>,
