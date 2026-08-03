@@ -3,6 +3,7 @@
 #![allow(clippy::mut_from_ref)]
 #![allow(clippy::single_match)]
 #![allow(clippy::len_without_is_empty)]
+#![allow(clippy::manual_async_fn)]
 
 pub mod synchronised_registry;
 pub mod accessor;

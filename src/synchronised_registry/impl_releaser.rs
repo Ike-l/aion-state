@@ -20,12 +20,12 @@ impl<
         AS::ValueId: Clone,
         S::Value: StoredValueTrait
 {
-    type AccessError = SynchronisedRegistryAcquireAccessError;
+    type Error = SynchronisedRegistryAcquireAccessError;
     type AccessInput = RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
 
     type ReleaseInput = RegistryReleasingReleaseAccess<S::ValueId, AS::Access>;
 
-    fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<<S::Value as StoredValueTrait>::Value, AccessResult, Self>, Self::AccessError> {
+    fn acquire_released_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<<S::Value as StoredValueTrait>::Value, AccessResult, Self>, Self::Error> {
         let result = self.as_ref().acquire_access(RegistryAcquireAccess {
             user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
             resource_id: input.resource_id.clone(),
