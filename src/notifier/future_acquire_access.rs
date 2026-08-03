@@ -1,43 +1,46 @@
-// use crate::prelude::{AccessFilter, Notifier, RegistryNotifiedAcquireAccess};
+use std::{marker::PhantomData, task::Poll};
 
-use std::task::Poll;
+use crate::prelude::{AccessFilter, AccessorResult, Notifier, RegistryNotifiedAcquireAccess, Waiter};
 
-use crate::prelude::{AccessFilter, Notifier, RegistryNotifiedAcquireAccess, Waiter};
-
-pub struct FutureAcquireAccess<
-    Notifyee: Notifier, 
+pub struct FutureAcquireAccess<'a,
+    Value,
+    Notifyee: Notifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>, 
     Filter: AccessFilter<Error = Notifyee::Error>,
-    Id, IdPassword, ResourceId, Access, Password
+    Id, IdPassword, ResourceId, Access, Password,
+    AccessResult
 > {
-    notifyee: crate::prelude::sync::Arc<Notifyee>,
+    notifyee: &'a Notifyee,
     input: RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
     filter: Filter,
     waiter: crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>>,
+    _r: PhantomData<AccessResult>,
+    _v: PhantomData<Value>
 }
 
-impl<Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password> FutureAcquireAccess<Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password> 
+impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> FutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: Notifier<AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: Notifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
         RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone
 {
     pub fn new(
-        notifyee: crate::prelude::sync::Arc<Notifyee>,
+        notifyee: &'a Notifyee,
         input: RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
         filter: Filter,
     ) -> Self {
         let waiter = notifyee.register_waiter(input.clone());
-        Self { notifyee, input, filter, waiter }
+        Self { notifyee, input, filter, waiter, _r: Default::default(), _v: Default::default() }
     }
 }
 
-impl<Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password> Future for FutureAcquireAccess<Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password> 
+impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Future for FutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: Notifier<AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: Notifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
-        RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone
+        RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
+        AccessResult: AccessorResult<'a, Value>
 {
-    type Output = Result<Notifyee::Output, Notifyee::Error>;
+    type Output = Result<AccessResult, Notifyee::Error>;
 
     fn poll(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
         let mut waiter = self.waiter.lock();
@@ -63,24 +66,12 @@ impl<Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password> Future for 
     }
 }
 
-// impl<'a, T> Drop for FutureResolve<'a, T> {
-//     fn drop(&mut self) {
-//         // let span = span!(FUNCTION_LEVEL, "FutureResolve Drop");
-//         // let _enter = span.enter();
-
-//         // let mut future_resources = self.program_registry.future_resources.lock();
-
-//         // for key in self.cached_keys.iter() {
-//         //     let span = span!(FUNCTION_LEVEL, "For key", key =? key);
-//         //     let _enter = span.enter();
-            
-//         //     if let Some(waiters) = future_resources.get_mut(key) {
-//         //         event!(FUNCTION_LEVEL, waiters_len =? waiters.len(), "Waiters len before");
-
-//         //         waiters.retain(|w| !Arc::ptr_eq(w, &self.waker_ready));
-                
-//         //         event!(FUNCTION_LEVEL, waiters_len =? waiters.len(), "Waiters len after");
-//         //     }
-//         // }
-//     }
-// }
+impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Drop for FutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
+    where 
+        Notifyee: Notifier<Value, AccessInput = RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Filter: AccessFilter<Error = Notifyee::Error>,
+{
+    fn drop(&mut self) {
+        self.notifyee.unregister_waiter(&self.input, &self.waiter);
+    }
+}

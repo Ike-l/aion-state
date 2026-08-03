@@ -23,4 +23,12 @@ impl<ValueId: Eq + Hash> NotifyQueue<ValueId> {
         self.queue.entry(value_id).or_default().push(crate::prelude::sync::Arc::clone(&waiter));
         waiter
     }
+
+    pub fn unregister(&mut self, value_id: &ValueId, waiter: &crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>>) {
+        if let Some(waiters) = self.queue.get_mut(value_id) {
+            waiters.retain(|registered_waiter| {
+                !crate::prelude::sync::Arc::ptr_eq(registered_waiter, &waiter)
+            });
+        }
+    }
 }
