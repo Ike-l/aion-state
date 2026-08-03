@@ -45,7 +45,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
 
     fn poll(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
         if self.finished.load(Ordering::Acquire) {
-            return Poll::Pending
+            panic!("I hope i never have to deal with this");
         }
 
         // can drop guard because it doesnt actually matter if the waiter changes after this

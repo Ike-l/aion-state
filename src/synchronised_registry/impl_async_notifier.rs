@@ -1,6 +1,6 @@
 use std::{fmt::Debug, hash::Hash};
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, AsyncNotifier, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryNotifiedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, Waiter, WhitelistStorage, sync::{Arc, Mutex}};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, AsyncNotifier, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, SynchronisedRegistry, WhitelistStorage};
 
 impl<
     S: RegistryStorage,
@@ -17,17 +17,6 @@ impl<
         S::ValueId: Hash + Eq,
         <S as RegistryStorage>::Value: StoredValueTrait,
 {
-    type AccessInput = RegistryNotifiedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
-    type Error = SynchronisedRegistryAcquireAccessError;
-
-    fn register_waiter(&self, input: Self::AccessInput) -> Arc<Mutex<crate::prelude::Waiter>> {
-        self.notify_queue.lock().register(input.resource_id)
-    }
-
-    fn unregister_waiter(&self, input: &Self::AccessInput, waiter: &Arc<Mutex<Waiter>>) {
-        self.notify_queue.lock().unregister(&input.resource_id, waiter);
-    }
-
     fn async_acquire_access<'a, AccessResult: AccessorResult<'a, <<S as RegistryStorage>::Value as StoredValueTrait>::Value>>(&'a self, input: Self::AccessInput) -> impl Future<Output = Result<AccessResult, Self::Error>> + 'a {
         async move {
             self.acquire_access_async(RegistryAcquireAccess {
