@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, task::Poll};
+use std::{marker::PhantomData, sync::atomic::{AtomicBool, Ordering}, task::Poll};
 
 use crate::prelude::{AccessFilter, AccessorResult, Notifier, RegistryNotifiedAcquireAccess, Waiter};
 
@@ -13,6 +13,7 @@ pub struct FutureAcquireAccess<'a,
     input: RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
     filter: Filter,
     waiter: crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>>,
+    finished: AtomicBool,
     _r: PhantomData<AccessResult>,
     _v: PhantomData<Value>
 }
@@ -29,7 +30,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
         filter: Filter,
     ) -> Self {
         let waiter = notifyee.register_waiter(input.clone());
-        Self { notifyee, input, filter, waiter, _r: Default::default(), _v: Default::default() }
+        Self { notifyee, input, filter, waiter, finished: AtomicBool::new(false), _r: Default::default(), _v: Default::default() }
     }
 }
 
@@ -43,6 +44,10 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
     type Output = Result<AccessResult, Notifyee::Error>;
 
     fn poll(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
+        if self.finished.load(Ordering::Acquire) {
+            return Poll::Pending
+        }
+
         let mut waiter = self.waiter.lock();
         waiter.set_waker(cx.waker().clone());
 
@@ -50,6 +55,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
             let result = self.notifyee.acquire_access(self.input.clone());
             match result {
                 Ok(result) => {
+                    self.finished.store(true, Ordering::Release);
                     return Poll::Ready(Ok(result))
                 },
                 Err(error) => {
