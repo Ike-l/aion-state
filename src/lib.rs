@@ -104,7 +104,8 @@ pub mod prelude {
         notifier::{
             Notifier,
             access_filter::{
-                AccessFilter
+                AccessFilter,
+                PermissiveFilter
             },
             future_acquire_access::{
                 FutureAcquireAccess
