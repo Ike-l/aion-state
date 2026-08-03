@@ -10,6 +10,8 @@ pub mod accessor;
 pub mod releaser;
 #[cfg(feature = "notifier")]
 pub mod notifier;
+#[cfg(all(feature = "async", feature = "releaser"))]
+pub mod async_releaser;
 
 pub mod prelude {
     pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::TRACE;
@@ -21,15 +23,6 @@ pub mod prelude {
         #[allow(clippy::disallowed_types, unused_imports)]
         pub use std::sync::Arc;
     }
-
-    // Features
-    
-    // Tokio
-    // await synchronised registry
-    // await coordinated reception
-
-    // Notify 
-    // notify on release
 
     macro_rules! trace_function {
         ($log:literal) => {
@@ -129,6 +122,9 @@ pub mod prelude {
             }
         }
     };
+
+    #[cfg(all(feature = "async", feature = "releaser"))]
+    pub use super::async_releaser::AsyncReleaser;
 
     pub use super::{
         synchronised_registry::{
