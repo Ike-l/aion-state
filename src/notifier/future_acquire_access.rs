@@ -1,6 +1,6 @@
 use std::{marker::PhantomData, sync::atomic::{AtomicBool, Ordering}, task::Poll};
 
-use crate::prelude::{AccessFilter, AccessorResult, Notifier, RegistryNotifiedAcquireAccess, Waiter};
+use crate::prelude::{AccessFilter, AccessorResult, Notifier, RegistryNotifiedAcquireAccess, Waiter, sync::{Arc, Mutex}};
 
 pub struct FutureAcquireAccess<'a,
     Value,
@@ -12,7 +12,7 @@ pub struct FutureAcquireAccess<'a,
     notifyee: &'a Notifyee,
     input: RegistryNotifiedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
     filter: Filter,
-    waiter: crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>>,
+    waiter: Arc<Mutex<Waiter>>,
     finished: AtomicBool,
     _r: PhantomData<AccessResult>,
     _v: PhantomData<Value>

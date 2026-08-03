@@ -1,19 +1,13 @@
 use std::task::Waker;
 
 
+#[derive(Default)]
 pub struct Waiter {
     waker: Option<Waker>,
     ready: bool
 }
 
 impl Waiter {
-    pub fn new() -> Self {
-        Self {
-            waker: None,
-            ready: false
-        }
-    }
-
     pub fn set_ready_to_retry(&mut self) {
         self.ready = true
     }

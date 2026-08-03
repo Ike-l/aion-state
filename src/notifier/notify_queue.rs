@@ -1,10 +1,10 @@
 use std::{collections::HashMap, hash::Hash};
 
-use crate::prelude::Waiter;
+use crate::prelude::{Waiter, sync::{Arc, Mutex}};
 
 #[derive(Default)]
 pub struct NotifyQueue<ValueId> {
-    queue: HashMap<ValueId, Vec<crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>>>>
+    queue: HashMap<ValueId, Vec<Arc<Mutex<Waiter>>>>
 }
 
 impl<ValueId: Eq + Hash> NotifyQueue<ValueId> {
@@ -18,16 +18,16 @@ impl<ValueId: Eq + Hash> NotifyQueue<ValueId> {
         }
     }
 
-    pub fn register(&mut self, value_id: ValueId) -> crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>> {
-        let waiter = crate::prelude::sync::Arc::new(crate::prelude::sync::Mutex::new(Waiter::new()));
-        self.queue.entry(value_id).or_default().push(crate::prelude::sync::Arc::clone(&waiter));
+    pub fn register(&mut self, value_id: ValueId) -> Arc<Mutex<Waiter>> {
+        let waiter = Arc::new(Mutex::new(Waiter::default()));
+        self.queue.entry(value_id).or_default().push(Arc::clone(&waiter));
         waiter
     }
 
-    pub fn unregister(&mut self, value_id: &ValueId, waiter: &crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>>) {
+    pub fn unregister(&mut self, value_id: &ValueId, waiter: &Arc<Mutex<Waiter>>) {
         if let Some(waiters) = self.queue.get_mut(value_id) {
             waiters.retain(|registered_waiter| {
-                !crate::prelude::sync::Arc::ptr_eq(registered_waiter, &waiter)
+                !Arc::ptr_eq(registered_waiter, waiter)
             });
         }
     }

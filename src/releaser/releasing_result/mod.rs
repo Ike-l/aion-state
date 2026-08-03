@@ -1,11 +1,11 @@
-use crate::prelude::Releaser;
+use crate::prelude::{Releaser, sync::Arc};
 
 pub struct ReleasingResult<S, AccessResult, R: Releaser<S> + ?Sized> {
     raw: Option<AccessResult>,
     consumed: bool,
     // because the import is from prelude
     #[allow(clippy::disallowed_types)]
-    releaser: Option<crate::prelude::sync::Arc<R>>,
+    releaser: Option<Arc<R>>,
     release_input: Option<R::ReleaseInput>
 }
 
@@ -14,7 +14,7 @@ impl<S, AccessResult, R: Releaser<S>> ReleasingResult<S, AccessResult, R> {
     #[allow(clippy::disallowed_types)]
     pub fn new(
         access_result: AccessResult, 
-        releaser: crate::prelude::sync::Arc<R>,
+        releaser: Arc<R>,
         release_input: R::ReleaseInput
     ) -> Self {
         Self { 

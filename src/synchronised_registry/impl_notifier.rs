@@ -1,6 +1,6 @@
 use std::{fmt::Debug, hash::Hash};
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryAcquireAccess, RegistryNotifiedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, Waiter, WhitelistStorage};
+use crate::prelude::{sync::{Arc, Mutex}, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryAcquireAccess, RegistryNotifiedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, Waiter, WhitelistStorage};
 
 impl<
     S: RegistryStorage,
@@ -20,11 +20,11 @@ impl<
     type AccessInput = RegistryNotifiedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
     type Error = SynchronisedRegistryAcquireAccessError;
 
-    fn register_waiter(&self, input: Self::AccessInput) -> crate::prelude::sync::Arc<crate::prelude::sync::Mutex<crate::prelude::Waiter>> {
+    fn register_waiter(&self, input: Self::AccessInput) -> Arc<Mutex<crate::prelude::Waiter>> {
         self.unsynchronised_registry.register_waiter(input)
     }
 
-    fn unregister_waiter(&self, input: &Self::AccessInput, waiter: &crate::prelude::sync::Arc<crate::prelude::sync::Mutex<Waiter>>) {
+    fn unregister_waiter(&self, input: &Self::AccessInput, waiter: &Arc<Mutex<Waiter>>) {
         self.unsynchronised_registry.unregister_waiter(input, waiter);
     }
 
