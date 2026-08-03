@@ -1,7 +1,7 @@
 use crate::prelude::{AccessorResult, Releaser, ReleasingResult, sync::Arc};
 
 pub trait AsyncReleaser<Value>: Releaser<Value> {
-    fn async_acquire_access<'a, AccessResult: AccessorResult<'a, Value>>(
+    fn async_acquire_released_access<'a, AccessResult: AccessorResult<'a, Value>>(
         self: &'a Arc<Self>, 
         input: Self::AccessInput
     ) -> 

@@ -17,6 +17,8 @@ pub mod async_releaser;
 pub mod async_notifier;
 #[cfg(all(feature = "notifier", feature = "releaser"))]
 pub mod notified_releaser;
+#[cfg(all(feature = "async", feature = "notifier", feature = "releaser"))]
+pub mod async_notified_releaser;
 
 pub mod prelude {
     pub(crate) const FUNCTION_LEVEL: tracing::Level = tracing::Level::TRACE;
@@ -135,6 +137,14 @@ pub mod prelude {
 
     #[cfg(any(feature = "notifier", feature = "releaser"))]
     pub use super::synchronised_registry::unsynchronised_registry::registry_input::RegistryOwnedAcquireAccess;
+    
+    #[cfg(all(feature = "async", feature = "notifier", feature = "releaser"))]
+    pub use super::async_notified_releaser::{
+        AsyncNotifiedReleaser,
+        async_future_acquire_released_access::{
+            AsyncFutureAcquireReleasedAccess
+        }
+    };
 
     pub use super::{
         synchronised_registry::{
