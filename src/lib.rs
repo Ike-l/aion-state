@@ -129,7 +129,12 @@ pub mod prelude {
     pub use super::async_releaser::AsyncReleaser;
     
     #[cfg(all(feature = "async", feature = "notifier"))]
-    pub use super::async_notifier::AsyncNotifier;
+    pub use super::async_notifier::{
+        AsyncNotifier,
+        async_future_acquire_access::{
+            AsyncFutureAcquireAccess
+        }
+    };
 
     pub use super::{
         synchronised_registry::{

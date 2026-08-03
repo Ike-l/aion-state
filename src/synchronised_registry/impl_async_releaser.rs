@@ -21,7 +21,7 @@ impl<
         AS::ValueId: Clone,
         S::Value: StoredValueTrait
 {
-    fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+    fn async_acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
         self: &'a Arc<Self>, 
         input: Self::AccessInput
     ) -> 
@@ -65,7 +65,7 @@ impl<
         S::ValueId: Clone + Eq + Hash,
         S::Value: StoredValueTrait
 {
-    fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+    fn async_acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
         self: &'a Arc<Self>, 
         input: Self::AccessInput
     ) -> 

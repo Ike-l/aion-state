@@ -48,10 +48,14 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
             return Poll::Pending
         }
 
-        let mut waiter = self.waiter.lock();
-        waiter.set_waker(cx.waker().clone());
+        // can drop guard because it doesnt actually matter if the waiter changes after this
+        let should_retry = {
+            let mut waiter = self.waiter.lock();
+            waiter.set_waker(cx.waker().clone());
+            waiter.is_ready_to_retry()
+        };
 
-        if waiter.is_ready_to_retry() {
+        if should_retry {
             let result = self.notifyee.acquire_access(self.input.clone());
             match result {
                 Ok(result) => {
@@ -60,7 +64,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
                 },
                 Err(error) => {
                     if self.filter.retry(&error) {
-                        waiter.set_waiting_to_retry();
+                        self.waiter.lock().set_waiting_to_retry();
                     } else {
                         return Poll::Ready(Err(error))
                     }
