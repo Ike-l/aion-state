@@ -1,9 +1,8 @@
-#![cfg(feature = "sync")]
-
 use aion_state::prelude::Registry;
 
 pub mod default;
 mod golden_path;
+mod acquire_access;
 
 use default::prelude::*;
 
@@ -29,7 +28,7 @@ fn init_tracing() {
 
 // cargo test --features default-implementation -- --no-capture
 
-pub type TestRegistry = Registry<RegistryStorage<ResourceId, Box<Resource>>, ReservationStorage<ReserverId, AccessStorage<ResourceId, Access>>, AccessStorage<ResourceId, Access>, CredentialStorage<ReserverId, Password>, WhitelistStorage<ResourceId, Access>, BlacklistStorage<ResourceId, Access, Password>, ControlStorage<ReserverId, ResourceId>>;
+pub type TestRegistry = Registry<RegistryStorage<ResourceId, StoredResource>, ReservationStorage<ReserverId, AccessStorage<ResourceId, Access>>, AccessStorage<ResourceId, Access>, CredentialStorage<ReserverId, Password>, WhitelistStorage<ResourceId, Access>, BlacklistStorage<ResourceId, Access, Password>, ControlStorage<ReserverId, ResourceId>>;
 
 pub fn create_registry() -> TestRegistry {
     init_tracing();

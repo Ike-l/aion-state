@@ -13,7 +13,6 @@ mod release_access;
 mod reserve;
 mod unreserve;
 mod drain_reservations;
-mod acquire_access;
 mod safer_replace;
 mod contains_resource;
 mod get_access;

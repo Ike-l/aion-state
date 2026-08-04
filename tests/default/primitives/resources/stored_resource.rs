@@ -1,13 +1,13 @@
 use crate::default::prelude::Resource;
 use aion_state::prelude::StoredValueTrait;
 
-pub type StoredResource = Box<Resource>;
+pub type StoredResource = Resource;
 
 impl StoredValueTrait for StoredResource {
     type Value = Resource;
 
     fn new(value: Self::Value) -> Self {
-        Box::new(value)
+        value
     }
 
     fn as_shared(&self) -> &Self::Value {
@@ -19,6 +19,6 @@ impl StoredValueTrait for StoredResource {
     }
 
     fn into_inner(self) -> Self::Value {
-        *self
+        self
     }
 }

@@ -4,13 +4,18 @@ use crate::default::prelude::*;
 
 use crate::create_registry;
 
-fn can_acquire_access() {
+#[test]
+fn can_acquire_one_t() {
+    can_acquire_one();
+}
+
+fn can_acquire_one() {
     let registry = create_registry();
 
     let resource_id = ResourceId::new_type::<String>();
     let resource = Resource::new("resource".to_string());
 
-    let result = registry.reallocating_replace(RegistrySaferReplacement {
+    let result = registry.checked_replace(RegistrySaferReplacement {
         user_details: None,
         access: &Access::Replace,
         resource_id: resource_id.clone(),
@@ -28,13 +33,7 @@ fn can_acquire_access() {
     }).unwrap();
 
     assert!(match result {
-        AccessResult::Shared(resource_result) if *resource_result == resource => true,
+        AccessResult::Shared(resource_result) => *resource_result == resource,
         _ => false
     })
-
-}
-
-#[test]
-fn can_acquire_access_normal() {
-    can_acquire_access();
 }
