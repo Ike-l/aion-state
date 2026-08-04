@@ -12,7 +12,8 @@ impl Waiter {
         self.ready = true
     }
 
-    pub fn set_waiting_to_retry(&mut self) {
+    pub fn set_waiting_to_retry(&mut self, waker: Waker) {
+        self.set_waker(waker);
         self.ready = false
     }
 
@@ -22,7 +23,7 @@ impl Waiter {
         }
     }
 
-    pub fn set_waker(&mut self, waker: Waker) {
+    fn set_waker(&mut self, waker: Waker) {
         self.waker.replace(waker).expect("Expected no Waker");
     }
 

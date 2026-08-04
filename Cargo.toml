@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 parking_lot = "0.12.5"
 tracing = "0.1.44"
-thiserror = "2.0.18"
+thiserror = "2.0.19"
 
 stable_deref_trait = "1.2.1"
 tokio = { version = "1.53.1", features = ["sync"], optional = true }

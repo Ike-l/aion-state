@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, pin::Pin, sync::atomic::{AtomicBool, Ordering}, task::Poll};
+use std::{marker::PhantomData, pin::Pin, task::Poll};
 
 use crate::prelude::{AccessFilter, AccessorResult, AsyncNotifier, RegistryOwnedAcquireAccess, Waiter, sync::{Arc, Mutex}};
 
@@ -13,7 +13,6 @@ pub struct AsyncFutureAcquireAccess<'a,
     input: RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
     filter: Filter,
     waiter: Arc<Mutex<Waiter>>,
-    finished: AtomicBool,
     acquire_future: Option<Pin<Box<dyn Future<Output = Result<AccessResult, Notifyee::Error>> + 'a>>>,
     _r: PhantomData<AccessResult>,
     _v: PhantomData<Value>
@@ -36,7 +35,6 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
             input, 
             filter, 
             waiter, 
-            finished: AtomicBool::new(false), 
             acquire_future: None,
             _r: Default::default(), 
             _v: Default::default() 
@@ -62,18 +60,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
     type Output = Result<AccessResult, Notifyee::Error>;
 
     fn poll(mut self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
-        if self.finished.load(Ordering::Acquire) {
-            panic!("I hope i never have to deal with this");
-        }
-
-        // can drop guard because it doesnt actually matter if the waiter changes after this
-        let should_retry = {
-            let mut waiter = self.waiter.lock();
-            waiter.set_waker(cx.waker().clone());
-            waiter.is_ready_to_retry()
-        };
-
-        if self.acquire_future.is_none() && should_retry {
+        if self.acquire_future.is_none() && self.waiter.lock().is_ready_to_retry() {
             let future = self.notifyee.async_acquire_access(self.input.clone());
             self.acquire_future = Some(Box::pin(future));
         }
@@ -81,27 +68,22 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
         if let Some(future) = &mut self.acquire_future {
             match future.as_mut().poll(cx) {
                 Poll::Ready(Ok(result)) => {
-                    self.finished.store(true, Ordering::Release);
                     return Poll::Ready(Ok(result));
                 }
 
                 Poll::Ready(Err(error)) => {
                     self.acquire_future = None;
 
-                    let mut waiter = self.waiter.lock();
-
-                    if self.filter.retry(&error) {
-                        waiter.set_waiting_to_retry();
-                    } else {
+                    if !self.filter.retry(&error) {
                         return Poll::Ready(Err(error));
                     }
                 }
 
-                Poll::Pending => {
-                    return Poll::Pending;
-                }
+                Poll::Pending => ()
             }
         }
+        
+        self.waiter.lock().set_waiting_to_retry(cx.waker().clone());
 
         Poll::Pending
     }

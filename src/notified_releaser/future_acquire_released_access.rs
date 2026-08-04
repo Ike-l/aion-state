@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, sync::atomic::{AtomicBool, Ordering}, task::Poll};
+use std::{marker::PhantomData, task::Poll};
 
 use crate::prelude::{AccessFilter, AccessorResult, NotifiedReleaser, RegistryOwnedAcquireAccess, ReleasingResult, Waiter, sync::{Arc, Mutex}};
 
@@ -14,7 +14,6 @@ pub struct FutureAcquireReleasedAccess<'a,
     input: RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
     filter: Filter,
     waiter: Arc<Mutex<Waiter>>,
-    finished: AtomicBool,
     _r: PhantomData<AccessResult>,
     _v: PhantomData<Value>
 }
@@ -31,7 +30,7 @@ impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Pas
         filter: Filter,
     ) -> Self {
         let waiter = notifyee.register_waiter(input.clone());
-        Self { notifyee, input, filter, waiter, finished: AtomicBool::new(false), _r: Default::default(), _v: Default::default() }
+        Self { notifyee, input, filter, waiter, _r: Default::default(), _v: Default::default() }
     }
 }
 
@@ -45,33 +44,21 @@ impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Pas
     type Output = Result<ReleasingResult<Value, AccessResult, Notifyee>, Error>;
 
     fn poll(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
-        if self.finished.load(Ordering::Acquire) {
-            panic!("I hope i never have to deal with this");
-        }
-
-        // can drop guard because it doesnt actually matter if the waiter changes after this
-        let should_retry = {
-            let mut waiter = self.waiter.lock();
-            waiter.set_waker(cx.waker().clone());
-            waiter.is_ready_to_retry()
-        };
-
-        if should_retry {
+        if self.waiter.lock().is_ready_to_retry() {
             let result = self.notifyee.acquire_released_access(self.input.clone());
             match result {
                 Ok(result) => {
-                    self.finished.store(true, Ordering::Release);
                     return Poll::Ready(Ok(result))
                 },
                 Err(error) => {
-                    if self.filter.retry(&error) {
-                        self.waiter.lock().set_waiting_to_retry();
-                    } else {
+                    if !self.filter.retry(&error) {
                         return Poll::Ready(Err(error))
                     }
                 }
             }
         }
+        
+        self.waiter.lock().set_waiting_to_retry(cx.waker().clone());
 
         Poll::Pending
     }
