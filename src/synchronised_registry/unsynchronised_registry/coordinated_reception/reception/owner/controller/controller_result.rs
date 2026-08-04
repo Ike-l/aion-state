@@ -19,6 +19,7 @@ pub enum ControllerWhitelistAllowResult {
     Denied
 }
 
+#[derive(Debug)]
 pub enum ControllerCheckAccessResult {
     AccessControl(AccessControlCheckAccessResult),
     IsOwner,

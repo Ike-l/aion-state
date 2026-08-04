@@ -5,10 +5,6 @@ use crate::default::prelude::*;
 use crate::create_registry;
 
 #[test]
-fn can_acquire_many_t() {
-    can_acquire_many();
-}
-
 fn can_acquire_many() {
     let registry = create_registry();
 

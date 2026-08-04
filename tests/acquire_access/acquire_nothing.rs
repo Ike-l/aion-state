@@ -5,10 +5,6 @@ use crate::default::prelude::*;
 use crate::create_registry;
 
 #[test]
-fn can_acquire_nothing_t() {
-    can_acquire_nothing();
-}
-
 fn can_acquire_nothing() {
     let registry = create_registry();
 

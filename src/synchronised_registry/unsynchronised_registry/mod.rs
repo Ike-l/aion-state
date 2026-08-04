@@ -235,7 +235,6 @@ impl<
             match registry_result {
                 Ok(accesses_result) => {
                     let reception_result = self.reception.record_access(ReceptionRecordAccess { user_details, resource_id, access, password });
-        
                     assert!(reception_result.ok());
         
                     return Ok(accesses_result);

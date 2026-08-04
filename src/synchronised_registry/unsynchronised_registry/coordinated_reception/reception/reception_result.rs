@@ -58,6 +58,7 @@ pub enum ReceptionReleaseAccessResult {
     Host(HostReleaseAccessResult),
 }
 
+#[derive(Debug)]
 pub enum ReceptionRecordAccessResult {
     Host(HostRecordAccessResult),
     Denied(OwnerCheckAccessResult)

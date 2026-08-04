@@ -5,20 +5,6 @@ use crate::default::prelude::*;
 use crate::create_registry;
 
 #[test]
-fn can_acquire_conflicting_tu() {
-    can_acquire_conflicting_u();
-}
-
-#[test]
-fn can_acquire_conflicting_ts() {
-    can_acquire_conflicting_s();
-}
-
-#[test]
-fn can_acquire_conflicting_tuu() {
-    can_acquire_conflicting_uu();
-}
-
 fn can_acquire_conflicting_u() {
     let registry = create_registry();
 
@@ -57,6 +43,7 @@ fn can_acquire_conflicting_u() {
     assert!(result.is_err_and(|err| err == SynchronisedRegistryAcquireAccessError::AccessConflict));
 }
 
+#[test]
 fn can_acquire_conflicting_s() {
     let registry = create_registry();
 
@@ -95,6 +82,7 @@ fn can_acquire_conflicting_s() {
     assert!(result.is_err_and(|err| err == SynchronisedRegistryAcquireAccessError::AccessConflict));
 }
 
+#[test]
 fn can_acquire_conflicting_uu() {
     let registry = create_registry();
 

@@ -1,6 +1,6 @@
 use aion_state::prelude::AccessorResult;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum AccessResult<'a, T> {
     Shared(&'a T),
     Unique(&'a mut T),

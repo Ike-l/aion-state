@@ -5,10 +5,6 @@ use crate::default::prelude::*;
 use crate::create_registry;
 
 #[test]
-fn can_acquire_using_replace_t() {
-    can_acquire_using_replace();
-}
-
 fn can_acquire_using_replace() {
     let registry = create_registry();
 

@@ -1,5 +1,6 @@
 use crate::prelude::{BlacklistCheckAccessResult, BlacklistAllowResult, BlacklistUnallowResult, BlacklistReleaseAllResult, BlacklistReleaseResult, WhitelistCheckAccessResult, WhitelistAllowResult, WhitelistUnallowResult, WhitelistReleaseAllResult, WhitelistReleaseResult};
 
+#[derive(Debug)]
 pub enum AccessControlCheckAccessResult {
     Lists {
         whitelist: WhitelistCheckAccessResult,

@@ -18,6 +18,7 @@ pub enum ReservationsReserveResult {
     Reservations(ReservationsCheckAccessResult)
 }
 
+#[derive(Debug)]
 pub enum ReservationsUnreserveResult {
     Accesses(AccessesReleaseResult),
     NoReservationsMadeByReserver
@@ -27,7 +28,7 @@ impl ReservationsUnreserveResult {
     pub fn ok(&self) -> bool {
         match self {
             Self::Accesses(accesses) => accesses.ok(),
-            _ => false
+            Self::NoReservationsMadeByReserver => true
         }
     }
 }

@@ -13,6 +13,7 @@ impl AccessesCheckAccessResult {
     }
 }
 
+#[derive(Debug)]
 pub enum AccessesRecordAccessResult {
     Merged,
     Inserted
@@ -24,6 +25,7 @@ impl AccessesRecordAccessResult {
     }
 }
 
+#[derive(Debug)]
 pub enum AccessesReleaseResult {
     Split,
     NoCurrentAccess

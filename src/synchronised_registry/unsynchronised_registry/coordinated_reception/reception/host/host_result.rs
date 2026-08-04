@@ -14,6 +14,7 @@ impl HostCheckAccessResult {
     }
 }
 
+#[derive(Debug)]
 pub struct HostRecordAccessResult {
     pub unreserve_result: Option<HostUnreserveResult>,
     pub record_access_result: AccessesRecordAccessResult
@@ -26,6 +27,7 @@ impl HostRecordAccessResult {
     }
 }
 
+#[derive(Debug)]
 pub enum HostUnreserveResult {
     Reservations(ReservationsUnreserveResult)
 }

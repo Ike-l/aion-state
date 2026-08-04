@@ -3,5 +3,5 @@ mod acquire_many;
 mod acquire_conflicting;
 mod acquire_nothing;
 mod using_replace;
-// user details
+mod acquire_owned;
 // password

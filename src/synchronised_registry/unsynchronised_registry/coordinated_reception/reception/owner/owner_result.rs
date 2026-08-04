@@ -35,6 +35,7 @@ pub enum OwnerBlacklistAllowResult<Password> {
     Denied
 }
 
+#[derive(Debug)]
 pub enum OwnerCheckAccessResult {
     Controller(ControllerCheckAccessResult),
     Denied

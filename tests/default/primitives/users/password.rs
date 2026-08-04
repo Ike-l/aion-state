@@ -8,3 +8,9 @@ impl From<u64> for Password {
         Self { inner: value }
     }
 }
+
+impl Password {
+    pub fn new(value: u64) -> Self {
+        Self { inner: value }
+    }
+}
