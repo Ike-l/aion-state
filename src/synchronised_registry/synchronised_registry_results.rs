@@ -363,6 +363,15 @@ pub enum SynchronisedRegistryWhitelistAllowResult {
     VerificationFailure
 }
 
+impl SynchronisedRegistryWhitelistAllowResult {
+    pub fn ok(&self) -> bool {
+        match self {
+            Self::Ok => true,
+            _ => false
+        }
+    }
+}
+
 impl From<UnsynchronisedRegistryWhitelistAllowResult> for SynchronisedRegistryWhitelistAllowResult {
     fn from(value: UnsynchronisedRegistryWhitelistAllowResult) -> Self {
         match value {
