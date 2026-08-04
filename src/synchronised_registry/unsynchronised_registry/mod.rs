@@ -258,7 +258,7 @@ impl<
     /// Insert won't invalidate concurrent access
     /// 
     /// ^ i.e do not replace a borrowed item
-    pub unsafe fn safer_replace(
+    pub unsafe fn reallocating_replace(
         &self,
         RegistrySaferReplacement {
             user_details, access, resource_id, resource, password
@@ -271,7 +271,7 @@ impl<
         let reception_result = self.reception.check_access(&ReceptionCheckAccess { user_details, resource_id: &resource_id, access, password });
 
         if reception_result.ok() {
-            return UnsynchronisedRegistrySaferReplacementResult::AutomatedRegistry(unsafe { self.automated_registry.safer_replace(ManualRegistryReplacementInput { access, value_id: resource_id, value: resource }) })
+            return UnsynchronisedRegistrySaferReplacementResult::AutomatedRegistry(unsafe { self.automated_registry.reallocating_replace(ManualRegistryReplacementInput { access, value_id: resource_id, value: resource }) })
         }
 
         UnsynchronisedRegistrySaferReplacementResult::Reception(reception_result)

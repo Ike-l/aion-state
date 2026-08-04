@@ -239,7 +239,7 @@ impl<
         unsafe { self.unsynchronised_registry.acquire_access(input).map_err(|err| err.into()) }
     }
 
-    pub async fn safer_replace_async(
+    pub async fn reallocating_replace_async(
         &self,
         input: RegistrySaferReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoredValueTrait>::Value, BS::Password>
     ) -> SynchronisedRegistrySaferReplacementResult<<S::Value as StoredValueTrait>::Value>
@@ -250,7 +250,7 @@ impl<
         let _a_sync = self.a_sync.write().await;
         let _sync = self.sync.write();
 
-        unsafe { self.unsynchronised_registry.safer_replace(input).into() }
+        unsafe { self.unsynchronised_registry.reallocating_replace(input).into() }
     }
 
     pub async fn contains_resource_async(

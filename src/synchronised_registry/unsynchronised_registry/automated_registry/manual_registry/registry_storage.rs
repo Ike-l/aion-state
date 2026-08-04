@@ -28,5 +28,8 @@ pub trait RegistryStorage {
     fn len(&self) -> usize;
 
     fn keys(&self) -> impl Iterator<Item = &Self::ValueId>;
+
+    fn next_insert_reallocates(&self) -> bool;
+    fn next_removal_reallocates(&self) -> bool;
 }
 

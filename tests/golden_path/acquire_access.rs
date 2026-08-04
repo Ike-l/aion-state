@@ -10,7 +10,7 @@ fn can_acquire_access() {
     let resource_id = ResourceId::new_type::<String>();
     let resource = Resource::new("resource".to_string());
 
-    let result = registry.safer_replace(RegistrySaferReplacement {
+    let result = registry.reallocating_replace(RegistrySaferReplacement {
         user_details: None,
         access: &Access::Replace,
         resource_id: resource_id.clone(),

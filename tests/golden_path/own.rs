@@ -49,7 +49,7 @@ fn owning_blocks_by_default() {
 
     assert!(result.ok());
 
-    let result = registry.safer_replace(RegistrySaferReplacement {
+    let result = registry.reallocating_replace(RegistrySaferReplacement {
         user_details: Some((&id, &password)),
         access: &Access::Replace,
         resource_id: resource_id.clone(),

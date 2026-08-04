@@ -99,7 +99,7 @@ impl<
     /// Insert won't invalidate concurrent access
     /// 
     /// ^ i.e do not replace a borrowed item
-    pub unsafe fn safer_replace<Access: Accessor>(
+    pub unsafe fn reallocating_replace<Access: Accessor>(
         &mut self,
         manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoredValueTrait>::Value>
     ) -> ManualRegistryReplacementResult<<S::Value as StoredValueTrait>::Value> 
