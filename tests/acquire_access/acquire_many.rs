@@ -1,4 +1,4 @@
-use aion_state::prelude::{RegistryAcquireAccess, RegistrySaferReplacement};
+use aion_state::prelude::{RegistryAcquireAccess, RegistryReplacement};
 
 use crate::default::prelude::*;
 
@@ -15,7 +15,7 @@ fn can_acquire_many() {
     let resource_id1 = ResourceId::new_label("1");
     let resource1 = Resource::new("resource1".to_string());
 
-    let result = registry.checked_replace(RegistrySaferReplacement {
+    let result = registry.checked_replace(RegistryReplacement {
         user_details: None,
         access: &Access::Replace,
         resource_id: resource_id1.clone(),
@@ -28,7 +28,7 @@ fn can_acquire_many() {
     let resource_id2 = ResourceId::new_label("2");
     let resource2 = Resource::new("resource2".to_string());
 
-    let result = registry.checked_replace(RegistrySaferReplacement {
+    let result = registry.checked_replace(RegistryReplacement {
         user_details: None,
         access: &Access::Replace,
         resource_id: resource_id2.clone(),
@@ -41,7 +41,7 @@ fn can_acquire_many() {
     let resource_id3 = ResourceId::new_label("3");
     let resource3 = Resource::new("resource3".to_string());
 
-    let result = registry.checked_replace(RegistrySaferReplacement {
+    let result = registry.checked_replace(RegistryReplacement {
         user_details: None,
         access: &Access::Replace,
         resource_id: resource_id3.clone(),

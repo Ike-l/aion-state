@@ -1,4 +1,4 @@
-use aion_state::prelude::{RegistryAcquireAccess, RegistryContainsResource, RegistrySaferReplacement, SynchronisedRegistryCheckedReplacementResult};
+use aion_state::prelude::{RegistryAcquireAccess, RegistryContainsResource, RegistryReplacement, SynchronisedRegistryCheckedReplacementResult};
 
 use std::assert_matches;
 
@@ -8,7 +8,7 @@ use crate::create_registry;
 fn can_safer_replace() {
     let registry = create_registry();
 
-    let result = registry.checked_replace(RegistrySaferReplacement {
+    let result = registry.checked_replace(RegistryReplacement {
         user_details: None,
         access: &Access::Replace,
         resource_id: ResourceId::Label("Foo".to_string()),
@@ -36,7 +36,7 @@ fn multi_safer_replace() {
     for raw_resource in raw_resources.take(n) {
         let resource_id = ResourceId::Label(raw_resource.to_string());
         let resource = Resource::new(raw_resource.to_string());
-        let result = registry.checked_replace(RegistrySaferReplacement {
+        let result = registry.checked_replace(RegistryReplacement {
             user_details: None,
             access: &Access::Replace,
             resource_id: resource_id.clone(),

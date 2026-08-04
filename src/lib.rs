@@ -189,7 +189,7 @@ pub mod prelude {
                     RegistryUnreserve,
                     RegistryDrainReservations,
                     RegistryAcquireAccess,
-                    RegistrySaferReplacement,
+                    RegistryReplacement,
                     RegistryContainsResource,
                 },
                 unsynchronised_registry_result::{

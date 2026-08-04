@@ -1,4 +1,4 @@
-use aion_state::prelude::{RegistryAcquireAccess, SynchronisedRegistryAcquireAccessError, RegistryOwn, RegistryRegister, RegistrySaferReplacement};
+use aion_state::prelude::{RegistryAcquireAccess, SynchronisedRegistryAcquireAccessError, RegistryOwn, RegistryRegister, RegistryReplacement};
 
 use std::assert_matches;
 
@@ -49,7 +49,7 @@ fn owning_blocks_by_default() {
 
     assert!(result.ok());
 
-    let result = registry.checked_replace(RegistrySaferReplacement {
+    let result = registry.checked_replace(RegistryReplacement {
         user_details: Some((&id, &password)),
         access: &Access::Replace,
         resource_id: resource_id.clone(),

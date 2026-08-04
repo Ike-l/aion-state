@@ -101,7 +101,7 @@ pub struct RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Passwo
 }
 
 
-pub struct RegistrySaferReplacement<'a, Id, IdPassword, Access, ResourceId, Resource, Password> {
+pub struct RegistryReplacement<'a, Id, IdPassword, Access, ResourceId, Resource, Password> {
     pub user_details: Option<(&'a Id, &'a IdPassword)>,
     pub access: &'a Access,
     pub resource_id: ResourceId,

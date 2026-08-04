@@ -785,7 +785,7 @@ impl<Reservations> From<UnsynchronisedRegistryDrainReservationsResult<Reservatio
     }
 }
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, thiserror::Error, PartialEq)]
 pub enum SynchronisedRegistryAcquireAccessError {
     #[error("Resource Not Found")]
     NotFound,

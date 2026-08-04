@@ -1,4 +1,4 @@
-use aion_state::prelude::{RegistryAcquireAccess, RegistrySaferReplacement};
+use aion_state::prelude::{RegistryAcquireAccess, RegistryReplacement};
 
 use crate::default::prelude::*;
 
@@ -15,7 +15,7 @@ fn can_acquire_one() {
     let resource_id = ResourceId::new_type::<String>();
     let resource = Resource::new("resource".to_string());
 
-    let result = registry.checked_replace(RegistrySaferReplacement {
+    let result = registry.checked_replace(RegistryReplacement {
         user_details: None,
         access: &Access::Replace,
         resource_id: resource_id.clone(),
