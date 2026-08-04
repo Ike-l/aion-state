@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, pin::Pin, task::Poll};
+use std::{marker::PhantomData, pin::Pin, task::{Context, Poll}};
 
 use crate::prelude::{AccessFilter, AccessorResult, AsyncNotifiedReleaser, RegistryOwnedAcquireAccess, ReleasingResult, Waiter, sync::{Arc, Mutex}};
 
@@ -60,7 +60,7 @@ impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Pas
 {
     type Output = Result<ReleasingResult<Value, AccessResult, Notifyee>, Error>;
 
-    fn poll(mut self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
+    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         if self.acquire_future.is_none() && self.waiter.lock().is_ready_to_retry() {
             let future = self.notifyee.async_acquire_released_access(self.input.clone());
             self.acquire_future = Some(Box::pin(future));

@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, task::Poll};
+use std::{marker::PhantomData, pin::Pin, task::{Context, Poll}};
 
 use crate::prelude::{AccessFilter, AccessorResult, Notifier, RegistryOwnedAcquireAccess, Waiter, sync::{Arc, Mutex}};
 
@@ -42,7 +42,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
 {
     type Output = Result<AccessResult, Notifyee::Error>;
 
-    fn poll(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         if self.waiter.lock().is_ready_to_retry() {
             let result = self.notifyee.acquire_access(self.input.clone());
             match result {

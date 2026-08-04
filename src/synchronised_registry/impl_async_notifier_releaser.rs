@@ -1,5 +1,4 @@
-use std::fmt::Debug;
-use std::hash::Hash;
+use std::{fmt::Debug, hash::Hash};
 
 use crate::prelude::{AccessStorage, Accessor, AsyncNotifiedReleaser, BlacklistStorage, ControlStorage, CredentialStorage, RegistryOwnedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
 
