@@ -59,7 +59,7 @@ fn cant_acquire_others_whitelist() {
     assert_eq!(result, Err(SynchronisedRegistryAcquireAccessError::ListsDenied));
 }
 
-// #[test]
+#[test]
 fn can_acquire_others_whitelist() {
     let registry = create_registry();
 
@@ -80,6 +80,13 @@ fn can_acquire_others_whitelist() {
         resource_id: resource_id.clone(),
     }).ok());
 
+    assert!(registry.allow_whitelist(RegistryAllow { 
+        id: &id, 
+        password: &password, 
+        resource_id: resource_id.clone(), 
+        access: Access::Shared(1) 
+    }).ok());
+
     assert!(registry.checked_replace(RegistryReplacement {
         user_details: Some((&id, &password)),
         access: &Access::Replace,
@@ -95,15 +102,15 @@ fn can_acquire_others_whitelist() {
         password: None
     });
 
-    assert_eq!(result, Err(SynchronisedRegistryAcquireAccessError::ListsDenied));
+    assert_eq!(result, Ok(AccessResult::Shared(&resource)));
 }
 
-// #[test]
-fn can_acquire_others_multiple_whitelist() {
+#[test]
+fn can_acquire_others_multiple_whitelist_u() {
     let registry = create_registry();
 
     let resource_id = ResourceId::new_type::<String>();
-    let resource = Resource::new("resource".to_string());
+    let mut resource = Resource::new("resource".to_string());
 
     let id = ReserverId::new("1");
     let password = Password::new(1);
@@ -148,5 +155,58 @@ fn can_acquire_others_multiple_whitelist() {
         password: None
     });
 
-    assert_eq!(result, Err(SynchronisedRegistryAcquireAccessError::ListsDenied));
+    assert_eq!(result, Ok(AccessResult::Unique(&mut resource)));
+}
+
+#[test]
+fn can_acquire_others_multiple_whitelist_s() {
+    let registry = create_registry();
+
+    let resource_id = ResourceId::new_type::<String>();
+    let resource = Resource::new("resource".to_string());
+
+    let id = ReserverId::new("1");
+    let password = Password::new(1);
+
+    assert!(registry.register(RegistryRegister {
+        id: id.clone(),
+        password: password.clone(),
+    }).ok());
+
+    assert!(registry.own(RegistryOwn {
+        id: id.clone(),
+        password: &password,
+        resource_id: resource_id.clone(),
+    }).ok());
+
+    assert!(registry.allow_whitelist(RegistryAllow { 
+        id: &id, 
+        password: &password, 
+        resource_id: resource_id.clone(), 
+        access: Access::Shared(1) 
+    }).ok());
+
+    assert!(registry.allow_whitelist(RegistryAllow { 
+        id: &id, 
+        password: &password, 
+        resource_id: resource_id.clone(), 
+        access: Access::Unique 
+    }).ok());
+
+    assert!(registry.checked_replace(RegistryReplacement {
+        user_details: Some((&id, &password)),
+        access: &Access::Replace,
+        resource_id: resource_id.clone(),
+        resource: Some(resource.clone()),
+        password: None,
+    }).ok());
+
+    let result = registry.acquire_access::<AccessResult<'_, Resource>>(RegistryAcquireAccess {
+        user_details: None,
+        resource_id: resource_id.clone(),
+        access: Access::Shared(1),
+        password: None
+    });
+
+    assert_eq!(result, Ok(AccessResult::Shared(&resource)));
 }
