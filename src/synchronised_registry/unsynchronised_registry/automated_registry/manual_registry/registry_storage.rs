@@ -32,11 +32,11 @@ pub trait RegistryStorage {
     /// # Safety
     /// 
     /// return must guarantee semantics
-    unsafe fn next_insert_reallocates(&self) -> bool;
+    unsafe fn next_insert_may_reallocates(&self) -> bool;
 
     /// # Safety
     /// 
     /// return must guarantee semantics
-    unsafe fn next_removal_reallocates(&self) -> bool;
+    unsafe fn next_removal_may_reallocates(&self) -> bool;
 }
 

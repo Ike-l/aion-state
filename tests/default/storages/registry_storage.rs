@@ -8,7 +8,8 @@ pub struct RegistryStorage<ResourceId, StoredResource> {
 
 impl<ResourceId, StoragedResource> Default for RegistryStorage<ResourceId, StoragedResource> {
     fn default() -> Self {
-        Self { inner: Default::default() }
+        let capacity = 100;
+        Self { inner: HashMap::with_capacity(capacity) }
     }
 }
 
@@ -59,5 +60,13 @@ impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage
 
     fn len(&self) -> usize {
         self.inner.len()
+    }
+
+    unsafe fn next_insert_may_reallocates(&self) -> bool {
+        self.len() >= self.inner.capacity()
+    }
+
+    unsafe fn next_removal_may_reallocates(&self) -> bool {
+        false
     }
 }

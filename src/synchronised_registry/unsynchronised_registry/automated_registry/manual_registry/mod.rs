@@ -127,12 +127,12 @@ impl<
         let contains_value = self.storage.contains_key(&manual_registry_replacement_input.value_id);
         
         let inserting = has_value && manual_registry_replacement_input.access.can_insert_resource() && !contains_value;
-        if inserting && unsafe { self.storage.next_insert_reallocates() } {
+        if inserting && unsafe { self.storage.next_insert_may_reallocates() } {
             return ManualRegistryCheckedReplacementResult::InsertingReallocates;
         }
 
         let removing = !has_value && manual_registry_replacement_input.access.can_remove_resource() && contains_value;
-        if removing && unsafe { self.storage.next_removal_reallocates() } {
+        if removing && unsafe { self.storage.next_removal_may_reallocates() } {
             return ManualRegistryCheckedReplacementResult::RemovalReallocates;
         }
 
