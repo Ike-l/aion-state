@@ -798,7 +798,9 @@ pub enum SynchronisedRegistryAcquireAccessError {
     #[error("Control Storage Ownership Denied")]
     OwnershipDenied,
     #[error("Whitelist & Blacklist Check Access Denied")]
-    ListsDenied
+    ListsDenied,
+    #[error("Access Denied Acquiring")]
+    TriedAcquiring
 }
 
 impl From<UnsynchronisedRegistryAcquireAccessError> for SynchronisedRegistryAcquireAccessError {
@@ -809,6 +811,9 @@ impl From<UnsynchronisedRegistryAcquireAccessError> for SynchronisedRegistryAcqu
                     ManualRegistryAccessError::NotFound => {
                         Self::NotFound
                     },
+                    ManualRegistryAccessError::TriedAcquiring => {
+                        Self::TriedAcquiring
+                    }
                 }
             },
             UnsynchronisedRegistryAcquireAccessError::Reception(reception_check_access_result) => {

@@ -17,7 +17,7 @@ pub trait Accessor {
     fn acquire<'a, V: StoredValueTrait, R: AccessorResult<'a, V::Value>>(
         &self, 
         stored_value: &'a mut V
-    ) -> R;
+    ) -> Option<R>;
 
     /// If `can_access(self, other)` then `merge(self, other)`
     /// 

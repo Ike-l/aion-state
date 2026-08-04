@@ -1,5 +1,6 @@
 pub enum ManualRegistryAccessError {
     NotFound,
+    TriedAcquiring,
 }
 
 pub enum ManualRegistryReplacementResult<ReplacementResult> {

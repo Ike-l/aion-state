@@ -100,14 +100,14 @@ impl Accessor for Access {
     fn acquire<'a, V: StoredValueTrait, R: AccessorResult<'a, V::Value>>(
         &self, 
         stored_value: &'a mut V
-    ) -> R {
+    ) -> Option<R> {
         event!(Level::TRACE, "Access Acquire");
 
         match self {
-            Access::Shared(0) => unreachable!(),
-            Access::Shared(_) => R::new_shared(stored_value.as_shared()),
-            Access::Unique => R::new_unique(stored_value.as_unique()),
-            Access::Replace => unreachable!(),
+            Access::Shared(0) => None,
+            Access::Shared(_) => Some(R::new_shared(stored_value.as_shared())),
+            Access::Unique => Some(R::new_unique(stored_value.as_unique())),
+            Access::Replace => None,
         }
     }
 }

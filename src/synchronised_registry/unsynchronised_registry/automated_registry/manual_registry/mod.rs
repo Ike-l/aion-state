@@ -29,7 +29,7 @@ impl<
 
         match self.storage.get_mut(value_id) {
             Some(stored_value) => {
-                Ok(access.acquire::<S::Value, AccessResult>(stored_value))
+                access.acquire::<S::Value, AccessResult>(stored_value).ok_or(ManualRegistryAccessError::TriedAcquiring)
             },
             None => Err(ManualRegistryAccessError::NotFound),
         }
