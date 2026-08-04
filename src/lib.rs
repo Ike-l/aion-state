@@ -60,7 +60,8 @@ pub mod prelude {
             UnsynchronisedRegistryUnreserveResult as RegistryUnreserveResult,
             UnsynchronisedRegistryDrainReservationsResult as RegistryDrainReservationsResult,
             UnsynchronisedRegistryAcquireAccessError as RegistryAcquireAccessError,
-            UnsynchronisedRegistrySaferReplacementResult as RegistrySaferReplacementResult,
+            UnsynchronisedRegistryReallocatingReplacementResult as RegistryReallocatingReplacementResult,
+            UnsynchronisedRegistryCheckedReplacementResult as RegistryCheckedReplacementResult,
             UnsynchronisedRegistryContainsResourceResult as RegistryContainsResourceResult,
         },
     };
@@ -81,7 +82,8 @@ pub mod prelude {
             SynchronisedRegistryReleaseResourceAllResult as RegistryReleaseResourceAllResult,
             SynchronisedRegistryReleaseResourceResult as RegistryReleaseResourceResult,
             SynchronisedRegistryReservationResult as RegistryReservationResult,
-            SynchronisedRegistrySaferReplacementResult as RegistrySaferReplacementResult,
+            SynchronisedRegistryReallocatingReplacementResult as RegistryReallocatingReplacementResult,
+            SynchronisedRegistryCheckedReplacementResult as RegistryCheckedReplacementResult,
             SynchronisedRegistryUnregisterResult as RegistryUnregisterResult,
             SynchronisedRegistryUnreserveResult as RegistryUnreserveResult,
             SynchronisedRegistryUpdatePasswordResult as RegistryUpdatePasswordResult,
@@ -162,7 +164,8 @@ pub mod prelude {
                 SynchronisedRegistryReleaseResourceAllResult,
                 SynchronisedRegistryReleaseResourceResult,
                 SynchronisedRegistryReservationResult,
-                SynchronisedRegistrySaferReplacementResult,
+                SynchronisedRegistryReallocatingReplacementResult,
+                SynchronisedRegistryCheckedReplacementResult,
                 SynchronisedRegistryUnregisterResult,
                 SynchronisedRegistryUnreserveResult,
                 SynchronisedRegistryUpdatePasswordResult,
@@ -206,7 +209,8 @@ pub mod prelude {
                     UnsynchronisedRegistryUnreserveResult,
                     UnsynchronisedRegistryDrainReservationsResult,
                     UnsynchronisedRegistryAcquireAccessError,
-                    UnsynchronisedRegistrySaferReplacementResult,
+                    UnsynchronisedRegistryReallocatingReplacementResult,
+                    UnsynchronisedRegistryCheckedReplacementResult,
                     UnsynchronisedRegistryContainsResourceResult,
                 },
                 coordinated_reception::{
@@ -465,6 +469,7 @@ pub mod prelude {
                         manual_registry_result::{
                             ManualRegistryAccessError, 
                             ManualRegistryReplacementResult,
+                            ManualRegistryCheckedReplacementResult,
                         },
                         registry_storage::{
                             RegistryStorage

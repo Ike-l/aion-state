@@ -2,7 +2,7 @@ use std::cell::UnsafeCell;
 
 use stable_deref_trait::StableDeref;
 
-use crate::prelude::{Accessor, AccessorResult, ManualRegistry, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoredValueTrait, trace_function};
+use crate::prelude::{Accessor, AccessorResult, ManualRegistry, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoredValueTrait, trace_function};
 
 pub mod manual_registry;
 
@@ -58,9 +58,27 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     ) -> ManualRegistryReplacementResult<<S::Value as StoredValueTrait>::Value> 
         where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
     {
-        trace_function!("Automated Safer Replacement");
+        trace_function!("Automated Reallocating Replacement");
 
         unsafe { self.get_inner_mut().reallocating_replace(manual_registry_replacement_input) }
+    }
+
+    /// # Safety 
+    /// 
+    /// No Concurrent References
+    /// 
+    /// Insert won't invalidate concurrent access
+    /// 
+    /// ^ i.e do not replace a borrowed item
+    pub unsafe fn checked_replace<Access: Accessor>(
+        &self,
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoredValueTrait>::Value>
+    ) -> ManualRegistryCheckedReplacementResult<<S::Value as StoredValueTrait>::Value> 
+        where <S as RegistryStorage>::Value: StoredValueTrait
+    {
+        trace_function!("Automated Checked Replacement");
+
+        unsafe { self.get_inner_mut().checked_replace(manual_registry_replacement_input) }
     }
 
     /// # Safety

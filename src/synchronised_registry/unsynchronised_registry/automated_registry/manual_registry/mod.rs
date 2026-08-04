@@ -1,7 +1,7 @@
 use stable_deref_trait::StableDeref;
 use tracing::{Level, event};
 
-use crate::prelude::{Accessor, AccessorResult, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoredValueTrait, trace_function};
+use crate::prelude::{Accessor, AccessorResult, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoredValueTrait, trace_function};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
@@ -35,7 +35,6 @@ impl<
         }
     }
 
-    // private until i can figure out a way to detect reallocations before they happen
     /// Safety:
     /// Insert won't invalidate concurrent access
     /// ^ i.e do not "replace" a borrowed item
@@ -91,10 +90,9 @@ impl<
         }
     }
 
-    // safer bc trade reallocation requirement for the don't reference the stable address stored value itself
     /// # Safety
     /// 
-    /// Access cannot be used to 'acquire' a reference to StableAddress itself
+    /// Access cannot be used to 'acquire' a reference to StableDeref itself
     /// 
     /// Insert won't invalidate concurrent access
     /// 
@@ -105,11 +103,40 @@ impl<
     ) -> ManualRegistryReplacementResult<<S::Value as StoredValueTrait>::Value> 
         where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
     {
-        trace_function!("Manual Safe Replacement");
+        trace_function!("Manual Reallocating Replacement");
 
         // Safety:
         // if a container of StableAddress reallocates, pointers are still valid
         unsafe { self.replace(manual_registry_replacement_input) }
+    }
+
+    /// # Safety
+    /// 
+    /// Insert won't invalidate concurrent access
+    /// 
+    /// ^ i.e do not replace a borrowed item
+    pub unsafe fn checked_replace<Access: Accessor>(
+        &mut self,
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoredValueTrait>::Value>
+    ) -> ManualRegistryCheckedReplacementResult<<S::Value as StoredValueTrait>::Value> 
+        where <S as RegistryStorage>::Value: StoredValueTrait
+    {
+        trace_function!("Manual Checked Replacement");
+
+        let has_value = manual_registry_replacement_input.value.is_some();
+        let contains_value = self.storage.contains_key(&manual_registry_replacement_input.value_id);
+        
+        let inserting = has_value && manual_registry_replacement_input.access.can_insert_resource() && !contains_value;
+        if inserting && unsafe { self.storage.next_insert_reallocates() } {
+            return ManualRegistryCheckedReplacementResult::InsertingReallocates;
+        }
+
+        let removing = !has_value && manual_registry_replacement_input.access.can_remove_resource() && contains_value;
+        if removing && unsafe { self.storage.next_removal_reallocates() } {
+            return ManualRegistryCheckedReplacementResult::RemovalReallocates;
+        }
+
+        ManualRegistryCheckedReplacementResult::ReplacementResult(unsafe { self.replace(manual_registry_replacement_input) })
     }
 
     pub fn contains_key(

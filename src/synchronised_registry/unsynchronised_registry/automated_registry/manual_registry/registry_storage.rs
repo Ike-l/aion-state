@@ -29,7 +29,14 @@ pub trait RegistryStorage {
 
     fn keys(&self) -> impl Iterator<Item = &Self::ValueId>;
 
-    fn next_insert_reallocates(&self) -> bool;
-    fn next_removal_reallocates(&self) -> bool;
+    /// # Safety
+    /// 
+    /// return must guarantee semantics
+    unsafe fn next_insert_reallocates(&self) -> bool;
+
+    /// # Safety
+    /// 
+    /// return must guarantee semantics
+    unsafe fn next_removal_reallocates(&self) -> bool;
 }
 
