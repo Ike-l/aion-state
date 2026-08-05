@@ -26,7 +26,7 @@ impl<
         trace_function!("Synchronised Registry Register Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.register(input).into()
+        self.register(input)
     }
 
     pub async fn unregister_async(
@@ -36,7 +36,7 @@ impl<
         trace_function!("Synchronised Registry Unregister Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.unregister(input).into()
+        self.unregister(input)
     }
 
     pub async fn update_password_async(
@@ -46,7 +46,7 @@ impl<
         trace_function!("Synchronised Registry Update Password Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.update_password(input).into()
+        self.update_password(input)
     }
 
 
@@ -57,7 +57,7 @@ impl<
         trace_function!("Synchronised Registry Own Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.own(input).into()
+        self.own(input)
     }
 
     pub async fn release_resource_async(
@@ -67,7 +67,7 @@ impl<
         trace_function!("Synchronised Registry Release Resource Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.release_resource(input).into()
+        self.release_resource(input)
     } 
 
     pub async fn release_resource_all_async<'a>(
@@ -77,7 +77,7 @@ impl<
         trace_function!("Synchronised Registry Release Resource All Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.release_resource_all(input).into()
+        self.release_resource_all(input)
     }
 
 
@@ -88,7 +88,7 @@ impl<
         trace_function!("Synchronised Registry Allow Blacklist Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.allow_blacklist(input).into()
+        self.allow_blacklist(input)
     }
 
     pub async fn allow_whitelist_async(
@@ -98,7 +98,7 @@ impl<
         trace_function!("Synchronised Registry Allow Whitelist Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.allow_whitelist(input).into()
+        self.allow_whitelist(input)
     }
 
     pub async fn unallow_blacklist_async(
@@ -108,7 +108,7 @@ impl<
         trace_function!("Synchronised Registry Unallow Blacklist Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.unallow_blacklist(input).into()
+        self.unallow_blacklist(input)
     }
 
     pub async fn unallow_whitelist_async(
@@ -118,7 +118,7 @@ impl<
         trace_function!("Synchronised Registry Unallow Whitelist Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.unallow_whitelist(input).into()
+        self.unallow_whitelist(input)
     }
 
     pub async fn check_access_async(
@@ -128,7 +128,7 @@ impl<
         trace_function!("Synchronised Registry Check Access Async");
 
         let _sync = self.a_sync.read().await;
-        self.check_access(input).into()
+        self.check_access(input)
     }
 
     /// # Safety
@@ -145,7 +145,7 @@ impl<
         trace_function!("Synchronised Registry Release Access Async");
 
         let _a_sync = self.a_sync.write().await;
-        unsafe { self.release_access(input) }.into()
+        unsafe { self.release_access(input) }
     }
 
     /// # Safety
@@ -159,7 +159,7 @@ impl<
         trace_function!("Synchronised Registry Release Access Async");
 
         let _a_sync = self.a_sync.write().await;
-        unsafe { unsynchronised_registry.release_access(input) }.into()
+        unsafe { unsynchronised_registry.release_access(input) }
     }
 
     pub async fn reserve_async(
@@ -169,7 +169,7 @@ impl<
         trace_function!("Synchronised Registry Reserve Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.reserve(input).into()
+        self.reserve(input)
     }
 
     pub async fn unreserve_async(
@@ -179,7 +179,7 @@ impl<
         trace_function!("Synchronised Registry Unreserve Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.unreserve(input).into()
+        self.unreserve(input)
     }
 
     pub async fn drain_reservations_async(
@@ -189,7 +189,7 @@ impl<
         trace_function!("Synchronised Registry Drain Reservations Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.drain_reservations(input).into()
+        self.drain_reservations(input)
     }
 
 
@@ -202,7 +202,7 @@ impl<
         trace_function!("Synchronised Registry Acquire Access Async");
 
         let _a_sync = self.a_sync.write().await;
-        self.acquire_access(input).into()
+        self.acquire_access(input)
     }
 
     pub async fn reallocating_replace_async(
@@ -214,7 +214,7 @@ impl<
         trace_function!("Synchronised Registry Reallocating Replace Async");
         
         let _a_sync = self.a_sync.write().await;
-        self.reallocating_replace(input).into()
+        self.reallocating_replace(input)
     }
 
     pub async fn checked_replace_async(
@@ -226,7 +226,7 @@ impl<
         trace_function!("Synchronised Registry Checked Replace Async");
         
         let _a_sync = self.a_sync.write().await;
-        self.checked_replace(input).into()
+        self.checked_replace(input)
     }
 
     pub async fn contains_resource_async(
@@ -236,7 +236,7 @@ impl<
         trace_function!("Synchronised Registry Contains Resource Async");
 
         let _a_sync = self.a_sync.read().await;
-        self.contains_resource(input).into()
+        self.contains_resource(input)
     }
 
     pub async fn len_async(&self) -> usize {
