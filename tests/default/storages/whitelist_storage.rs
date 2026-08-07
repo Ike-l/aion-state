@@ -2,11 +2,12 @@ use std::{collections::HashMap, hash::Hash};
 
 use tracing::{Level, event};
 
-pub struct WhitelistStorage<ResourceId, Access> {
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct WhitelistStorage<ResourceId: Hash + Eq, Access> {
     inner: HashMap<ResourceId, Vec<Access>>
 }
 
-impl<ResourceId, Access> Default for WhitelistStorage<ResourceId, Access> {
+impl<ResourceId: Hash + Eq, Access> Default for WhitelistStorage<ResourceId, Access> {
     fn default() -> Self {
         Self { inner: Default::default() }
     }

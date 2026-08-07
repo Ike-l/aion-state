@@ -3,18 +3,20 @@ use std::{collections::HashMap, hash::Hash};
 use rand::{Rng, rngs::ThreadRng};
 use tracing::{Level, event};
 
-pub struct BlacklistStorage<ResourceId, Access, Password> {
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct BlacklistStorage<ResourceId: Hash + Eq, Access, Password> {
     inner: HashMap<ResourceId, Vec<(Access, Password)>>,
+    #[serde(skip)]
     rng: ThreadRng
 }
 
-impl<ResourceId, Access, Password> Default for BlacklistStorage<ResourceId, Access, Password> {
+impl<ResourceId: Hash + Eq, Access, Password> Default for BlacklistStorage<ResourceId, Access, Password> {
     fn default() -> Self {
         Self { inner: Default::default(), rng: ThreadRng::default() }
     }
 }
 
-impl<ResourceId, Access, Password> BlacklistStorage<ResourceId, Access, Password>
+impl<ResourceId: Hash + Eq, Access, Password> BlacklistStorage<ResourceId, Access, Password>
     where u64: Into<Password>
 {
     pub fn generate_password(&mut self) -> Password {

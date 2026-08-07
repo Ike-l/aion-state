@@ -4,11 +4,12 @@ use tracing::{Level, event};
 
 use aion_state::prelude::Accesses;
 
-pub struct ReservationStorage<ReserverId, AccessStorage> {
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct ReservationStorage<ReserverId: Hash + Eq, AccessStorage> {
     inner: HashMap<ReserverId, Accesses<AccessStorage>>
 }
 
-impl<ReserverId, AccessStorage> Default for ReservationStorage<ReserverId, AccessStorage> {
+impl<ReserverId: Hash + Eq, AccessStorage> Default for ReservationStorage<ReserverId, AccessStorage> {
     fn default() -> Self {
         Self { inner: Default::default() }
     }

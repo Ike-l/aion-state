@@ -2,11 +2,12 @@ use std::{collections::HashMap, hash::Hash};
 
 use tracing::{Level, event};
 
-pub struct AccessStorage<ResourceId, Access> {
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct AccessStorage<ResourceId: Eq + Hash, Access> {
     inner: HashMap<ResourceId, Access>
 }
 
-impl<ResourceId, Access> Default for AccessStorage<ResourceId, Access> {
+impl<ResourceId: Eq + Hash, Access> Default for AccessStorage<ResourceId, Access> {
     fn default() -> Self {
         Self { inner: Default::default() }
     }

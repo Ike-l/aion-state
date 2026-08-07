@@ -2,11 +2,12 @@ use std::{collections::HashMap, hash::Hash};
 
 use tracing::{Level, event};
 
-pub struct RegistryStorage<ResourceId, StoredResource> {
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct RegistryStorage<ResourceId: Hash + Eq, StoredResource> {
     inner: HashMap<ResourceId, StoredResource>
 }
 
-impl<ResourceId, StoragedResource> Default for RegistryStorage<ResourceId, StoragedResource> {
+impl<ResourceId: Hash + Eq, StoragedResource> Default for RegistryStorage<ResourceId, StoragedResource> {
     fn default() -> Self {
         let capacity = 100;
         Self { inner: HashMap::with_capacity(capacity) }

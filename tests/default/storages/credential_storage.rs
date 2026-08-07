@@ -2,11 +2,12 @@ use std::{collections::HashMap, hash::Hash};
 
 use tracing::{Level, event};
 
-pub struct CredentialStorage<Id, Password> {
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct CredentialStorage<Id: Hash + Eq, Password> {
     inner: HashMap<Id, Password>
 }
 
-impl<Id, Password> Default for CredentialStorage<Id, Password> {
+impl<Id: Hash + Eq, Password> Default for CredentialStorage<Id, Password> {
     fn default() -> Self {
         Self { inner: Default::default() }
     }

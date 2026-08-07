@@ -7,7 +7,7 @@ enum BorrowType {
     Held, Instant
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, serde::Serialize, serde::Deserialize)]
 pub enum Access {
     Shared(usize),
     Unique,

@@ -2,11 +2,12 @@ use std::{collections::HashMap, hash::Hash};
 
 use tracing::{Level, event};
 
-pub struct ControlStorage<Id, ResourceId> {
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct ControlStorage<Id, ResourceId: Hash + Eq> {
     inner: HashMap<ResourceId, Id>
 }
 
-impl<Id, ResourceId> Default for ControlStorage<Id, ResourceId> {
+impl<Id, ResourceId: Hash + Eq> Default for ControlStorage<Id, ResourceId> {
     fn default() -> Self {
         Self { inner: Default::default() }
     }
