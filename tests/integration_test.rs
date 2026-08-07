@@ -3,6 +3,8 @@ use aion_state::prelude::Registry;
 pub mod default;
 mod golden_path;
 mod acquire_access;
+mod serde;
+mod brute;
 
 use default::prelude::*;
 

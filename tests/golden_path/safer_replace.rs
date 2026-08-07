@@ -11,14 +11,14 @@ fn can_safer_replace() {
     let result = registry.checked_replace(RegistryReplacement {
         user_details: None,
         access: &Access::Replace,
-        resource_id: ResourceId::Label("Foo".to_string()),
+        resource_id: ResourceId::new_label("Foo".to_string()),
         resource: Some(Resource::new("foo".to_string())),
         password: None,
     });
 
     assert!(result.ok());
 
-    assert!(registry.contains_resource(&RegistryContainsResource { resource_id: &ResourceId::Label("Foo".to_string()) }).ok());
+    assert!(registry.contains_resource(&RegistryContainsResource { resource_id: &ResourceId::new_label("Foo".to_string()) }).ok());
 }
 
 
@@ -34,7 +34,7 @@ fn multi_safer_replace() {
 
     let n = 100;
     for raw_resource in raw_resources.take(n) {
-        let resource_id = ResourceId::Label(raw_resource.to_string());
+        let resource_id = ResourceId::new_label(raw_resource.to_string());
         let resource = Resource::new(raw_resource.to_string());
         let result = registry.checked_replace(RegistryReplacement {
             user_details: None,
