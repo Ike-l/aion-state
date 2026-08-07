@@ -10,7 +10,7 @@ pub mod host_result;
 
 /// Gates accesses using reservations
 /// (`reservation` semantics are applied, then `accesses` semantics are applied)
-#[derive(Default)]
+#[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct Host<RS, AS> {
     reservations: Reservations<RS>,
     accesses: Accesses<AS>,

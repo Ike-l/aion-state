@@ -13,7 +13,7 @@ pub mod access_control_result;
 /// Semantic difference between `Whitelist` & `Blacklist` is simply that the blacklist takes a password whereas a whitelist doesn't
 ///
 /// Whitelist is good because if a resource is `owned` it is automatically rejected unless it is allowed by the control
-#[derive(Default)]
+#[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct AccessControl<WS, BS> {
     whitelist: Whitelist<WS>,
     blacklist: Blacklist<BS>,

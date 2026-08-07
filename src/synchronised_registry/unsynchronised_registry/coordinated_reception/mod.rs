@@ -9,6 +9,34 @@ pub struct CoordinatedReception<RS, AS, OS, PS, LS, OSS> {
     reception: RwLock<Reception<RS, AS, OS, PS, LS, OSS>>
 }
 
+impl<RS, AS, OS, PS, LS, OSS> serde::Serialize
+    for CoordinatedReception<RS, AS, OS, PS, LS, OSS>
+where
+    Reception<RS, AS, OS, PS, LS, OSS>: serde::Serialize,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        self.reception.read().serialize(serializer)
+    }
+}
+
+impl<'de, RS, AS, OS, PS, LS, OSS> serde::Deserialize<'de>
+    for CoordinatedReception<RS, AS, OS, PS, LS, OSS>
+where
+    Reception<RS, AS, OS, PS, LS, OSS>: serde::Deserialize<'de>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        Ok(Self {
+            reception: RwLock::new(Reception::deserialize(deserializer)?),
+        })
+    }
+}
+
 impl<
     RS: ReservationStorage<AccessStorage = AS>,
     AS: AccessStorage + Default,

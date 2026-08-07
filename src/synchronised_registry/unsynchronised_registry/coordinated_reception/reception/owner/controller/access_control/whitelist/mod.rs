@@ -6,7 +6,7 @@ pub mod whitelist_input;
 pub mod whitelist_result;
 
 /// Accesses are allowed without password
-#[derive(Default)]
+#[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct Whitelist<WS> {
     whitelist_storage: WS
 }

@@ -5,7 +5,7 @@ pub mod accesses_result;
 pub mod access_storage;
 
 /// Wraps `AccessStorage` with `Accessor`
-#[derive(Default)]
+#[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct Accesses<AS> {
     access_storage: AS
 }

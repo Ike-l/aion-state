@@ -6,7 +6,7 @@ pub mod authenticator_input;
 pub mod authenticator_result;
 
 /// wraps `credential storage`
-#[derive(Default)]
+#[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct Authenticator<CS> {
     credentials: CS,
 }

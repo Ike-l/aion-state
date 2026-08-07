@@ -13,7 +13,7 @@ pub mod controller_result;
 /// `Resource Control` links an `id` with a `resource id`
 /// 
 /// `Access Control` forms `resource id` `access` pairs with an optional password
-#[derive(Default)]
+#[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct Controller<WS, BS, CS> {
     access_control: AccessControl<WS, BS>,
     resource_control: ResourceControl<CS>

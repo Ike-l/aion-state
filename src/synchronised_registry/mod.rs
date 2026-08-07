@@ -25,11 +25,15 @@ pub mod impl_async_notifier_releaser;
 
 /// Separate Sync bc the point is to not use RAII, 
 /// removing the sync and making the functions take `&mut self` would require some form of RAII in mt situations
+#[derive(serde::Serialize, serde::Deserialize)]
 pub struct SynchronisedRegistry<S: RegistryStorage, RS, AS, OS, WS, BS, CS> {
     #[cfg(feature = "async")]
+    #[serde(skip)]
     a_sync: tokio::sync::RwLock<()>,
     #[cfg(feature = "notifier")]
+    #[serde(skip)]
     notify_queue: crate::prelude::sync::Mutex<crate::prelude::NotifyQueue<S::ValueId>>,
+    #[serde(skip)]
     sync: RwLock<()>,
     unsynchronised_registry: UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS>,
 }

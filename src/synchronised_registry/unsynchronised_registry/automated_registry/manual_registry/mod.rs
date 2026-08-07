@@ -8,7 +8,7 @@ pub mod manual_registry_input;
 pub mod manual_registry_result;
 
 /// Wraps storage using `Accessor`
-#[derive(Default)]
+#[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct ManualRegistry<S> {
     storage: S,
 }

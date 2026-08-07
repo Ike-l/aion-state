@@ -14,6 +14,26 @@ pub struct AutomatedRegistry<S> {
     manual_registry: UnsafeCell<ManualRegistry<S>>
 }
 
+impl<T: serde::Serialize + RegistryStorage> serde::Serialize for AutomatedRegistry<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer {
+        unsafe { self.get_inner().serialize(serializer) }
+    }
+}
+
+impl<'de, T: serde::Deserialize<'de> + RegistryStorage> serde::Deserialize<'de> for AutomatedRegistry<T> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>
+    {
+        Ok(Self {
+            manual_registry: UnsafeCell::new(ManualRegistry::deserialize(deserializer)?)
+        })
+    }
+}
+
+
 impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// # Safety 
     /// 

@@ -11,7 +11,7 @@ pub mod reservation_storage;
 // in future want another layer to track reservation users? - i.e to unreserve you must be the same person who reserved it
 
 /// Wraps reservation storage with `Accessor` semantics
-#[derive(Default)]
+#[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct Reservations<RS> {
     reservation_storage: RS,
 }

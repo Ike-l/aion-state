@@ -11,7 +11,7 @@ pub mod registry_input;
 #[cfg(feature = "releaser")]
 pub mod impl_releaser;
 
-#[derive(Default)]
+#[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct UnsynchronisedRegistry<S: RegistryStorage, RS, AS, OS, WL, BL, CS> {
     automated_registry: AutomatedRegistry<S>,
     reception: CoordinatedReception<RS, AS, OS, WL, BL, CS>,
