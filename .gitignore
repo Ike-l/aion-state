@@ -1,3 +1,4 @@
 /target
 .VSCodeCounter
 .DS_Store
+test_*.txt

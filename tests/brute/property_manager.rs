@@ -37,7 +37,8 @@ impl PropertyManager {
                             }
                         } else {
                             if !contains {
-                                // sometimes is not inserted (so its a replace?)
+                                // can fail if len >= capacity (would reallocate)
+                                // put test in later?
                                 assert_eq!(resources + 1, registry.len(), "Result: {result}");
                             } else {
                                 assert_eq!(resources, registry.len());
