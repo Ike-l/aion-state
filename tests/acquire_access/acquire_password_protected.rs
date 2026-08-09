@@ -15,7 +15,7 @@ use crate::create_registry;
 
 #[test]
 fn cant_acquire_others_whitelist() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id = ResourceId::new_type::<String>();
     let resource = Resource::new("resource".to_string());
@@ -61,7 +61,7 @@ fn cant_acquire_others_whitelist() {
 
 #[test]
 fn can_acquire_others_whitelist() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id = ResourceId::new_type::<String>();
     let resource = Resource::new("resource".to_string());
@@ -107,7 +107,7 @@ fn can_acquire_others_whitelist() {
 
 #[test]
 fn can_acquire_others_multiple_whitelist_u() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id = ResourceId::new_type::<String>();
     let mut resource = Resource::new("resource".to_string());
@@ -160,7 +160,7 @@ fn can_acquire_others_multiple_whitelist_u() {
 
 #[test]
 fn can_acquire_others_multiple_whitelist_s() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id = ResourceId::new_type::<String>();
     let resource = Resource::new("resource".to_string());

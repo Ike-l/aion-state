@@ -6,7 +6,7 @@ use crate::create_registry;
 
 #[test]
 fn can_acquire_many() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id1 = ResourceId::new_label("1");
     let resource1 = Resource::new("resource1".to_string());

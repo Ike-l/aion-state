@@ -6,7 +6,7 @@ use crate::default::prelude::*;
 use crate::create_registry;
 
 fn can_safer_replace() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let result = registry.checked_replace(RegistryReplacement {
         user_details: None,
@@ -28,7 +28,7 @@ fn can_safer_replace_normal() {
 }
 
 fn multi_safer_replace() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let raw_resources = 0..;
 

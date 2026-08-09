@@ -6,7 +6,7 @@ use crate::default::prelude::*;
 use crate::create_registry;
 
 fn can_own() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let id = ReserverId::new("foo");
     let password = Password::from(1);
@@ -31,7 +31,7 @@ fn can_own_normal() {
 }
 
 fn owning_blocks_by_default() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let id = ReserverId::new("foo");
     let password = Password::from(1);

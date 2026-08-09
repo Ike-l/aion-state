@@ -6,7 +6,7 @@ use crate::create_registry;
 
 #[test]
 fn can_acquire_nothing() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id = ResourceId::new_type::<String>();
     let resource = Resource::new("resource".to_string());

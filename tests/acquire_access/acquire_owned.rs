@@ -6,7 +6,7 @@ use crate::create_registry;
 
 #[test]
 fn cant_acquire_owned() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id = ResourceId::new_type::<String>();
     let resource = Resource::new("resource".to_string());
@@ -45,7 +45,7 @@ fn cant_acquire_owned() {
 
 #[test]
 fn can_acquire_owned() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id = ResourceId::new_type::<String>();
     let resource = Resource::new("resource".to_string());

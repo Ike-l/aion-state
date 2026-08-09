@@ -166,3 +166,11 @@ impl<
         self.storage.keys().cloned().collect()
     }
 }
+
+impl<S> ManualRegistry<S> {
+    pub fn new(storage: S) -> Self {
+        Self {
+            storage,
+        }
+    }
+}

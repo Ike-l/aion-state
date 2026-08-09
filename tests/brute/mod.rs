@@ -23,8 +23,9 @@ fn run() {
     let id_length = 10;
     let label_length = 10;
     let chance_to_be_known = 0.9; // 90%
+    let capacity = 10000;
     
-    let registry = Arc::new(create_registry());
+    let registry = Arc::new(create_registry(Some(capacity)));
     let property_manager = Arc::new(PropertyManager::new());
     
     let sync: Arc<Mutex<RawMutex, ()>> = Arc::new(Mutex::new(()));

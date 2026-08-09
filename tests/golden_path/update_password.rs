@@ -4,7 +4,7 @@ use crate::default::prelude::*;
 use crate::create_registry;
 
 fn can_update_password() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let id = ReserverId::new("foo");
     let password = Password::from(1);

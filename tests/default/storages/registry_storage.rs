@@ -12,7 +12,17 @@ pub struct RegistryStorage<ResourceId: Hash + Eq, StoredResource> {
 impl<ResourceId: Hash + Eq, StoragedResource> Default for RegistryStorage<ResourceId, StoragedResource> {
     fn default() -> Self {
         let capacity = 1000;
-        Self { inner: HashMap::with_capacity(capacity), calculated_len: 0, capacity }
+        Self::new(capacity)
+    }
+}
+
+impl<ResourceId: Hash + Eq, StoredResource> RegistryStorage<ResourceId, StoredResource> {
+    pub fn new(capacity: usize) -> Self {
+        Self {
+            inner: HashMap::with_capacity(capacity),
+            calculated_len: 0,
+            capacity
+        }
     }
 }
 

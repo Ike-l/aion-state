@@ -137,3 +137,11 @@ impl<
         unsafe { self.get_inner() }.keys()
     }
 }
+
+impl<S> AutomatedRegistry<S> {
+    pub fn new(storage: S) -> Self {
+        Self {
+            manual_registry: UnsafeCell::new(ManualRegistry::new(storage)),
+        }
+    }
+}

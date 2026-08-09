@@ -6,7 +6,7 @@ use crate::create_registry;
 
 #[test]
 fn can_acquire_conflicting_u() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id = ResourceId::new_label("1");
     let resource = Resource::new("resource".to_string());
@@ -45,7 +45,7 @@ fn can_acquire_conflicting_u() {
 
 #[test]
 fn can_acquire_conflicting_s() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id = ResourceId::new_label("1");
     let resource = Resource::new("resource".to_string());
@@ -84,7 +84,7 @@ fn can_acquire_conflicting_s() {
 
 #[test]
 fn can_acquire_conflicting_uu() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id = ResourceId::new_label("1");
     let resource = Resource::new("resource".to_string());

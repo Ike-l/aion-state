@@ -370,3 +370,12 @@ impl<
         unsafe { self.automated_registry.keys() }
     }
 }
+
+impl<S: RegistryStorage, RS: Default, AS: Default, OS: Default, WS: Default, BS: Default, CS: Default> UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> {
+    pub fn new(storage: S) -> Self {
+        Self {
+            automated_registry: AutomatedRegistry::new(storage),
+            reception: Default::default(),
+        }
+    }
+}

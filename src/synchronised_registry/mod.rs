@@ -378,3 +378,14 @@ impl<
         unsafe { self.unsynchronised_registry.keys() }
     }
 }
+
+impl<S: RegistryStorage, RS: Default, AS: Default, OS: Default, WS: Default, BS: Default, CS: Default> SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> {
+    pub fn new(storage: S) -> Self {
+        Self {
+            a_sync: Default::default(),
+            notify_queue: Default::default(),
+            sync: Default::default(),
+            unsynchronised_registry: UnsynchronisedRegistry::new(storage),
+        }
+    }
+}

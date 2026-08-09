@@ -6,7 +6,7 @@ use crate::create_registry;
 
 #[test]
 fn can_serde_with_owned() {
-    let registry = create_registry();
+    let registry = create_registry(None);
 
     let resource_id = ResourceId::new_label("Bar");
     let resource = Resource::new("baz".to_string());

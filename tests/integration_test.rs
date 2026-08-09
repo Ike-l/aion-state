@@ -32,8 +32,10 @@ fn init_tracing() {
 
 pub type TestRegistry = Registry<RegistryStorage<ResourceId, StoredResource>, ReservationStorage<ReserverId, AccessStorage<ResourceId, Access>>, AccessStorage<ResourceId, Access>, CredentialStorage<ReserverId, Password>, WhitelistStorage<ResourceId, Access>, BlacklistStorage<ResourceId, Access, Password>, ControlStorage<ReserverId, ResourceId>>;
 
-pub fn create_registry() -> TestRegistry {
+pub fn create_registry(capacity: Option<usize>) -> TestRegistry {
     init_tracing();
 
-    Registry::default()
+    let registry_storage = RegistryStorage::new(capacity.unwrap_or(100));
+
+    Registry::new(registry_storage)
 }
