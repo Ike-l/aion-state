@@ -4,13 +4,15 @@ use tracing::{Level, event};
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct RegistryStorage<ResourceId: Hash + Eq, StoredResource> {
-    inner: HashMap<ResourceId, StoredResource>
+    inner: HashMap<ResourceId, StoredResource>,
+    calculated_len: usize,
+    capacity: usize
 }
 
 impl<ResourceId: Hash + Eq, StoragedResource> Default for RegistryStorage<ResourceId, StoragedResource> {
     fn default() -> Self {
-        let capacity = 100;
-        Self { inner: HashMap::with_capacity(capacity) }
+        let capacity = 1000;
+        Self { inner: HashMap::with_capacity(capacity), calculated_len: 0, capacity }
     }
 }
 
@@ -38,7 +40,13 @@ impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage
     ) -> Option<Self::Value> {
         event!(Level::TRACE, "RegistryStorage insert");
 
-        self.inner.insert(value_id, value)
+        let r = self.inner.insert(value_id, value);
+
+        if r.is_none() {
+            self.calculated_len += 1;
+        }
+
+        r
     }
 
     fn remove(
@@ -47,7 +55,13 @@ impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage
     ) -> Option<Self::Value> {
         event!(Level::TRACE, "RegistryStorage remove");
 
-        self.inner.remove(value_id)
+        let r = self.inner.remove(value_id);
+
+        if r.is_some() {
+            self.calculated_len -= 1;
+        }
+
+        r
     }
 
     fn contains_key(
@@ -64,7 +78,7 @@ impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage
     }
 
     unsafe fn next_insert_may_reallocates(&self) -> bool {
-        self.len() >= self.inner.capacity()
+        self.calculated_len >= self.capacity
     }
 
     unsafe fn next_removal_may_reallocates(&self) -> bool {

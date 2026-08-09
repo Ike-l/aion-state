@@ -963,7 +963,7 @@ pub enum SynchronisedRegistryCheckedReplacementResult<ReplacementResult> {
     NotFound,
     #[error("Given Access Denied Removal Or Insert")]
     DeniedAccess,
-    #[error("Tried Inserting None")]
+    #[error("Tried Inserting None and Removing None")]
     NoOp,
     #[error("Tried Removing Resource Which Would Reallocate")]
     RemovalReallocates,

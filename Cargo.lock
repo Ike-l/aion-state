@@ -21,7 +21,6 @@ dependencies = [
  "rand_chacha",
  "serde",
  "serde_json",
- "small_iter_fields",
  "stable_deref_trait",
  "thiserror",
  "tokio",
@@ -307,16 +306,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f40ca3c46823713e0d4209592e8d6e826aa57e928f09752619fc696c499637f6"
 dependencies = [
  "lazy_static",
-]
-
-[[package]]
-name = "small_iter_fields"
-version = "0.1.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bd53c8e37dafe44c73fe918af564a33bfa657f1f866d5b50a365e1b3c5dd4b95"
-dependencies = [
- "quote",
- "syn 2.0.117",
 ]
 
 [[package]]

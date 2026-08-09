@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use parking_lot::{RawMutex, lock_api::Mutex};
-use rand::{distr::Alphanumeric, prelude::{Rng, RngExt, SeedableRng}};
+use rand::prelude::{IteratorRandom, RngExt, SeedableRng};
 use rand_chacha::ChaCha8Rng;
 
-use crate::{brute::{agent::Agent, property_manager::PropertyManager}, create_registry, default::prelude::{Password, ReserverId}};
+use crate::{brute::{agent::Agent, property_manager::PropertyManager}, create_registry};
 
 mod agent;
 mod command;
@@ -16,10 +16,12 @@ fn run() {
     let mut rng = ChaCha8Rng::seed_from_u64(seed);
     
     let max_threads = 20;
+    // let max_threads = 10;
     let max_agents = 10;
-    let max_ticks = 100;
+    let max_ticks = 1000;
     
     let id_length = 10;
+    let label_length = 10;
     let chance_to_be_known = 0.9; // 90%
     
     let registry = Arc::new(create_registry());
@@ -42,16 +44,21 @@ fn run() {
             
             let ticks: u32 = rng.random_range(1..=max_ticks);
             let agent_amount: u32 =  rng.random_range(1..=max_agents);
-
+        
             let mut agents = Vec::with_capacity(agent_amount as usize);
-            agents.fill_with(|| Agent::new(&mut rng, chance_to_be_known, agent_amount, id_length));
+            for _ in 0..agent_amount {
+                agents.push(Agent::new(&mut rng, chance_to_be_known, id_length));
+            }
 
             for _ in 0..ticks {
-                let current_agent = rng.random_range(0..agent_amount);
+                let agent = agents.iter().choose(&mut rng).unwrap();
 
-                let agent = unsafe { agents.get_unchecked(current_agent as usize) };
+                let command = agent.command(
+                    &registry, 
+                    &mut rng,
+                    label_length
+                );
 
-                let command = agent.command(&registry, &mut rng);
                 {
                     let _sync = sync.lock();
                     let _result = property_manager.test(&registry, command);
@@ -65,4 +72,7 @@ fn run() {
     for handle in handles {
         let _r = handle.join().unwrap();
     }
+
+    let Ok(registry) = Arc::try_unwrap(registry) else { panic!() };
+    panic!("Registry: {}", serde_json::to_string(&registry).unwrap())
 }

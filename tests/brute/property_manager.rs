@@ -1,6 +1,8 @@
 use std::sync::Arc;
 
-use crate::{TestRegistry, brute::command::Command};
+use aion_state::prelude::{RegistryContainsResource, RegistryReplacement};
+
+use crate::{TestRegistry, brute::command::Command, default::prelude::Access};
 
 pub struct PropertyManager {}
 
@@ -10,6 +12,44 @@ impl PropertyManager {
     }
 
     pub fn test(&self, registry: &Arc<TestRegistry>, command: Command) {
-        todo!()
+        match command {
+            Command::CheckedReplacement{ user_details, access, resource_id, resource, password } => {
+                let resource_is_some = resource.is_some();
+                let registry_contains_resource = RegistryContainsResource { resource_id: &resource_id };
+                let resources = registry.len();
+                let contains = registry.contains_resource(&registry_contains_resource).ok();
+
+                let result = registry.checked_replace(RegistryReplacement {
+                    user_details,
+                    access: &access,
+                    resource_id: resource_id.clone(),
+                    resource,
+                    password: password.as_ref(),
+                });
+
+                match access {
+                    Access::Replace => {
+                        if !resource_is_some {
+                            if contains {
+                                assert_eq!(resources - 1, registry.len());
+                            } else {
+                                assert!(!result.ok());
+                            }
+                        } else {
+                            if !contains {
+                                // sometimes is not inserted (so its a replace?)
+                                assert_eq!(resources + 1, registry.len(), "Result: {result}");
+                            } else {
+                                assert_eq!(resources, registry.len());
+                            }
+                            assert!(registry.contains_resource(&registry_contains_resource).ok());
+                        }
+                    },
+                    _ => {
+                        assert!(!result.ok())
+                    },
+                }
+            },
+        }
     }
 }

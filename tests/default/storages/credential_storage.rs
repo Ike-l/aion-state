@@ -24,7 +24,9 @@ impl<Id: Eq + Hash, Password: PartialEq> aion_state::prelude::CredentialStorage 
     ) -> bool {
         event!(Level::TRACE, "CredentialStorage verify");
 
-        self.inner.get(id).is_some_and(|registered_password| registered_password == password)
+        self.inner.get(id).is_none_or(|registered_password| registered_password == password)
+
+        // self.inner.get(id).is_some_and(|registered_password| registered_password == password)
     }
 
     fn register(
