@@ -18,7 +18,7 @@ fn run() {
     let max_threads = 20;
     // let max_threads = 10;
     let max_agents = 10;
-    let max_ticks = 1000;
+    let max_ticks = 10000;
     
     let id_length = 10;
     let label_length = 10;
@@ -75,5 +75,7 @@ fn run() {
     }
 
     let Ok(registry) = Arc::try_unwrap(registry) else { panic!() };
-    panic!("Registry: {}", serde_json::to_string(&registry).unwrap())
+    // assert_eq!(registry.keys().len(), registry.len());
+    panic!("Len: {}", registry.len())
+    // panic!("Registry: {}", serde_json::to_string(&registry).unwrap())
 }

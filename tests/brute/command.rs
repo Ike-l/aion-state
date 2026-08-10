@@ -6,13 +6,17 @@ use rand_chacha::ChaCha8Rng;
 use crate::{TestRegistry, default::prelude::{Access, Password, ReserverId, Resource, ResourceId}};
 
 pub enum Command<'a> {
-    CheckedReplacement{
+    CheckedReplacement {
         user_details: Option<(&'a ReserverId, &'a Password)>,
         access: Access,
         resource_id: ResourceId,
         resource: Option<Resource>,
         password: Option<Password>,
     },
+    Register {
+        id: ReserverId,
+        password: Password,
+    }
 }
 
 impl<'a> Command<'a> {
@@ -73,7 +77,7 @@ impl<'a> Command<'a> {
         label_length: usize
     ) -> Self {
         let command_idx = rng.random_range(0..Self::LEN);
-
+ 
         match command_idx {
             0 => {
                 Command::CheckedReplacement{ 
@@ -84,6 +88,13 @@ impl<'a> Command<'a> {
                     password: Self::generate_resource_password(rng),
                 }
             },
+            1 => {
+                if let Some((id, password)) = user_details {
+                    Command::Register { id: id.clone(), password: password.clone() }
+                } else {
+                    Self::choose(rng, user_details, registry, label_length)
+                }
+            }
             _ => unreachable!()
         }
     }

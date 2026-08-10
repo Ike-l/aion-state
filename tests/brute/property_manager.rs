@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use aion_state::prelude::{RegistryContainsResource, RegistryReplacement};
+use aion_state::prelude::{RegistryAcquireAccess, RegistryContainsResource, RegistryRegister, RegistryReplacement};
 
 use crate::{TestRegistry, brute::command::Command, default::prelude::Access};
 
@@ -51,6 +51,16 @@ impl PropertyManager {
                     },
                 }
             },
+            Command::Register { id, password } => {
+                let already_registered = registry.registered().contains(&id);
+                let result = registry.register(RegistryRegister {
+                    id: id.clone(),
+                    password,
+                });
+
+                assert!(registry.registered().contains(&id));
+                assert_eq!(!already_registered, result.ok());
+            }
         }
     }
 }

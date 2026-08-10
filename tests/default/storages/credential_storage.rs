@@ -29,6 +29,10 @@ impl<Id: Eq + Hash, Password: PartialEq> aion_state::prelude::CredentialStorage 
         // self.inner.get(id).is_some_and(|registered_password| registered_password == password)
     }
 
+    fn registered(&self) -> impl Iterator<Item = &Self::Id> {
+        self.inner.keys()
+    }
+
     fn register(
         &mut self,
         id: Self::Id,
