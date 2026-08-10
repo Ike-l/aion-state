@@ -5,6 +5,9 @@ use rand_chacha::ChaCha8Rng;
 
 use crate::{TestRegistry, default::prelude::{Access, Password, ReserverId, Resource, ResourceId}};
 
+use strum::EnumCount;
+
+#[derive(strum_macros::EnumCount)]
 pub enum Command<'a> {
     CheckedReplacement {
         user_details: Option<(&'a ReserverId, &'a Password)>,
@@ -16,11 +19,16 @@ pub enum Command<'a> {
     Register {
         id: ReserverId,
         password: Password,
+    },
+    Own {
+        id: ReserverId,
+        password: Password,
+        resource_id: ResourceId
     }
 }
 
 impl<'a> Command<'a> {
-    const LEN: usize = 1;
+    const LEN: usize = Command::COUNT;
 
     fn generate_access(rng: &mut ChaCha8Rng) -> Access {
         let r = rng.random_range(0..3);
@@ -91,6 +99,13 @@ impl<'a> Command<'a> {
             1 => {
                 if let Some((id, password)) = user_details {
                     Command::Register { id: id.clone(), password: password.clone() }
+                } else {
+                    Self::choose(rng, user_details, registry, label_length)
+                }
+            },
+            2 => {
+                if let Some((id, password)) = user_details {
+                    Command::Own { id: id.clone(), password: password.clone(), resource_id: Self::get_resource_id(rng, &registry.keys().into_iter().collect(), label_length) }
                 } else {
                     Self::choose(rng, user_details, registry, label_length)
                 }

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use aion_state::prelude::{RegistryAcquireAccess, RegistryContainsResource, RegistryRegister, RegistryReplacement};
+use aion_state::prelude::{RegistryContainsResource, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReplacement};
 
 use crate::{TestRegistry, brute::command::Command, default::prelude::Access};
 
@@ -29,6 +29,13 @@ impl PropertyManager {
 
                 match access {
                     Access::Replace => {
+                        // if resource is owned and not by this person then should be fail (change later when allow whitelist/blacklist)
+                        if registry.is_owned(&RegistryIsOwned { resource_id: &resource_id }) {
+                            if !registry.check_owner(&RegistryCheckOwner { id, resource_id }) {
+                                assert!(!result.ok());
+                            }
+                        }
+
                         if !resource_is_some {
                             if contains {
                                 assert_eq!(resources - 1, registry.len());
@@ -60,6 +67,30 @@ impl PropertyManager {
 
                 assert!(registry.registered().contains(&id));
                 assert_eq!(!already_registered, result.ok());
+            },
+            Command::Own { id, password, resource_id } => {
+                let registered = registry.registered().contains(&id);
+                let input = RegistryIsOwned {
+                    resource_id: &resource_id
+                };
+
+                let is_owned = registry.is_owned(&input);
+                let result = registry.own(RegistryOwn {
+                    id,
+                    password: &password,
+                    resource_id: resource_id.clone(),
+                });
+
+                if !registered {
+                    assert!(!result.ok());
+                }
+
+                if is_owned {
+                    assert!(!result.ok());
+                } else {
+                    assert!(registry.is_owned(&input));
+                    assert!(result.ok());
+                }
             }
         }
     }
