@@ -1,6 +1,6 @@
 use tracing::event;
 
-use crate::prelude::{AccessControl, AccessControlAllow, AccessControlCheckAccess, AccessControlRelease, AccessControlUnallow, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccess, ControllerCheckAccessResult, ControllerCheckOwner, ControllerCheckOwnerResult, ControllerOwn, ControllerOwnResult, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResource, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerUnallow, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, FUNCTION_LEVEL, ResourceControl, ResourceControlCheckOwner, ResourceControlIsOwnedResult, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceIsOwned, WhitelistStorage, trace_function};
+use crate::prelude::{AccessControl, AccessControlAllow, AccessControlCheckAccess, AccessControlRelease, AccessControlUnallow, BlacklistStorage, ControlStorage, ControllerAllow, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccess, ControllerCheckAccessResult, ControllerCheckOwner, ControllerCheckOwnerResult, ControllerIsOwned, ControllerOwn, ControllerOwnResult, ControllerReleaseId, ControllerReleaseIdResult, ControllerReleaseResource, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerUnallow, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, FUNCTION_LEVEL, ResourceControl, ResourceControlCheckOwner, ResourceControlOwn, ResourceControlRelease, ResourceControlReleaseId, ResourceControlReleaseIdResult, ResourceIsOwned, WhitelistStorage, trace_function};
 
 pub mod access_control;
 pub mod resource_control;
@@ -36,6 +36,17 @@ impl<
         trace_function!("Controller Own");
 
         ControllerOwnResult::ResourceControl(self.resource_control.own(ResourceControlOwn { id, resource_id }))
+    }
+
+    pub fn is_owned(
+        &self, 
+        ControllerIsOwned {
+            resource_id
+        }: &ControllerIsOwned<'_, CS::ResourceId>
+    ) -> bool {
+        trace_function!("Controller Is Owned");
+
+        self.resource_control.is_owned(&ResourceIsOwned { resource_id }).ok()
     }
 
     /// Releases ownership of a resource
@@ -106,7 +117,7 @@ impl<
         trace_function!("Controller Check Access");
 
         let is_owned_result = self.resource_control.is_owned(&ResourceIsOwned { resource_id });
-        if matches!(is_owned_result, ResourceControlIsOwnedResult::IsOwned(true)) {
+        if is_owned_result.ok() {
             if let Some(id) = id {
                 let resource_control_result = self.resource_control.check_owner(&ResourceControlCheckOwner { id, resource_id });
         

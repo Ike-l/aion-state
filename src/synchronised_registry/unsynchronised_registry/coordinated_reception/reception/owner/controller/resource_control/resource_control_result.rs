@@ -42,3 +42,9 @@ impl<Id, ResourceId> ResourceControlCheckOwnersResult<'_, Id, ResourceId> {
 pub enum ResourceControlIsOwnedResult {
     IsOwned(bool)
 }
+
+impl ResourceControlIsOwnedResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::IsOwned(true))
+    }
+}

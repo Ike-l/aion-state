@@ -3,6 +3,10 @@ pub struct ControllerOwn<Id, ResourceId> {
     pub resource_id: ResourceId
 }
 
+pub struct ControllerIsOwned<'a, ResourceId> {
+    pub resource_id: &'a ResourceId
+}
+
 pub struct ControllerReleaseResource<'a, Id, ResourceId> {
     pub id: &'a Id,
     pub resource_id: &'a ResourceId

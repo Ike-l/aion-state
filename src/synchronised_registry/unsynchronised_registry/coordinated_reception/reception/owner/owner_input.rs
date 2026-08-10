@@ -4,6 +4,10 @@ pub struct OwnerOwn<'a, Id, Password, ResourceId> {
     pub resource_id: ResourceId,
 }
 
+pub struct OwnerIsOwned<'a, ResourceId> {
+    pub resource_id: &'a ResourceId
+}
+
 pub struct OwnerRegister<Id, Password> {
     pub id: Id,
     pub password: Password

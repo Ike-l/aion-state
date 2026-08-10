@@ -179,6 +179,7 @@ pub mod prelude {
                     RegistryUnregister,
                     RegistryUpdatePassword,
                     RegistryOwn,
+                    RegistryIsOwned,
                     RegistryReleaseResource,
                     RegistryReleaseResourceAll,
                     RegistryAllow,
@@ -222,6 +223,7 @@ pub mod prelude {
                             ReceptionUnregister,
                             ReceptionUpdatePassword,
                             ReceptionOwn,
+                            ReceptionIsOwned,
                             ReceptionReleaseResource,
                             ReceptionAllow,
                             ReceptionUnallow,
@@ -312,6 +314,7 @@ pub mod prelude {
                             Owner,
                             owner_input::{
                                 OwnerOwn,
+                                OwnerIsOwned,
                                 OwnerRegister,
                                 OwnerReleaseResource,
                                 OwnerUpdatePassword,
@@ -358,6 +361,7 @@ pub mod prelude {
                                 Controller,
                                 controller_input::{
                                     ControllerOwn,
+                                    ControllerIsOwned,
                                     ControllerReleaseResource,
                                     ControllerAllow,
                                     ControllerCheckAccess,

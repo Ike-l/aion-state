@@ -20,6 +20,10 @@ pub struct ReceptionOwn<'a, Id, Password, ResourceId> {
     pub resource_id: ResourceId
 }
 
+pub struct ReceptionIsOwned<'a, ResourceId> {
+    pub resource_id: &'a ResourceId
+}
+
 pub struct ReceptionReleaseResource<'a, Id, Password, ResourceId> {
     pub id: &'a Id,
     pub password: &'a Password,
