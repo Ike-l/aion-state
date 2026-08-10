@@ -389,3 +389,26 @@ impl<S: RegistryStorage, RS: Default, AS: Default, OS: Default, WS: Default, BS:
         }
     }
 }
+
+impl<
+    S: RegistryStorage,
+    RS: ReservationStorage<AccessStorage = AS>,
+    AS: AccessStorage<ValueId = S::ValueId> + Default,
+    OS: CredentialStorage<Id = RS::ReserverId>,
+    WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
+    BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
+    CS: ControlStorage<ResourceId = BS::Id, Id = OS::Id>
+> SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+    where 
+        RS::ReserverId: Clone,
+{
+    pub fn registered(
+        &self
+    ) -> Vec<OS::Id> {
+        trace_function!("Synchronised Registry Registered");
+
+        let _sync = self.sync.write();
+
+        self.unsynchronised_registry.registered()
+    }
+}

@@ -68,3 +68,13 @@ impl<
         AuthenticateUnregisterResult::Unregister(self.credentials.unregister(id))
     }
 }
+
+impl<CS: CredentialStorage> Authenticator<CS> 
+    where CS::Id: Clone
+{
+    pub fn registered(&self) -> Vec<CS::Id> {
+        trace_function!("Authenticator Registered");
+
+        self.credentials.registered().cloned().collect()
+    }
+}

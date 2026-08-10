@@ -10,6 +10,8 @@ pub trait CredentialStorage {
         password: &Self::Password
     ) -> bool;
 
+    fn registered(&self) -> impl Iterator<Item = &Self::Id>;
+
     /// Registers `id` with `password`
     /// 
     /// so that if `register` returns `true` then `verify` with the same input returns true

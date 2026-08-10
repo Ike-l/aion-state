@@ -215,3 +215,13 @@ impl<
         self.reception.write().get_access(input).cloned()
     }
 }
+
+impl<RS, AS, OS: CredentialStorage, WS, BS, CS> CoordinatedReception<RS, AS, OS, WS, BS, CS> 
+    where OS::Id: Clone
+{
+    pub fn registered(&self) -> Vec<OS::Id> {
+        trace_function!("Coordinated Reception Registered");
+
+        self.reception.read().registered()
+    }
+}

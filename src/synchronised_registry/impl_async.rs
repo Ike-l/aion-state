@@ -292,3 +292,26 @@ impl<
         self.keys()
     }
 }
+
+impl<
+    S: RegistryStorage,
+    RS: ReservationStorage<AccessStorage = AS>,
+    AS: AccessStorage<ValueId = S::ValueId> + Default,
+    OS: CredentialStorage<Id = RS::ReserverId>,
+    WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
+    BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
+    CS: ControlStorage<ResourceId = BS::Id, Id = OS::Id>
+> SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+    where 
+        RS::ReserverId: Clone,
+{
+    pub async fn registered_async(
+        &self
+    ) -> Vec<OS::Id> {
+        trace_function!("Synchronised Registry Registered Async");
+
+        let _a_sync = self.a_sync.write().await;
+
+        self.registered()
+    }
+}

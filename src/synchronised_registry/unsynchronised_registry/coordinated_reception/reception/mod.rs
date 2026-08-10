@@ -282,3 +282,13 @@ impl<
         self.host.get_access(&HostGetAccess { access_id })
     }
 }
+
+impl<RS, AS, OS: CredentialStorage, WS, BS, CS> Reception<RS, AS, OS, WS, BS, CS> 
+    where OS::Id: Clone
+{
+    pub fn registered(&self) -> Vec<OS::Id> {
+        trace_function!("Reception Registered");
+
+        self.owner.registered()
+    }
+}

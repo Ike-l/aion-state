@@ -241,3 +241,14 @@ impl<
         OwnerAuthenticationResult::Authenticator(self.authenticator.authenticate(&Authentication { id, password }))
     }
 }
+
+
+impl<AS: CredentialStorage, WS, BS, CS> Owner<AS, WS, BS, CS> 
+    where AS::Id: Clone
+{
+    pub fn registered(&self) -> Vec<AS::Id> {
+        trace_function!("Owner Registered");
+
+        self.authenticator.registered()
+    }
+}

@@ -379,3 +379,13 @@ impl<S: RegistryStorage, RS: Default, AS: Default, OS: Default, WS: Default, BS:
         }
     }
 }
+
+impl<S: RegistryStorage, RS, AS, OS: CredentialStorage, WS, BS, CS> UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+    where OS::Id: Clone
+{
+    pub fn registered(&self) -> Vec<OS::Id> {
+        trace_function!("Unsynchronised Registry Registered");
+
+        self.reception.registered()
+    }
+}
