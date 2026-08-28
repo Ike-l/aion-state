@@ -1,4 +1,4 @@
-use std::{collections::HashSet, sync::Arc};
+use std::{collections::HashSet, fmt::Debug, sync::Arc};
 
 use rand::{distr::Alphanumeric, prelude::{IteratorRandom, Rng, RngExt}};
 use rand_chacha::ChaCha8Rng;
@@ -24,6 +24,16 @@ pub enum Command<'a> {
         id: ReserverId,
         password: Password,
         resource_id: ResourceId
+    }
+}
+
+impl Debug for Command<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Command::CheckedReplacement { .. } => write!(f, "Checked Replacement"),
+            Command::Register { .. } => write!(f, "Register"),
+            Command::Own { .. } => write!(f, "Own"),
+        }
     }
 }
 
