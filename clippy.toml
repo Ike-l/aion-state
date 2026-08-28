@@ -3,3 +3,6 @@ disallowed-types = [
     # { path = "std::sync::Mutex", reason = "Use crate::prelude::sync::Mutex instead." },
     # { path = "std::sync::Arc", reason = "Use crate::prelude::sync::Arc instead." },
 ]
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true
