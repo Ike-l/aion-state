@@ -107,44 +107,41 @@ impl PropertyManager {
                 resources_before,
                 registry_contains_resource
             );
-
-            return
+        } else {
+            if !registered {
+                if has_user_details {
+                    assert!(!result.ok());
+                    return
+                }
+    
+                if !resource_is_some && contains {
+                    assert!(result.ok());
+                    return
+                }
+    
+                if !resource_is_some {
+                    assert!(!result.ok());
+                    return
+                }
+    
+                if !contains {
+                    assert!(result.ok());
+                    return
+                }
+    
+                assert_eq!(resources_before, registry.len());
+                assert!(registry.contains_resource(registry_contains_resource).ok());
+            } else {
+                self.assert_checked_replacement_mutation(
+                    registry,
+                    result,
+                    contains,
+                    resource_is_some,
+                    resources_before,
+                    registry_contains_resource
+                );
+            }
         }
-
-        if !registered {
-            if has_user_details {
-                assert!(!result.ok());
-                return
-            }
-
-            if !resource_is_some && contains {
-                assert!(result.ok());
-                return
-            }
-
-            if !resource_is_some {
-                assert!(!result.ok());
-                return
-            }
-
-            if !contains {
-                assert!(result.ok());
-                return
-            }
-
-            assert_eq!(resources_before, registry.len());
-            assert!(registry.contains_resource(registry_contains_resource).ok());
-            return
-        }
-
-        self.assert_checked_replacement_mutation(
-            registry,
-            result,
-            contains,
-            resource_is_some,
-            resources_before,
-            registry_contains_resource
-        );
     }
 
     fn assert_checked_replacement_mutation(
