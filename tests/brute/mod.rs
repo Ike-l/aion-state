@@ -3,6 +3,7 @@ use std::sync::Arc;
 use parking_lot::{RawMutex, lock_api::Mutex};
 use rand::prelude::{IteratorRandom, RngExt, SeedableRng};
 use rand_chacha::ChaCha8Rng;
+use tracing::{Level, span};
 
 use crate::{brute::{agent::Agent, property_manager::PropertyManager}, create_registry};
 
@@ -32,7 +33,7 @@ fn run() {
     
     let threads = rng.random_range(1..=max_threads);
     let mut handles = Vec::with_capacity(threads);
-    for _ in 0..threads {
+    for thread in 0..threads {
         let registry = Arc::clone(&registry);
         let property_manager = Arc::clone(&property_manager);
         
@@ -41,6 +42,9 @@ fn run() {
         let seed: u64 = rng.random();
         
         let handle = std::thread::spawn(move || {
+            let span = span!(Level::INFO, "Thread", thread = thread);
+            let _enter = span.enter();
+
             let mut rng = ChaCha8Rng::seed_from_u64(seed);
             
             let ticks: u32 = rng.random_range(1..=max_ticks);
@@ -54,16 +58,14 @@ fn run() {
             for _ in 0..ticks {
                 let agent = agents.iter().choose(&mut rng).unwrap();
 
+                let _sync = sync.lock();
                 let command = agent.command(
                     &registry, 
                     &mut rng,
                     label_length
                 );
 
-                {
-                    let _sync = sync.lock();
-                    let _result = property_manager.test(&registry, command);
-                }
+                let _result = property_manager.test(&registry, command);
             }
         });
     
@@ -74,8 +76,8 @@ fn run() {
         let _r = handle.join().unwrap();
     }
 
-    let Ok(registry) = Arc::try_unwrap(registry) else { panic!() };
+    let Ok(_registry) = Arc::try_unwrap(registry) else { panic!() };
     // assert_eq!(registry.keys().len(), registry.len());
-    panic!("Len: {}", registry.len())
+    // panic!("Len: {}", registry.len())
     // panic!("Registry: {}", serde_json::to_string(&registry).unwrap())
 }
