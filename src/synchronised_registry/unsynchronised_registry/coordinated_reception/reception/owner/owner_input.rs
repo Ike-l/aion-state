@@ -61,3 +61,8 @@ pub struct OwnerAuthenticate<'a, Id, Password> {
     pub id: &'a Id,
     pub password: &'a Password
 }
+
+pub struct OwnerCheckOwner<'a, Id, Resourceid> {
+    pub id: &'a Id,
+    pub resource_id: &'a Resourceid
+}

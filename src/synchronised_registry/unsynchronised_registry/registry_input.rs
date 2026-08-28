@@ -88,6 +88,11 @@ pub struct RegistryDrainReservations<'a, Id, Password> {
     pub password: &'a Password
 }
 
+pub struct RegistryCheckOwner<'a, Id, Resourceid> {
+    pub id: &'a Id,
+    pub resource_id: &'a Resourceid
+}
+
 pub struct RegistryAcquireAccess<'a, Id, IdPassword, ResourceId, Access, Password> {
     pub user_details: Option<(&'a Id, &'a IdPassword)>,
     pub resource_id: ResourceId,
@@ -104,7 +109,7 @@ pub struct RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Passwo
     pub password: Option<Password>
 }
 
-
+#[derive(Debug, Clone)]
 pub struct RegistryReplacement<'a, Id, IdPassword, Access, ResourceId, Resource, Password> {
     pub user_details: Option<(&'a Id, &'a IdPassword)>,
     pub access: &'a Access,

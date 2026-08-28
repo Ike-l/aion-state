@@ -1,4 +1,4 @@
-use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlOwnResult, ResourceControlReleaseResult, UnsynchronisedRegistryAcquireAccessError, UnsynchronisedRegistryBlacklistAllowResult, UnsynchronisedRegistryBlacklistUnallowResult, UnsynchronisedRegistryCheckAccessResult, UnsynchronisedRegistryCheckedReplacementResult, UnsynchronisedRegistryContainsResourceResult, UnsynchronisedRegistryDrainReservationsResult, UnsynchronisedRegistryOwnResult, UnsynchronisedRegistryReallocatingReplacementResult, UnsynchronisedRegistryRegisterResult, UnsynchronisedRegistryReleaseAccessResult, UnsynchronisedRegistryReleaseResourceAllResult, UnsynchronisedRegistryReleaseResourceResult, UnsynchronisedRegistryReservationResult, UnsynchronisedRegistryUnregisterResult, UnsynchronisedRegistryUnreserveResult, UnsynchronisedRegistryUpdatePasswordResult, UnsynchronisedRegistryWhitelistAllowResult, UnsynchronisedRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
+use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerCheckOwnerResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerCheckOwnerResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionCheckOwnerResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, UnsynchronisedRegistryAcquireAccessError, UnsynchronisedRegistryBlacklistAllowResult, UnsynchronisedRegistryBlacklistUnallowResult, UnsynchronisedRegistryCheckAccessResult, UnsynchronisedRegistryCheckOwnerResult, UnsynchronisedRegistryCheckedReplacementResult, UnsynchronisedRegistryContainsResourceResult, UnsynchronisedRegistryDrainReservationsResult, UnsynchronisedRegistryOwnResult, UnsynchronisedRegistryReallocatingReplacementResult, UnsynchronisedRegistryRegisterResult, UnsynchronisedRegistryReleaseAccessResult, UnsynchronisedRegistryReleaseResourceAllResult, UnsynchronisedRegistryReleaseResourceResult, UnsynchronisedRegistryReservationResult, UnsynchronisedRegistryUnregisterResult, UnsynchronisedRegistryUnreserveResult, UnsynchronisedRegistryUpdatePasswordResult, UnsynchronisedRegistryWhitelistAllowResult, UnsynchronisedRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
 
 #[derive(Debug, thiserror::Error)]
 pub enum SynchronisedRegistryRegisterResult {
@@ -191,6 +191,50 @@ impl From<UnsynchronisedRegistryOwnResult> for SynchronisedRegistryOwnResult {
         }
     }
 }
+
+#[derive(Debug, thiserror::Error)]
+pub enum SynchronisedRegistryCheckOwnerResult {
+    #[error("Is Owner")]
+    Ok,
+    #[error("Not Owner")]
+    Err
+}
+
+impl SynchronisedRegistryCheckOwnerResult {
+    pub fn ok(&self) -> bool {
+        matches!(self, Self::Ok)
+    }
+}
+
+impl From<UnsynchronisedRegistryCheckOwnerResult> for SynchronisedRegistryCheckOwnerResult {
+    fn from(value: UnsynchronisedRegistryCheckOwnerResult) -> Self {
+        match value {
+            UnsynchronisedRegistryCheckOwnerResult::Reception(reception_check_owner_result) => {
+                match reception_check_owner_result {
+                    ReceptionCheckOwnerResult::Owner(owner_check_owner_result) => {
+                        match owner_check_owner_result {
+                            OwnerCheckOwnerResult::Controller(controller_check_owner_result) => {
+                                match controller_check_owner_result {
+                                    ControllerCheckOwnerResult::ResourceControl(resource_control_check_owner_result) => {
+                                        match resource_control_check_owner_result {
+                                            ResourceControlCheckOwnerResult::Verification(ok) => {
+                                                match ok {
+                                                    true => Self::Ok,
+                                                    false => Self::Err,
+                                                }
+                                            },
+                                        }
+                                    },
+                                }
+                            },
+                        }
+                    }
+                }
+            },
+        }
+    }
+}
+
 
 #[derive(Debug, thiserror::Error)]
 pub enum SynchronisedRegistryReleaseResourceResult {

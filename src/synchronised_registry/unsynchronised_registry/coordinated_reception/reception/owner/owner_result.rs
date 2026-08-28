@@ -1,4 +1,4 @@
-use crate::{prelude::{AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, ControllerBlacklistAllowResult, ControllerCheckAccessResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceResult, ControllerBlacklistUnallowResult, ControllerWhitelistUnallowResult, ControllerWhitelistAllowResult}, synchronised_registry::unsynchronised_registry::coordinated_reception::reception::owner::controller::controller_result::ControllerReleaseResourceAllResult};
+use crate::{prelude::{AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerCheckOwnerResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult}, synchronised_registry::unsynchronised_registry::coordinated_reception::reception::owner::controller::controller_result::ControllerReleaseResourceAllResult};
 
 pub enum OwnerOwnResult {
     Controller(ControllerOwnResult),
@@ -75,4 +75,8 @@ impl OwnerAuthenticationResult {
             OwnerAuthenticationResult::Authenticator(authentication_result) => authentication_result.ok(),
         }
     }
+}
+
+pub enum OwnerCheckOwnerResult {
+    Controller(ControllerCheckOwnerResult)
 }

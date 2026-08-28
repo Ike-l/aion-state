@@ -1,4 +1,4 @@
-use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerAllow, ControllerCheckAccess, ControllerIsOwned, ControllerOwn, ControllerReleaseId, ControllerReleaseResource, ControllerUnallow, CredentialStorage, OwnerAllow, OwnerAuthenticate, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccess, OwnerCheckAccessResult, OwnerIsOwned, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnallow, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, WhitelistStorage, trace_function};
+use crate::prelude::{AuthenticateRegister, AuthenticateUnregister, AuthenticateUpdatePassword, Authentication, Authenticator, BlacklistStorage, ControlStorage, Controller, ControllerAllow, ControllerCheckAccess, ControllerCheckOwner, ControllerIsOwned, ControllerOwn, ControllerReleaseId, ControllerReleaseResource, ControllerUnallow, CredentialStorage, OwnerAllow, OwnerAuthenticate, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccess, OwnerCheckAccessResult, OwnerCheckOwner, OwnerCheckOwnerResult, OwnerIsOwned, OwnerOwn, OwnerOwnResult, OwnerRegister, OwnerRegisterResult, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnallow, OwnerUnregister, OwnerUnregisterResult, OwnerUpdatePassword, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, WhitelistStorage, trace_function};
 
 pub mod authenticator;
 pub mod controller;
@@ -198,6 +198,8 @@ impl<
             id, password, resource_id, access
         }: &OwnerUnallow<'_, AS::Id, AS::Password, CS::ResourceId, WS::Access>
     ) -> OwnerWhitelistUnallowResult {
+        trace_function!("Owner Unallow Whitelist");
+
         let authentication_result = self.authenticator.authenticate(&Authentication { id, password });
         
         if authentication_result.ok() {
@@ -213,6 +215,8 @@ impl<
             id, password, resource_id, access
         }: &OwnerUnallow<'_, AS::Id, AS::Password, CS::ResourceId, WS::Access>
     ) -> OwnerBlacklistUnallowResult {
+        trace_function!("Owner Unallow Blacklist");
+
         let authentication_result = self.authenticator.authenticate(&Authentication { id, password });
         
         if authentication_result.ok() {
@@ -229,6 +233,8 @@ impl<
             inputs
         }: OwnerReleaseResourceAll<'a, AS::Id, AS::Password, CS::ResourceId>
     ) -> OwnerReleaseResourceAllResult {
+        trace_function!("Owner Release Resource All");
+
         let authentication_result = self.authenticator.authenticate(&Authentication { id, password });
 
         if authentication_result.ok() {
@@ -249,7 +255,20 @@ impl<
             id, password
         }: &OwnerAuthenticate<'_, AS::Id, AS::Password>
     ) -> OwnerAuthenticationResult {
+        trace_function!("Owner Authenticate");
+
         OwnerAuthenticationResult::Authenticator(self.authenticator.authenticate(&Authentication { id, password }))
+    }
+
+    pub fn check_owner(
+        &self,
+        OwnerCheckOwner {
+            id, resource_id
+        }: &OwnerCheckOwner<'_, CS::Id, CS::ResourceId>
+    ) -> OwnerCheckOwnerResult {
+        trace_function!("Owner Check Owner");
+
+        OwnerCheckOwnerResult::Controller(self.controller.check_owner(&ControllerCheckOwner { id, resource_id }))
     }
 }
 

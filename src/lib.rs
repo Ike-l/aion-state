@@ -59,6 +59,7 @@ pub mod prelude {
             UnsynchronisedRegistryReservationResult as RegistryReservationResult,
             UnsynchronisedRegistryUnreserveResult as RegistryUnreserveResult,
             UnsynchronisedRegistryDrainReservationsResult as RegistryDrainReservationsResult,
+            UnsynchronisedRegistryCheckOwnerResult as RegistryCheckOwnerResult,
             UnsynchronisedRegistryAcquireAccessError as RegistryAcquireAccessError,
             UnsynchronisedRegistryReallocatingReplacementResult as RegistryReallocatingReplacementResult,
             UnsynchronisedRegistryCheckedReplacementResult as RegistryCheckedReplacementResult,
@@ -81,6 +82,7 @@ pub mod prelude {
             SynchronisedRegistryReleaseAccessResult as RegistryReleaseAccessResult,
             SynchronisedRegistryReleaseResourceAllResult as RegistryReleaseResourceAllResult,
             SynchronisedRegistryReleaseResourceResult as RegistryReleaseResourceResult,
+            SynchronisedRegistryCheckOwnerResult as RegistryCheckOwnerResult,
             SynchronisedRegistryReservationResult as RegistryReservationResult,
             SynchronisedRegistryReallocatingReplacementResult as RegistryReallocatingReplacementResult,
             SynchronisedRegistryCheckedReplacementResult as RegistryCheckedReplacementResult,
@@ -163,6 +165,7 @@ pub mod prelude {
                 SynchronisedRegistryReleaseAccessResult,
                 SynchronisedRegistryReleaseResourceAllResult,
                 SynchronisedRegistryReleaseResourceResult,
+                SynchronisedRegistryCheckOwnerResult,
                 SynchronisedRegistryReservationResult,
                 SynchronisedRegistryReallocatingReplacementResult,
                 SynchronisedRegistryCheckedReplacementResult,
@@ -189,6 +192,7 @@ pub mod prelude {
                     RegistryReservation,
                     RegistryUnreserve,
                     RegistryDrainReservations,
+                    RegistryCheckOwner,
                     RegistryAcquireAccess,
                     RegistryReplacement,
                     RegistryContainsResource,
@@ -209,6 +213,7 @@ pub mod prelude {
                     UnsynchronisedRegistryReservationResult,
                     UnsynchronisedRegistryUnreserveResult,
                     UnsynchronisedRegistryDrainReservationsResult,
+                    UnsynchronisedRegistryCheckOwnerResult,
                     UnsynchronisedRegistryAcquireAccessError,
                     UnsynchronisedRegistryReallocatingReplacementResult,
                     UnsynchronisedRegistryCheckedReplacementResult,
@@ -234,7 +239,8 @@ pub mod prelude {
                             ReceptionReservation,
                             ReceptionUnreserve,
                             ReceptionDrainReservations,
-                            ReceptionGetAccess
+                            ReceptionGetAccess,
+                            ReceptionCheckOwner,
                         },
                         reception_result::{
                             ReceptionRegisterResult,
@@ -252,7 +258,8 @@ pub mod prelude {
                             ReceptionRecordAccessResult,
                             ReceptionReservationResult,
                             ReceptionUnreserveResult,
-                            ReceptionDrainReservationsResult
+                            ReceptionDrainReservationsResult,
+                            ReceptionCheckOwnerResult,
                         },
                         host::{
                             Host,
@@ -323,7 +330,8 @@ pub mod prelude {
                                 OwnerCheckAccess,
                                 OwnerUnallow,
                                 OwnerReleaseResourceAll,
-                                OwnerAuthenticate
+                                OwnerAuthenticate,
+                                OwnerCheckOwner,
                             },
                             owner_result::{
                                 OwnerOwnResult,
@@ -337,7 +345,8 @@ pub mod prelude {
                                 OwnerWhitelistUnallowResult,
                                 OwnerBlacklistUnallowResult,
                                 OwnerReleaseResourceAllResult,
-                                OwnerAuthenticationResult
+                                OwnerAuthenticationResult,
+                                OwnerCheckOwnerResult,
                             },
                             authenticator::{
                                 Authenticator,

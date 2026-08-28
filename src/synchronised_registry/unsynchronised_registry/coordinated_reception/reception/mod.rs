@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, HostCheckAccess, HostDrainReservations, HostGetAccess, HostRecordAccess, HostReleaseAccess, HostReservation, HostUnreserve, Owner, OwnerAllow, OwnerAuthenticate, OwnerCheckAccess, OwnerIsOwned, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionDrainReservations, ReceptionDrainReservationsResult, ReceptionGetAccess, ReceptionIsOwned, ReceptionOwn, ReceptionOwnResult, ReceptionRecordAccess, ReceptionRecordAccessResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseAccess, ReceptionReleaseAccessResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservation, ReceptionReservationResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUnreserve, ReceptionUnreserveResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, HostCheckAccess, HostDrainReservations, HostGetAccess, HostRecordAccess, HostReleaseAccess, HostReservation, HostUnreserve, Owner, OwnerAllow, OwnerAuthenticate, OwnerCheckAccess, OwnerCheckOwner, OwnerIsOwned, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionCheckOwner, ReceptionCheckOwnerResult, ReceptionDrainReservations, ReceptionDrainReservationsResult, ReceptionGetAccess, ReceptionIsOwned, ReceptionOwn, ReceptionOwnResult, ReceptionRecordAccess, ReceptionRecordAccessResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseAccess, ReceptionReleaseAccessResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservation, ReceptionReservationResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUnreserve, ReceptionUnreserveResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -291,6 +291,17 @@ impl<
         trace_function!("Coordinated Reception Get Access");
 
         self.host.get_access(&HostGetAccess { access_id })
+    }
+
+    pub fn check_owner(
+        &self,
+        ReceptionCheckOwner {
+            id, resource_id
+        }: &ReceptionCheckOwner<'_, CS::Id, CS::ResourceId>
+    ) -> ReceptionCheckOwnerResult {
+        trace_function!("Reception Check Owner");
+
+        ReceptionCheckOwnerResult::Owner(self.owner.check_owner(&OwnerCheckOwner { id, resource_id }))
     }
 }
 

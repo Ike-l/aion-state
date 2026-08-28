@@ -4,7 +4,7 @@ use std::hash::Hash;
 
 use stable_deref_trait::StableDeref;
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryContainsResource, RegistryDrainReservations, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReplacement, RegistryReservation, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, StoredValueTrait, SynchronisedRegistryAcquireAccessError, SynchronisedRegistryBlacklistAllowResult, SynchronisedRegistryBlacklistUnallowResult, SynchronisedRegistryCheckAccessResult, SynchronisedRegistryCheckedReplacementResult, SynchronisedRegistryContainsResourceResult, SynchronisedRegistryDrainReservationsResult, SynchronisedRegistryOwnResult, SynchronisedRegistryReallocatingReplacementResult, SynchronisedRegistryRegisterResult, SynchronisedRegistryReleaseAccessResult, SynchronisedRegistryReleaseResourceAllResult, SynchronisedRegistryReleaseResourceResult, SynchronisedRegistryReservationResult, SynchronisedRegistryUnregisterResult, SynchronisedRegistryUnreserveResult, SynchronisedRegistryUpdatePasswordResult, SynchronisedRegistryWhitelistAllowResult, SynchronisedRegistryWhitelistUnallowResult, UnsynchronisedRegistry, WhitelistStorage, sync::RwLock, trace_function};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryCheckOwner, RegistryContainsResource, RegistryDrainReservations, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReplacement, RegistryReservation, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, StoredValueTrait, SynchronisedRegistryAcquireAccessError, SynchronisedRegistryBlacklistAllowResult, SynchronisedRegistryBlacklistUnallowResult, SynchronisedRegistryCheckAccessResult, SynchronisedRegistryCheckOwnerResult, SynchronisedRegistryCheckedReplacementResult, SynchronisedRegistryContainsResourceResult, SynchronisedRegistryDrainReservationsResult, SynchronisedRegistryOwnResult, SynchronisedRegistryReallocatingReplacementResult, SynchronisedRegistryRegisterResult, SynchronisedRegistryReleaseAccessResult, SynchronisedRegistryReleaseResourceAllResult, SynchronisedRegistryReleaseResourceResult, SynchronisedRegistryReservationResult, SynchronisedRegistryUnregisterResult, SynchronisedRegistryUnreserveResult, SynchronisedRegistryUpdatePasswordResult, SynchronisedRegistryWhitelistAllowResult, SynchronisedRegistryWhitelistUnallowResult, UnsynchronisedRegistry, WhitelistStorage, sync::RwLock, trace_function};
 
 pub mod unsynchronised_registry;
 pub mod synchronised_registry_results;
@@ -136,6 +136,17 @@ impl<
         let _sync = self.sync.read();
 
         self.unsynchronised_registry.is_owned(input)
+    }
+
+    pub fn check_owner(
+        &self,
+        input: &RegistryCheckOwner<'_, CS::Id, CS::ResourceId>
+    ) -> SynchronisedRegistryCheckOwnerResult {
+        trace_function!("Synchronised Registry Check Owner");
+
+        let _sync = self.sync.read();
+
+        self.unsynchronised_registry.check_owner(input).into()
     }
 
     pub fn release_resource(
