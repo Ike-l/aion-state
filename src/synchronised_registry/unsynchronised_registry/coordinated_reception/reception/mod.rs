@@ -15,6 +15,15 @@ pub struct Reception<RS, AS, OS, WS, BS, CS> {
     host: Host<RS, AS>
 }
 
+impl<RS: Default, AS: Default, OS: Default, WS: Default, BS, CS: Default> Reception<RS, AS, OS, WS, BS, CS> {
+    pub fn new(blacklist_storage: BS) -> Self {
+        Self {
+            owner: Owner::new(blacklist_storage),
+            host: Default::default()
+        }
+    }
+}
+
 impl<
     RS: ReservationStorage<AccessStorage = AS>,
     AS: AccessStorage + Default,

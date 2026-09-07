@@ -13,6 +13,14 @@ pub struct Blacklist<BS> {
     blacklist_storage: BS
 }
 
+impl<BS> Blacklist<BS> {
+    pub fn new(blacklist_storage: BS) -> Self {
+        Self {
+            blacklist_storage
+        }
+    }
+}
+
 impl<
     BS: BlacklistStorage
 > Blacklist<BS> {

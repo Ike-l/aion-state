@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use aion_state::prelude::{RegistryCheckOwner, RegistryCheckedReplacementResult, RegistryContainsResource, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReplacement};
+use aion_state::prelude::{RegistryCheckOwner, RegistryCheckedReplacementResult, RegistryContainsResource, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReplacement, RegistryUnregister};
 use tracing::{Level, event};
 
 use crate::{TestRegistry, brute::command::Command, default::prelude::{Access, Password, ReserverId, Resource, ResourceId}};
@@ -17,6 +17,7 @@ impl PropertyManager {
         match command {
             Command::CheckedReplacement{ user_details, access, resource_id, resource, password } => self.test_checked_replacement(registry, user_details, access, resource_id, resource, password),
             Command::Register { id, password } => self.test_register(registry, id, password),
+            Command::Unregister { id, password } => self.test_unregister(registry, id, password),
             Command::Own { id, password, resource_id } => self.test_own(registry, id, password, resource_id),
         }
     }
@@ -188,6 +189,32 @@ impl PropertyManager {
 
         assert!(registry.registered().contains(&id));
         assert_eq!(!already_registered, result.ok());
+    }
+
+    fn test_unregister(
+        &self,
+        registry: &Arc<TestRegistry>,
+        id: ReserverId,
+        password: Password,
+    ) {
+        let input = RegistryUnregister {
+            id: &id,
+            password: &password,
+        };
+
+        let registered = registry.registered().contains(&id);
+
+        let result = registry.unregister(&input);
+
+        if !registered {
+            assert!(!result.ok());
+        } else {
+            assert!(result.ok());
+        }
+
+        // if password matches
+        
+        
     }
 
     fn test_own(

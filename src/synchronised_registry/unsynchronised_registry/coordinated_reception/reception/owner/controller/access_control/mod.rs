@@ -19,6 +19,15 @@ pub struct AccessControl<WS, BS> {
     blacklist: Blacklist<BS>,
 }
 
+impl<WS: Default, BS> AccessControl<WS, BS> {
+    pub fn new(blacklist_storage: BS) -> Self {
+        Self {
+            whitelist: Default::default(),
+            blacklist: Blacklist::new(blacklist_storage)
+        }
+    }
+}
+
 /// `allow_blacklist`'s blacklist is linked with the whitelist incase in the future we want to link them in some way
 /// splits the `allow` behaviour into 2 functions instead of the alternative- an enum Target::[Whitelist | Blacklist] 
 /// this is the simpler approach. And allows a combo function later if we decide a reason for it

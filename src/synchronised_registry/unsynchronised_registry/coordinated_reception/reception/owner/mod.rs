@@ -13,6 +13,15 @@ pub struct Owner<AS, WS, BS, CS> {
     controller: Controller<WS, BS, CS>,
 }
 
+impl<AS: Default, WS: Default, BS, CS: Default> Owner<AS, WS, BS, CS> {
+    pub fn new(blacklist_storage: BS) -> Self {
+        Self {
+            authenticator: Default::default(),
+            controller: Controller::new(blacklist_storage)
+        }
+    }
+}
+
 impl<
     AS: CredentialStorage,
     WS: WhitelistStorage,

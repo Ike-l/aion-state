@@ -5,14 +5,22 @@ use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, 
 pub mod reception;
 
 #[derive(Default)]
-pub struct CoordinatedReception<RS, AS, OS, PS, LS, OSS> {
-    reception: RwLock<Reception<RS, AS, OS, PS, LS, OSS>>
+pub struct CoordinatedReception<RS, AS, OS, WS, BS, CS> {
+    reception: RwLock<Reception<RS, AS, OS, WS, BS, CS>>
 }
 
-impl<RS, AS, OS, PS, LS, OSS> serde::Serialize
-    for CoordinatedReception<RS, AS, OS, PS, LS, OSS>
+impl<RS: Default, AS: Default, OS: Default, WS: Default, BS, CS: Default> CoordinatedReception<RS, AS, OS, WS, BS, CS> {
+    pub fn new(blacklist_storage: BS) -> Self {
+        Self {
+            reception: RwLock::new(Reception::new(blacklist_storage)),
+        }
+    }
+}
+
+impl<RS, AS, OS, WS, BS, CS> serde::Serialize
+    for CoordinatedReception<RS, AS, OS, WS, BS, CS>
 where
-    Reception<RS, AS, OS, PS, LS, OSS>: serde::Serialize,
+    Reception<RS, AS, OS, WS, BS, CS>: serde::Serialize,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -22,10 +30,10 @@ where
     }
 }
 
-impl<'de, RS, AS, OS, PS, LS, OSS> serde::Deserialize<'de>
-    for CoordinatedReception<RS, AS, OS, PS, LS, OSS>
+impl<'de, RS, AS, OS, WS, BS, CS> serde::Deserialize<'de>
+    for CoordinatedReception<RS, AS, OS, WS, BS, CS>
 where
-    Reception<RS, AS, OS, PS, LS, OSS>: serde::Deserialize<'de>,
+    Reception<RS, AS, OS, WS, BS, CS>: serde::Deserialize<'de>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where

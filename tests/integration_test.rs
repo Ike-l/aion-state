@@ -37,5 +37,5 @@ pub fn create_registry(capacity: Option<usize>) -> TestRegistry {
 
     let registry_storage = RegistryStorage::new(capacity.unwrap_or(100));
 
-    Registry::new(registry_storage)
+    Registry::new(registry_storage, Default::default())
 }

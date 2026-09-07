@@ -19,6 +19,15 @@ pub struct Controller<WS, BS, CS> {
     resource_control: ResourceControl<CS>
 }
 
+impl<WS: Default, BS, CS: Default> Controller<WS, BS, CS> {
+    pub fn new(blacklist_storage: BS) -> Self {
+        Self {
+            access_control: AccessControl::new(blacklist_storage),
+            resource_control: Default::default()
+        }
+    }
+}
+
 impl<
     WS: WhitelistStorage,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,

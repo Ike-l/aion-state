@@ -20,6 +20,10 @@ pub enum Command<'a> {
         id: ReserverId,
         password: Password,
     },
+    Unregister {
+        id: ReserverId,
+        password: Password
+    },
     Own {
         id: ReserverId,
         password: Password,
@@ -32,6 +36,7 @@ impl Debug for Command<'_> {
         match self {
             Command::CheckedReplacement { .. } => write!(f, "Checked Replacement"),
             Command::Register { .. } => write!(f, "Register"),
+            Command::Unregister { .. } => write!(f, "Unregister"),
             Command::Own { .. } => write!(f, "Own"),
         }
     }
@@ -96,6 +101,8 @@ impl<'a> Command<'a> {
     ) -> Self {
         let command_idx = rng.random_range(0..Self::LEN);
  
+        // todo!("Sometimes i should randomly select a wrong password");
+
         match command_idx {
             0 => {
                 Command::CheckedReplacement{ 
@@ -119,7 +126,14 @@ impl<'a> Command<'a> {
                 } else {
                     Self::choose(rng, user_details, registry, label_length)
                 }
-            }
+            },
+            3 => {
+                if let Some((id, password)) = user_details {
+                    Command::Unregister { id: id.clone(), password: password.clone() }
+                } else {
+                    Self::choose(rng, user_details, registry, label_length)
+                }
+            },
             _ => unreachable!()
         }
     }
