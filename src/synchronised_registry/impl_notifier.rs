@@ -1,6 +1,6 @@
 use std::{fmt::Debug, hash::Hash};
 
-use crate::prelude::{sync::{Arc, Mutex}, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryAcquireAccess, RegistryOwnedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, Waiter, WhitelistStorage};
+use crate::prelude::{sync::{Arc, Mutex}, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryAcquireAccess, RegistryOwnedAcquireAccess, RegistryStorage, ReservationStorage, ReferenceValue, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, Waiter, WhitelistStorage};
 
 impl<
     S: RegistryStorage,
@@ -10,12 +10,12 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>,
-> Notifier<<<S as RegistryStorage>::Value as StoredValueTrait>::Value> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+> Notifier<<<S as RegistryStorage>::Value as ReferenceValue>::Value> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor, 
         S::ValueId: Hash + Eq,
-        <S as RegistryStorage>::Value: StoredValueTrait,
+        <S as RegistryStorage>::Value: ReferenceValue,
 {
     type AccessInput = RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
     type Error = SynchronisedRegistryAcquireAccessError;
@@ -28,7 +28,7 @@ impl<
         self.notify_queue.lock().unregister(&input.resource_id, waiter);
     }
 
-    fn acquire_access<'a, AccessResult: AccessorResult<'a, <<S as RegistryStorage>::Value as StoredValueTrait>::Value>>(&'a self, input: Self::AccessInput) -> Result<AccessResult, Self::Error> {
+    fn acquire_access<'a, AccessResult: AccessorResult<'a, <<S as RegistryStorage>::Value as ReferenceValue>::Value>>(&'a self, input: Self::AccessInput) -> Result<AccessResult, Self::Error> {
         self.acquire_access(RegistryAcquireAccess {
             user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
             resource_id: input.resource_id,

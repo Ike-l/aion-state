@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use stable_deref_trait::StableDeref;
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionCheckOwner, ReceptionDrainReservations, ReceptionGetAccess, ReceptionIsOwned, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryCheckOwner, RegistryContainsResource, RegistryDrainReservations, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReplacement, RegistryReservation, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, StoredValueTrait, UnsynchronisedRegistryAcquireAccessError, UnsynchronisedRegistryBlacklistAllowResult, UnsynchronisedRegistryBlacklistUnallowResult, UnsynchronisedRegistryCheckAccessResult, UnsynchronisedRegistryCheckOwnerResult, UnsynchronisedRegistryCheckedReplacementResult, UnsynchronisedRegistryContainsResourceResult, UnsynchronisedRegistryDrainReservationsResult, UnsynchronisedRegistryOwnResult, UnsynchronisedRegistryReallocatingReplacementResult, UnsynchronisedRegistryRegisterResult, UnsynchronisedRegistryReleaseAccessResult, UnsynchronisedRegistryReleaseResourceAllResult, UnsynchronisedRegistryReleaseResourceResult, UnsynchronisedRegistryReservationResult, UnsynchronisedRegistryUnregisterResult, UnsynchronisedRegistryUnreserveResult, UnsynchronisedRegistryUpdatePasswordResult, UnsynchronisedRegistryWhitelistAllowResult, UnsynchronisedRegistryWhitelistUnallowResult, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionCheckOwner, ReceptionDrainReservations, ReceptionGetAccess, ReceptionIsOwned, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, ReferenceValue, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryCheckOwner, RegistryContainsResource, RegistryDrainReservations, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReplacement, RegistryReservation, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, StoreValue, UnsynchronisedRegistryAcquireAccessError, UnsynchronisedRegistryBlacklistAllowResult, UnsynchronisedRegistryBlacklistUnallowResult, UnsynchronisedRegistryCheckAccessResult, UnsynchronisedRegistryCheckOwnerResult, UnsynchronisedRegistryCheckedReplacementResult, UnsynchronisedRegistryContainsResourceResult, UnsynchronisedRegistryDrainReservationsResult, UnsynchronisedRegistryOwnResult, UnsynchronisedRegistryReallocatingReplacementResult, UnsynchronisedRegistryRegisterResult, UnsynchronisedRegistryReleaseAccessResult, UnsynchronisedRegistryReleaseResourceAllResult, UnsynchronisedRegistryReleaseResourceResult, UnsynchronisedRegistryReservationResult, UnsynchronisedRegistryUnregisterResult, UnsynchronisedRegistryUnreserveResult, UnsynchronisedRegistryUpdatePasswordResult, UnsynchronisedRegistryWhitelistAllowResult, UnsynchronisedRegistryWhitelistUnallowResult, WhitelistStorage, trace_function};
 
 pub mod automated_registry;
 pub mod coordinated_reception;
@@ -248,13 +248,13 @@ impl<
     /// # Safety
     /// 
     /// No Concurrent Unique References
-    pub unsafe fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+    pub unsafe fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as ReferenceValue>::Value>>(
         &'a self,
         RegistryAcquireAccess {
             user_details, resource_id, access, password
         }: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> Result<AccessResult, UnsynchronisedRegistryAcquireAccessError> 
-        where <S as RegistryStorage>::Value: StoredValueTrait 
+        where <S as RegistryStorage>::Value: ReferenceValue 
     {
         trace_function!("Unsynchronised Registry Acquire Access");
 
@@ -292,9 +292,9 @@ impl<
         &self,
         RegistryReplacement {
             user_details, access, resource_id, resource, password
-        }: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoredValueTrait>::Value, BS::Password>
-    ) -> UnsynchronisedRegistryReallocatingReplacementResult<<S::Value as StoredValueTrait>::Value>
-        where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
+        }: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoreValue>::Value, BS::Password>
+    ) -> UnsynchronisedRegistryReallocatingReplacementResult<<S::Value as StoreValue>::Value>
+        where <S as RegistryStorage>::Value: StableDeref + StoreValue
     {
         trace_function!("Unsynchronised Registry Reallocating Replace");
 
@@ -318,9 +318,9 @@ impl<
         &self,
         RegistryReplacement {
             user_details, access, resource_id, resource, password
-        }: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoredValueTrait>::Value, BS::Password>
-    ) -> UnsynchronisedRegistryCheckedReplacementResult<<S::Value as StoredValueTrait>::Value>
-        where <S as RegistryStorage>::Value: StoredValueTrait
+        }: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoreValue>::Value, BS::Password>
+    ) -> UnsynchronisedRegistryCheckedReplacementResult<<S::Value as StoreValue>::Value>
+        where <S as RegistryStorage>::Value: StoreValue
     {
         trace_function!("Unsynchronised Registry Checked Replace");
 

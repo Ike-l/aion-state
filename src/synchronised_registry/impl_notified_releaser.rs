@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use std::hash::Hash;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, NotifiedReleaser, SynchronisedRegistryAcquireAccessError, RegistryOwnedAcquireAccess, RegistryStorage, ReservationStorage, StoredValueTrait, SynchronisedRegistry, WhitelistStorage};
+use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, NotifiedReleaser, SynchronisedRegistryAcquireAccessError, RegistryOwnedAcquireAccess, RegistryStorage, ReservationStorage, ReferenceValue, SynchronisedRegistry, WhitelistStorage};
 
 impl<
     S: RegistryStorage,
@@ -11,10 +11,10 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
-> NotifiedReleaser<<S::Value as StoredValueTrait>::Value, RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>, SynchronisedRegistryAcquireAccessError> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+> NotifiedReleaser<<S::Value as ReferenceValue>::Value, RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>, SynchronisedRegistryAcquireAccessError> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         S::ValueId: Clone + Eq + Hash,
-        S::Value: StoredValueTrait
+        S::Value: ReferenceValue
 {}

@@ -1,7 +1,7 @@
 use stable_deref_trait::StableDeref;
 use tracing::{Level, event};
 
-use crate::prelude::{Accessor, AccessorResult, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoredValueTrait, trace_function};
+use crate::prelude::{Accessor, AccessorResult, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, ReferenceValue, StoreValue, trace_function};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
@@ -17,13 +17,13 @@ impl<
     S: RegistryStorage,
 > ManualRegistry<S> 
 {
-    pub fn acquire_access<'a, Access: Accessor, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+    pub fn acquire_access<'a, Access: Accessor, AccessResult: AccessorResult<'a, <S::Value as ReferenceValue>::Value>>(
         &'a mut self, 
         ManualRegistryAccessInput {
             value_id, access
         }: ManualRegistryAccessInput<'_, S::ValueId, Access>
     ) -> Result<AccessResult, ManualRegistryAccessError> 
-        where <S as RegistryStorage>::Value: StoredValueTrait
+        where <S as RegistryStorage>::Value: ReferenceValue
     {
         trace_function!("Manual Acquire Access");
 
@@ -43,9 +43,9 @@ impl<
         &mut self,
         ManualRegistryReplacementInput {
             access, value_id, value
-        }: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoredValueTrait>::Value>
-    ) -> ManualRegistryReplacementResult<<S::Value as StoredValueTrait>::Value>
-        where <S as RegistryStorage>::Value: StoredValueTrait
+        }: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoreValue>::Value>
+    ) -> ManualRegistryReplacementResult<<S::Value as StoreValue>::Value>
+        where <S as RegistryStorage>::Value: StoreValue
     {
         trace_function!("Manual Unsafe Replacement");
 
@@ -74,18 +74,18 @@ impl<
             // replacement and allowed insert & remove
             (Some(new_value), true, true, true) => {
                 event!(Level::DEBUG, "Access Can Replace");
-                self.storage.insert(value_id, S::Value::new(new_value))
+                self.storage.insert(value_id, S::Value::store(new_value))
             },
 
             // insert without replacement and allowed insert
             (Some(new_value), false, true, _) => {
                 event!(Level::DEBUG, "Access Can Insert");
-                self.storage.insert(value_id, S::Value::new(new_value))
+                self.storage.insert(value_id, S::Value::store(new_value))
             },            
         };
 
         match old_resource {
-            Some(found) => ManualRegistryReplacementResult::Found(found.into_inner()),
+            Some(found) => ManualRegistryReplacementResult::Found(found.take()),
             None => ManualRegistryReplacementResult::NotFound,
         }
     }
@@ -99,9 +99,9 @@ impl<
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn reallocating_replace<Access: Accessor>(
         &mut self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoredValueTrait>::Value>
-    ) -> ManualRegistryReplacementResult<<S::Value as StoredValueTrait>::Value> 
-        where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoreValue>::Value>
+    ) -> ManualRegistryReplacementResult<<S::Value as StoreValue>::Value> 
+        where <S as RegistryStorage>::Value: StableDeref + StoreValue
     {
         trace_function!("Manual Reallocating Replacement");
 
@@ -117,9 +117,9 @@ impl<
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn checked_replace<Access: Accessor>(
         &mut self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoredValueTrait>::Value>
-    ) -> ManualRegistryCheckedReplacementResult<<S::Value as StoredValueTrait>::Value> 
-        where <S as RegistryStorage>::Value: StoredValueTrait
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoreValue>::Value>
+    ) -> ManualRegistryCheckedReplacementResult<<S::Value as StoreValue>::Value> 
+        where <S as RegistryStorage>::Value: StoreValue
     {
         trace_function!("Manual Checked Replacement");
 

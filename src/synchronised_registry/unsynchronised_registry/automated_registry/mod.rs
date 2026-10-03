@@ -2,7 +2,7 @@ use std::cell::UnsafeCell;
 
 use stable_deref_trait::StableDeref;
 
-use crate::prelude::{Accessor, AccessorResult, ManualRegistry, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoredValueTrait, trace_function};
+use crate::prelude::{Accessor, AccessorResult, ManualRegistry, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, ReferenceValue, trace_function};
 
 pub mod manual_registry;
 
@@ -52,11 +52,11 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// # Safety 
     /// 
     /// No Concurrent Unique References
-    pub unsafe fn acquire_access<'a, Access: Accessor, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+    pub unsafe fn acquire_access<'a, Access: Accessor, AccessResult: AccessorResult<'a, <S::Value as ReferenceValue>::Value>>(
         &'a self,
         input: ManualRegistryAccessInput<'_, S::ValueId, Access>
     ) -> Result<AccessResult, ManualRegistryAccessError> 
-        where <S as RegistryStorage>::Value: StoredValueTrait 
+        where <S as RegistryStorage>::Value: ReferenceValue 
     {
         trace_function!("Automated Registry Acquire Access");
 
@@ -74,9 +74,9 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn reallocating_replace<Access: Accessor>(
         &self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoredValueTrait>::Value>
-    ) -> ManualRegistryReplacementResult<<S::Value as StoredValueTrait>::Value> 
-        where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoreValue>::Value>
+    ) -> ManualRegistryReplacementResult<<S::Value as StoreValue>::Value> 
+        where <S as RegistryStorage>::Value: StableDeref + StoreValue
     {
         trace_function!("Automated Reallocating Replacement");
 
@@ -92,9 +92,9 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn checked_replace<Access: Accessor>(
         &self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoredValueTrait>::Value>
-    ) -> ManualRegistryCheckedReplacementResult<<S::Value as StoredValueTrait>::Value> 
-        where <S as RegistryStorage>::Value: StoredValueTrait
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoreValue>::Value>
+    ) -> ManualRegistryCheckedReplacementResult<<S::Value as StoreValue>::Value> 
+        where <S as RegistryStorage>::Value: StoreValue
     {
         trace_function!("Automated Checked Replacement");
 

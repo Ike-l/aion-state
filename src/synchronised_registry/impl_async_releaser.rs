@@ -3,7 +3,7 @@ use std::fmt::Debug;
 #[cfg(feature = "notifier")]
 use std::hash::Hash;
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, AsyncReleaser, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleasingReleaseAccess, RegistryStorage, ReleasingResult, ReservationStorage, StoredValueTrait, SynchronisedRegistry, WhitelistStorage, sync::Arc};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, AsyncReleaser, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleasingReleaseAccess, RegistryStorage, ReleasingResult, ReservationStorage, ReferenceValue, SynchronisedRegistry, WhitelistStorage, sync::Arc};
 
 #[cfg(not(feature = "notifier"))]
 impl<
@@ -14,18 +14,18 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
-> AsyncReleaser<<S::Value as StoredValueTrait>::Value> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+> AsyncReleaser<<S::Value as ReferenceValue>::Value> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         AS::ValueId: Clone,
-        S::Value: StoredValueTrait
+        S::Value: ReferenceValue
 {
-    fn async_acquire_released_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+    fn async_acquire_released_access<'a, AccessResult: AccessorResult<'a, <S::Value as ReferenceValue>::Value>>(
         self: &'a Arc<Self>, 
         input: Self::AccessInput
     ) -> 
-        impl Future<Output = Result<ReleasingResult<<S::Value as StoredValueTrait>::Value, AccessResult, Self>, Self::Error>> + 'a
+        impl Future<Output = Result<ReleasingResult<<S::Value as ReferenceValue>::Value, AccessResult, Self>, Self::Error>> + 'a
     {
         async move {
             let result = self
@@ -58,18 +58,18 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
-> AsyncReleaser<<S::Value as StoredValueTrait>::Value> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+> AsyncReleaser<<S::Value as ReferenceValue>::Value> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         S::ValueId: Clone + Eq + Hash,
-        S::Value: StoredValueTrait
+        S::Value: ReferenceValue
 {
-    fn async_acquire_released_access<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+    fn async_acquire_released_access<'a, AccessResult: AccessorResult<'a, <S::Value as ReferenceValue>::Value>>(
         self: &'a Arc<Self>, 
         input: Self::AccessInput
     ) -> 
-        impl Future<Output = Result<ReleasingResult<<S::Value as StoredValueTrait>::Value, AccessResult, Self>, Self::Error>> + 'a
+        impl Future<Output = Result<ReleasingResult<<S::Value as ReferenceValue>::Value, AccessResult, Self>, Self::Error>> + 'a
     {
         async move {
             let result = self

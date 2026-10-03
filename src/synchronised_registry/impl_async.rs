@@ -4,7 +4,7 @@ use std::hash::Hash;
 
 use stable_deref_trait::StableDeref;
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryCheckOwner, SynchronisedRegistryCheckOwnerResult, RegistryContainsResource, RegistryDrainReservations, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReplacement, RegistryReservation, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, StoredValueTrait, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, SynchronisedRegistryBlacklistAllowResult, SynchronisedRegistryBlacklistUnallowResult, SynchronisedRegistryCheckAccessResult, SynchronisedRegistryCheckedReplacementResult, SynchronisedRegistryContainsResourceResult, SynchronisedRegistryDrainReservationsResult, SynchronisedRegistryOwnResult, SynchronisedRegistryReallocatingReplacementResult, SynchronisedRegistryRegisterResult, SynchronisedRegistryReleaseAccessResult, SynchronisedRegistryReleaseResourceAllResult, SynchronisedRegistryReleaseResourceResult, SynchronisedRegistryReservationResult, SynchronisedRegistryUnregisterResult, SynchronisedRegistryUnreserveResult, SynchronisedRegistryUpdatePasswordResult, SynchronisedRegistryWhitelistAllowResult, SynchronisedRegistryWhitelistUnallowResult, WhitelistStorage, trace_function};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, ReferenceValue, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryCheckOwner, RegistryContainsResource, RegistryDrainReservations, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReplacement, RegistryReservation, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, StoreValue, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, SynchronisedRegistryBlacklistAllowResult, SynchronisedRegistryBlacklistUnallowResult, SynchronisedRegistryCheckAccessResult, SynchronisedRegistryCheckOwnerResult, SynchronisedRegistryCheckedReplacementResult, SynchronisedRegistryContainsResourceResult, SynchronisedRegistryDrainReservationsResult, SynchronisedRegistryOwnResult, SynchronisedRegistryReallocatingReplacementResult, SynchronisedRegistryRegisterResult, SynchronisedRegistryReleaseAccessResult, SynchronisedRegistryReleaseResourceAllResult, SynchronisedRegistryReleaseResourceResult, SynchronisedRegistryReservationResult, SynchronisedRegistryUnregisterResult, SynchronisedRegistryUnreserveResult, SynchronisedRegistryUpdatePasswordResult, SynchronisedRegistryWhitelistAllowResult, SynchronisedRegistryWhitelistUnallowResult, WhitelistStorage, trace_function};
 
 impl<
     S: RegistryStorage,
@@ -215,11 +215,11 @@ impl<
     }
 
 
-    pub async fn acquire_access_async<'a, AccessResult: AccessorResult<'a, <S::Value as StoredValueTrait>::Value>>(
+    pub async fn acquire_access_async<'a, AccessResult: AccessorResult<'a, <S::Value as ReferenceValue>::Value>>(
         &'a self,
         input: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> Result<AccessResult, SynchronisedRegistryAcquireAccessError> 
-        where <S as RegistryStorage>::Value: StoredValueTrait 
+        where <S as RegistryStorage>::Value: ReferenceValue 
     {
         trace_function!("Synchronised Registry Acquire Access Async");
 
@@ -229,9 +229,9 @@ impl<
 
     pub async fn reallocating_replace_async(
         &self,
-        input: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoredValueTrait>::Value, BS::Password>
-    ) -> SynchronisedRegistryReallocatingReplacementResult<<S::Value as StoredValueTrait>::Value>
-        where <S as RegistryStorage>::Value: StableDeref + StoredValueTrait
+        input: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoreValue>::Value, BS::Password>
+    ) -> SynchronisedRegistryReallocatingReplacementResult<<S::Value as StoreValue>::Value>
+        where <S as RegistryStorage>::Value: StableDeref + StoreValue
     {
         trace_function!("Synchronised Registry Reallocating Replace Async");
         
@@ -241,9 +241,9 @@ impl<
 
     pub async fn checked_replace_async(
         &self,
-        input: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoredValueTrait>::Value, BS::Password>
-    ) -> SynchronisedRegistryCheckedReplacementResult<<S::Value as StoredValueTrait>::Value>
-        where <S as RegistryStorage>::Value: StoredValueTrait
+        input: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoreValue>::Value, BS::Password>
+    ) -> SynchronisedRegistryCheckedReplacementResult<<S::Value as StoreValue>::Value>
+        where <S as RegistryStorage>::Value: StoreValue
     {
         trace_function!("Synchronised Registry Checked Replace Async");
         

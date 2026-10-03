@@ -494,7 +494,8 @@ pub mod prelude {
         accessor::{
             Accessor,
             AccessorResult,
-            StoredValueTrait
+            StoreValue,
+            ReferenceValue
         },
     };
 }
