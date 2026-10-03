@@ -8,7 +8,7 @@ pub enum AccessResult<'a, T> {
 }
 
 impl<'a, T> AccessorResult<'a, T> for AccessResult<'a, T> {
-    fn new_shared(value: &'a T) -> Self {
+    fn to_shared(value: &'a mut T) -> Self {
         AccessResult::Shared(value)
     }
 

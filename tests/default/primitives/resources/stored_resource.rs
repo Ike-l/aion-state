@@ -10,10 +10,6 @@ impl StoredValueTrait for StoredResource {
         value
     }
 
-    fn as_shared(&self) -> &Self::Value {
-        self
-    }
-
     fn as_unique(&mut self) -> &mut Self::Value {
         self
     }
