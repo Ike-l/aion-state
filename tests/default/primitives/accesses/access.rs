@@ -105,7 +105,7 @@ impl Accessor for Access {
 
         match self {
             Access::Shared(0) => None,
-            Access::Shared(_) => Some(R::new_shared(stored_value.as_shared())),
+            Access::Shared(_) => Some(R::to_shared(stored_value.as_unqiue())),
             Access::Unique => Some(R::new_unique(stored_value.as_unique())),
             Access::Replace => None,
         }

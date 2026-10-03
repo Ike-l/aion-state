@@ -40,13 +40,12 @@ pub trait StoredValueTrait {
     type Value;
 
     fn new(value: Self::Value) -> Self;
-    fn as_shared(&self) -> &Self::Value;
     fn as_unique(&mut self) -> &mut Self::Value;
     fn into_inner(self) -> Self::Value;
 }
 
 pub trait AccessorResult<'a, T> {
-    fn new_shared(value: &'a T) -> Self;
+    fn to_shared(value: &'a mut T) -> Self;
     fn new_unique(value: &'a mut T) -> Self;
     fn new_owned(value: T) -> Self;
 }

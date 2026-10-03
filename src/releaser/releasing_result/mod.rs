@@ -36,6 +36,14 @@ impl<S, AccessResult, R: Releaser<S>> ReleasingResult<S, AccessResult, R> {
     pub fn as_mut(&mut self) -> Option<&mut AccessResult> {
         self.raw.as_mut()
     }
+
+    pub fn access_releaser(&self) -> Option<&Arc<R>> {
+        self.releaser.as_ref()
+    }
+
+    pub fn access_release_input(&self) -> Option<&R::ReleaseInput> {
+        self.release_input.as_ref()
+    }
 }
 
 impl<S, AccessResult, R: Releaser<S> + ?Sized> Drop for ReleasingResult<S, AccessResult, R> {
