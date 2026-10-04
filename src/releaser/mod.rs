@@ -8,6 +8,6 @@ pub trait Releaser<'a, Value> {
 
     type ReleaseInput;
 
-    fn acquire_released_access<AccessResult: AccessorResult<'a, Value>>(self: &'a Arc<Self>, access_input: Self::AccessInput) -> Result<ReleasingResult<Value, AccessResult, Self>, Self::Error>;
+    fn acquire_released_access<AccessResult: AccessorResult<Value>>(self: &'a Arc<Self>, access_input: Self::AccessInput) -> Result<ReleasingResult<'a, Value, AccessResult, Self>, Self::Error>;
     fn release_access(&self, release_input: &Self::ReleaseInput);
 }

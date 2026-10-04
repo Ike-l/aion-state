@@ -47,7 +47,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
         Notifyee: AsyncNotifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
-        AccessResult: AccessorResult<'a, Value>
+        AccessResult: AccessorResult<Value>
 {}
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Future for AsyncFutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
@@ -55,7 +55,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
         Notifyee: AsyncNotifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
-        AccessResult: AccessorResult<'a, Value>
+        AccessResult: AccessorResult<Value>
 {
     type Output = Result<AccessResult, Notifyee::Error>;
 

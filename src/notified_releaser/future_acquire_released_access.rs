@@ -39,7 +39,7 @@ impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Pas
         Notifyee: NotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
         Filter: AccessFilter<Error = Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
-        AccessResult: AccessorResult<'a, Value>
+        AccessResult: AccessorResult<Value>
 {
     type Output = Result<ReleasingResult<'a, Value, AccessResult, Notifyee>, Error>;
 

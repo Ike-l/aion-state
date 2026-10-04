@@ -11,5 +11,5 @@ pub trait Notifier<'a, Value> {
 
     fn register_waiter(&self, input: Self::AccessInput) -> Arc<Mutex<Waiter>>;
     fn unregister_waiter(&self, input: &Self::AccessInput, waiter: &Arc<Mutex<Waiter>>);
-    fn acquire_access<AccessResult: AccessorResult<'a, Value>>(&'a self, input: Self::AccessInput) -> Result<AccessResult, Self::Error>;
+    fn acquire_access<AccessResult: AccessorResult<Value>>(&'a self, input: Self::AccessInput) -> Result<AccessResult, Self::Error>;
 }

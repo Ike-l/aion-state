@@ -24,7 +24,7 @@ impl<
 
     type ReleaseInput = RegistryReleasingReleaseAccess<S::ValueId, AS::Access>;
 
-    fn acquire_released_access<AccessResult: AccessorResult<'a, S::ReferencedValue<'a>>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<S::ReferencedValue<'a>, AccessResult, Self>, Self::Error> {
+    fn acquire_released_access<AccessResult: AccessorResult<S::ReferencedValue<'a>>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<'a, S::ReferencedValue<'a>, AccessResult, Self>, Self::Error> {
         let result = unsafe { self.as_ref().acquire_access(RegistryAcquireAccess {
             user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
             resource_id: input.resource_id.clone(),

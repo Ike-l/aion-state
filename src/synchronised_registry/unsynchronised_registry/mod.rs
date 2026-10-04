@@ -255,7 +255,7 @@ impl<
         }: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> Result<AccessResult, UnsynchronisedRegistryAcquireAccessError> 
         where 
-            AccessResult: AccessorResult<'a, S::ReferencedValue<'a>>,
+            AccessResult: AccessorResult<S::ReferencedValue<'a>>,
     {
         trace_function!("Unsynchronised Registry Acquire Access");
 

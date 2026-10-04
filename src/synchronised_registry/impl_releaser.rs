@@ -2,10 +2,11 @@ use std::fmt::Debug;
 #[cfg(feature = "notifier")]
 use std::hash::Hash;
 
-use crate::prelude::{sync::Arc, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleaseAccess, RegistryOwnedAcquireAccess, RegistryReleasingReleaseAccess, RegistryStorage, Releaser, ReleasingResult, ReservationStorage, WrappedValue, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
+use crate::prelude::{sync::Arc, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleaseAccess, RegistryOwnedAcquireAccess, RegistryReleasingReleaseAccess, RegistryStorage, Releaser, ReleasingResult, ReservationStorage, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
 
 #[cfg(not(feature = "notifier"))]
 impl<
+    'a,
     S: RegistryStorage,
     RS: ReservationStorage<AccessStorage = AS>,
     AS: AccessStorage<ValueId = S::ValueId> + Default,
@@ -13,19 +14,18 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
-> Releaser<<S::Value as WrappedValue>::Value> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+> Releaser<'a, S::ReferencedValue<'a>> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         AS::ValueId: Clone,
-        S::Value: WrappedValue
 {
     type Error = SynchronisedRegistryAcquireAccessError;
     type AccessInput = RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
 
     type ReleaseInput = RegistryReleasingReleaseAccess<S::ValueId, AS::Access>;
 
-    fn acquire_released_access<'a, AccessResult: AccessorResult<'a, <S::Value as WrappedValue>::Value>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<<S::Value as WrappedValue>::Value, AccessResult, Self>, Self::Error> {
+    fn acquire_released_access<AccessResult: AccessorResult<S::ReferencedValue<'a>>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<'a, S::ReferencedValue<'a>, AccessResult, Self>, Self::Error> {
         let result = self.as_ref().acquire_access(RegistryAcquireAccess {
             user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
             resource_id: input.resource_id.clone(),
@@ -68,7 +68,7 @@ impl<
 
     type ReleaseInput = RegistryReleasingReleaseAccess<S::ValueId, AS::Access>;
 
-    fn acquire_released_access<AccessResult: AccessorResult<'a, S::ReferencedValue<'a>>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<S::ReferencedValue<'a>, AccessResult, Self>, Self::Error> {
+    fn acquire_released_access<AccessResult: AccessorResult<S::ReferencedValue<'a>>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<'a, S::ReferencedValue<'a>, AccessResult, Self>, Self::Error> {
         let result = self.as_ref().acquire_access(RegistryAcquireAccess {
             user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
             resource_id: input.resource_id.clone(),

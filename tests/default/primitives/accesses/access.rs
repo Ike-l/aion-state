@@ -1,6 +1,6 @@
 use tracing::{Level, event};
 
-use aion_state::prelude::{AccessorResult, StoredValueTrait, Accessor};
+use aion_state::prelude::{Accessor, AccessorResult, WrappedValue};
 
 #[derive(Debug, PartialEq)]
 enum BorrowType {
@@ -97,9 +97,9 @@ impl Accessor for Access {
         }  
     }
     
-    fn acquire<'a, V: StoredValueTrait, R: AccessorResult<'a, V::Value>>(
+    fn acquire<'a, V: WrappedValue, R: AccessorResult<'a, V>>(
         &self, 
-        stored_value: &'a mut V
+        stored_value: V
     ) -> Option<R> {
         event!(Level::TRACE, "Access Acquire");
 

@@ -1,6 +1,6 @@
 use std::{fmt::Debug, hash::Hash};
 
-use crate::prelude::{sync::{Arc, Mutex}, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryAcquireAccess, RegistryOwnedAcquireAccess, RegistryStorage, ReservationStorage, WrappedValue, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, Waiter, WhitelistStorage};
+use crate::prelude::{sync::{Arc, Mutex}, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryAcquireAccess, RegistryOwnedAcquireAccess, RegistryStorage, ReservationStorage, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, Waiter, WhitelistStorage};
 
 impl<
     'a,
@@ -28,7 +28,7 @@ impl<
         self.notify_queue.lock().unregister(&input.resource_id, waiter);
     }
 
-    fn acquire_access<AccessResult: AccessorResult<'a, S::ReferencedValue<'a>>>(&'a self, input: Self::AccessInput) -> Result<AccessResult, Self::Error> {
+    fn acquire_access<AccessResult: AccessorResult<S::ReferencedValue<'a>>>(&'a self, input: Self::AccessInput) -> Result<AccessResult, Self::Error> {
         self.acquire_access(RegistryAcquireAccess {
             user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
             resource_id: input.resource_id,

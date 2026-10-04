@@ -25,7 +25,7 @@ impl<
     ) -> Result<AccessResult, ManualRegistryAccessError> 
         where 
             Access: Accessor,
-            AccessResult: AccessorResult<'a, S::ReferencedValue<'a>>,
+            AccessResult: AccessorResult<S::ReferencedValue<'a>>,
     {
         trace_function!("Manual Acquire Access");
 

@@ -310,7 +310,7 @@ impl<
         input: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> Result<AccessResult, SynchronisedRegistryAcquireAccessError> 
         where 
-            AccessResult: AccessorResult<'a, S::ReferencedValue<'a>>,
+            AccessResult: AccessorResult<S::ReferencedValue<'a>>,
     {
         trace_function!("Synchronised Registry Acquire Access");
 

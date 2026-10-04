@@ -38,7 +38,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
         Notifyee: Notifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
-        AccessResult: AccessorResult<'a, Value>
+        AccessResult: AccessorResult<Value>
 {
     type Output = Result<AccessResult, Notifyee::Error>;
 

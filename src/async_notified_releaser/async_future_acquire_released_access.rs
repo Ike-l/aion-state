@@ -48,7 +48,7 @@ impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Pas
         Notifyee: AsyncNotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
         Filter: AccessFilter<Error = Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
-        AccessResult: AccessorResult<'a, Value>
+        AccessResult: AccessorResult<Value>
 {}
 
 impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Future for AsyncFutureAcquireReleasedAccess<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
@@ -56,7 +56,7 @@ impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Pas
         Notifyee: AsyncNotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
         Filter: AccessFilter<Error = Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
-        AccessResult: AccessorResult<'a, Value>
+        AccessResult: AccessorResult<Value>
 {
     type Output = Result<ReleasingResult<'a, Value, AccessResult, Notifyee>, Error>;
 
