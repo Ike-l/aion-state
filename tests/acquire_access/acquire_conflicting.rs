@@ -6,6 +6,7 @@ use crate::create_registry;
 
 #[test]
 fn can_acquire_conflicting_u() {
+    use crate::default::storages::registry_storage::ResourceWrapper;
     let registry = create_registry(None);
 
     let resource_id = ResourceId::new_label("1");
@@ -29,11 +30,11 @@ fn can_acquire_conflicting_u() {
     }).unwrap();
 
     assert!(match result {
-        AccessResult::Unique(resource_result) => *resource_result == resource,
+        AccessResult::Unique(ResourceWrapper::Unique(resource_result)) => *resource_result == resource,
         _ => false
     });
 
-    let result = registry.acquire_access::<AccessResult<'_, Resource>>(RegistryAcquireAccess {
+    let result = registry.acquire_access::<AccessResult<ResourceWrapper<'_, Resource>>>(RegistryAcquireAccess {
         user_details: None,
         resource_id: resource_id.clone(),
         access: Access::Unique,
@@ -45,6 +46,7 @@ fn can_acquire_conflicting_u() {
 
 #[test]
 fn can_acquire_conflicting_s() {
+    use crate::default::storages::registry_storage::ResourceWrapper;
     let registry = create_registry(None);
 
     let resource_id = ResourceId::new_label("1");
@@ -68,11 +70,11 @@ fn can_acquire_conflicting_s() {
     }).unwrap();
 
     assert!(match result {
-        AccessResult::Shared(resource_result) => *resource_result == resource,
+        AccessResult::Shared(ResourceWrapper::Shared(resource_result)) => *resource_result == resource,
         _ => false
     });
 
-    let result = registry.acquire_access::<AccessResult<'_, Resource>>(RegistryAcquireAccess {
+    let result = registry.acquire_access::<AccessResult<ResourceWrapper<'_, Resource>>>(RegistryAcquireAccess {
         user_details: None,
         resource_id: resource_id.clone(),
         access: Access::Unique,
@@ -84,6 +86,7 @@ fn can_acquire_conflicting_s() {
 
 #[test]
 fn can_acquire_conflicting_uu() {
+    use crate::default::storages::registry_storage::ResourceWrapper;
     let registry = create_registry(None);
 
     let resource_id = ResourceId::new_label("1");
@@ -107,11 +110,11 @@ fn can_acquire_conflicting_uu() {
     }).unwrap();
 
     assert!(match result {
-        AccessResult::Unique(resource_result) => *resource_result == resource,
+        AccessResult::Unique(ResourceWrapper::Unique(resource_result)) => *resource_result == resource,
         _ => false
     });
 
-    let result = registry.acquire_access::<AccessResult<'_, Resource>>(RegistryAcquireAccess {
+    let result = registry.acquire_access::<AccessResult<ResourceWrapper<'_, Resource>>>(RegistryAcquireAccess {
         user_details: None,
         resource_id: resource_id.clone(),
         access: Access::Unique,

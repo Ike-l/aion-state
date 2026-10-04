@@ -1,6 +1,6 @@
 use tracing::{Level, event};
 
-use aion_state::prelude::{Accessor, AccessorResult, WrappedValue};
+use aion_state::prelude::{Accessor, AccessorResult};
 
 #[derive(Debug, PartialEq)]
 enum BorrowType {
@@ -97,7 +97,7 @@ impl Accessor for Access {
         }  
     }
     
-    fn acquire<'a, V: WrappedValue, R: AccessorResult<'a, V>>(
+    fn acquire<'a, V, R: AccessorResult<V>>(
         &self, 
         stored_value: V
     ) -> Option<R> {
@@ -105,8 +105,8 @@ impl Accessor for Access {
 
         match self {
             Access::Shared(0) => None,
-            Access::Shared(_) => Some(R::to_shared(stored_value.as_unique())),
-            Access::Unique => Some(R::new_unique(stored_value.as_unique())),
+            Access::Shared(_) => Some(R::to_shared(stored_value)),
+            Access::Unique => Some(R::new_unique(stored_value)),
             Access::Replace => None,
         }
     }

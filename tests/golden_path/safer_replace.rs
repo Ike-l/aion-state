@@ -4,6 +4,7 @@ use std::assert_matches;
 
 use crate::default::prelude::*;
 use crate::create_registry;
+use crate::default::storages::registry_storage::ResourceWrapper;
 
 fn can_safer_replace() {
     let registry = create_registry(None);
@@ -35,7 +36,7 @@ fn multi_safer_replace() {
     let n = 100;
     for raw_resource in raw_resources.take(n) {
         let resource_id = ResourceId::new_label(raw_resource.to_string());
-        let resource = Resource::new(raw_resource.to_string());
+        let mut resource = Resource::new(raw_resource.to_string());
         let result = registry.checked_replace(RegistryReplacement {
             user_details: None,
             access: &Access::Replace,
@@ -54,7 +55,7 @@ fn multi_safer_replace() {
         }).unwrap();
 
         let AccessResult::Unique(current_resource) = result else { unreachable!() };
-        assert_eq!(*current_resource, resource);
+        assert_eq!(current_resource, ResourceWrapper::Unique(&mut resource));
 
         assert!(registry.contains_resource(&RegistryContainsResource { resource_id: &resource_id }).ok());
     }

@@ -1,22 +1,27 @@
 use aion_state::prelude::AccessorResult;
 
 #[derive(Debug, PartialEq)]
-pub enum AccessResult<'a, T> {
-    Shared(&'a T),
-    Unique(&'a mut T),
+pub enum AccessResult<T: Transmutable> {
+    Shared(T),
+    Unique(T),
     Owned(T),
 }
 
-impl<'a, T> AccessorResult<'a, T> for AccessResult<'a, T> {
-    fn to_shared(value: &'a mut T) -> Self {
-        AccessResult::Shared(value)
+pub trait Transmutable {
+    fn transmute(self) -> Self;
+}
+
+impl<T: Transmutable> AccessorResult<T> for AccessResult<T> {
+    fn to_shared(value: T) -> Self {
+        let shared = value.transmute();
+        AccessResult::Shared(shared)
     }
 
-    fn new_unique(value: &'a mut T) -> Self {
+    fn new_unique(value: T) -> Self {
         AccessResult::Unique(value)
     }
 
-    fn new_owned(value: T) -> Self {
+    fn to_owned(value: T) -> Self {
         AccessResult::Owned(value)
     }
 }

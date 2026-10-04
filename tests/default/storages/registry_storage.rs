@@ -1,6 +1,9 @@
 use std::{collections::HashMap, hash::Hash};
 
+use aion_state::prelude::WrappedValue;
 use tracing::{Level, event};
+
+use crate::default::primitives::accesses::access_result::Transmutable;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct RegistryStorage<ResourceId: Hash + Eq, StoredResource> {
@@ -26,21 +29,51 @@ impl<ResourceId: Hash + Eq, StoredResource> RegistryStorage<ResourceId, StoredRe
     }
 }
 
+#[derive(Debug, PartialEq)]
+pub enum ResourceWrapper<'a, T> {
+    Unique(&'a mut T),
+    Shared(&'a T)
+}
+
+impl<'a, T> ResourceWrapper<'a, T> {
+    pub fn new(value: &'a mut T) -> Self {
+        Self::Unique(value)
+    }
+}
+
+impl<'a, T> WrappedValue for ResourceWrapper<'a, T> {
+    type Value = T;
+
+    fn as_unique(&mut self) -> &mut Self::Value {
+        let Self::Unique(value) = self else { unreachable!() };
+        value
+    }
+}
+
+impl<'a, T> Transmutable for ResourceWrapper<'a, T> {
+    fn transmute(self) -> Self {
+        let Self::Unique(value) = self else { unreachable!() };
+        Self::Shared(value)
+    }
+}
+
 impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage for RegistryStorage<ResourceId, StoredResource> {
     type ValueId = ResourceId;
     type OwnedValue = StoredResource;
+    type ReferencedValue<'a> = ResourceWrapper<'a, StoredResource> where Self: 'a;
 
     fn keys(&self) -> impl Iterator<Item = &Self::ValueId> {
         self.inner.keys()
     }
-
-    fn get_mut(
-        &mut self, 
+    
+    fn get_mut_wrapped(
+        &mut self,
         value_id: &Self::ValueId
-    ) -> Option<&mut Self::OwnedValue> {
+    ) -> Option<Self::ReferencedValue<'_>>
+    {
         event!(Level::TRACE, "RegistryStorage get mut");
 
-        self.inner.get_mut(value_id)
+        self.inner.get_mut(value_id).map(ResourceWrapper::new)
     }
 
     fn insert(

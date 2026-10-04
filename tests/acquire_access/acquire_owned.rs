@@ -3,9 +3,12 @@ use aion_state::prelude::{RegistryAcquireAccess, SynchronisedRegistryAcquireAcce
 use crate::default::prelude::*;
 
 use crate::create_registry;
+use crate::default::primitives::accesses::access_result::Transmutable;
 
 #[test]
 fn cant_acquire_owned() {
+    use crate::default::storages::registry_storage::ResourceWrapper;
+
     let registry = create_registry(None);
 
     let resource_id = ResourceId::new_type::<String>();
@@ -33,7 +36,7 @@ fn cant_acquire_owned() {
         password: None,
     }).ok());
 
-    let result = registry.acquire_access::<AccessResult<'_, Resource>>(RegistryAcquireAccess {
+    let result = registry.acquire_access::<AccessResult<ResourceWrapper<'_, Resource>>>(RegistryAcquireAccess {
         user_details: None,
         resource_id: resource_id.clone(),
         access: Access::Shared(1),
@@ -45,10 +48,12 @@ fn cant_acquire_owned() {
 
 #[test]
 fn can_acquire_owned() {
+    use crate::default::storages::registry_storage::ResourceWrapper;
+
     let registry = create_registry(None);
 
     let resource_id = ResourceId::new_type::<String>();
-    let resource = Resource::new("resource".to_string());
+    let mut resource = Resource::new("resource".to_string());
 
     let id = ReserverId::new("1");
     let password = Password::new(1);
@@ -72,12 +77,13 @@ fn can_acquire_owned() {
         password: None,
     }).ok());
 
-    let result = registry.acquire_access::<AccessResult<'_, Resource>>(RegistryAcquireAccess {
+    let result = registry.acquire_access::<AccessResult<ResourceWrapper<'_, Resource>>>(RegistryAcquireAccess {
         user_details: Some((&id, &password)),
         resource_id: resource_id.clone(),
         access: Access::Shared(1),
         password: None
     });
 
-    assert_eq!(result, Ok(AccessResult::Shared(&resource)));
+    let resource_wrapper = ResourceWrapper::new(&mut resource).transmute();
+    assert_eq!(result, Ok(AccessResult::Shared(resource_wrapper)));
 }

@@ -6,6 +6,7 @@ use crate::create_registry;
 
 #[test]
 fn can_acquire_many() {
+    use crate::default::storages::registry_storage::ResourceWrapper;
     let registry = create_registry(None);
 
     let resource_id1 = ResourceId::new_label("1");
@@ -55,7 +56,7 @@ fn can_acquire_many() {
     }).unwrap();
 
     assert!(match result {
-        AccessResult::Shared(resource_result) => *resource_result == resource1,
+        AccessResult::Shared(ResourceWrapper::Shared(resource_result)) => *resource_result == resource1,
         _ => false
     });
 
@@ -67,7 +68,7 @@ fn can_acquire_many() {
     }).unwrap();
 
     assert!(match result {
-        AccessResult::Shared(resource_result) => *resource_result == resource2,
+        AccessResult::Shared(ResourceWrapper::Shared(resource_result)) => *resource_result == resource2,
         _ => false
     });
 
@@ -79,7 +80,7 @@ fn can_acquire_many() {
     }).unwrap();
 
     assert!(match result {
-        AccessResult::Shared(resource_result) => *resource_result == resource3,
+        AccessResult::Shared(ResourceWrapper::Shared(resource_result)) => *resource_result == resource3,
         _ => false
     });
 }

@@ -6,6 +6,7 @@ use crate::create_registry;
 
 #[test]
 fn can_acquire_nothing() {
+    use crate::default::storages::registry_storage::ResourceWrapper;
     let registry = create_registry(None);
 
     let resource_id = ResourceId::new_type::<String>();
@@ -23,7 +24,7 @@ fn can_acquire_nothing() {
 
     let wrong_resource_id = ResourceId::new_type::<i32>();
 
-    let result = registry.acquire_access::<AccessResult<'_, Resource>>(RegistryAcquireAccess {
+    let result = registry.acquire_access::<AccessResult<ResourceWrapper<'_, Resource>>>(RegistryAcquireAccess {
         user_details: None,
         resource_id: wrong_resource_id,
         access: Access::Shared(1),

@@ -4,6 +4,7 @@ use std::assert_matches;
 
 use crate::default::prelude::*;
 use crate::create_registry;
+use crate::default::storages::registry_storage::ResourceWrapper;
 
 fn can_own() {
     let registry = create_registry(None);
@@ -59,7 +60,7 @@ fn owning_blocks_by_default() {
 
     assert!(result.ok());
 
-    let result = registry.acquire_access::<AccessResult<Resource>>(RegistryAcquireAccess {
+    let result = registry.acquire_access::<AccessResult<ResourceWrapper<'_, Resource>>>(RegistryAcquireAccess {
         user_details: None,
         access: Access::Shared(1),
         resource_id,

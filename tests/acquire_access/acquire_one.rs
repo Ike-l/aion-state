@@ -6,6 +6,8 @@ use crate::create_registry;
 
 #[test]
 fn can_acquire_one() {
+    use crate::default::storages::registry_storage::ResourceWrapper;
+    
     let registry = create_registry(None);
 
     let resource_id = ResourceId::new_type::<String>();
@@ -29,7 +31,7 @@ fn can_acquire_one() {
     }).unwrap();
 
     assert!(match result {
-        AccessResult::Shared(resource_result) => *resource_result == resource,
+        AccessResult::Shared(ResourceWrapper::Shared(resource_result)) => *resource_result == resource,
         _ => false
     })
 }
