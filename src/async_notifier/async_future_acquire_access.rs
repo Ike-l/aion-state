@@ -4,7 +4,7 @@ use crate::prelude::{AccessFilter, AccessorResult, AsyncNotifier, RegistryOwnedA
 
 pub struct AsyncFutureAcquireAccess<'a,
     Value,
-    Notifyee: AsyncNotifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>, 
+    Notifyee: AsyncNotifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>, 
     Filter: AccessFilter<Error = Notifyee::Error>,
     Id, IdPassword, ResourceId, Access, Password,
     AccessResult
@@ -20,7 +20,7 @@ pub struct AsyncFutureAcquireAccess<'a,
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> AsyncFutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: AsyncNotifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone
 {
@@ -44,7 +44,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Unpin for AsyncFutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: AsyncNotifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
         AccessResult: AccessorResult<'a, Value>
@@ -52,7 +52,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Future for AsyncFutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: AsyncNotifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
         AccessResult: AccessorResult<'a, Value>
@@ -91,7 +91,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Drop for AsyncFutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: AsyncNotifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
 {
     fn drop(&mut self) {

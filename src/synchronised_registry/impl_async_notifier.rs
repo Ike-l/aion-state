@@ -1,8 +1,9 @@
 use std::{fmt::Debug, hash::Hash};
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, AsyncNotifier, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryStorage, ReservationStorage, ReferenceValue, SynchronisedRegistry, WhitelistStorage};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, AsyncNotifier, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryStorage, ReservationStorage, WrappedValue, SynchronisedRegistry, WhitelistStorage};
 
 impl<
+    'a,
     S: RegistryStorage,
     RS: ReservationStorage<AccessStorage = AS>,
     AS: AccessStorage<ValueId = S::ValueId> + Default,
@@ -10,14 +11,13 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>,
-> AsyncNotifier<<<S as RegistryStorage>::OwnedValue as ReferenceValue>::Value> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+> AsyncNotifier<'a, S::ReferencedValue<'a>> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor, 
         S::ValueId: Hash + Eq,
-        <S as RegistryStorage>::OwnedValue: ReferenceValue,
 {
-    fn async_acquire_access<'a, AccessResult: AccessorResult<'a, <<S as RegistryStorage>::OwnedValue as ReferenceValue>::Value>>(&'a self, input: Self::AccessInput) -> impl Future<Output = Result<AccessResult, Self::Error>> + 'a {
+    fn async_acquire_access<AccessResult: AccessorResult<'a, S::ReferencedValue<'a>>>(&'a self, input: Self::AccessInput) -> impl Future<Output = Result<AccessResult, Self::Error>> + 'a {
         async move {
             self.acquire_access_async(RegistryAcquireAccess {
                 user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),

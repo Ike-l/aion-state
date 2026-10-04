@@ -5,11 +5,11 @@ pub mod access_filter;
 pub mod notify_queue;
 pub mod waiter;
 
-pub trait Notifier<Value> {
+pub trait Notifier<'a, Value> {
     type AccessInput;
     type Error;
 
     fn register_waiter(&self, input: Self::AccessInput) -> Arc<Mutex<Waiter>>;
     fn unregister_waiter(&self, input: &Self::AccessInput, waiter: &Arc<Mutex<Waiter>>);
-    fn acquire_access<'a, AccessResult: AccessorResult<'a, Value>>(&'a self, input: Self::AccessInput) -> Result<AccessResult, Self::Error>;
+    fn acquire_access<AccessResult: AccessorResult<'a, Value>>(&'a self, input: Self::AccessInput) -> Result<AccessResult, Self::Error>;
 }

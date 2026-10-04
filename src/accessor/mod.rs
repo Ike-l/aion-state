@@ -14,9 +14,9 @@ pub trait Accessor {
     fn can_remove_resource(&self) -> bool;
 
     /// When acquiring a resource the stored value is passed through `acquire` and the result is returned by the function
-    fn acquire<'a, V: ReferenceValue, R: AccessorResult<'a, V::Value>>(
+    fn acquire<'a, V: WrappedValue, R: AccessorResult<'a, V>>(
         &self, 
-        stored_value: &'a mut V
+        stored_value: V
     ) -> Option<R>;
 
     /// If `can_access(self, other)` then `merge(self, other)`
@@ -42,7 +42,7 @@ pub trait StoreValue {
     fn take(self) -> Self::Value;
 }
 
-pub trait ReferenceValue {
+pub trait WrappedValue {
     type Value;
     fn as_unique(&mut self) -> &mut Self::Value;
 }

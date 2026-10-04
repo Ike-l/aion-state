@@ -1,13 +1,13 @@
 use crate::prelude::{Releaser, sync::Arc};
 
-pub struct ReleasingResult<S, AccessResult, R: Releaser<S> + ?Sized> {
+pub struct ReleasingResult<'a, S, AccessResult, R: Releaser<'a, S> + ?Sized> {
     raw: Option<AccessResult>,
     consumed: bool,
     releaser: Option<Arc<R>>,
     release_input: Option<R::ReleaseInput>
 }
 
-impl<S, AccessResult, R: Releaser<S>> ReleasingResult<S, AccessResult, R> {
+impl<'a, S, AccessResult, R: Releaser<'a, S>> ReleasingResult<'a, S, AccessResult, R> {
     pub fn new(
         access_result: AccessResult, 
         releaser: Arc<R>,
@@ -24,7 +24,7 @@ impl<S, AccessResult, R: Releaser<S>> ReleasingResult<S, AccessResult, R> {
     pub fn update<NewAccessResult>(
         mut self, 
         f: impl FnOnce(AccessResult) -> NewAccessResult
-    ) -> ReleasingResult<S, NewAccessResult, R> {
+    ) -> ReleasingResult<'a, S, NewAccessResult, R> {
         self.consumed = true;
         ReleasingResult::new(f(self.raw.take().unwrap()), self.releaser.take().unwrap(), self.release_input.take().unwrap())
     }
@@ -46,7 +46,7 @@ impl<S, AccessResult, R: Releaser<S>> ReleasingResult<S, AccessResult, R> {
     }
 }
 
-impl<S, AccessResult, R: Releaser<S> + ?Sized> Drop for ReleasingResult<S, AccessResult, R> {
+impl<'a, S, AccessResult, R: Releaser<'a, S> + ?Sized> Drop for ReleasingResult<'a, S, AccessResult, R> {
     fn drop(&mut self) {
         if !self.consumed {
             self.releaser.take().unwrap().release_access(&self.release_input.take().unwrap());

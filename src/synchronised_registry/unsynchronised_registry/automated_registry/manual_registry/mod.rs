@@ -1,7 +1,7 @@
 use stable_deref_trait::StableDeref;
 use tracing::{Level, event};
 
-use crate::prelude::{Accessor, AccessorResult, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, ReferenceValue, StoreValue, trace_function};
+use crate::prelude::{Accessor, AccessorResult, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, trace_function};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
@@ -25,13 +25,13 @@ impl<
     ) -> Result<AccessResult, ManualRegistryAccessError> 
         where 
             Access: Accessor,
-            AccessResult: AccessorResult<'a, <S::OwnedValue as ReferenceValue>::Value>,
+            AccessResult: AccessorResult<'a, S::ReferencedValue<'a>>,
     {
         trace_function!("Manual Acquire Access");
 
-        match self.storage.get_mut(value_id) {
+        match self.storage.get_mut_wrapped(value_id) {
             Some(stored_value) => {
-                access.acquire::<S::OwnedValue, AccessResult>(stored_value).ok_or(ManualRegistryAccessError::TriedAcquiring)
+                access.acquire::<S::ReferencedValue<'a>, AccessResult>(stored_value).ok_or(ManualRegistryAccessError::TriedAcquiring)
             },
             None => Err(ManualRegistryAccessError::NotFound),
         }

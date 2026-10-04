@@ -5,7 +5,7 @@ use crate::prelude::{AccessFilter, AccessorResult, NotifiedReleaser, RegistryOwn
 pub struct FutureAcquireReleasedAccess<'a,
     Value,
     Error,
-    Notifyee: NotifiedReleaser<Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
+    Notifyee: NotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
     Filter: AccessFilter<Error = Error>,
     Id, IdPassword, ResourceId, Access, Password,
     AccessResult
@@ -20,7 +20,7 @@ pub struct FutureAcquireReleasedAccess<'a,
 
 impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> FutureAcquireReleasedAccess<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: NotifiedReleaser<Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
+        Notifyee: NotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
         Filter: AccessFilter<Error = Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone,
 {
@@ -36,12 +36,12 @@ impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Pas
 
 impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Future for FutureAcquireReleasedAccess<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: NotifiedReleaser<Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
+        Notifyee: NotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
         Filter: AccessFilter<Error = Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
         AccessResult: AccessorResult<'a, Value>
 {
-    type Output = Result<ReleasingResult<Value, AccessResult, Notifyee>, Error>;
+    type Output = Result<ReleasingResult<'a, Value, AccessResult, Notifyee>, Error>;
 
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         if self.waiter.lock().is_ready_to_retry() {
@@ -66,7 +66,7 @@ impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Pas
 
 impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Drop for FutureAcquireReleasedAccess<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: NotifiedReleaser<Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
+        Notifyee: NotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
         Filter: AccessFilter<Error = Error>,
 {
     fn drop(&mut self) {

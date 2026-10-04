@@ -4,7 +4,7 @@ use crate::prelude::{AccessFilter, AccessorResult, Notifier, RegistryOwnedAcquir
 
 pub struct FutureAcquireAccess<'a,
     Value,
-    Notifyee: Notifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>, 
+    Notifyee: Notifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>, 
     Filter: AccessFilter<Error = Notifyee::Error>,
     Id, IdPassword, ResourceId, Access, Password,
     AccessResult
@@ -19,7 +19,7 @@ pub struct FutureAcquireAccess<'a,
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> FutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: Notifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: Notifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone
 {
@@ -35,7 +35,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Future for FutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: Notifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: Notifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
         AccessResult: AccessorResult<'a, Value>
@@ -65,7 +65,7 @@ impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, 
 
 impl<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Drop for FutureAcquireAccess<'a, Value, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: Notifier<Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
+        Notifyee: Notifier<'a, Value, AccessInput = RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>>,
         Filter: AccessFilter<Error = Notifyee::Error>,
 {
     fn drop(&mut self) {

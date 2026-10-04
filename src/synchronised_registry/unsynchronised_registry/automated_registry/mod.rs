@@ -2,7 +2,7 @@ use std::cell::UnsafeCell;
 
 use stable_deref_trait::StableDeref;
 
-use crate::prelude::{Accessor, AccessorResult, ManualRegistry, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, ReferenceValue, trace_function};
+use crate::prelude::{Accessor, AccessorResult, ManualRegistry, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, WrappedValue, trace_function};
 
 pub mod manual_registry;
 
@@ -52,11 +52,13 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// # Safety 
     /// 
     /// No Concurrent Unique References
-    pub unsafe fn acquire_access<'a, Access: Accessor, AccessResult: AccessorResult<'a, <S::OwnedValue as ReferenceValue>::Value>>(
+    pub unsafe fn acquire_access<'a, Access, AccessResult>(
         &'a self,
         input: ManualRegistryAccessInput<'_, S::ValueId, Access>
     ) -> Result<AccessResult, ManualRegistryAccessError> 
-        where <S as RegistryStorage>::OwnedValue: ReferenceValue 
+        where 
+            Access: Accessor,
+            AccessResult: AccessorResult<'a, S::ReferencedValue<'a>>,
     {
         trace_function!("Automated Registry Acquire Access");
 

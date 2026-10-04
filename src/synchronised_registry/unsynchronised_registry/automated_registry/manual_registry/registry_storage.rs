@@ -1,10 +1,10 @@
-use crate::prelude::ReferenceValue;
+use crate::prelude::WrappedValue;
 
 pub trait RegistryStorage {
     type ValueId;
 
     type OwnedValue;
-    type ReferencedValue<'a>: ReferenceValue where Self: 'a;
+    type ReferencedValue<'a>: WrappedValue where Self: 'a;
 
     fn get_mut_wrapped(
         &mut self,

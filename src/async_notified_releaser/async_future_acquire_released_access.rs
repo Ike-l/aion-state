@@ -5,7 +5,7 @@ use crate::prelude::{AccessFilter, AccessorResult, AsyncNotifiedReleaser, Regist
 pub struct AsyncFutureAcquireReleasedAccess<'a,
     Value,
     Error,
-    Notifyee: AsyncNotifiedReleaser<Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>, 
+    Notifyee: AsyncNotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>, 
     Filter: AccessFilter<Error = Error>,
     Id, IdPassword, ResourceId, Access, Password,
     AccessResult
@@ -14,14 +14,14 @@ pub struct AsyncFutureAcquireReleasedAccess<'a,
     input: RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>,
     filter: Filter,
     waiter: Arc<Mutex<Waiter>>,
-    acquire_future: Option<Pin<Box<dyn Future<Output = Result<ReleasingResult<Value, AccessResult, Notifyee>, Error>> + 'a>>>,
+    acquire_future: Option<Pin<Box<dyn Future<Output = Result<ReleasingResult<'a, Value, AccessResult, Notifyee>, Error>> + 'a>>>,
     _r: PhantomData<AccessResult>,
     _v: PhantomData<Value>
 }
 
 impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> AsyncFutureAcquireReleasedAccess<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifiedReleaser<Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
+        Notifyee: AsyncNotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
         Filter: AccessFilter<Error = Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone
 {
@@ -45,7 +45,7 @@ impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Pas
 
 impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Unpin for AsyncFutureAcquireReleasedAccess<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifiedReleaser<Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
+        Notifyee: AsyncNotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
         Filter: AccessFilter<Error = Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
         AccessResult: AccessorResult<'a, Value>
@@ -53,12 +53,12 @@ impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Pas
 
 impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Future for AsyncFutureAcquireReleasedAccess<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifiedReleaser<Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
+        Notifyee: AsyncNotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
         Filter: AccessFilter<Error = Error>,
         RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>: Clone, 
         AccessResult: AccessorResult<'a, Value>
 {
-    type Output = Result<ReleasingResult<Value, AccessResult, Notifyee>, Error>;
+    type Output = Result<ReleasingResult<'a, Value, AccessResult, Notifyee>, Error>;
 
     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         if self.acquire_future.is_none() && self.waiter.lock().is_ready_to_retry() {
@@ -92,7 +92,7 @@ impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Pas
 
 impl<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> Drop for AsyncFutureAcquireReleasedAccess<'a, Value, Error, Notifyee, Filter, Id, IdPassword, ResourceId, Access, Password, AccessResult> 
     where 
-        Notifyee: AsyncNotifiedReleaser<Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
+        Notifyee: AsyncNotifiedReleaser<'a, Value, RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password>, Error>,
         Filter: AccessFilter<Error = Error>,
 {
     fn drop(&mut self) {

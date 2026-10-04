@@ -1,9 +1,10 @@
 use std::fmt::Debug;
 use std::hash::Hash;
 
-use crate::prelude::{sync::Arc, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleaseAccess, RegistryOwnedAcquireAccess, RegistryReleasingReleaseAccess, RegistryStorage, Releaser, ReleasingResult, ReservationStorage, ReferenceValue, UnsynchronisedRegistry, UnsynchronisedRegistryAcquireAccessError, WhitelistStorage};
+use crate::prelude::{sync::Arc, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleaseAccess, RegistryOwnedAcquireAccess, RegistryReleasingReleaseAccess, RegistryStorage, Releaser, ReleasingResult, ReservationStorage, WrappedValue, UnsynchronisedRegistry, UnsynchronisedRegistryAcquireAccessError, WhitelistStorage};
 
 impl<
+    'a,
     S: RegistryStorage,
     RS: ReservationStorage<AccessStorage = AS>,
     AS: AccessStorage<ValueId = S::ValueId> + Default,
@@ -11,19 +12,19 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
-> Releaser<<S::OwnedValue as ReferenceValue>::Value> for UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+> Releaser<'a, S::ReferencedValue<'a>> for UnsynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         S::ValueId: Clone + Eq + Hash,
-        S::OwnedValue: ReferenceValue
+        S::ReferencedValue<'a>: WrappedValue
 {
     type Error = UnsynchronisedRegistryAcquireAccessError;
     type AccessInput = RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
 
     type ReleaseInput = RegistryReleasingReleaseAccess<S::ValueId, AS::Access>;
 
-    fn acquire_released_access<'a, AccessResult: AccessorResult<'a, <S::OwnedValue as ReferenceValue>::Value>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<<S::OwnedValue as ReferenceValue>::Value, AccessResult, Self>, Self::Error> {
+    fn acquire_released_access<AccessResult: AccessorResult<'a, S::ReferencedValue<'a>>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<S::ReferencedValue<'a>, AccessResult, Self>, Self::Error> {
         let result = unsafe { self.as_ref().acquire_access(RegistryAcquireAccess {
             user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
             resource_id: input.resource_id.clone(),

@@ -485,7 +485,7 @@ pub mod prelude {
                             ManualRegistryCheckedReplacementResult,
                         },
                         registry_storage::{
-                            RegistryStorage
+                            RegistryStorage,
                         },
                     }
                 }
@@ -495,7 +495,7 @@ pub mod prelude {
             Accessor,
             AccessorResult,
             StoreValue,
-            ReferenceValue
+            WrappedValue
         },
     };
 }
