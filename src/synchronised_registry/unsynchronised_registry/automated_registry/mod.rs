@@ -2,7 +2,7 @@ use std::cell::UnsafeCell;
 
 use stable_deref_trait::StableDeref;
 
-use crate::prelude::{Accessor, AccessorResult, ManualRegistry, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, trace_function};
+use crate::prelude::{Accessor, AccessorResult, ManualRegistry, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, WrappedValue, trace_function};
 
 pub mod manual_registry;
 
@@ -59,6 +59,7 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
         where 
             Access: Accessor,
             AccessResult: AccessorResult<S::ReferencedValue<'a>>,
+            S::ReferencedValue<'a>: WrappedValue,
     {
         trace_function!("Automated Registry Acquire Access");
 

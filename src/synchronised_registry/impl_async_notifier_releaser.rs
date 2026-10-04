@@ -16,5 +16,5 @@ impl<
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         S::ValueId: Clone + Eq + Hash,
-        S::OwnedValue: WrappedValue
+        S::ReferencedValue<'a>: WrappedValue,
 {}

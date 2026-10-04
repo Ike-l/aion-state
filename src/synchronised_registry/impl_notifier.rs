@@ -1,6 +1,6 @@
 use std::{fmt::Debug, hash::Hash};
 
-use crate::prelude::{sync::{Arc, Mutex}, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryAcquireAccess, RegistryOwnedAcquireAccess, RegistryStorage, ReservationStorage, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, Waiter, WhitelistStorage};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, Notifier, RegistryAcquireAccess, RegistryOwnedAcquireAccess, RegistryStorage, ReservationStorage, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, Waiter, WhitelistStorage, WrappedValue, sync::{Arc, Mutex}};
 
 impl<
     'a,
@@ -16,6 +16,7 @@ impl<
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor, 
         S::ValueId: Hash + Eq,
+        S::ReferencedValue<'a>: WrappedValue,
 {
     type AccessInput = RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
     type Error = SynchronisedRegistryAcquireAccessError;

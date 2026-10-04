@@ -2,6 +2,8 @@ use std::fmt::Debug;
 #[cfg(feature = "notifier")]
 use std::hash::Hash;
 
+#[cfg(feature = "notifier")]
+use crate::prelude::WrappedValue;
 use crate::prelude::{sync::Arc, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleaseAccess, RegistryOwnedAcquireAccess, RegistryReleasingReleaseAccess, RegistryStorage, Releaser, ReleasingResult, ReservationStorage, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
 
 #[cfg(not(feature = "notifier"))]
@@ -19,6 +21,7 @@ impl<
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         AS::ValueId: Clone,
+        S::ReferencedValue<'a>: WrappedValue
 {
     type Error = SynchronisedRegistryAcquireAccessError;
     type AccessInput = RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
@@ -62,6 +65,7 @@ impl<
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         S::ValueId: Clone + Eq + Hash,
+        S::ReferencedValue<'a>: WrappedValue,
 {
     type Error = SynchronisedRegistryAcquireAccessError;
     type AccessInput = RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
