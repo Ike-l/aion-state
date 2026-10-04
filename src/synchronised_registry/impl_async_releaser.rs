@@ -58,18 +58,18 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
-> AsyncReleaser<<S::Value as ReferenceValue>::Value> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+> AsyncReleaser<<S::OwnedValue as ReferenceValue>::Value> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         S::ValueId: Clone + Eq + Hash,
-        S::Value: ReferenceValue
+        S::OwnedValue: ReferenceValue
 {
-    fn async_acquire_released_access<'a, AccessResult: AccessorResult<'a, <S::Value as ReferenceValue>::Value>>(
+    fn async_acquire_released_access<'a, AccessResult: AccessorResult<'a, <S::OwnedValue as ReferenceValue>::Value>>(
         self: &'a Arc<Self>, 
         input: Self::AccessInput
     ) -> 
-        impl Future<Output = Result<ReleasingResult<<S::Value as ReferenceValue>::Value, AccessResult, Self>, Self::Error>> + 'a
+        impl Future<Output = Result<ReleasingResult<<S::OwnedValue as ReferenceValue>::Value, AccessResult, Self>, Self::Error>> + 'a
     {
         async move {
             let result = self

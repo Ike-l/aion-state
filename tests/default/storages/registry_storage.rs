@@ -28,7 +28,7 @@ impl<ResourceId: Hash + Eq, StoredResource> RegistryStorage<ResourceId, StoredRe
 
 impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage for RegistryStorage<ResourceId, StoredResource> {
     type ValueId = ResourceId;
-    type Value = StoredResource;
+    type OwnedValue = StoredResource;
 
     fn keys(&self) -> impl Iterator<Item = &Self::ValueId> {
         self.inner.keys()
@@ -37,7 +37,7 @@ impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage
     fn get_mut(
         &mut self, 
         value_id: &Self::ValueId
-    ) -> Option<&mut Self::Value> {
+    ) -> Option<&mut Self::OwnedValue> {
         event!(Level::TRACE, "RegistryStorage get mut");
 
         self.inner.get_mut(value_id)
@@ -46,8 +46,8 @@ impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage
     fn insert(
         &mut self, 
         value_id: Self::ValueId, 
-        value: Self::Value
-    ) -> Option<Self::Value> {
+        value: Self::OwnedValue
+    ) -> Option<Self::OwnedValue> {
         event!(Level::TRACE, "RegistryStorage insert");
 
         let r = self.inner.insert(value_id, value);
@@ -62,7 +62,7 @@ impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage
     fn remove(
         &mut self, 
         value_id: &Self::ValueId
-    ) -> Option<Self::Value> {
+    ) -> Option<Self::OwnedValue> {
         event!(Level::TRACE, "RegistryStorage remove");
 
         let r = self.inner.remove(value_id);

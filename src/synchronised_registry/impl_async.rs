@@ -215,11 +215,11 @@ impl<
     }
 
 
-    pub async fn acquire_access_async<'a, AccessResult: AccessorResult<'a, <S::Value as ReferenceValue>::Value>>(
+    pub async fn acquire_access_async<'a, AccessResult: AccessorResult<'a, <S::OwnedValue as ReferenceValue>::Value>>(
         &'a self,
         input: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> Result<AccessResult, SynchronisedRegistryAcquireAccessError> 
-        where <S as RegistryStorage>::Value: ReferenceValue 
+        where <S as RegistryStorage>::OwnedValue: ReferenceValue 
     {
         trace_function!("Synchronised Registry Acquire Access Async");
 
@@ -229,9 +229,9 @@ impl<
 
     pub async fn reallocating_replace_async(
         &self,
-        input: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoreValue>::Value, BS::Password>
-    ) -> SynchronisedRegistryReallocatingReplacementResult<<S::Value as StoreValue>::Value>
-        where <S as RegistryStorage>::Value: StableDeref + StoreValue
+        input: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::OwnedValue as StoreValue>::Value, BS::Password>
+    ) -> SynchronisedRegistryReallocatingReplacementResult<<S::OwnedValue as StoreValue>::Value>
+        where <S as RegistryStorage>::OwnedValue: StableDeref + StoreValue
     {
         trace_function!("Synchronised Registry Reallocating Replace Async");
         
@@ -241,9 +241,9 @@ impl<
 
     pub async fn checked_replace_async(
         &self,
-        input: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoreValue>::Value, BS::Password>
-    ) -> SynchronisedRegistryCheckedReplacementResult<<S::Value as StoreValue>::Value>
-        where <S as RegistryStorage>::Value: StoreValue
+        input: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::OwnedValue as StoreValue>::Value, BS::Password>
+    ) -> SynchronisedRegistryCheckedReplacementResult<<S::OwnedValue as StoreValue>::Value>
+        where <S as RegistryStorage>::OwnedValue: StoreValue
     {
         trace_function!("Synchronised Registry Checked Replace Async");
         

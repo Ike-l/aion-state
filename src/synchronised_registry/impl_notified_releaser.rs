@@ -11,10 +11,10 @@ impl<
     WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
     BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
     CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
-> NotifiedReleaser<<S::Value as ReferenceValue>::Value, RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>, SynchronisedRegistryAcquireAccessError> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
+> NotifiedReleaser<<S::OwnedValue as ReferenceValue>::Value, RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>, SynchronisedRegistryAcquireAccessError> for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> 
     where 
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         S::ValueId: Clone + Eq + Hash,
-        S::Value: ReferenceValue
+        S::OwnedValue: ReferenceValue
 {}

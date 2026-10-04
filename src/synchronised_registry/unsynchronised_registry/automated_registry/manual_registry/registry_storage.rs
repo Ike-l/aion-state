@@ -1,24 +1,26 @@
+use crate::prelude::ReferenceValue;
+
 pub trait RegistryStorage {
     type ValueId;
 
-    // Accessor::StoredResource
-    type Value;
+    type OwnedValue;
+    type ReferencedValue<'a>: ReferenceValue where Self: 'a;
 
-    fn get_mut(
-        &mut self, 
+    fn get_mut_wrapped(
+        &mut self,
         value_id: &Self::ValueId
-    ) -> Option<&mut Self::Value>;
+    ) -> Option<Self::ReferencedValue<'_>>;
 
     fn insert(
         &mut self, 
         value_id: Self::ValueId, 
-        value: Self::Value
-    ) -> Option<Self::Value>; 
+        value: Self::OwnedValue
+    ) -> Option<Self::OwnedValue>; 
 
     fn remove(
         &mut self, 
         value_id: &Self::ValueId
-    ) -> Option<Self::Value>;
+    ) -> Option<Self::OwnedValue>;
 
     fn contains_key(
         &self, 

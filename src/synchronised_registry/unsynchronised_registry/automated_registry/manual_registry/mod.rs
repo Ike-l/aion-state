@@ -17,19 +17,21 @@ impl<
     S: RegistryStorage,
 > ManualRegistry<S> 
 {
-    pub fn acquire_access<'a, Access: Accessor, AccessResult: AccessorResult<'a, <S::Value as ReferenceValue>::Value>>(
+    pub fn acquire_access<'a, Access, AccessResult>(
         &'a mut self, 
         ManualRegistryAccessInput {
             value_id, access
         }: ManualRegistryAccessInput<'_, S::ValueId, Access>
     ) -> Result<AccessResult, ManualRegistryAccessError> 
-        where <S as RegistryStorage>::Value: ReferenceValue
+        where 
+            Access: Accessor,
+            AccessResult: AccessorResult<'a, <S::OwnedValue as ReferenceValue>::Value>,
     {
         trace_function!("Manual Acquire Access");
 
         match self.storage.get_mut(value_id) {
             Some(stored_value) => {
-                access.acquire::<S::Value, AccessResult>(stored_value).ok_or(ManualRegistryAccessError::TriedAcquiring)
+                access.acquire::<S::OwnedValue, AccessResult>(stored_value).ok_or(ManualRegistryAccessError::TriedAcquiring)
             },
             None => Err(ManualRegistryAccessError::NotFound),
         }
@@ -43,9 +45,9 @@ impl<
         &mut self,
         ManualRegistryReplacementInput {
             access, value_id, value
-        }: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoreValue>::Value>
-    ) -> ManualRegistryReplacementResult<<S::Value as StoreValue>::Value>
-        where <S as RegistryStorage>::Value: StoreValue
+        }: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::OwnedValue as StoreValue>::Value>
+    ) -> ManualRegistryReplacementResult<<S::OwnedValue as StoreValue>::Value>
+        where <S as RegistryStorage>::OwnedValue: StoreValue
     {
         trace_function!("Manual Unsafe Replacement");
 
@@ -74,13 +76,13 @@ impl<
             // replacement and allowed insert & remove
             (Some(new_value), true, true, true) => {
                 event!(Level::DEBUG, "Access Can Replace");
-                self.storage.insert(value_id, S::Value::store(new_value))
+                self.storage.insert(value_id, S::OwnedValue::store(new_value))
             },
 
             // insert without replacement and allowed insert
             (Some(new_value), false, true, _) => {
                 event!(Level::DEBUG, "Access Can Insert");
-                self.storage.insert(value_id, S::Value::store(new_value))
+                self.storage.insert(value_id, S::OwnedValue::store(new_value))
             },            
         };
 
@@ -99,9 +101,9 @@ impl<
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn reallocating_replace<Access: Accessor>(
         &mut self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoreValue>::Value>
-    ) -> ManualRegistryReplacementResult<<S::Value as StoreValue>::Value> 
-        where <S as RegistryStorage>::Value: StableDeref + StoreValue
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::OwnedValue as StoreValue>::Value>
+    ) -> ManualRegistryReplacementResult<<S::OwnedValue as StoreValue>::Value> 
+        where <S as RegistryStorage>::OwnedValue: StableDeref + StoreValue
     {
         trace_function!("Manual Reallocating Replacement");
 
@@ -117,9 +119,9 @@ impl<
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn checked_replace<Access: Accessor>(
         &mut self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoreValue>::Value>
-    ) -> ManualRegistryCheckedReplacementResult<<S::Value as StoreValue>::Value> 
-        where <S as RegistryStorage>::Value: StoreValue
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::OwnedValue as StoreValue>::Value>
+    ) -> ManualRegistryCheckedReplacementResult<<S::OwnedValue as StoreValue>::Value> 
+        where <S as RegistryStorage>::OwnedValue: StoreValue
     {
         trace_function!("Manual Checked Replacement");
 

@@ -52,11 +52,11 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// # Safety 
     /// 
     /// No Concurrent Unique References
-    pub unsafe fn acquire_access<'a, Access: Accessor, AccessResult: AccessorResult<'a, <S::Value as ReferenceValue>::Value>>(
+    pub unsafe fn acquire_access<'a, Access: Accessor, AccessResult: AccessorResult<'a, <S::OwnedValue as ReferenceValue>::Value>>(
         &'a self,
         input: ManualRegistryAccessInput<'_, S::ValueId, Access>
     ) -> Result<AccessResult, ManualRegistryAccessError> 
-        where <S as RegistryStorage>::Value: ReferenceValue 
+        where <S as RegistryStorage>::OwnedValue: ReferenceValue 
     {
         trace_function!("Automated Registry Acquire Access");
 
@@ -74,9 +74,9 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn reallocating_replace<Access: Accessor>(
         &self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoreValue>::Value>
-    ) -> ManualRegistryReplacementResult<<S::Value as StoreValue>::Value> 
-        where <S as RegistryStorage>::Value: StableDeref + StoreValue
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::OwnedValue as StoreValue>::Value>
+    ) -> ManualRegistryReplacementResult<<S::OwnedValue as StoreValue>::Value> 
+        where <S as RegistryStorage>::OwnedValue: StableDeref + StoreValue
     {
         trace_function!("Automated Reallocating Replacement");
 
@@ -92,9 +92,9 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     /// ^ i.e do not replace a borrowed item
     pub unsafe fn checked_replace<Access: Accessor>(
         &self,
-        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::Value as StoreValue>::Value>
-    ) -> ManualRegistryCheckedReplacementResult<<S::Value as StoreValue>::Value> 
-        where <S as RegistryStorage>::Value: StoreValue
+        manual_registry_replacement_input: ManualRegistryReplacementInput<'_, Access, S::ValueId, <S::OwnedValue as StoreValue>::Value>
+    ) -> ManualRegistryCheckedReplacementResult<<S::OwnedValue as StoreValue>::Value> 
+        where <S as RegistryStorage>::OwnedValue: StoreValue
     {
         trace_function!("Automated Checked Replacement");
 

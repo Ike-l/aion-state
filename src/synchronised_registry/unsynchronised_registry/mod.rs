@@ -248,13 +248,13 @@ impl<
     /// # Safety
     /// 
     /// No Concurrent Unique References
-    pub unsafe fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::Value as ReferenceValue>::Value>>(
+    pub unsafe fn acquire_access<'a, AccessResult: AccessorResult<'a, <S::OwnedValue as ReferenceValue>::Value>>(
         &'a self,
         RegistryAcquireAccess {
             user_details, resource_id, access, password
         }: RegistryAcquireAccess<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> Result<AccessResult, UnsynchronisedRegistryAcquireAccessError> 
-        where <S as RegistryStorage>::Value: ReferenceValue 
+        where <S as RegistryStorage>::OwnedValue: ReferenceValue 
     {
         trace_function!("Unsynchronised Registry Acquire Access");
 
@@ -292,9 +292,9 @@ impl<
         &self,
         RegistryReplacement {
             user_details, access, resource_id, resource, password
-        }: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoreValue>::Value, BS::Password>
-    ) -> UnsynchronisedRegistryReallocatingReplacementResult<<S::Value as StoreValue>::Value>
-        where <S as RegistryStorage>::Value: StableDeref + StoreValue
+        }: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::OwnedValue as StoreValue>::Value, BS::Password>
+    ) -> UnsynchronisedRegistryReallocatingReplacementResult<<S::OwnedValue as StoreValue>::Value>
+        where <S as RegistryStorage>::OwnedValue: StableDeref + StoreValue
     {
         trace_function!("Unsynchronised Registry Reallocating Replace");
 
@@ -318,9 +318,9 @@ impl<
         &self,
         RegistryReplacement {
             user_details, access, resource_id, resource, password
-        }: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::Value as StoreValue>::Value, BS::Password>
-    ) -> UnsynchronisedRegistryCheckedReplacementResult<<S::Value as StoreValue>::Value>
-        where <S as RegistryStorage>::Value: StoreValue
+        }: RegistryReplacement<'_, OS::Id, OS::Password, AS::Access, S::ValueId, <S::OwnedValue as StoreValue>::Value, BS::Password>
+    ) -> UnsynchronisedRegistryCheckedReplacementResult<<S::OwnedValue as StoreValue>::Value>
+        where <S as RegistryStorage>::OwnedValue: StoreValue
     {
         trace_function!("Unsynchronised Registry Checked Replace");
 
