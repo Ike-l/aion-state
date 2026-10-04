@@ -495,7 +495,6 @@ pub mod prelude {
             Accessor,
             AccessorResult,
             StoreValue,
-            WrappedValue
         },
     };
 }

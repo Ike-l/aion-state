@@ -42,11 +42,6 @@ pub trait StoreValue {
     fn take(self) -> Self::Value;
 }
 
-pub trait WrappedValue {
-    type Value;
-    fn as_unique(&mut self) -> &mut Self::Value;
-}
-
 pub trait AccessorResult<T> {
     fn to_shared(value: T) -> Self;
     fn to_owned(value: T) -> Self;

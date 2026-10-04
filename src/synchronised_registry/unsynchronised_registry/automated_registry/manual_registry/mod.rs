@@ -1,7 +1,7 @@
 use stable_deref_trait::StableDeref;
 use tracing::{Level, event};
 
-use crate::prelude::{Accessor, AccessorResult, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, WrappedValue, trace_function};
+use crate::prelude::{Accessor, AccessorResult, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, trace_function};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
@@ -26,7 +26,6 @@ impl<
         where 
             Access: Accessor,
             AccessResult: AccessorResult<S::ReferencedValue<'a>>,
-            S::ReferencedValue<'a>: WrappedValue
     {
         trace_function!("Manual Acquire Access");
 

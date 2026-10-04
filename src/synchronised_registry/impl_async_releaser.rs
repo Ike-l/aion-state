@@ -4,7 +4,6 @@ use std::fmt::Debug;
 use std::hash::Hash;
 
 #[cfg(feature = "notifier")]
-use crate::prelude::WrappedValue;
 use crate::prelude::{AccessStorage, Accessor, AccessorResult, AsyncReleaser, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleasingReleaseAccess, RegistryStorage, ReleasingResult, ReservationStorage, SynchronisedRegistry, WhitelistStorage, sync::Arc};
 
 #[cfg(not(feature = "notifier"))]
@@ -22,7 +21,6 @@ impl<
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         AS::ValueId: Clone,
-        S::ReferencedValue<'a>: WrappedValue
 {
     fn async_acquire_released_access<AccessResult: AccessorResult<S::ReferencedValue<'a>>>(
         self: &'a Arc<Self>, 
@@ -67,7 +65,6 @@ impl<
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         S::ValueId: Clone + Eq + Hash,
-        S::ReferencedValue<'a>: WrappedValue
 {
     fn async_acquire_released_access<AccessResult: AccessorResult<S::ReferencedValue<'a>>>(
         self: &'a Arc<Self>, 

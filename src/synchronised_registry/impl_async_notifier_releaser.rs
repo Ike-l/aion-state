@@ -1,6 +1,6 @@
 use std::{fmt::Debug, hash::Hash};
 
-use crate::prelude::{AccessStorage, Accessor, AsyncNotifiedReleaser, BlacklistStorage, ControlStorage, CredentialStorage, RegistryOwnedAcquireAccess, RegistryStorage, ReservationStorage, WrappedValue, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
+use crate::prelude::{AccessStorage, Accessor, AsyncNotifiedReleaser, BlacklistStorage, ControlStorage, CredentialStorage, RegistryOwnedAcquireAccess, RegistryStorage, ReservationStorage, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
 
 impl<
     'a,
@@ -16,5 +16,4 @@ impl<
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor + Clone,
         S::ValueId: Clone + Eq + Hash,
-        S::ReferencedValue<'a>: WrappedValue,
 {}

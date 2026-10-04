@@ -1,6 +1,6 @@
 use std::{fmt::Debug, hash::Hash};
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, AsyncNotifier, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryStorage, ReservationStorage, SynchronisedRegistry, WhitelistStorage, WrappedValue};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, AsyncNotifier, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryStorage, ReservationStorage, SynchronisedRegistry, WhitelistStorage};
 
 impl<
     'a,
@@ -16,7 +16,6 @@ impl<
         RS::ReserverId: Debug + PartialEq,
         AS::Access: Accessor, 
         S::ValueId: Hash + Eq,
-        S::ReferencedValue<'a>: WrappedValue
 {
     fn async_acquire_access<AccessResult: AccessorResult<S::ReferencedValue<'a>>>(&'a self, input: Self::AccessInput) -> impl Future<Output = Result<AccessResult, Self::Error>> + 'a {
         async move {
