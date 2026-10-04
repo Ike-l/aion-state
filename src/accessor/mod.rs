@@ -32,7 +32,7 @@ pub trait Accessor {
     /// Essentially the inverse function of `merge`
     fn release(
         &mut self,
-        other: &Self
+        subtractor: &Self
     );
 }
 
