@@ -29,7 +29,7 @@ impl<
     {
         trace_function!("Manual Acquire Access");
 
-        match self.storage.get_mut_wrapped(value_id) {
+        match self.storage.get_mut(value_id) {
             Some(stored_value) => {
                 access.acquire::<S::ReferencedValue<'a>, AccessResult>(stored_value).ok_or(ManualRegistryAccessError::TriedAcquiring)
             },

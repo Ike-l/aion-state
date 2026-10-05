@@ -4,7 +4,12 @@ pub trait RegistryStorage {
     type OwnedValue;
     type ReferencedValue<'a> where Self: 'a;
 
-    fn get_mut_wrapped(
+    /// Note:
+    /// 
+    /// After getting a unique reference you can then cast it to a shared reference using `Access` and `AccessorResult`
+    /// 
+    /// (But not the other way around)
+    fn get_mut(
         &mut self,
         value_id: &Self::ValueId
     ) -> Option<Self::ReferencedValue<'_>>;

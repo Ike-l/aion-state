@@ -1,6 +1,5 @@
 use std::{collections::HashMap, hash::Hash};
 
-use aion_state::prelude::WrappedValue;
 use tracing::{Level, event};
 
 use crate::default::primitives::accesses::access_result::Transmutable;
@@ -41,15 +40,6 @@ impl<'a, T> ResourceWrapper<'a, T> {
     }
 }
 
-impl<'a, T> WrappedValue for ResourceWrapper<'a, T> {
-    type Value = T;
-
-    fn as_unique(&mut self) -> &mut Self::Value {
-        let Self::Unique(value) = self else { unreachable!() };
-        value
-    }
-}
-
 impl<'a, T> Transmutable for ResourceWrapper<'a, T> {
     fn transmute(self) -> Self {
         let Self::Unique(value) = self else { unreachable!() };
@@ -66,7 +56,7 @@ impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage
         self.inner.keys()
     }
     
-    fn get_mut_wrapped(
+    fn get_mut(
         &mut self,
         value_id: &Self::ValueId
     ) -> Option<Self::ReferencedValue<'_>>
