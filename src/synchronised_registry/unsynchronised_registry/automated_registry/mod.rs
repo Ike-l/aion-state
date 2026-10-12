@@ -2,7 +2,7 @@ use std::cell::UnsafeCell;
 
 use stable_deref_trait::StableDeref;
 
-use crate::prelude::{Accessor, AccessorResult, ManualRegistry, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, trace_function};
+use crate::prelude::{Accessor, AccessorResult, ManualRegistry, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryAcquireViewInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, trace_function};
 
 pub mod manual_registry;
 
@@ -35,8 +35,8 @@ impl<'de, T: serde::Deserialize<'de> + RegistryStorage> serde::Deserialize<'de> 
 
 
 impl<S: RegistryStorage> AutomatedRegistry<S> {
-    /// # Safety 
-    /// 
+    /// # Safety
+    ///
     /// No Concurrent Unique References
     unsafe fn get_inner(&self) -> &ManualRegistry<S> {
         unsafe { & *self.manual_registry.get() }
@@ -55,14 +55,30 @@ impl<S: RegistryStorage> AutomatedRegistry<S> {
     pub unsafe fn acquire_access<'a, Access, AccessResult>(
         &'a self,
         input: ManualRegistryAccessInput<'_, S::ValueId, Access>
-    ) -> Result<AccessResult, ManualRegistryAccessError> 
-        where 
+    ) -> Result<AccessResult, ManualRegistryAccessError>
+        where
             Access: Accessor,
             AccessResult: AccessorResult<S::ReferencedValue<'a>>,
     {
         trace_function!("Automated Registry Acquire Access");
 
         unsafe { self.get_inner_mut() }.acquire_access(input)
+    }
+
+    /// # Safety
+    ///
+    /// No Concurrent Unique References
+    pub unsafe fn acquire_view<'a, Access, AccessResult>(
+        &'a self,
+        input: ManualRegistryAcquireViewInput<'_, S::ValueId, Access>,
+    ) -> Result<AccessResult, ManualRegistryAccessError>
+    where
+        Access: Accessor,
+        AccessResult: AccessorResult<S::StorageView<'a>>,
+    {
+        trace_function!("Automated Registry Acquire View");
+
+        unsafe { self.get_inner_mut() }.acquire_view(input)
     }
 
     /// # Safety 
