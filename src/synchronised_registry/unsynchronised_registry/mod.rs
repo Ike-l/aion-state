@@ -1,8 +1,8 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, hash::Hash};
 
 use stable_deref_trait::StableDeref;
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionCheckOwner, ReceptionDrainReservations, ReceptionGetAccess, ReceptionIsOwned, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryCheckOwner, RegistryContainsResource, RegistryDrainReservations, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReplacement, RegistryReservation, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, StoreValue, UnsynchronisedRegistryAcquireAccessError, UnsynchronisedRegistryBlacklistAllowResult, UnsynchronisedRegistryBlacklistUnallowResult, UnsynchronisedRegistryCheckAccessResult, UnsynchronisedRegistryCheckOwnerResult, UnsynchronisedRegistryCheckedReplacementResult, UnsynchronisedRegistryContainsResourceResult, UnsynchronisedRegistryDrainReservationsResult, UnsynchronisedRegistryOwnResult, UnsynchronisedRegistryReallocatingReplacementResult, UnsynchronisedRegistryRegisterResult, UnsynchronisedRegistryReleaseAccessResult, UnsynchronisedRegistryReleaseResourceAllResult, UnsynchronisedRegistryReleaseResourceResult, UnsynchronisedRegistryReservationResult, UnsynchronisedRegistryUnregisterResult, UnsynchronisedRegistryUnreserveResult, UnsynchronisedRegistryUpdatePasswordResult, UnsynchronisedRegistryWhitelistAllowResult, UnsynchronisedRegistryWhitelistUnallowResult, WhitelistStorage, trace_function};
+use crate::prelude::{ReceptionCheckView, ReceptionRecordView, AccessStorage, Accessor, AccessorResult, AutomatedRegistry, BlacklistStorage, ControlStorage, CoordinatedReception, CredentialStorage, ManualRegistryAccessInput, ManualRegistryAcquireViewInput, ManualRegistryReplacementInput, ReceptionAllow, ReceptionCheckAccess, ReceptionCheckOwner, ReceptionDrainReservations, ReceptionGetAccess, ReceptionIsOwned, ReceptionOwn, ReceptionRecordAccess, ReceptionRegister, ReceptionReleaseAccess, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReservation, ReceptionUnallow, ReceptionUnregister, ReceptionUnreserve, ReceptionUpdatePassword, RegistryAcquireAccess, RegistryAcquireView, RegistryAllow, RegistryCheckAccess, RegistryCheckOwner, RegistryContainsResource, RegistryDrainReservations, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReplacement, RegistryReservation, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, StoreValue, UnsynchronisedRegistryAcquireAccessError, UnsynchronisedRegistryAcquireViewError, UnsynchronisedRegistryBlacklistAllowResult, UnsynchronisedRegistryBlacklistUnallowResult, UnsynchronisedRegistryCheckAccessResult, UnsynchronisedRegistryCheckOwnerResult, UnsynchronisedRegistryCheckedReplacementResult, UnsynchronisedRegistryContainsResourceResult, UnsynchronisedRegistryDrainReservationsResult, UnsynchronisedRegistryOwnResult, UnsynchronisedRegistryReallocatingReplacementResult, UnsynchronisedRegistryRegisterResult, UnsynchronisedRegistryReleaseAccessResult, UnsynchronisedRegistryReleaseResourceAllResult, UnsynchronisedRegistryReleaseResourceResult, UnsynchronisedRegistryReservationResult, UnsynchronisedRegistryUnregisterResult, UnsynchronisedRegistryUnreserveResult, UnsynchronisedRegistryUpdatePasswordResult, UnsynchronisedRegistryWhitelistAllowResult, UnsynchronisedRegistryWhitelistUnallowResult, WhitelistStorage, trace_function};
 
 pub mod automated_registry;
 pub mod coordinated_reception;
@@ -378,6 +378,48 @@ impl<
         trace_function!("Unsynchronised Registry Get Access");
 
         self.reception.get_access(input)
+    }
+
+    /// # Safety
+    ///
+    /// No Concurrent Unique References (No writes that could modify the keys)
+    pub unsafe fn acquire_view<'a, AccessResult>(
+        &'a self,
+        RegistryAcquireView {
+            user_details, resource_access, access
+        }: RegistryAcquireView<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
+    ) -> Result<AccessResult, UnsynchronisedRegistryAcquireViewError>
+        where
+            AccessResult: AccessorResult<S::StorageView<'a>>,
+            S::ValueId: Clone + Eq + Hash,
+    {
+        trace_function!("Unsynchronised Registry Acquire View");
+
+        let check_view = self.reception.check_view(&ReceptionCheckView {
+            user_details,
+            resource_access: &resource_access,
+            access: &access,
+        });
+
+        if check_view.ok() {
+            let resource_ids = resource_access.iter().map(|(resource_id, _)| resource_id).collect::<Vec<_>>();
+
+            let registry_result = unsafe { self.automated_registry.acquire_view(ManualRegistryAcquireViewInput { value_ids: &resource_ids, access: &access }) };
+
+            match registry_result {
+                Ok(access_result) => {
+                    let record_view = self.reception.record_view(ReceptionRecordView { user_details, resource_access: &resource_access, access: &access });
+                    assert!(record_view.ok());
+
+                    return Ok(access_result);
+                },
+                Err(err) => {
+                    return Err(UnsynchronisedRegistryAcquireViewError::AutomatedRegistry(err));
+                },
+            }
+        }
+
+        Err(UnsynchronisedRegistryAcquireViewError::CheckView(check_view))
     }
 }
 
