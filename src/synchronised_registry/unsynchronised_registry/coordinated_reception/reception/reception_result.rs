@@ -87,6 +87,18 @@ impl ReceptionRecordAccessResult {
     }
 }
 
+pub enum ReceptionRecordViewResult {
+    Denied(Vec<(usize, ReceptionRecordAccessResult)>),
+}
+
+impl ReceptionRecordViewResult {
+    pub fn ok(&self) -> bool {
+        match self {
+            Self::Denied(denied) => denied.is_empty(),
+        }
+    }
+}
+
 pub enum ReceptionReservationResult {
     Host(HostReservationResult),
     Denied(OwnerCheckAccessResult),
