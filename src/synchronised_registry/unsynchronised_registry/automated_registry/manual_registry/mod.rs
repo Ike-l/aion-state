@@ -1,7 +1,7 @@
 use stable_deref_trait::StableDeref;
 use tracing::{Level, event};
 
-use crate::prelude::{Accessor, AccessorResult, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, trace_function};
+use crate::prelude::{Accessor, AccessorResult, ManualRegistryAccessError, ManualRegistryAccessInput, ManualRegistryAcquireViewInput, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementInput, ManualRegistryReplacementResult, RegistryStorage, StoreValue, trace_function};
 
 pub mod registry_storage;
 pub mod manual_registry_input;
@@ -18,12 +18,12 @@ impl<
 > ManualRegistry<S> 
 {
     pub fn acquire_access<'a, Access, AccessResult>(
-        &'a mut self, 
+        &'a mut self,
         ManualRegistryAccessInput {
             value_id, access
         }: ManualRegistryAccessInput<'_, S::ValueId, Access>
-    ) -> Result<AccessResult, ManualRegistryAccessError> 
-        where 
+    ) -> Result<AccessResult, ManualRegistryAccessError>
+        where
             Access: Accessor,
             AccessResult: AccessorResult<S::ReferencedValue<'a>>,
     {
@@ -32,6 +32,24 @@ impl<
         match self.storage.get_mut(value_id) {
             Some(stored_value) => {
                 access.acquire::<S::ReferencedValue<'a>, AccessResult>(stored_value).ok_or(ManualRegistryAccessError::TriedAcquiring)
+            },
+            None => Err(ManualRegistryAccessError::NotFound),
+        }
+    }
+
+    pub fn acquire_view<'a, Access, AccessResult>(
+        &'a mut self,
+        input: ManualRegistryAcquireViewInput<'_, S::ValueId, Access>,
+    ) -> Result<AccessResult, ManualRegistryAccessError>
+    where
+        Access: Accessor,
+        AccessResult: AccessorResult<S::StorageView<'a>>,
+    {
+        trace_function!("Manual Acquire View");
+
+        match self.storage.get_view(input.value_ids) {
+            Some(storage_view) => {
+                input.access.acquire::<S::StorageView<'a>, AccessResult>(storage_view).ok_or(ManualRegistryAccessError::TriedAcquiring)
             },
             None => Err(ManualRegistryAccessError::NotFound),
         }
