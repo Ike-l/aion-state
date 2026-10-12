@@ -205,6 +205,40 @@ impl<
         ReceptionCheckAccessResult::Denied(check_owner)
     }
 
+    pub fn check_view(
+        &self,
+        ReceptionCheckView {
+            user_details, resource_access, access
+        }: &ReceptionCheckView<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
+    ) -> ReceptionCheckViewResult
+        where AS::ValueId: Eq + Hash
+    {
+        trace_function!("Reception Check View");
+
+        let mut seen = HashSet::with_capacity(resource_access.len());
+        let duplicate_ids = resource_access.iter().enumerate()
+            .filter_map(|(index, (resource_id, _))| (!seen.insert(resource_id)).then_some(index))
+            .collect::<Vec<_>>();
+
+        if !duplicate_ids.is_empty() {
+            return ReceptionCheckViewResult::DuplicateIds(duplicate_ids);
+        }
+
+        let denied = resource_access.iter().enumerate()
+            .filter_map(|(index, (resource_id, password))| {
+                let result = self.check_access(&ReceptionCheckAccess {
+                    user_details: *user_details,
+                    resource_id,
+                    access,
+                    password: *password,
+                });
+                (!result.ok()).then_some((index, result))
+            })
+            .collect::<Vec<_>>();
+
+        ReceptionCheckViewResult::Denied(denied)
+    }
+
     // anyone can release any access?
     // unless i track which id gets which access
     // i suppose anyone should be able to release accesses- the parent struct can make the caller "unsafe" for implementers to ensure
