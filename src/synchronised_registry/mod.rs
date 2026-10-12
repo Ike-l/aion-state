@@ -4,7 +4,7 @@ use std::hash::Hash;
 
 use stable_deref_trait::StableDeref;
 
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, RegistryAcquireAccess, RegistryAllow, RegistryCheckAccess, RegistryCheckOwner, RegistryContainsResource, RegistryDrainReservations, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReplacement, RegistryReservation, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, StoreValue, SynchronisedRegistryAcquireAccessError, SynchronisedRegistryBlacklistAllowResult, SynchronisedRegistryBlacklistUnallowResult, SynchronisedRegistryCheckAccessResult, SynchronisedRegistryCheckOwnerResult, SynchronisedRegistryCheckedReplacementResult, SynchronisedRegistryContainsResourceResult, SynchronisedRegistryDrainReservationsResult, SynchronisedRegistryOwnResult, SynchronisedRegistryReallocatingReplacementResult, SynchronisedRegistryRegisterResult, SynchronisedRegistryReleaseAccessResult, SynchronisedRegistryReleaseResourceAllResult, SynchronisedRegistryReleaseResourceResult, SynchronisedRegistryReservationResult, SynchronisedRegistryUnregisterResult, SynchronisedRegistryUnreserveResult, SynchronisedRegistryUpdatePasswordResult, SynchronisedRegistryWhitelistAllowResult, SynchronisedRegistryWhitelistUnallowResult, UnsynchronisedRegistry, WhitelistStorage, sync::RwLock, trace_function};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, ReceptionGetAccess, RegistryAcquireAccess, RegistryAcquireView, RegistryAllow, RegistryCheckAccess, RegistryCheckOwner, RegistryContainsResource, RegistryDrainReservations, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReleaseAccess, RegistryReleaseResource, RegistryReleaseResourceAll, RegistryReplacement, RegistryReservation, RegistryStorage, RegistryUnallow, RegistryUnregister, RegistryUnreserve, RegistryUpdatePassword, ReservationStorage, StoreValue, SynchronisedRegistryAcquireAccessError, SynchronisedRegistryAcquireViewError, SynchronisedRegistryBlacklistAllowResult, SynchronisedRegistryBlacklistUnallowResult, SynchronisedRegistryCheckAccessResult, SynchronisedRegistryCheckOwnerResult, SynchronisedRegistryCheckedReplacementResult, SynchronisedRegistryContainsResourceResult, SynchronisedRegistryDrainReservationsResult, SynchronisedRegistryOwnResult, SynchronisedRegistryReallocatingReplacementResult, SynchronisedRegistryRegisterResult, SynchronisedRegistryReleaseAccessResult, SynchronisedRegistryReleaseResourceAllResult, SynchronisedRegistryReleaseResourceResult, SynchronisedRegistryReservationResult, SynchronisedRegistryUnregisterResult, SynchronisedRegistryUnreserveResult, SynchronisedRegistryUpdatePasswordResult, SynchronisedRegistryWhitelistAllowResult, SynchronisedRegistryWhitelistUnallowResult, UnsynchronisedRegistry, WhitelistStorage, sync::RwLock, trace_function};
 
 pub mod unsynchronised_registry;
 pub mod synchronised_registry_results;
@@ -387,6 +387,21 @@ impl<
         let _sync = self.sync.read();
 
         self.unsynchronised_registry.get_access(input)
+    }
+
+    pub fn acquire_view<'a, AccessResult>(
+        &'a self,
+        input: RegistryAcquireView<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
+    ) -> Result<AccessResult, SynchronisedRegistryAcquireViewError>
+        where
+            AccessResult: AccessorResult<S::StorageView<'a>>,
+            S::ValueId: Clone + Eq + std::hash::Hash,
+    {
+        trace_function!("Synchronised Registry Acquire View");
+
+        let _sync = self.sync.write();
+
+        unsafe { self.unsynchronised_registry.acquire_view(input).map_err(Into::into) }
     }
 }
 
