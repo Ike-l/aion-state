@@ -1,6 +1,6 @@
-use std::fmt::Debug;
+use std::{collections::HashSet, fmt::Debug, hash::Hash};
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, HostCheckAccess, HostDrainReservations, HostGetAccess, HostRecordAccess, HostReleaseAccess, HostReservation, HostUnreserve, Owner, OwnerAllow, OwnerAuthenticate, OwnerCheckAccess, OwnerCheckOwner, OwnerIsOwned, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionCheckOwner, ReceptionCheckOwnerResult, ReceptionDrainReservations, ReceptionDrainReservationsResult, ReceptionGetAccess, ReceptionIsOwned, ReceptionOwn, ReceptionOwnResult, ReceptionRecordAccess, ReceptionRecordAccessResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseAccess, ReceptionReleaseAccessResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservation, ReceptionReservationResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUnreserve, ReceptionUnreserveResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
+use crate::prelude::{ReceptionCheckView, ReceptionCheckViewResult, ReceptionRecordView, ReceptionRecordViewResult, AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Host, HostCheckAccess, HostDrainReservations, HostGetAccess, HostRecordAccess, HostReleaseAccess, HostReservation, HostUnreserve, Owner, OwnerAllow, OwnerAuthenticate, OwnerCheckAccess, OwnerCheckOwner, OwnerIsOwned, OwnerOwn, OwnerRegister, OwnerReleaseResource, OwnerReleaseResourceAll, OwnerUnallow, OwnerUnregister, OwnerUpdatePassword, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionCheckOwner, ReceptionCheckOwnerResult, ReceptionDrainReservations, ReceptionDrainReservationsResult, ReceptionGetAccess, ReceptionIsOwned, ReceptionOwn, ReceptionOwnResult, ReceptionRecordAccess, ReceptionRecordAccessResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseAccess, ReceptionReleaseAccessResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservation, ReceptionReservationResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUnreserve, ReceptionUnreserveResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, trace_function};
 
 pub mod host;
 pub mod owner;
@@ -273,6 +273,31 @@ impl<
         }
 
         ReceptionRecordAccessResult::Denied(check_owner)
+    }
+
+    pub fn record_view(
+        &mut self,
+        ReceptionRecordView {
+            user_details, resource_access, access
+        }: ReceptionRecordView<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
+    ) -> ReceptionRecordViewResult
+        where AS::ValueId: Clone, AS::Access: Clone
+    {
+        trace_function!("Reception Record View");
+
+        let denied = resource_access.iter().enumerate()
+            .filter_map(|(index, (resource_id, password))| {
+                let result = self.record_access(ReceptionRecordAccess {
+                    user_details,
+                    resource_id: resource_id.clone(),
+                    access: access.clone(),
+                    password: *password,
+                });
+                (!result.ok()).then_some((index, result))
+            })
+            .collect::<Vec<_>>();
+
+        ReceptionRecordViewResult::Denied(denied)
     }
 
     pub fn reserve(
