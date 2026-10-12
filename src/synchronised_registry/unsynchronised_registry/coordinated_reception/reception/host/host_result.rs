@@ -22,7 +22,7 @@ pub struct HostRecordAccessResult {
 
 impl HostRecordAccessResult {
     pub fn ok(&self) -> bool {
-        self.unreserve_result.as_ref().is_none_or(|host| host.ok()) &&
+        self.unreserve_result.as_ref().is_none_or(|host| host.ok_for_recording()) &&
         self.record_access_result.ok()
     }
 }
@@ -36,6 +36,13 @@ impl HostUnreserveResult {
     pub fn ok(&self) -> bool {
         match self {
             Self::Reservations(reservations) => reservations.ok(),
+        }
+    }
+
+    fn ok_for_recording(&self) -> bool {
+        match self {
+            Self::Reservations(ReservationsUnreserveResult::Accesses(AccessesReleaseResult::NoCurrentAccess)) => true,
+            _ => self.ok(),
         }
     }
 }
