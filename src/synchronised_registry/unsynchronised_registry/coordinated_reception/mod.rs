@@ -1,6 +1,7 @@
 use std::fmt::Debug;
+use std::hash::Hash;
 
-use crate::prelude::{AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Reception, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionCheckOwner, ReceptionCheckOwnerResult, ReceptionDrainReservations, ReceptionDrainReservationsResult, ReceptionGetAccess, ReceptionIsOwned, ReceptionOwn, ReceptionOwnResult, ReceptionRecordAccess, ReceptionRecordAccessResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseAccess, ReceptionReleaseAccessResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservation, ReceptionReservationResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUnreserve, ReceptionUnreserveResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, sync::RwLock, trace_function};
+use crate::prelude::{ReceptionCheckView, ReceptionCheckViewResult, ReceptionRecordView, ReceptionRecordViewResult, AccessStorage, Accessor, BlacklistStorage, ControlStorage, CredentialStorage, Reception, ReceptionAllow, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccess, ReceptionCheckAccessResult, ReceptionCheckOwner, ReceptionCheckOwnerResult, ReceptionDrainReservations, ReceptionDrainReservationsResult, ReceptionGetAccess, ReceptionIsOwned, ReceptionOwn, ReceptionOwnResult, ReceptionRecordAccess, ReceptionRecordAccessResult, ReceptionRegister, ReceptionRegisterResult, ReceptionReleaseAccess, ReceptionReleaseAccessResult, ReceptionReleaseResource, ReceptionReleaseResourceAll, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservation, ReceptionReservationResult, ReceptionUnallow, ReceptionUnregister, ReceptionUnregisterResult, ReceptionUnreserve, ReceptionUnreserveResult, ReceptionUpdatePassword, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationStorage, WhitelistStorage, sync::RwLock, trace_function};
 
 pub mod reception;
 
@@ -165,6 +166,17 @@ impl<
         self.reception.write().check_access(input)
     }
 
+    pub fn check_view(
+        &self,
+        input: &ReceptionCheckView<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
+    ) -> ReceptionCheckViewResult
+        where AS::ValueId: Eq + Hash
+    {
+        trace_function!("Coordinated Reception Check View");
+
+        self.reception.write().check_view(input)
+    }
+
     pub fn release_access(
         &self,
         input: &ReceptionReleaseAccess<'_, AS::ValueId, AS::Access>
@@ -181,6 +193,17 @@ impl<
         trace_function!("Coordinated Reception Record Access");
 
         self.reception.write().record_access(input)
+    }
+
+    pub fn record_view(
+        &self,
+        input: ReceptionRecordView<'_, OS::Id, OS::Password, AS::ValueId, AS::Access, BS::Password>
+    ) -> ReceptionRecordViewResult
+        where AS::ValueId: Clone, AS::Access: Clone
+    {
+        trace_function!("Coordinated Reception Record View");
+
+        self.reception.write().record_view(input)
     }
 
     pub fn reserve(
