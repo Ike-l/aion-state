@@ -100,6 +100,12 @@ pub struct RegistryAcquireAccess<'a, Id, IdPassword, ResourceId, Access, Passwor
     pub password: Option<&'a Password>
 }
 
+pub struct RegistryAcquireView<'a, Id, IdPassword, ResourceId, Access, Password> {
+    pub user_details: Option<(&'a Id, &'a IdPassword)>,
+    pub resource_access: Vec<(ResourceId, Option<&'a Password>)>,
+    pub access: Access,
+}
+
 #[cfg(any(feature = "releaser", feature = "notifier"))]
 #[derive(Clone)]
 pub struct RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Password> {
