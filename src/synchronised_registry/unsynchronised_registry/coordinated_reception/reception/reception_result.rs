@@ -54,6 +54,20 @@ impl ReceptionCheckAccessResult {
     }
 }
 
+pub enum ReceptionCheckViewResult {
+    DuplicateIds(Vec<usize>),
+    Denied(Vec<(usize, ReceptionCheckAccessResult)>),
+}
+
+impl ReceptionCheckViewResult {
+    pub fn ok(&self) -> bool {
+        match self {
+            Self::DuplicateIds(_) => false,
+            Self::Denied(denied) => denied.is_empty(),
+        }
+    }
+}
+
 pub enum ReceptionReleaseAccessResult {
     Host(HostReleaseAccessResult),
 }
