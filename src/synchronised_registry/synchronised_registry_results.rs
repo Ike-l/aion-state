@@ -605,7 +605,7 @@ impl From<UnsynchronisedRegistryCheckAccessResult> for SynchronisedRegistryCheck
                                     ControllerCheckAccessResult::AccessControl(access_control_check_access_result) => {
                                         match access_control_check_access_result {
                                             AccessControlCheckAccessResult::Lists { whitelist, blacklist } => {
-                                                assert!(!whitelist.ok() && blacklist.is_some_and(|blacklist_result| blacklist_result.ok()));
+                                                assert!(!whitelist.ok() && blacklist.is_none_or(|blacklist_result| !blacklist_result.ok()));
 
                                                 Self::ListsDenied
                                             },
@@ -721,7 +721,7 @@ impl From<UnsynchronisedRegistryReservationResult> for SynchronisedRegistryReser
                                     ControllerCheckAccessResult::AccessControl(access_control_check_access_result) => {
                                         match access_control_check_access_result {
                                             AccessControlCheckAccessResult::Lists { whitelist, blacklist } => {
-                                                assert!(!whitelist.ok() && blacklist.is_some_and(|blacklist_result| blacklist_result.ok()));
+                                                assert!(!whitelist.ok() && blacklist.is_none_or(|blacklist_result| !blacklist_result.ok()));
 
                                                 Self::ListsDenied
                                             },
@@ -1028,7 +1028,7 @@ impl<ReplacementResult> From<UnsynchronisedRegistryReallocatingReplacementResult
                                     ControllerCheckAccessResult::AccessControl(access_control_check_access_result) => {
                                         match access_control_check_access_result {
                                             AccessControlCheckAccessResult::Lists { whitelist, blacklist } => {
-                                                assert!(!whitelist.ok() && blacklist.is_some_and(|blacklist_result| blacklist_result.ok()));
+                                                assert!(!whitelist.ok() && blacklist.is_none_or(|blacklist_result| !blacklist_result.ok()));
 
                                                 Self::ListsDenied
                                             },
