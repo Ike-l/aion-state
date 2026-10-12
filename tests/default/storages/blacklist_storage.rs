@@ -88,10 +88,16 @@ impl<ResourceId, Access, Password:> aion_state::prelude::BlacklistStorage for Bl
 
     fn release_all<'a>(
         &mut self,
-        mut ids: impl Iterator<Item = &'a Self::Id>
+        ids: impl Iterator<Item = &'a Self::Id>
     ) -> bool where <Self as aion_state::prelude::BlacklistStorage>::Id: 'a {
         event!(Level::TRACE, "Blacklist release all");
 
-        !ids.any(|resource_id| !self.release(resource_id))
+        let mut released_all = true;
+        for resource_id in ids {
+            if !self.release(resource_id) {
+                released_all = false;
+            }
+        }
+        released_all
     }
 }
