@@ -3,6 +3,7 @@ pub trait RegistryStorage {
 
     type OwnedValue;
     type ReferencedValue<'a> where Self: 'a;
+    type StorageView<'a> where Self: 'a;
 
     /// Note:
     /// 
@@ -13,6 +14,11 @@ pub trait RegistryStorage {
         &mut self,
         value_id: &Self::ValueId
     ) -> Option<Self::ReferencedValue<'_>>;
+
+    fn get_view(
+        &mut self,
+        value_ids: &[&Self::ValueId]
+    ) -> Option<Self::StorageView<'_>>;
 
     fn insert(
         &mut self, 
