@@ -51,11 +51,17 @@ impl<ResourceId: Eq + Hash, Access: PartialEq> aion_state::prelude::WhitelistSto
 
     fn release_all<'a>(
         &mut self,
-        mut ids: impl Iterator<Item = &'a Self::Id>
+        ids: impl Iterator<Item = &'a Self::Id>
     ) -> bool where <Self as aion_state::prelude::WhitelistStorage>::Id: 'a {
         event!(Level::TRACE, "Whitelist release all");
 
-        !ids.any(|resource_id| !self.release(resource_id))
+        let mut released_all = true;
+        for resource_id in ids {
+            if !self.release(resource_id) {
+                released_all = false;
+            }
+        }
+        released_all
     }
 
     fn unallow(
