@@ -1,4 +1,5 @@
-use crate::prelude::{AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerCheckOwnerResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerCheckOwnerResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionCheckOwnerResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, UnsynchronisedRegistryAcquireAccessError, UnsynchronisedRegistryBlacklistAllowResult, UnsynchronisedRegistryBlacklistUnallowResult, UnsynchronisedRegistryCheckAccessResult, UnsynchronisedRegistryCheckOwnerResult, UnsynchronisedRegistryCheckedReplacementResult, UnsynchronisedRegistryContainsResourceResult, UnsynchronisedRegistryDrainReservationsResult, UnsynchronisedRegistryOwnResult, UnsynchronisedRegistryReallocatingReplacementResult, UnsynchronisedRegistryRegisterResult, UnsynchronisedRegistryReleaseAccessResult, UnsynchronisedRegistryReleaseResourceAllResult, UnsynchronisedRegistryReleaseResourceResult, UnsynchronisedRegistryReservationResult, UnsynchronisedRegistryUnregisterResult, UnsynchronisedRegistryUnreserveResult, UnsynchronisedRegistryUpdatePasswordResult, UnsynchronisedRegistryWhitelistAllowResult, UnsynchronisedRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
+use crate::prelude::{ReceptionCheckViewResult, AccessControlBlacklistAllowResult, AccessControlBlacklistUnallowResult, AccessControlCheckAccessResult, AccessControlReleaseAllResult, AccessControlWhitelistAllowResult, AccessControlWhitelistUnallowResult, AccessesCheckAccessResult, AccessesDrainResult, AccessesReleaseResult, AuthenticateRegistrationResult, AuthenticateUpdatePasswordResult, AuthenticationResult, BlacklistAllowResult, BlacklistReleaseAllResult, BlacklistUnallowResult, ControllerBlacklistAllowResult, ControllerBlacklistUnallowResult, ControllerCheckAccessResult, ControllerCheckOwnerResult, ControllerOwnResult, ControllerReleaseIdResult, ControllerReleaseResourceAllResult, ControllerReleaseResourceResult, ControllerWhitelistAllowResult, ControllerWhitelistUnallowResult, HostCheckAccessResult, HostDrainReservationsResult, HostReleaseAccessResult, HostReservationResult, HostUnreserveResult, ManualRegistryAccessError, ManualRegistryCheckedReplacementResult, ManualRegistryReplacementResult, OwnerAuthenticationResult, OwnerBlacklistAllowResult, OwnerBlacklistUnallowResult, OwnerCheckAccessResult, OwnerCheckOwnerResult, OwnerOwnResult, OwnerRegisterResult, OwnerReleaseResourceAllResult, OwnerReleaseResourceResult, OwnerUnregisterResult, OwnerUpdatePasswordResult, OwnerWhitelistAllowResult, OwnerWhitelistUnallowResult, ReceptionBlacklistAllowResult, ReceptionBlacklistUnallowResult, ReceptionCheckAccessResult, ReceptionCheckOwnerResult, ReceptionDrainReservationsResult, ReceptionOwnResult, ReceptionRegisterResult, ReceptionReleaseAccessResult, ReceptionReleaseResourceAllResult, ReceptionReleaseResourceResult, ReceptionReservationResult, ReceptionUnregisterResult, ReceptionUnreserveResult, ReceptionUpdatePasswordResult, ReceptionWhitelistAllowResult, ReceptionWhitelistUnallowResult, ReservationsCheckAccessResult, ReservationsDrainReservationsResult, ReservationsReserveResult, ReservationsUnreserveResult, ResourceControlCheckOwnerResult, ResourceControlOwnResult, ResourceControlReleaseResult, UnsynchronisedRegistryAcquireAccessError, UnsynchronisedRegistryAcquireViewError, UnsynchronisedRegistryBlacklistAllowResult, UnsynchronisedRegistryBlacklistUnallowResult, UnsynchronisedRegistryCheckAccessResult, UnsynchronisedRegistryCheckOwnerResult, UnsynchronisedRegistryCheckedReplacementResult, UnsynchronisedRegistryContainsResourceResult, UnsynchronisedRegistryDrainReservationsResult, UnsynchronisedRegistryOwnResult, UnsynchronisedRegistryReallocatingReplacementResult, UnsynchronisedRegistryRegisterResult, UnsynchronisedRegistryReleaseAccessResult, UnsynchronisedRegistryReleaseResourceAllResult, UnsynchronisedRegistryReleaseResourceResult, UnsynchronisedRegistryReservationResult, UnsynchronisedRegistryUnregisterResult, UnsynchronisedRegistryUnreserveResult, UnsynchronisedRegistryUpdatePasswordResult, UnsynchronisedRegistryWhitelistAllowResult, UnsynchronisedRegistryWhitelistUnallowResult, WhitelistAllowResult, WhitelistReleaseAllResult, WhitelistUnallowResult};
+
 
 #[derive(Debug, thiserror::Error)]
 pub enum SynchronisedRegistryRegisterResult {
@@ -856,7 +857,7 @@ pub enum SynchronisedRegistryAcquireAccessError {
 
 impl From<UnsynchronisedRegistryAcquireAccessError> for SynchronisedRegistryAcquireAccessError {
     fn from(value: UnsynchronisedRegistryAcquireAccessError) -> Self {
-        match value {
+        match value {            
             UnsynchronisedRegistryAcquireAccessError::AutomatedRegistry(manual_registry_access_result) => {
                 match manual_registry_access_result {
                     ManualRegistryAccessError::NotFound => {
@@ -903,6 +904,53 @@ impl From<UnsynchronisedRegistryAcquireAccessError> for SynchronisedRegistryAcqu
                             },
                         }
                     },
+                }
+            },
+        }
+    }
+}
+
+#[derive(Debug, thiserror::Error, PartialEq)]
+pub enum SynchronisedRegistryAcquireViewError {
+    #[error("Duplicate resource IDs at request positions {0:?}")]
+    DuplicateIds(Vec<usize>),
+    #[error("Reception rejected view access at request positions {0:?}")]
+    Reception(Vec<(usize, SynchronisedRegistryAcquireAccessError)>),
+    #[error("Resource Not Found")]
+    NotFound,
+    #[error("Current Access Does not Accept Incoming Access")]
+    AccessConflict,
+    #[error("Reservation Conflict")]
+    ReservationConflict,
+    #[error("Credential Storage Verification Failure")]
+    VerificationFailure,
+    #[error("Whitelist & Blacklist Check Access Denied")]
+    ListsDenied,
+    #[error("Access Denied Acquiring")]
+    TriedAcquiring
+}
+
+impl From<UnsynchronisedRegistryAcquireViewError> for SynchronisedRegistryAcquireViewError {
+    fn from(value: UnsynchronisedRegistryAcquireViewError) -> Self {
+        match value {
+            UnsynchronisedRegistryAcquireViewError::CheckView(check_view) => {
+                match check_view {
+                    ReceptionCheckViewResult::DuplicateIds(indices) => Self::DuplicateIds(indices),
+                    ReceptionCheckViewResult::Denied(denied) => Self::Reception(
+                        denied.into_iter().map(|(index, result)| {
+                            (index, UnsynchronisedRegistryAcquireAccessError::Reception(result).into())
+                        }).collect()
+                    ),
+                }
+            }
+            UnsynchronisedRegistryAcquireViewError::AutomatedRegistry(manual_registry_access_result) => {
+                match manual_registry_access_result {
+                    ManualRegistryAccessError::NotFound => {
+                        Self::NotFound
+                    },
+                    ManualRegistryAccessError::TriedAcquiring => {
+                        Self::TriedAcquiring
+                    }
                 }
             },
         }
