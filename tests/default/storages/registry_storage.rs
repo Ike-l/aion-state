@@ -47,10 +47,38 @@ impl<'a, T> Transmutable for ResourceWrapper<'a, T> {
     }
 }
 
-impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage for RegistryStorage<ResourceId, StoredResource> {
+#[derive(Debug, PartialEq)]
+pub enum ResourceView<'a, ResourceId: Hash + Eq, StoredResource> {
+    Unique(HashMap<ResourceId, &'a mut StoredResource>),
+    Shared(HashMap<ResourceId, &'a StoredResource>)
+}
+
+impl<'a, ResourceId: Hash + Eq, StoredResource> ResourceView<'a, ResourceId, StoredResource> {
+    pub fn new(values: HashMap<ResourceId, &'a mut StoredResource>) -> Self {
+        Self::Unique(values)
+    }
+
+    pub fn get(&self, key: &ResourceId) -> Option<&StoredResource> {
+        match self {
+            Self::Unique(values) => values.get(key).map(|value| &**value),
+            Self::Shared(values) => values.get(key).copied(),
+        }
+    }
+}
+
+impl<'a, ResourceId: Hash + Eq, StoredResource> Transmutable for ResourceView<'a, ResourceId, StoredResource> {
+    fn transmute(self) -> Self {
+        let Self::Unique(values) = self else { unreachable!() };
+        let shared = values.into_iter().map(|(key, value)| (key, &*value)).collect();
+        Self::Shared(shared)
+    }
+}
+
+impl<ResourceId: Eq + Hash + Clone, StoredResource> aion_state::prelude::RegistryStorage for RegistryStorage<ResourceId, StoredResource> {
     type ValueId = ResourceId;
     type OwnedValue = StoredResource;
     type ReferencedValue<'a> = ResourceWrapper<'a, StoredResource> where Self: 'a;
+    type StorageView<'a> = ResourceView<'a, ResourceId, StoredResource> where Self: 'a;
 
     fn keys(&self) -> impl Iterator<Item = &Self::ValueId> {
         self.inner.keys()
@@ -64,6 +92,32 @@ impl<ResourceId: Eq + Hash, StoredResource> aion_state::prelude::RegistryStorage
         event!(Level::TRACE, "RegistryStorage get mut");
 
         self.inner.get_mut(value_id).map(ResourceWrapper::new)
+    }
+
+    fn get_view(
+        &mut self,
+        value_ids: &[&Self::ValueId]
+    ) -> Option<Self::StorageView<'_>>
+    {
+        event!(Level::TRACE, "RegistryStorage get view");
+
+        if self.calculated_len == 0 {
+            return None;
+        }
+
+        for value_id in value_ids {
+            if !self.inner.contains_key(*value_id) {
+                return None;
+            }
+        }
+
+        let values = self.inner
+            .iter_mut()
+            .filter(|(key, _)| value_ids.iter().any(|value_id| *value_id == *key))
+            .map(|(key, value)| (key.clone(), value))
+            .collect::<HashMap<ResourceId, &mut StoredResource>>();
+
+        Some(ResourceView::new(values))
     }
 
     fn insert(

@@ -34,7 +34,8 @@ pub mod prelude {
         },
         storages::{
             registry_storage::{
-                RegistryStorage
+                RegistryStorage,
+                ResourceView
             },
             reservation_storage::{
                 ReservationStorage
