@@ -57,6 +57,12 @@ pub struct ReceptionCheckAccess<'a, Id, IdPassword, ResourceId, Access, Password
     pub password: Option<&'a Password>
 }
 
+pub struct ReceptionCheckView<'a, Id, IdPassword, ResourceId, Access, Password> {
+    pub user_details: Option<(&'a Id, &'a IdPassword)>,
+    pub resource_access: &'a [(ResourceId, Option<&'a Password>)],
+    pub access: &'a Access,
+}
+
 pub struct ReceptionReleaseAccess<'a, ResourceId, Access> {
     pub resource_id: &'a ResourceId,
     pub access: &'a Access
