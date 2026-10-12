@@ -75,6 +75,12 @@ pub struct ReceptionRecordAccess<'a, Id, IdPassword, ResourceId, Access, Passwor
     pub password: Option<&'a Password>
 }
 
+pub struct ReceptionRecordView<'a, Id, IdPassword, ResourceId, Access, Password> {
+    pub user_details: Option<(&'a Id, &'a IdPassword)>,
+    pub resource_access: &'a [(ResourceId, Option<&'a Password>)],
+    pub access: &'a Access,
+}
+
 pub struct ReceptionReservation<'a, Id, IdPassword, ResourceId, Access, Password> {
     pub id: Id,
     pub id_password: &'a IdPassword,
