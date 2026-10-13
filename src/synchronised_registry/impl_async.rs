@@ -1,5 +1,4 @@
 use std::fmt::Debug;
-#[cfg(feature = "notifier")]
 use std::hash::Hash;
 
 use stable_deref_trait::StableDeref;
@@ -181,7 +180,7 @@ impl<
         trace_function!("Synchronised Registry Release Access Async");
 
         let _a_sync = self.a_sync.write().await;
-        unsafe { unsynchronised_registry.release_access(input) }
+        unsafe { self.release_access(input) }
     }
 
     pub async fn reserve_async(
