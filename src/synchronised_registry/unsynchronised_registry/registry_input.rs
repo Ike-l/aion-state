@@ -115,6 +115,14 @@ pub struct RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Passwo
     pub password: Option<Password>
 }
 
+#[cfg(feature = "releaser")]
+#[derive(Clone)]
+pub struct RegistryOwnedAcquireView<Id, IdPassword, ResourceId, Access, Password> {
+    pub user_details: Option<(Id, IdPassword)>,
+    pub resource_access: Vec<(ResourceId, Option<Password>)>,
+    pub access: Access
+}
+
 #[derive(Debug, Clone)]
 pub struct RegistryReplacement<'a, Id, IdPassword, Access, ResourceId, Resource, Password> {
     pub user_details: Option<(&'a Id, &'a IdPassword)>,
