@@ -4,6 +4,19 @@
 
 The crate manages that bookkeeping. **Your application supplies the actual storage types and defines what its access modes mean.** There is no built-in `HashMap` registry to construct directly.
 
+## Contents
+
+- [Why I Built This](#why-i-built-this)
+- [A Concrete Example](#a-concrete-example)
+- [Reading the Report](#reading-the-report)
+- [What the Registry Tracks](#what-the-registry-tracks)
+- [Defining Access](#defining-access)
+- [Operations](#operations)
+- [Features](#features)
+- [Build and Run](#build-and-run)
+- [Tests](#tests)
+- [Test One Feature at a Time](#test-one-feature-at-a-time)
+
 ## Why I Built This
 
 I built `aion-state` for a game engine where mods and plugins are first-class parts of the game. Two plugins may want to use or change the same resource: for example, one plugin may update a world object while another is reading it. Ownership makes it clear which plugin is responsible for a resource. Reservations let a plugin announce the access it plans to take, so the registry can detect a conflicting request before granting access. Together with shared and exclusive access modes, these rules are intended to catch mistakes and make plugin interactions more predictable.
@@ -152,7 +165,7 @@ By default, Cargo enables `sync`, `releaser`, `notifier`, and `async`. The `stab
 | Feature | What changes |
 | --- | --- |
 | `sync` | The `Registry` name in the prelude refers to `SynchronisedRegistry`, which locks registry operations. Without it, `Registry` refers to `UnsynchronisedRegistry`; callers must coordinate access themselves when sharing it across threads. |
-| `releaser` | Adds `Releaser` guards. Dropping a guard releases the access it acquired. |
+| `releaser` | Adds `Releaser` and `ViewReleaser` traits. Their guards release a single access or every access in a view when dropped. |
 | `notifier` | Adds waiters that can retry an acquisition after a conflicting access is released. Use `sync` when you want this on the `Registry` alias; notifier support is implemented for `SynchronisedRegistry`. |
 | `async` | Adds async methods to `SynchronisedRegistry` and enables Tokio's `sync` dependency. It does not turn on `sync` or change the `Registry` alias. |
 | `stable_deref` | Changes the brute integration test's stored value from `StoredResource` to `Box<Resource>`, allowing that test to call `reallocating_replace`. It does not change the library API. |
@@ -162,7 +175,7 @@ The convenience types provided by combinations are:
 | Enable these features | You also get |
 | --- | --- |
 | `releaser`, `notifier` | `NotifiedReleaser` |
-| `async`, `releaser` | `AsyncReleaser` |
+| `async`, `releaser` | `AsyncReleaser` and `AsyncViewReleaser` |
 | `async`, `notifier` | `AsyncNotifier` and async wait/retry helpers |
 | `async`, `notifier`, `releaser` | `AsyncNotifiedReleaser` |
 
@@ -211,17 +224,52 @@ Run only the randomized brute test:
 cargo test --test integration_test brute::run
 ```
 
-The brute test sends randomly generated operations through the synchronous registry and checks the results against a model of users, values, ownership, and access. To make it exercise `reallocating_replace`, enable the test-only storage switch:
+The brute test sends randomly generated operations through the synchronous registry and checks the results against a model of users, values, ownership, and access. It also generates commands for each enabled feature: automatic release, notifier wakeups, async registry operations, and stable-deref replacement. The test asserts that every command enabled in that build was exercised.
+
+To make the brute test exercise the `reallocating_replace` path, enable the test-only storage switch:
 
 ```sh
 cargo test --features stable_deref
 ```
 
-Without `stable_deref`, the same brute command uses `checked_replace` instead. The full integration test harness requires `sync`, so use this command—not plain `cargo test --no-default-features`—to run it with only that feature:
+Without `stable_deref`, the corresponding brute command uses checked replacement instead. The full integration test harness requires `sync`, so use this command—not plain `cargo test --no-default-features`—to run the base suite with only `sync`:
 
 ```sh
 cargo test --no-default-features --features sync
 ```
+
+### Test One Feature at a Time
+
+These commands run the full integration suite with each optional feature selected by itself. `sync` stays enabled because the test harness uses `SynchronisedRegistry`.
+
+```sh
+cargo test --no-default-features --features sync,releaser
+cargo test --no-default-features --features sync,notifier
+cargo test --no-default-features --features sync,async
+cargo test --no-default-features --features sync,stable_deref
+```
+
+The focused tests for feature behavior can also be run individually:
+
+| Feature or combination | Test filter |
+| --- | --- |
+| `releaser` access guard | `released_access_deaccesses_on_drop` |
+| `releaser` view guard | `released_view_deaccesses_on_drop` |
+| `notifier` retry after release | `future_acquire_access_waits_for_release` |
+| `async` view acquisition | `async_acquire_view_resolves_without_contention` |
+| `stable_deref` replacement | `reallocating_replace_accepts_stable_deref_storage` |
+| `notifier` + `releaser` | `released_view_deaccesses_and_notifies_on_drop` |
+| `async` + `releaser` | `async_released_view_deaccesses_on_drop` |
+| `async` + `notifier` | `async_future_acquire_access_waits_for_release` |
+| `async` + `notifier` + `releaser` | `async_released_future_waits_for_releaser_drop` |
+
+For example, run the notifier retry test with:
+
+```sh
+cargo test --test integration_test future_acquire_access_waits_for_release
+```
+
+The default `cargo test` command also runs the feature-combination tests with all default features enabled. Adding `--features stable_deref` runs that suite with stable-deref storage too.
 
 These commands check useful feature combinations without running the integration tests:
 
