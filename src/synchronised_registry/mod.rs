@@ -10,12 +10,16 @@ pub mod unsynchronised_registry;
 pub mod synchronised_registry_results;
 #[cfg(feature = "releaser")]
 pub mod impl_releaser;
+#[cfg(feature = "releaser")]
+pub mod impl_view_releaser;
 #[cfg(feature = "notifier")]
 pub mod impl_notifier;
 #[cfg(feature = "async")]
 pub mod impl_async;
 #[cfg(all(feature = "async", feature = "releaser"))]
 pub mod impl_async_releaser;
+#[cfg(all(feature = "async", feature = "releaser"))]
+pub mod impl_async_view_releaser;
 #[cfg(all(feature = "async", feature = "notifier"))]
 pub mod impl_async_notifier;
 #[cfg(all(feature = "notifier", feature = "releaser"))]
@@ -41,7 +45,9 @@ pub struct SynchronisedRegistry<S: RegistryStorage, RS, AS, OS, WS, BS, CS> {
 impl<S: RegistryStorage, RS: Default, AS: Default, OS: Default, WS: Default, BS, CS: Default> SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS> {
     pub fn new(storage: S, blacklist_storage: BS) -> Self {
         Self {
+            #[cfg(feature = "async")]
             a_sync: Default::default(),
+            #[cfg(feature = "notifier")]
             notify_queue: Default::default(),
             sync: Default::default(),
             unsynchronised_registry: UnsynchronisedRegistry::new(storage, blacklist_storage),
