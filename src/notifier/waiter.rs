@@ -24,7 +24,7 @@ impl Waiter {
     }
 
     fn set_waker(&mut self, waker: Waker) {
-        self.waker.replace(waker).expect("Expected no Waker");
+        self.waker = Some(waker);
     }
 
     pub fn is_ready_to_retry(&self) -> bool {
