@@ -99,12 +99,17 @@ pub mod prelude {
     #[cfg(feature = "releaser")]
     pub use super::{
         releaser::{
+            Release,
             Releaser,
+            ViewReleaser,
             releasing_result::{
                 ReleasingResult,
             }
         },
-        synchronised_registry::unsynchronised_registry::registry_input::RegistryReleasingReleaseAccess
+        synchronised_registry::unsynchronised_registry::registry_input::{
+            RegistryOwnedAcquireView,
+            RegistryReleasingRelease,
+        },
     };
 
     #[cfg(feature = "notifier")]
@@ -128,7 +133,7 @@ pub mod prelude {
     };
 
     #[cfg(all(feature = "async", feature = "releaser"))]
-    pub use super::async_releaser::AsyncReleaser;
+    pub use super::async_releaser::{AsyncReleaser, AsyncViewReleaser};
     
     #[cfg(all(feature = "async", feature = "notifier"))]
     pub use super::async_notifier::{
