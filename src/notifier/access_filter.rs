@@ -6,8 +6,13 @@ pub trait AccessFilter {
     fn retry(&self, error: &Self::Error) -> bool;
 }
 
-#[derive(Default)]
 pub struct PermissiveFilter<Error>(PhantomData<Error>);
+
+impl<Error> Default for PermissiveFilter<Error> {
+    fn default() -> Self {
+        Self(PhantomData)
+    }
+}
 
 impl<Error> AccessFilter for PermissiveFilter<Error> {
     type Error = Error;
