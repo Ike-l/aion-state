@@ -249,24 +249,27 @@ cargo test --no-default-features --features sync,async
 cargo test --no-default-features --features sync,stable_deref
 ```
 
-The focused tests for feature behavior can also be run individually:
+Focused API tests live in `tests/feature_tests/`, grouped by feature. Direct tests of the Brute feature commands live in `tests/brute/feature_commands.rs`; the randomized multi-command run remains in `tests/brute/mod.rs`.
 
-| Feature or combination | Test filter |
+Run a focused test by its distinctive name:
+
+| Feature or combination | Test name |
 | --- | --- |
-| `releaser` access guard | `released_access_deaccesses_on_drop` |
-| `releaser` view guard | `released_view_deaccesses_on_drop` |
-| `notifier` retry after release | `future_acquire_access_waits_for_release` |
-| `async` view acquisition | `async_acquire_view_resolves_without_contention` |
-| `stable_deref` replacement | `reallocating_replace_accepts_stable_deref_storage` |
+| `releaser` access guard | `releaser_access_guard_releases_when_dropped` |
+| `releaser` view guard | `releaser_view_guard_releases_every_id_when_dropped` |
+| `notifier` retry after release | `notifier_future_retries_after_the_current_access_is_released` |
+| `async` access | `async_registry_can_store_acquire_and_release_a_resource` |
+| `async` view | `async_registry_can_acquire_a_view` |
+| `stable_deref` replacement | `stable_deref_storage_allows_reallocating_replacement` |
 | `notifier` + `releaser` | `released_view_deaccesses_and_notifies_on_drop` |
 | `async` + `releaser` | `async_released_view_deaccesses_on_drop` |
-| `async` + `notifier` | `async_future_acquire_access_waits_for_release` |
-| `async` + `notifier` + `releaser` | `async_released_future_waits_for_releaser_drop` |
+| `async` + `notifier` | `async_notifier_retries_acquisition_after_release` |
+| `async` + `notifier` + `releaser` | `async_notified_releaser_resumes_after_guard_drop` |
 
 For example, run the notifier retry test with:
 
 ```sh
-cargo test --test integration_test future_acquire_access_waits_for_release
+cargo test --test integration_test notifier_future_retries_after_the_current_access_is_released
 ```
 
 The default `cargo test` command also runs the feature-combination tests with all default features enabled. Adding `--features stable_deref` runs that suite with stable-deref storage too.
