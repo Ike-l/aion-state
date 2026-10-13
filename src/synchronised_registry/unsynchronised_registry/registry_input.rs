@@ -63,8 +63,8 @@ pub struct RegistryReleaseAccess<'a, ResourceId, Access> {
 }
 
 #[cfg(feature = "releaser")]
-pub struct RegistryReleasingReleaseAccess<ResourceId, Access> {
-    pub resource_id: ResourceId,
+pub struct RegistryReleasingRelease<ResourceId, Access> {
+    pub resource_ids: Vec<ResourceId>,
     pub access: Access
 }
 
