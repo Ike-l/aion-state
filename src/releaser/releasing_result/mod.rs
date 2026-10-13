@@ -1,13 +1,16 @@
-use crate::prelude::{Releaser, sync::Arc};
+use std::marker::PhantomData;
 
-pub struct ReleasingResult<'a, S, AccessResult, R: Releaser<'a, S> + ?Sized> {
+use crate::prelude::{Release, sync::Arc};
+
+pub struct ReleasingResult<'a, S, AccessResult, R: Release + ?Sized> {
     raw: Option<AccessResult>,
     consumed: bool,
     releaser: Option<Arc<R>>,
-    release_input: Option<R::ReleaseInput>
+    release_input: Option<R::ReleaseInput>,
+    marker: PhantomData<(&'a (), fn() -> S)>,
 }
 
-impl<'a, S, AccessResult, R: Releaser<'a, S>> ReleasingResult<'a, S, AccessResult, R> {
+impl<'a, S, AccessResult, R: Release> ReleasingResult<'a, S, AccessResult, R> {
     pub fn new(
         access_result: AccessResult, 
         releaser: Arc<R>,
@@ -17,7 +20,8 @@ impl<'a, S, AccessResult, R: Releaser<'a, S>> ReleasingResult<'a, S, AccessResul
             raw: Some(access_result),
             consumed: false,
             releaser: Some(releaser),
-            release_input: Some(release_input)
+            release_input: Some(release_input),
+            marker: PhantomData,
         }
     }
 
@@ -26,7 +30,7 @@ impl<'a, S, AccessResult, R: Releaser<'a, S>> ReleasingResult<'a, S, AccessResul
         f: impl FnOnce(AccessResult) -> NewAccessResult
     ) -> ReleasingResult<'a, S, NewAccessResult, R> {
         self.consumed = true;
-        ReleasingResult::new(f(self.raw.take().unwrap()), self.releaser.take().unwrap(), self.release_input.take().unwrap())
+        ReleasingResult::<S, NewAccessResult, R>::new(f(self.raw.take().unwrap()), self.releaser.take().unwrap(), self.release_input.take().unwrap())
     }
 
     pub fn as_ref(&self) -> Option<&AccessResult> {
@@ -46,7 +50,7 @@ impl<'a, S, AccessResult, R: Releaser<'a, S>> ReleasingResult<'a, S, AccessResul
     }
 }
 
-impl<'a, S, AccessResult, R: Releaser<'a, S> + ?Sized> Drop for ReleasingResult<'a, S, AccessResult, R> {
+impl<'a, S, AccessResult, R: Release + ?Sized> Drop for ReleasingResult<'a, S, AccessResult, R> {
     fn drop(&mut self) {
         if !self.consumed {
             self.releaser.take().unwrap().release_access(&self.release_input.take().unwrap());
