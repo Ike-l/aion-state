@@ -75,9 +75,10 @@ impl<
             return ControllerReleaseResourceResult::Denied
         }
 
+        // todo maybe make "ok" part of the return signature in `_Result`
         let access_control_release_result = self.access_control.release(&AccessControlRelease { id: resource_id });
-        
-        event!(FUNCTION_LEVEL, result =? access_control_release_result.ok(), "Access Control Release Result");
+        let access_control_release_ok = access_control_release_result.ok();
+        event!(FUNCTION_LEVEL, result =? access_control_release_ok, "Access Control Release Result");
 
         ControllerReleaseResourceResult::ResourceControl(self.resource_control.release(&ResourceControlRelease { resource_id }))
     }
