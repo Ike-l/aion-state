@@ -3,8 +3,7 @@ use std::fmt::Debug;
 #[cfg(feature = "notifier")]
 use std::hash::Hash;
 
-#[cfg(feature = "notifier")]
-use crate::prelude::{AccessStorage, Accessor, AccessorResult, AsyncReleaser, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleasingReleaseAccess, RegistryStorage, ReleasingResult, ReservationStorage, SynchronisedRegistry, WhitelistStorage, sync::Arc};
+use crate::prelude::{AccessStorage, Accessor, AccessorResult, AsyncReleaser, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleasingRelease, RegistryStorage, ReleasingResult, ReservationStorage, SynchronisedRegistry, WhitelistStorage, sync::Arc};
 
 #[cfg(not(feature = "notifier"))]
 impl<
@@ -38,11 +37,11 @@ impl<
                 })
                 .await?;
 
-            Ok(ReleasingResult::new(
+            Ok(ReleasingResult::<S::ReferencedValue<'a>, AccessResult, Self>::new(
                 result,
                 Arc::clone(self),
-                RegistryReleasingReleaseAccess {
-                    resource_id: input.resource_id,
+                RegistryReleasingRelease {
+                    resource_ids: vec![input.resource_id],
                     access: input.access,
                 },
             ))
@@ -82,11 +81,11 @@ impl<
                 })
                 .await?;
 
-            Ok(ReleasingResult::new(
+            Ok(ReleasingResult::<S::ReferencedValue<'a>, AccessResult, Self>::new(
                 result,
                 Arc::clone(self),
-                RegistryReleasingReleaseAccess {
-                    resource_id: input.resource_id,
+                RegistryReleasingRelease {
+                    resource_ids: vec![input.resource_id],
                     access: input.access,
                 },
             ))
