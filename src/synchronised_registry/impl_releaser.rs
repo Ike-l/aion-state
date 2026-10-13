@@ -2,8 +2,65 @@ use std::fmt::Debug;
 #[cfg(feature = "notifier")]
 use std::hash::Hash;
 
+use crate::prelude::{sync::Arc, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleaseAccess, RegistryOwnedAcquireAccess, RegistryReleasingRelease, RegistryStorage, Release, Releaser, ReleasingResult, ReservationStorage, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
+
+#[cfg(not(feature = "notifier"))]
+impl<
+    S: RegistryStorage,
+    RS: ReservationStorage<AccessStorage = AS>,
+    AS: AccessStorage<ValueId = S::ValueId> + Default,
+    OS: CredentialStorage<Id = RS::ReserverId>,
+    WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
+    BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
+    CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
+> Release for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS>
+where
+    RS::ReserverId: Debug + PartialEq,
+    AS::Access: Accessor + Clone,
+    S::ValueId: Clone,
+{
+    type ReleaseInput = RegistryReleasingRelease<S::ValueId, AS::Access>;
+
+    fn release_access(&self, input: &Self::ReleaseInput) {
+        for resource_id in &input.resource_ids {
+            unsafe {
+                self.release_access(&RegistryReleaseAccess {
+                    resource_id,
+                    access: &input.access,
+                });
+            }
+        }
+    }
+}
+
 #[cfg(feature = "notifier")]
-use crate::prelude::{sync::Arc, AccessStorage, Accessor, AccessorResult, BlacklistStorage, ControlStorage, CredentialStorage, RegistryAcquireAccess, RegistryReleaseAccess, RegistryOwnedAcquireAccess, RegistryReleasingReleaseAccess, RegistryStorage, Releaser, ReleasingResult, ReservationStorage, SynchronisedRegistry, SynchronisedRegistryAcquireAccessError, WhitelistStorage};
+impl<
+    S: RegistryStorage,
+    RS: ReservationStorage<AccessStorage = AS>,
+    AS: AccessStorage<ValueId = S::ValueId> + Default,
+    OS: CredentialStorage<Id = RS::ReserverId>,
+    WS: WhitelistStorage<Id = AS::ValueId, Access = AS::Access>,
+    BS: BlacklistStorage<Id = WS::Id, Access = WS::Access>,
+    CS: ControlStorage<Id = OS::Id, ResourceId = BS::Id>
+> Release for SynchronisedRegistry<S, RS, AS, OS, WS, BS, CS>
+where
+    RS::ReserverId: Debug + PartialEq,
+    AS::Access: Accessor + Clone,
+    S::ValueId: Clone + Eq + std::hash::Hash,
+{
+    type ReleaseInput = RegistryReleasingRelease<S::ValueId, AS::Access>;
+
+    fn release_access(&self, input: &Self::ReleaseInput) {
+        for resource_id in &input.resource_ids {
+            unsafe {
+                self.release_access(&RegistryReleaseAccess {
+                    resource_id,
+                    access: &input.access,
+                });
+            }
+        }
+    }
+}
 
 #[cfg(not(feature = "notifier"))]
 impl<
@@ -24,8 +81,6 @@ impl<
     type Error = SynchronisedRegistryAcquireAccessError;
     type AccessInput = RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
 
-    type ReleaseInput = RegistryReleasingReleaseAccess<S::ValueId, AS::Access>;
-
     fn acquire_released_access<AccessResult: AccessorResult<S::ReferencedValue<'a>>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<'a, S::ReferencedValue<'a>, AccessResult, Self>, Self::Error> {
         let result = self.as_ref().acquire_access(RegistryAcquireAccess {
             user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
@@ -34,17 +89,10 @@ impl<
             password: input.password.as_ref()
         })?;
 
-        Ok(ReleasingResult::new(result, Arc::clone(self), RegistryReleasingReleaseAccess {
-            resource_id: input.resource_id,
+        Ok(ReleasingResult::<S::ReferencedValue<'a>, AccessResult, Self>::new(result, Arc::clone(self), RegistryReleasingRelease {
+            resource_ids: vec![input.resource_id],
             access: input.access
         }))
-    }
-
-    fn release_access(&self, input: &Self::ReleaseInput) {
-        unsafe { self.release_access(&RegistryReleaseAccess {
-            resource_id: &input.resource_id,
-            access: &input.access
-        }) };
     }
 }
 
@@ -67,8 +115,6 @@ impl<
     type Error = SynchronisedRegistryAcquireAccessError;
     type AccessInput = RegistryOwnedAcquireAccess<OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>;
 
-    type ReleaseInput = RegistryReleasingReleaseAccess<S::ValueId, AS::Access>;
-
     fn acquire_released_access<AccessResult: AccessorResult<S::ReferencedValue<'a>>>(self: &'a Arc<Self>, input: Self::AccessInput) -> Result<ReleasingResult<'a, S::ReferencedValue<'a>, AccessResult, Self>, Self::Error> {
         let result = self.as_ref().acquire_access(RegistryAcquireAccess {
             user_details: input.user_details.as_ref().map(|(a, b)| { (a, b) }),
@@ -77,16 +123,9 @@ impl<
             password: input.password.as_ref()
         })?;
 
-        Ok(ReleasingResult::new(result, Arc::clone(self), RegistryReleasingReleaseAccess {
-            resource_id: input.resource_id,
+        Ok(ReleasingResult::<S::ReferencedValue<'a>, AccessResult, Self>::new(result, Arc::clone(self), RegistryReleasingRelease {
+            resource_ids: vec![input.resource_id],
             access: input.access
         }))
-    }
-
-    fn release_access(&self, input: &Self::ReleaseInput) {
-        unsafe { self.release_access(&RegistryReleaseAccess {
-            resource_id: &input.resource_id,
-            access: &input.access
-        }) };
     }
 }
