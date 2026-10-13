@@ -10,6 +10,8 @@ pub mod unsynchronised_registry_result;
 pub mod registry_input;
 #[cfg(feature = "releaser")]
 pub mod impl_releaser;
+#[cfg(feature = "releaser")]
+pub mod impl_view_releaser;
 
 #[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct UnsynchronisedRegistry<S: RegistryStorage, RS, AS, OS, WL, BL, CS> {
