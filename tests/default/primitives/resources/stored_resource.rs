@@ -15,3 +15,16 @@ impl StoreValue for StoredResource {
         self
     }
 }
+
+#[cfg(feature = "stable_deref")]
+impl StoreValue for Box<Resource> {
+    type Value = Resource;
+
+    fn store(value: Self::Value) -> Self {
+        Box::new(value)
+    }
+
+    fn take(self) -> Self::Value {
+        *self
+    }
+}

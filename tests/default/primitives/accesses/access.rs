@@ -92,7 +92,8 @@ impl Accessor for Access {
         event!(Level::TRACE, "Access Release");
 
         match (self, other) {
-            (Access::Shared(n), Access::Shared(m)) => *n -= m,     
+            (Access::Shared(n), Access::Shared(m)) => *n -= m,
+            (current @ Access::Unique, Access::Unique) => *current = Access::Shared(0),
             _ => ()
         }  
     }

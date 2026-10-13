@@ -1,4 +1,4 @@
-use aion_state::prelude::{RegistryAcquireAccess, SynchronisedRegistryAcquireAccessError, RegistryOwn, RegistryRegister, RegistryReplacement};
+use aion_state::prelude::{RegistryAcquireAccess, RegistryCheckOwner, RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReplacement, SynchronisedRegistryAcquireAccessError, SynchronisedRegistryOwnResult};
 
 use std::assert_matches;
 
@@ -16,13 +16,22 @@ fn can_own() {
 
     assert!(result.ok());
 
+    let resource_id = ResourceId::new_type::<i32>();
     let result = registry.own(RegistryOwn {
-        id,
+        id: id.clone(),
         password: &password,
-        resource_id: ResourceId::new_type::<i32>()
+        resource_id: resource_id.clone()
     });
 
-    assert!(result.ok())
+    assert!(result.ok());
+    assert!(registry.is_owned(&RegistryIsOwned { resource_id: &resource_id }));
+    assert!(registry.check_owner(&RegistryCheckOwner { id: &id, resource_id: &resource_id }).ok());
+    assert!(matches!(registry.own(RegistryOwn {
+        id: id.clone(), password: &Password::from(2), resource_id: resource_id.clone(),
+    }), SynchronisedRegistryOwnResult::VerificationFailure));
+    assert!(matches!(registry.own(RegistryOwn {
+        id: id.clone(), password: &password, resource_id: resource_id.clone(),
+    }), SynchronisedRegistryOwnResult::OwnershipConflict));
 }
 
 

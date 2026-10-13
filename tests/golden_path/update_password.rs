@@ -1,4 +1,4 @@
-use aion_state::prelude::{RegistryRegister, RegistryUnregister, RegistryUpdatePassword};
+use aion_state::prelude::{RegistryRegister, RegistryUnregister, RegistryUpdatePassword, SynchronisedRegistryUnregisterResult};
 
 use crate::default::prelude::*;
 use crate::create_registry;
@@ -20,6 +20,8 @@ fn can_update_password() {
     });
     
     assert!(result.ok());
+
+    assert!(matches!(registry.unregister(&RegistryUnregister { id: &id, password: &password }), SynchronisedRegistryUnregisterResult::VerificationFailure));
 
     let result = registry.unregister(&RegistryUnregister {
         id: &id,

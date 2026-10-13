@@ -1,4 +1,4 @@
-use aion_state::prelude::RegistryRegister;
+use aion_state::prelude::{RegistryRegister, SynchronisedRegistryRegisterResult};
 
 use crate::default::prelude::*;
 use crate::create_registry;
@@ -11,7 +11,10 @@ fn can_register() {
 
     let result = registry.register(RegistryRegister { id: id.clone(), password: password.clone() });
 
-    assert!(result.ok());
+    assert!(matches!(result, SynchronisedRegistryRegisterResult::Ok));
+    assert_eq!(registry.registered(), vec![id.clone()]);
+    assert!(matches!(registry.register(RegistryRegister { id: id.clone(), password }), SynchronisedRegistryRegisterResult::Err));
+    assert_eq!(registry.registered(), vec![id]);
 }
 
 #[test]

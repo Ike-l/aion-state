@@ -36,7 +36,7 @@ fn multi_safer_replace() {
     let n = 100;
     for raw_resource in raw_resources.take(n) {
         let resource_id = ResourceId::new_label(raw_resource.to_string());
-        let mut resource = Resource::new(raw_resource.to_string());
+        let resource = Resource::new(raw_resource.to_string());
         let result = registry.checked_replace(RegistryReplacement {
             user_details: None,
             access: &Access::Replace,
@@ -46,6 +46,20 @@ fn multi_safer_replace() {
         });
     
         assert_matches!(result, SynchronisedRegistryCheckedReplacementResult::NotFound);
+
+        let replacement = Resource::new(format!("replacement-{raw_resource}"));
+        let result = registry.checked_replace(RegistryReplacement {
+            user_details: None,
+            access: &Access::Replace,
+            resource_id: resource_id.clone(),
+            resource: Some(replacement.clone()),
+            password: None,
+        });
+        let SynchronisedRegistryCheckedReplacementResult::Found(previous) = result else {
+            panic!("replacing an existing resource should return its previous value");
+        };
+        assert_eq!(previous, resource);
+        let mut resource = replacement;
 
         let result = registry.acquire_access(RegistryAcquireAccess {
             user_details: None,

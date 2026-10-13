@@ -8,7 +8,8 @@ use crate::default::primitives::accesses::access_result::Transmutable;
 pub struct RegistryStorage<ResourceId: Hash + Eq, StoredResource> {
     inner: HashMap<ResourceId, StoredResource>,
     calculated_len: usize,
-    capacity: usize
+    capacity: usize,
+    removal_may_reallocate: bool,
 }
 
 impl<ResourceId: Hash + Eq, StoragedResource> Default for RegistryStorage<ResourceId, StoragedResource> {
@@ -23,7 +24,17 @@ impl<ResourceId: Hash + Eq, StoredResource> RegistryStorage<ResourceId, StoredRe
         Self {
             inner: HashMap::with_capacity(capacity),
             calculated_len: 0,
-            capacity
+            capacity,
+            removal_may_reallocate: false,
+        }
+    }
+
+    pub fn new_with_removal_reallocation(capacity: usize, removal_may_reallocate: bool) -> Self {
+        Self {
+            inner: HashMap::with_capacity(capacity),
+            calculated_len: 0,
+            capacity,
+            removal_may_reallocate,
         }
     }
 }
@@ -169,6 +180,6 @@ impl<ResourceId: Eq + Hash + Clone, StoredResource> aion_state::prelude::Registr
     }
 
     unsafe fn next_removal_may_reallocates(&self) -> bool {
-        false
+        self.removal_may_reallocate
     }
 }

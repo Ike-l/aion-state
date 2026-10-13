@@ -15,6 +15,7 @@ The crate manages that bookkeeping. **Your application supplies the actual stora
 - [Features](#features)
 - [Build and Run](#build-and-run)
 - [Tests](#tests)
+- [Coverage](#coverage)
 - [Test One Feature at a Time](#test-one-feature-at-a-time)
 
 ## Why I Built This
@@ -237,6 +238,40 @@ Without `stable_deref`, the corresponding brute command uses checked replacement
 ```sh
 cargo test --no-default-features --features sync
 ```
+
+## Coverage
+
+Install `cargo-llvm-cov` and Rust's LLVM tools once:
+
+```sh
+rustup component add llvm-tools-preview
+cargo install cargo-llvm-cov --version 0.9.1 --locked
+```
+
+Generate a machine-readable summary or a browsable HTML report. Both commands run the unit and integration test targets with all crate features enabled, including `stable_deref`:
+
+```sh
+cargo llvm-cov --all-targets --all-features --json --summary-only
+cargo llvm-cov --all-targets --all-features --open --output-dir target/llvm-cov
+cargo llvm-cov report --text --show-missing-lines --show-instantiations
+```
+
+Run the commands from this crate's directory. The HTML report is written to `target/llvm-cov/html/index.html` inside the crate. The report covers the crate's Rust source files under `src/`; it does not count test code or documentation examples as source coverage. Doc tests are not included in this command.
+
+Measured on 2026-10-13 with `cargo-llvm-cov 0.9.1`:
+
+| Metric | Covered | Total | Coverage |
+| --- | ---: | ---: | ---: |
+| Raw LLVM source lines | 3,068 | 3,075 | 99.77% |
+| Concrete executable source lines | 3,068 | 3,068 | 100% |
+| Functions | 392 | 392 | 100% |
+| Raw LLVM regions | 3,262 | 3,270 | 99.76% |
+| Concrete executable regions | 3,262 | 3,262 | 100% |
+| Generic instantiations | 700 | 1,106 | 63.29% |
+
+The seven raw line and eight raw region misses are uninstantiated generic placeholders, not untested concrete execution paths. `cargo llvm-cov report --text --show-instantiations` labels them `Unexecuted instantiation` with `_` type parameters; Rust emits no concrete function for those placeholders. The affected generic state-machine functions are `AsyncFutureAcquireAccess`, `AsyncFutureAcquireReleasedAccess`, `FutureAcquireAccess`, `FutureAcquireReleasedAccess`, and the generic `Owner` wrapper. The uninstantiated `CoordinatedReception` template contributes one region. These are explicit coverage exceptions: the concrete async pending, success, and error paths are tested, while a generic placeholder cannot be executed. Use the instantiation report to distinguish these exceptions from future missed executable lines. The generic-instantiation percentage counts type combinations and is not a branch-coverage percentage.
+
+The HTML report's source view is the best way to inspect executable line hits. Rerun the commands after changes; the percentages above are a snapshot and the raw summary can vary with LLVM/compiler versions.
 
 ### Test One Feature at a Time
 

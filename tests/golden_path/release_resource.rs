@@ -1,4 +1,4 @@
-use aion_state::prelude::{RegistryOwn, RegistryRegister, RegistryReleaseResource};
+use aion_state::prelude::{RegistryIsOwned, RegistryOwn, RegistryRegister, RegistryReleaseResource, SynchronisedRegistryReleaseResourceResult};
 
 use crate::default::prelude::*;
 use crate::create_registry;
@@ -22,13 +22,35 @@ fn can_release_resource() {
 
     assert!(result.ok());
 
-    let result = registry.release_resource(&RegistryReleaseResource {
-        id: &id,
-        password: &password,
-        resource_id: &resource_id
+    let guest = ReserverId::new("guest");
+    let guest_password = Password::from(2);
+    assert!(registry.register(RegistryRegister { id: guest.clone(), password: guest_password.clone() }).ok());
+    assert!(matches!(registry.release_resource(&RegistryReleaseResource {
+        id: &guest, password: &guest_password, resource_id: &resource_id,
+    }), SynchronisedRegistryReleaseResourceResult::OwnershipDenied));
+    assert!(matches!(registry.release_resource(&RegistryReleaseResource {
+        id: &id, password: &Password::from(2), resource_id: &resource_id,
+    }), SynchronisedRegistryReleaseResourceResult::VerificationFailure));
+    assert!(registry.is_owned(&RegistryIsOwned { resource_id: &resource_id }));
+
+    let subscriber = tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::TRACE)
+        .with_writer(std::io::sink)
+        .finish();
+    let result = tracing::subscriber::with_default(subscriber, || {
+        assert!(tracing::enabled!(tracing::Level::TRACE));
+        registry.release_resource(&RegistryReleaseResource {
+            id: &id,
+            password: &password,
+            resource_id: &resource_id
+        })
     });
 
-    assert!(result.ok())
+    assert!(result.ok());
+    assert!(!registry.is_owned(&RegistryIsOwned { resource_id: &resource_id }));
+    assert!(matches!(registry.release_resource(&RegistryReleaseResource {
+        id: &id, password: &password, resource_id: &resource_id,
+    }), SynchronisedRegistryReleaseResourceResult::OwnershipDenied));
 }
 
 #[test]

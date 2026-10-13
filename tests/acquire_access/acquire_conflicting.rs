@@ -4,23 +4,24 @@ use crate::default::prelude::*;
 
 use crate::create_registry;
 
-#[test]
-fn can_acquire_conflicting_u() {
-    use crate::default::storages::registry_storage::ResourceWrapper;
+fn registry_with_resource() -> (crate::TestRegistry, ResourceId, Resource) {
     let registry = create_registry(None);
-
-    let resource_id = ResourceId::new_label("1");
+    let resource_id = ResourceId::new_label("conflicting-access");
     let resource = Resource::new("resource".to_string());
-
-    let result = registry.checked_replace(RegistryReplacement {
+    assert!(registry.checked_replace(RegistryReplacement {
         user_details: None,
         access: &Access::Replace,
         resource_id: resource_id.clone(),
         resource: Some(resource.clone()),
         password: None,
-    });
+    }).ok());
+    (registry, resource_id, resource)
+}
 
-    assert!(result.ok());
+#[test]
+fn can_acquire_conflicting_u() {
+    use crate::default::storages::registry_storage::ResourceWrapper;
+    let (registry, resource_id, resource) = registry_with_resource();
 
     let result = registry.acquire_access(RegistryAcquireAccess {
         user_details: None,
@@ -47,20 +48,7 @@ fn can_acquire_conflicting_u() {
 #[test]
 fn can_acquire_conflicting_s() {
     use crate::default::storages::registry_storage::ResourceWrapper;
-    let registry = create_registry(None);
-
-    let resource_id = ResourceId::new_label("1");
-    let resource = Resource::new("resource".to_string());
-
-    let result = registry.checked_replace(RegistryReplacement {
-        user_details: None,
-        access: &Access::Replace,
-        resource_id: resource_id.clone(),
-        resource: Some(resource.clone()),
-        password: None,
-    });
-
-    assert!(result.ok());
+    let (registry, resource_id, resource) = registry_with_resource();
 
     let result = registry.acquire_access(RegistryAcquireAccess {
         user_details: None,
@@ -85,22 +73,9 @@ fn can_acquire_conflicting_s() {
 }
 
 #[test]
-fn can_acquire_conflicting_uu() {
+fn unique_access_conflicts_with_a_shared_request() {
     use crate::default::storages::registry_storage::ResourceWrapper;
-    let registry = create_registry(None);
-
-    let resource_id = ResourceId::new_label("1");
-    let resource = Resource::new("resource".to_string());
-
-    let result = registry.checked_replace(RegistryReplacement {
-        user_details: None,
-        access: &Access::Replace,
-        resource_id: resource_id.clone(),
-        resource: Some(resource.clone()),
-        password: None,
-    });
-
-    assert!(result.ok());
+    let (registry, resource_id, resource) = registry_with_resource();
 
     let result = registry.acquire_access(RegistryAcquireAccess {
         user_details: None,
@@ -117,7 +92,7 @@ fn can_acquire_conflicting_uu() {
     let result = registry.acquire_access::<AccessResult<ResourceWrapper<'_, Resource>>>(RegistryAcquireAccess {
         user_details: None,
         resource_id: resource_id.clone(),
-        access: Access::Unique,
+        access: Access::Shared(1),
         password: None
     });
 
