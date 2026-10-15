@@ -63,7 +63,7 @@ fn releaser_view_guard_releases_every_id_when_dropped() {
             crate::default::storages::registry_storage::ResourceView<'_, ResourceId, Resource>,
         >>(RegistryOwnedAcquireView {
             user_details: None,
-            resource_access: resource_ids.iter().cloned().map(|id| (id, None)).collect(),
+            resource_details: resource_ids.iter().cloned().map(|id| (id, None)).collect(),
             access: Access::Shared(1),
         }).unwrap();
         assert!(guard.as_ref().is_some());
@@ -76,7 +76,7 @@ fn releaser_view_guard_releases_every_id_when_dropped() {
         crate::default::storages::registry_storage::ResourceView<'_, ResourceId, Resource>,
     >>(RegistryAcquireView {
         user_details: None,
-        resource_access: resource_ids.iter().cloned().map(|id| (id, None)).collect(),
+        resource_details: resource_ids.iter().cloned().map(|id| (id, None)).collect(),
         access: Access::Unique,
     }).is_ok());
 }
@@ -133,7 +133,7 @@ fn view_releaser_preserves_missing_resource_errors() {
         crate::default::storages::registry_storage::ResourceView<'_, ResourceId, Resource>,
     >>(RegistryOwnedAcquireView {
         user_details: None,
-        resource_access: vec![(missing, None)],
+        resource_details: vec![(missing, None)],
         access: Access::Shared(1),
     });
     assert!(matches!(result, Err(SynchronisedRegistryAcquireViewError::NotFound)));
@@ -174,7 +174,7 @@ fn releaser_guards_forward_authenticated_user_details() {
             crate::default::storages::registry_storage::ResourceView<'_, ResourceId, Resource>,
         >>(RegistryOwnedAcquireView {
             user_details: Some((id.clone(), password.clone())),
-            resource_access: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
+            resource_details: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
             access: Access::Shared(1),
         }).unwrap();
         assert!(guard.as_ref().is_some());

@@ -102,7 +102,7 @@ pub struct RegistryAcquireAccess<'a, Id, IdPassword, ResourceId, Access, Passwor
 
 pub struct RegistryAcquireView<'a, Id, IdPassword, ResourceId, Access, Password> {
     pub user_details: Option<(&'a Id, &'a IdPassword)>,
-    pub resource_access: Vec<(ResourceId, Option<&'a Password>)>,
+    pub resource_details: Vec<(ResourceId, Option<&'a Password>)>,
     pub access: Access,
 }
 
@@ -119,7 +119,7 @@ pub struct RegistryOwnedAcquireAccess<Id, IdPassword, ResourceId, Access, Passwo
 #[derive(Clone)]
 pub struct RegistryOwnedAcquireView<Id, IdPassword, ResourceId, Access, Password> {
     pub user_details: Option<(Id, IdPassword)>,
-    pub resource_access: Vec<(ResourceId, Option<Password>)>,
+    pub resource_details: Vec<(ResourceId, Option<Password>)>,
     pub access: Access
 }
 

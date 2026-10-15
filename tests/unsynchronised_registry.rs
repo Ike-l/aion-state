@@ -112,7 +112,7 @@ fn unsynchronised_releaser_guards_clear_accesses_on_drop() {
     {
         let guard = registry.acquire_released_view::<AccessResult<ResourceView<'_, ResourceId, TestStoredResource>>>(RegistryOwnedAcquireView {
             user_details: Some((owner.clone(), owner_password.clone())),
-            resource_access: resource_ids.iter().cloned().map(|id| (id, None)).collect(),
+            resource_details: resource_ids.iter().cloned().map(|id| (id, None)).collect(),
             access: Access::Shared(1),
         }).unwrap_or_else(|_| panic!("unsynchronised released view should succeed"));
         assert!(guard.as_ref().is_some());
@@ -130,7 +130,7 @@ fn unsynchronised_releaser_guards_clear_accesses_on_drop() {
     }), Err(UnsynchronisedRegistryAcquireAccessError::AutomatedRegistry(_))));
     assert!(matches!(registry.acquire_released_view::<AccessResult<ResourceView<'_, ResourceId, TestStoredResource>>>(RegistryOwnedAcquireView {
         user_details: None,
-        resource_access: vec![(missing_id, None)],
+        resource_details: vec![(missing_id, None)],
         access: Access::Shared(1),
     }), Err(UnsynchronisedRegistryAcquireViewError::AutomatedRegistry(_))));
 }
@@ -361,7 +361,7 @@ fn unsynchronised_registry_runs_its_public_resource_lifecycle() {
         default::storages::registry_storage::ResourceView<'_, ResourceId, TestStoredResource>,
     >>(RegistryAcquireView {
         user_details: Some((&id, &updated_password)),
-        resource_access: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
+        resource_details: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
         access: access.clone(),
     }) };
     let Ok(view) = view else { panic!("unsynchronised view acquisition should succeed") };

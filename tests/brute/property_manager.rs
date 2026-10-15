@@ -897,7 +897,7 @@ impl PropertyManager {
         let resource_ids = vec![resource_id, second_resource_id];
         let guard = registry.acquire_released_view::<BruteViewResult<'_>>(RegistryOwnedAcquireView {
             user_details: None,
-            resource_access: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
+            resource_details: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
             access: access.clone(),
         }).expect("releaser view should succeed for stored unowned resources");
         assert!(guard.as_ref().is_some());
@@ -1122,7 +1122,7 @@ impl PropertyManager {
 
         let acquired_view = block_on(registry.acquire_view_async::<BruteViewResult<'_>>(RegistryAcquireView {
             user_details: Some((&id, &updated_password)),
-            resource_access: vec![(resource_id1.clone(), None), (resource_id2.clone(), None)],
+            resource_details: vec![(resource_id1.clone(), None), (resource_id2.clone(), None)],
             access: access.clone(),
         })).expect("async view acquisition should succeed");
         assert!(matches!(&acquired_view, AccessResult::Shared(ResourceView::Shared(_))));
@@ -1147,7 +1147,7 @@ impl PropertyManager {
 
             let guard = block_on(registry.async_acquire_released_view::<BruteViewResult<'_>>(RegistryOwnedAcquireView {
                 user_details: Some((id.clone(), updated_password.clone())),
-                resource_access: vec![(resource_id1.clone(), None), (resource_id2.clone(), None)],
+                resource_details: vec![(resource_id1.clone(), None), (resource_id2.clone(), None)],
                 access: access.clone(),
             })).expect("async releaser view should succeed");
             for resource_id in [&resource_id1, &resource_id2] {
@@ -1305,7 +1305,7 @@ impl PropertyManager {
         let should_acquire = duplicate_ids.is_empty() && denied.is_empty() && !has_missing_resource && can_acquire_access;
         let actual = registry.acquire_view::<AccessResult<ResourceView<'_, ResourceId, BruteStoredResource>>>(RegistryAcquireView {
             user_details: user_details.as_ref().map(|(id, password)| (id, password)),
-            resource_access: resource_access.iter().map(|(id, password)| (id.clone(), password.as_ref())).collect(),
+            resource_details: resource_access.iter().map(|(id, password)| (id.clone(), password.as_ref())).collect(),
             access: access.clone(),
         });
 

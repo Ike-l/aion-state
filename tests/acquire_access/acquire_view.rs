@@ -41,7 +41,7 @@ fn can_acquire_view_shared() {
 
     let result = registry.acquire_view::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
         user_details: None,
-        resource_access: vec![
+        resource_details: vec![
             (resource_id1.clone(), None),
             (resource_id2.clone(), None),
         ],
@@ -67,7 +67,7 @@ fn can_acquire_view_unique() {
 
     let result = registry.acquire_view::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
         user_details: None,
-        resource_access: vec![
+        resource_details: vec![
             (resource_id1.clone(), None),
             (resource_id2.clone(), None),
         ],
@@ -99,7 +99,7 @@ fn cannot_acquire_view_using_replace_access() {
 
     let result = registry.acquire_view::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
         user_details: None,
-        resource_access: vec![(resource_id, None)],
+        resource_details: vec![(resource_id, None)],
         access: Access::Replace,
     });
     assert!(matches!(result, Err(SynchronisedRegistryAcquireViewError::TriedAcquiring)));
@@ -124,7 +124,7 @@ fn cannot_acquire_view_with_duplicates() {
 
     let result = registry.acquire_view::<AccessResult<crate::default::storages::registry_storage::ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
         user_details: None,
-        resource_access: vec![
+        resource_details: vec![
             (resource_id1.clone(), None),
             (resource_id1.clone(), None),
         ],
@@ -156,14 +156,14 @@ fn reports_all_rejected_resources() {
     {
         let _view = registry.acquire_view::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
             user_details: None,
-            resource_access: vec![(resource_id1.clone(), None), (resource_id2.clone(), None)],
+            resource_details: vec![(resource_id1.clone(), None), (resource_id2.clone(), None)],
             access: Access::Shared(1),
         }).unwrap();
     }
 
     let result = registry.acquire_view::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
         user_details: None,
-        resource_access: vec![(resource_id1, None), (resource_id2, None)],
+        resource_details: vec![(resource_id1, None), (resource_id2, None)],
         access: Access::Unique,
     });
 
@@ -206,7 +206,7 @@ fn cannot_acquire_view_with_invalid_user_credentials() {
 
     let result = registry.acquire_view::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
         user_details: Some((&guest, &Password::new(0))),
-        resource_access: resource_ids.iter().cloned().map(|id| (id, None)).collect(),
+        resource_details: resource_ids.iter().cloned().map(|id| (id, None)).collect(),
         access: Access::Shared(1),
     });
     assert!(result.is_err_and(|error| matches!(
@@ -239,7 +239,7 @@ fn async_acquire_view_reports_duplicate_resources() {
     let resource_id = ResourceId::new_label("duplicate");
     let mut future = std::pin::pin!(registry.acquire_view_async::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
         user_details: None,
-        resource_access: vec![(resource_id.clone(), None), (resource_id, None)],
+        resource_details: vec![(resource_id.clone(), None), (resource_id, None)],
         access: Access::Shared(1),
     }));
     let waker = Waker::from(Arc::new(NoopWake));
@@ -279,7 +279,7 @@ fn cannot_acquire_view_with_missing_resource() {
 
     let result = registry.acquire_view::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
         user_details: None,
-        resource_access: vec![
+        resource_details: vec![
             (resource_id1.clone(), None),
             (resource_id_missing, None),
         ],
@@ -357,7 +357,7 @@ fn released_view_deaccesses_and_notifies_on_drop() {
     {
         let _view = registry.acquire_released_view::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryOwnedAcquireView {
             user_details: None,
-            resource_access: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
+            resource_details: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
             access: Access::Shared(1),
         }).unwrap();
     }
@@ -409,7 +409,7 @@ fn async_released_view_deaccesses_on_drop() {
 
     let mut future = std::pin::pin!(registry.async_acquire_released_view::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryOwnedAcquireView {
         user_details: None,
-        resource_access: vec![(resource_id.clone(), None)],
+        resource_details: vec![(resource_id.clone(), None)],
         access: Access::Shared(1),
     }));
     let waker = Waker::from(Arc::new(NoopWake));

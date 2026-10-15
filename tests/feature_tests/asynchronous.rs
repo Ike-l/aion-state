@@ -61,7 +61,7 @@ fn async_registry_can_acquire_a_view() {
 
     let view = block_on(registry.acquire_view_async::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
         user_details: None,
-        resource_access: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
+        resource_details: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
         access: Access::Shared(1),
     })).unwrap();
     assert!(matches!(view, AccessResult::Shared(ResourceView::Shared(_))));
@@ -114,7 +114,7 @@ fn async_registry_reports_missing_zero_access_and_duplicate_view_errors() {
         crate::default::storages::registry_storage::ResourceView<'_, ResourceId, Resource>,
     >>(RegistryAcquireView {
         user_details: None,
-        resource_access: vec![(resource_id.clone(), None), (resource_id, None)],
+        resource_details: vec![(resource_id.clone(), None), (resource_id, None)],
         access: Access::Shared(1),
     }));
     assert!(matches!(duplicate_result, Err(SynchronisedRegistryAcquireViewError::DuplicateIds(indices)) if indices == vec![1]));
@@ -172,7 +172,7 @@ fn async_access_apis_preserve_credential_failures() {
 
     let view_result = block_on(registry.acquire_view_async::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
         user_details: Some((&guest, &wrong_password)),
-        resource_access: vec![(resource_id.clone(), None)],
+        resource_details: vec![(resource_id.clone(), None)],
         access: Access::Shared(1),
     }));
     assert!(matches!(
@@ -238,7 +238,7 @@ fn async_view_reports_conflicts_for_each_requested_resource() {
 
     let result = block_on(registry.acquire_view_async::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryAcquireView {
         user_details: None,
-        resource_access: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
+        resource_details: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
         access: Access::Shared(1),
     }));
     assert!(matches!(
@@ -263,7 +263,7 @@ fn async_view_releaser_preserves_missing_resource_errors() {
     let missing = ResourceId::new_label("async-view-releaser-missing");
     let result = block_on(registry.async_acquire_released_view::<AccessResult<ResourceView<'_, ResourceId, Resource>>>(RegistryOwnedAcquireView {
         user_details: None,
-        resource_access: vec![(missing, None)],
+        resource_details: vec![(missing, None)],
         access: Access::Shared(1),
     }));
     assert!(matches!(result, Err(SynchronisedRegistryAcquireViewError::NotFound)));

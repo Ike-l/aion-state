@@ -27,12 +27,12 @@ where
         input: Self::AccessInput,
     ) -> Result<ReleasingResult<'a, S::StorageView<'a>, AccessResult, Self>, Self::Error> {
         let release_input = RegistryReleasingRelease {
-            resource_ids: input.resource_access.iter().map(|(id, _)| id.clone()).collect(),
+            resource_ids: input.resource_details.iter().map(|(id, _)| id.clone()).collect(),
             access: input.access.clone(),
         };
         let result = self.acquire_view(RegistryAcquireView {
             user_details: input.user_details.as_ref().map(|(id, password)| (id, password)),
-            resource_access: input.resource_access.iter()
+            resource_details: input.resource_details.iter()
                 .map(|(id, password)| (id.clone(), password.as_ref()))
                 .collect(),
             access: input.access,

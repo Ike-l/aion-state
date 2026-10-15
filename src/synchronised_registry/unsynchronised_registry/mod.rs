@@ -388,7 +388,7 @@ impl<
     pub unsafe fn acquire_view<'a, AccessResult>(
         &'a self,
         RegistryAcquireView {
-            user_details, resource_access, access
+            user_details, resource_details: resource_access, access
         }: RegistryAcquireView<'_, OS::Id, OS::Password, S::ValueId, AS::Access, BS::Password>
     ) -> Result<AccessResult, UnsynchronisedRegistryAcquireViewError>
         where
