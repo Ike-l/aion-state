@@ -33,20 +33,20 @@ impl<'a, S, AccessResult, R: Release> ReleasingResult<'a, S, AccessResult, R> {
         ReleasingResult::<S, NewAccessResult, R>::new(f(self.raw.take().unwrap()), self.releaser.take().unwrap(), self.release_input.take().unwrap())
     }
 
-    pub fn as_ref(&self) -> Option<&AccessResult> {
-        self.raw.as_ref()
+    pub fn as_ref(&self) -> &AccessResult {
+        self.raw.as_ref().unwrap()
     }
 
-    pub fn as_mut(&mut self) -> Option<&mut AccessResult> {
-        self.raw.as_mut()
+    pub fn as_mut(&mut self) -> &mut AccessResult {
+        self.raw.as_mut().unwrap()
     }
 
-    pub fn access_releaser(&self) -> Option<&Arc<R>> {
-        self.releaser.as_ref()
+    pub fn access_releaser(&self) -> &Arc<R> {
+        self.releaser.as_ref().unwrap()
     }
 
-    pub fn access_release_input(&self) -> Option<&R::ReleaseInput> {
-        self.release_input.as_ref()
+    pub fn access_release_input(&self) -> &R::ReleaseInput {
+        self.release_input.as_ref().unwrap()
     }
 }
 
