@@ -25,7 +25,7 @@ fn releaser_access_guard_releases_when_dropped() {
     insert_resource(&registry, resource_id.clone());
 
     {
-        let guard = registry.acquire_released_access::<AccessResult<
+        let _guard = registry.acquire_released_access::<AccessResult<
             crate::default::storages::registry_storage::ResourceWrapper<'_, Resource>,
         >>(RegistryOwnedAcquireAccess {
             user_details: None,
@@ -33,7 +33,6 @@ fn releaser_access_guard_releases_when_dropped() {
             access: Access::Shared(1),
             password: None,
         }).unwrap();
-        assert!(guard.as_ref().is_some());
     }
 
     assert_eq!(Some(Access::Shared(0)), registry.get_access(&ReceptionGetAccess { access_id: &resource_id }));
@@ -59,14 +58,13 @@ fn releaser_view_guard_releases_every_id_when_dropped() {
     }
 
     {
-        let guard = registry.acquire_released_view::<AccessResult<
+        let _guard = registry.acquire_released_view::<AccessResult<
             crate::default::storages::registry_storage::ResourceView<'_, ResourceId, Resource>,
         >>(RegistryOwnedAcquireView {
             user_details: None,
             resource_details: resource_ids.iter().cloned().map(|id| (id, None)).collect(),
             access: Access::Shared(1),
         }).unwrap();
-        assert!(guard.as_ref().is_some());
     }
 
     for resource_id in &resource_ids {
@@ -86,7 +84,7 @@ fn releasing_result_accessors_and_update_keep_the_release_token() {
     let registry = Arc::new(create_registry(None));
     let resource_id = ResourceId::new_label("releaser-update");
     insert_resource(&registry, resource_id.clone());
-    let mut guard = registry.acquire_released_access::<AccessResult<
+    let guard = registry.acquire_released_access::<AccessResult<
         crate::default::storages::registry_storage::ResourceWrapper<'_, Resource>,
     >>(RegistryOwnedAcquireAccess {
         user_details: None,
@@ -95,15 +93,12 @@ fn releasing_result_accessors_and_update_keep_the_release_token() {
         password: None,
     }).unwrap();
 
-    assert!(guard.as_ref().is_some());
-    assert!(guard.as_mut().is_some());
-    assert!(Arc::ptr_eq(guard.access_releaser().unwrap(), &registry));
-    let release = guard.access_release_input().unwrap();
+    assert!(Arc::ptr_eq(guard.access_releaser(), &registry));
+    let release = guard.access_release_input();
     assert_eq!(vec![resource_id.clone()], release.resource_ids);
     assert_eq!(Access::Shared(1), release.access);
 
     let updated = guard.update(|access_result| access_result);
-    assert!(updated.as_ref().is_some());
     drop(updated);
     assert_eq!(Some(Access::Shared(0)), registry.get_access(&ReceptionGetAccess { access_id: &resource_id }));
 }
@@ -159,25 +154,23 @@ fn releaser_guards_forward_authenticated_user_details() {
     let registry = Arc::new(registry);
 
     {
-        let guard = registry.acquire_released_access::<AccessResult<
+        let _guard = registry.acquire_released_access::<AccessResult<
             crate::default::storages::registry_storage::ResourceWrapper<'_, Resource>,
         >>(RegistryOwnedAcquireAccess {
             user_details: Some((id.clone(), password.clone())), resource_id: resource_ids[0].clone(),
             access: Access::Shared(1), password: None,
         }).unwrap();
-        assert!(guard.as_ref().is_some());
     }
     assert_eq!(Some(Access::Shared(0)), registry.get_access(&ReceptionGetAccess { access_id: &resource_ids[0] }));
 
     {
-        let guard = registry.acquire_released_view::<AccessResult<
+        let _guard = registry.acquire_released_view::<AccessResult<
             crate::default::storages::registry_storage::ResourceView<'_, ResourceId, Resource>,
         >>(RegistryOwnedAcquireView {
             user_details: Some((id.clone(), password.clone())),
             resource_details: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
             access: Access::Shared(1),
         }).unwrap();
-        assert!(guard.as_ref().is_some());
     }
     for resource_id in &resource_ids {
         assert_eq!(Some(Access::Shared(0)), registry.get_access(&ReceptionGetAccess { access_id: resource_id }));

@@ -99,23 +99,21 @@ fn unsynchronised_releaser_guards_clear_accesses_on_drop() {
     }
 
     {
-        let guard = registry.acquire_released_access::<AccessResult<ResourceWrapper<'_, TestStoredResource>>>(RegistryOwnedAcquireAccess {
+        let _guard = registry.acquire_released_access::<AccessResult<ResourceWrapper<'_, TestStoredResource>>>(RegistryOwnedAcquireAccess {
             user_details: Some((owner.clone(), owner_password.clone())),
             resource_id: resource_ids[0].clone(),
             access: Access::Shared(1),
             password: None,
         }).unwrap_or_else(|_| panic!("unsynchronised released access should succeed"));
-        assert!(guard.as_ref().is_some());
     }
     assert_eq!(Some(Access::Shared(0)), registry.get_access(&ReceptionGetAccess { access_id: &resource_ids[0] }));
 
     {
-        let guard = registry.acquire_released_view::<AccessResult<ResourceView<'_, ResourceId, TestStoredResource>>>(RegistryOwnedAcquireView {
+        let _guard = registry.acquire_released_view::<AccessResult<ResourceView<'_, ResourceId, TestStoredResource>>>(RegistryOwnedAcquireView {
             user_details: Some((owner.clone(), owner_password.clone())),
             resource_details: resource_ids.iter().cloned().map(|id| (id, None)).collect(),
             access: Access::Shared(1),
         }).unwrap_or_else(|_| panic!("unsynchronised released view should succeed"));
-        assert!(guard.as_ref().is_some());
     }
     for resource_id in &resource_ids {
         assert_eq!(Some(Access::Shared(0)), registry.get_access(&ReceptionGetAccess { access_id: resource_id }));

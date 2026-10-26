@@ -888,7 +888,6 @@ impl PropertyManager {
             access: access.clone(),
             password: None,
         }).expect("releaser access should succeed for an unowned resource");
-        assert!(guard.as_ref().is_some());
         self.record_active_access(registry, &resource_id, &access);
         drop(guard);
         self.release_access_after_guard_drop(registry, &resource_id, &access);
@@ -900,7 +899,6 @@ impl PropertyManager {
             resource_details: resource_ids.iter().cloned().map(|resource_id| (resource_id, None)).collect(),
             access: access.clone(),
         }).expect("releaser view should succeed for stored unowned resources");
-        assert!(guard.as_ref().is_some());
         for resource_id in &resource_ids {
             self.record_active_access(registry, resource_id, &access);
         }

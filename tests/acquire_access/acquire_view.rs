@@ -419,7 +419,7 @@ fn async_released_view_deaccesses_on_drop() {
         Poll::Ready(Err(error)) => panic!("async view acquisition failed: {error:?}"),
         Poll::Pending => panic!("uncontended async lock did not resolve immediately"),
     };
-    assert!(matches!(view.as_ref(), Some(AccessResult::Shared(ResourceView::Shared(_)))));
+    assert!(matches!(view.as_ref(), AccessResult::Shared(ResourceView::Shared(_))));
     drop(view);
 
     let unique = registry.acquire_access::<AccessResult<crate::default::storages::registry_storage::ResourceWrapper<'_, Resource>>>(aion_state::prelude::RegistryAcquireAccess {
