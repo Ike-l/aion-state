@@ -33,7 +33,7 @@ pub mod prelude {
 
     macro_rules! trace_function {
         ($log:literal) => {
-            let span = tracing::span!(crate::prelude::FUNCTION_LEVEL, $log);
+            let span = tracing::span!(parent: tracing::Span::current(), crate::prelude::FUNCTION_LEVEL, $log);
             let _enter = span.enter();
         };
     }
